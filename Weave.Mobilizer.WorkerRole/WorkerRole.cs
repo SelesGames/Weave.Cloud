@@ -1,11 +1,12 @@
 using Microsoft.WindowsAzure.ServiceRuntime;
 using Ninject;
+using Ninject.WebApi;
 using System;
 using System.Diagnostics;
 using System.Net;
 using System.Threading;
-using Weave.Mobilizer.Core;
 using Weave.Mobilizer.Core.Cache;
+using Weave.Mobilizer.Core.Web;
 
 namespace Weave.Mobilizer.WorkerRole
 {
@@ -66,7 +67,10 @@ namespace Weave.Mobilizer.WorkerRole
                 localCache.SetCacheTTLInMinutes(localCacheTTL);
                 var cloudCache = kernel.Get<AzureStorageCache>();
                 cloudCache.SetCacheTTLAndCleanupIntervalInHours(cloudCacheTTL, cloudCacheCleanupInterval);
-                Weave.Mobilizer.Core.MobilizerService.Initialize(ipString, () => kernel.Get<InstapaperMobilizerFormatter>());
+
+                var resolver = new NinjectResolver(kernel);
+                var selfHost = new SelfHost(ipString, resolver);
+                selfHost.StartServer().Wait();
             }
             catch (Exception e)
             {

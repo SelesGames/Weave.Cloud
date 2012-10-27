@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ServiceConfiguration serviceName="Weave.Mobilizer.AzureService" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="1" osVersion="*" schemaVersion="2012-05.1.7">
   <Role name="Weave.Mobilizer.WorkerRole">
-    <Instances count="1" />
+    <Instances count="2" />
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="CloudCacheTTLInHours" value="96" />
+      <Setting name="LocalCacheTTLInMinutes" value="45" />
+      <Setting name="CloudCacheCleanupInterval" value="3" />
     </ConfigurationSettings>
   </Role>
 </ServiceConfiguration>

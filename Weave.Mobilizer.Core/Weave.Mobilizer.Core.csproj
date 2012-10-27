@@ -55,6 +55,7 @@
     <Reference Include="Microsoft.WindowsAzure.StorageClient, Version=1.7.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System.Reactive.Core">
       <HintPath>..\packages\Rx-Core.2.0.20823\lib\Net40\System.Reactive.Core.dll</HintPath>
     </Reference>
@@ -72,22 +73,23 @@
     <Reference Include="System.ServiceModel.Web" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Web.Http.SelfHost, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cache\ReadabilityCache.cs" />
+    <Compile Include="Controllers\IPFController.cs" />
     <Compile Include="Library\IExtendedCache.cs" />
     <Compile Include="Library\IBasicCache.cs" />
     <Compile Include="Library\NLevelCache.cs" />
-    <Compile Include="Contract\IInstapaperMobilizerFormatter.cs" />
     <Compile Include="Cache\AzureClient.cs" />
-    <Compile Include="HtmlFormatter.cs" />
     <Compile Include="Library\TimeStampedCacheEntry.cs" />
-    <Compile Include="Service\InstapaperMobilizerFormatter.cs" />
     <Compile Include="Cache\LocalMemoryCache.cs" />
-    <Compile Include="Service\MobilizerService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Cache\AzureStorageCache.cs" />
+    <Compile Include="Web\ConfigurationExtensions.cs" />
+    <Compile Include="Web\SelfHost.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">
@@ -116,11 +118,6 @@
       <Project>{46AD4F10-5B0A-4333-A4CC-4CBAFCFE3ED2}</Project>
       <Name>Weave.Readability</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="css.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

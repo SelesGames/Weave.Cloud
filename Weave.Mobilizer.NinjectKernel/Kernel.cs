@@ -20,14 +20,14 @@ namespace Weave.Mobilizer.NinjectKernel
             var azureCache = new AzureStorageCache(azureClient);
             var localCache = new LocalMemoryCache();
             var nLevelCache = new ReadabilityCache(rc, localCache, azureCache);
-            var formatter = new HtmlFormatter();
+            //var formatter = new HtmlFormatter();
 
             Bind<ReadabilityClient>().ToConstant(rc).InSingletonScope();
             Bind<AzureClient>().ToConstant(azureClient).InSingletonScope();
             Bind<AzureStorageCache>().ToConstant(azureCache).InSingletonScope();
             Bind<LocalMemoryCache>().ToConstant(localCache).InSingletonScope();
             Bind<ReadabilityCache>().ToConstant(nLevelCache).InSingletonScope();
-            Bind<HtmlFormatter>().ToConstant(formatter).InSingletonScope();
+            //Bind<HtmlFormatter>().ToConstant(formatter).InSingletonScope();
         }
     }
 }

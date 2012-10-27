@@ -13,5 +13,14 @@
     <Imports>
       <Import moduleName="Diagnostics" />
     </Imports>
+    <Runtime executionContext="elevated" />
+    <Endpoints>
+      <InputEndpoint name="MobilizerService" protocol="http" port="80" localPort="80" />
+    </Endpoints>
+    <ConfigurationSettings>
+      <Setting name="CloudCacheTTLInHours" />
+      <Setting name="LocalCacheTTLInMinutes" />
+      <Setting name="CloudCacheCleanupInterval" />
+    </ConfigurationSettings>
   </WorkerRole>
 </ServiceDefinition>
