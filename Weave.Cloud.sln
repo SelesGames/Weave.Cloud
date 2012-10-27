@@ -1,0 +1,63 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "Weave.Mobilizer.AzureService", "Weave.Mobilizer.AzureService\Weave.Mobilizer.AzureService.ccproj", "{438B607A-6C4A-4329-97BA-CCBAD384F9E9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SelesGames.Rest", "SelesGames.Rest\SelesGames.Rest.csproj", "{BF01AF3A-26B9-40F2-BB1E-9C702242B504}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.Readability", "Weave.Readability\Weave.Readability.csproj", "{46AD4F10-5B0A-4333-A4CC-4CBAFCFE3ED2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mobilizer", "Mobilizer", "{5BB29567-3652-4F5E-9E4A-ED4A94987018}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.Mobilizer.NinjectKernel", "Weave.Mobilizer.NinjectKernel\Weave.Mobilizer.NinjectKernel.csproj", "{B70B3A96-75EF-49CA-8372-3E81015FC378}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.Mobilizer.Core", "Weave.Mobilizer.Core\Weave.Mobilizer.Core.csproj", "{AC94F729-4CC5-4ADC-B531-EFCBD9131FCF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Azure", "Azure", "{6705E664-89A0-47BB-B0BD-E973F14EE70D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.Mobilizer.WorkerRole", "Weave.Mobilizer.WorkerRole\Weave.Mobilizer.WorkerRole.csproj", "{6CB9BEFC-D065-4EAA-9D5F-9DA025495B20}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{438B607A-6C4A-4329-97BA-CCBAD384F9E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{438B607A-6C4A-4329-97BA-CCBAD384F9E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{438B607A-6C4A-4329-97BA-CCBAD384F9E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{438B607A-6C4A-4329-97BA-CCBAD384F9E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF01AF3A-26B9-40F2-BB1E-9C702242B504}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF01AF3A-26B9-40F2-BB1E-9C702242B504}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF01AF3A-26B9-40F2-BB1E-9C702242B504}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF01AF3A-26B9-40F2-BB1E-9C702242B504}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46AD4F10-5B0A-4333-A4CC-4CBAFCFE3ED2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46AD4F10-5B0A-4333-A4CC-4CBAFCFE3ED2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46AD4F10-5B0A-4333-A4CC-4CBAFCFE3ED2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46AD4F10-5B0A-4333-A4CC-4CBAFCFE3ED2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B70B3A96-75EF-49CA-8372-3E81015FC378}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B70B3A96-75EF-49CA-8372-3E81015FC378}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B70B3A96-75EF-49CA-8372-3E81015FC378}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B70B3A96-75EF-49CA-8372-3E81015FC378}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC94F729-4CC5-4ADC-B531-EFCBD9131FCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC94F729-4CC5-4ADC-B531-EFCBD9131FCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC94F729-4CC5-4ADC-B531-EFCBD9131FCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC94F729-4CC5-4ADC-B531-EFCBD9131FCF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CB9BEFC-D065-4EAA-9D5F-9DA025495B20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CB9BEFC-D065-4EAA-9D5F-9DA025495B20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CB9BEFC-D065-4EAA-9D5F-9DA025495B20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CB9BEFC-D065-4EAA-9D5F-9DA025495B20}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{46AD4F10-5B0A-4333-A4CC-4CBAFCFE3ED2} = {5BB29567-3652-4F5E-9E4A-ED4A94987018}
+		{BF01AF3A-26B9-40F2-BB1E-9C702242B504} = {5BB29567-3652-4F5E-9E4A-ED4A94987018}
+		{AC94F729-4CC5-4ADC-B531-EFCBD9131FCF} = {5BB29567-3652-4F5E-9E4A-ED4A94987018}
+		{B70B3A96-75EF-49CA-8372-3E81015FC378} = {5BB29567-3652-4F5E-9E4A-ED4A94987018}
+		{6705E664-89A0-47BB-B0BD-E973F14EE70D} = {5BB29567-3652-4F5E-9E4A-ED4A94987018}
+		{438B607A-6C4A-4329-97BA-CCBAD384F9E9} = {6705E664-89A0-47BB-B0BD-E973F14EE70D}
+		{6CB9BEFC-D065-4EAA-9D5F-9DA025495B20} = {6705E664-89A0-47BB-B0BD-E973F14EE70D}
+	EndGlobalSection
+EndGlobal
