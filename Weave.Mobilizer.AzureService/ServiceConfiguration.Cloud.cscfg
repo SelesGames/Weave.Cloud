@@ -3,7 +3,7 @@
   <Role name="Weave.Mobilizer.WorkerRole">
     <Instances count="2" />
     <ConfigurationSettings>
-      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=weave;AccountKey=uudFrra70qkI64bifaI2Rrm37CZ1HkzaBQrLMyw6U/hmzNDZehXeo9DdUv7BCpuZY4N2q/CNpNwYxW2fa218xA==" />
       <Setting name="CloudCacheTTLInHours" value="96" />
       <Setting name="LocalCacheTTLInMinutes" value="45" />
       <Setting name="CloudCacheCleanupInterval" value="3" />

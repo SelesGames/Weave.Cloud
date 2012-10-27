@@ -53,6 +53,9 @@
       <HintPath>..\packages\Microsoft.CompilerServices.AsyncTargetingPack.1.0.0\lib\net40\Microsoft.CompilerServices.AsyncTargetingPack.Net4.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.WindowsAzure.StorageClient, Version=1.7.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.4.5.10\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
@@ -114,6 +117,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\SelesGames.WebApi\SelesGames.WebApi.csproj">
+      <Project>{bb3ea281-94b3-435f-a1ef-c395a7d1f25a}</Project>
+      <Name>SelesGames.WebApi</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Weave.Readability\Weave.Readability.csproj">
       <Project>{46AD4F10-5B0A-4333-A4CC-4CBAFCFE3ED2}</Project>
       <Name>Weave.Readability</Name>

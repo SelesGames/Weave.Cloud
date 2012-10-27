@@ -62,6 +62,7 @@ namespace Weave.Mobilizer.WorkerRole
             var ipString = string.Format("http://{0}", ip.ToString());
             try
             {
+                Trace.WriteLine(string.Format("**** IP ADDRESS: {0}", ipString));
                 var kernel = new Weave.Mobilizer.NinjectKernel.Kernel();
                 var localCache = kernel.Get<LocalMemoryCache>();
                 localCache.SetCacheTTLInMinutes(localCacheTTL);

@@ -1,5 +1,7 @@
-﻿using System.Web.Http;
+﻿using SelesGames.WebApi.Compression;
+using System.Web.Http;
 using System.Web.Http.Dependencies;
+using Weave.Mobilizer.Core.Controllers;
 
 namespace Weave.Mobilizer.Core.Web
 {
@@ -9,15 +11,16 @@ namespace Weave.Mobilizer.Core.Web
         {
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
-                routeTemplate: "api/IPF"
-                //defaults: new
-                //{
-                //    id = RouteParameter.Optional,
-                //    controller = typeof(GameController),
-                //}
+                routeTemplate: "{controller}",
+                defaults: new
+                {
+                    controller = typeof(IPFController),
+                }
             );
 
             config.DependencyResolver = resolver;
+
+            config.MessageHandlers.Add(new EncodingDelegateHandler { ForceCompression = true });
         }
     }
 }
