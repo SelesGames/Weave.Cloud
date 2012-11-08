@@ -1,6 +1,5 @@
 ﻿using Microsoft.WindowsAzure;
 using Ninject;
-using Weave.Mobilizer.Core;
 using Weave.Mobilizer.Core.Cache;
 using Weave.Mobilizer.Core.Service;
 using Weave.Readability;

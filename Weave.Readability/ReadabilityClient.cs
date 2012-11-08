@@ -1,6 +1,5 @@
-﻿using System.Diagnostics;
+﻿using SelesGames.Rest;
 using System.Threading.Tasks;
-using SelesGames.Rest;
 
 namespace Weave.Readability
 {
@@ -17,7 +16,9 @@ namespace Weave.Readability
         public Task<ReadabilityResult> GetAsync(string url)
         {
             var fullUrl = string.Format(urlTemplate, token, url);
-            Debug.WriteLine(string.Format("calling {0}", url), "READABILITY");
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine(string.Format("calling {0}", url), "READABILITY");
+#endif
             return new JsonRestClient<ReadabilityResult> { UseGzip = true }
                 .GetAsync(fullUrl, System.Threading.CancellationToken.None);
         }
