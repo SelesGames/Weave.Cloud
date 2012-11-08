@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "Weave.Mobilizer.AzureService", "Weave.Mobilizer.AzureService\Weave.Mobilizer.AzureService.ccproj", "{438B607A-6C4A-4329-97BA-CCBAD384F9E9}"
+Project("{48B1769A-AADA-35A8-8DD7-B39A433C486A}") = "Weave.Mobilizer.AzureService", "Weave.Mobilizer.AzureService\Weave.Mobilizer.AzureService.ccproj", "{438B607A-6C4A-4329-97BA-CCBAD384F9E9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SelesGames.Rest", "SelesGames.Rest\SelesGames.Rest.csproj", "{BF01AF3A-26B9-40F2-BB1E-9C702242B504}"
 EndProject
