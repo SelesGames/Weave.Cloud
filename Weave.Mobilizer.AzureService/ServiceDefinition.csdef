@@ -8,7 +8,7 @@
     </Imports>
     <Runtime executionContext="elevated" />
     <Endpoints>
-      <InputEndpoint name="MobilizerService" protocol="http" port="8080" />
+      <InputEndpoint name="MobilizerService" protocol="http" port="80" />
     </Endpoints>
     <ConfigurationSettings>
       <Setting name="CloudCacheTTLInHours" />

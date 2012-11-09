@@ -20,6 +20,8 @@ namespace Weave.Mobilizer.NinjectKernel
             var localCache = new LocalMemoryCache();
             var nLevelCache = new ReadabilityCache(rc, localCache, azureCache);
 
+            Bind<AzureStorageCache>().ToConstant(azureCache).InSingletonScope();
+            Bind<LocalMemoryCache>().ToConstant(localCache).InSingletonScope();
             Bind<ReadabilityCache>().ToConstant(nLevelCache).InSingletonScope();
         }
     }

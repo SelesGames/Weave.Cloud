@@ -66,7 +66,7 @@ namespace Weave.Mobilizer.Core.Service
                 ms.Position = 0;
                 var serial = new DataContractJsonSerializer(typeof(ReadabilityResult));
                 var result = (ReadabilityResult)serial.ReadObject(ms);
-                Debug.WriteLine(string.Format("{0} retrieved from azure", url), "AZURE");
+                //Debug.WriteLine(string.Format("{0} retrieved from azure", url), "AZURE");
                 return result;
             }
         }
