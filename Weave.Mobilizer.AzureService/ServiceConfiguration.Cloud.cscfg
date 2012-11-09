@@ -1,6 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ServiceConfiguration serviceName="Weave.Mobilizer.AzureService" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="3" osVersion="*" schemaVersion="2012-10.1.8">
-  <Role name="Weave.Mobilizer.WorkerRole">
+  
+  
+  <!--Role name="Weave.Mobilizer.WorkerRole">
+    <Instances count="2" />
+    <ConfigurationSettings>
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=weave;AccountKey=uudFrra70qkI64bifaI2Rrm37CZ1HkzaBQrLMyw6U/hmzNDZehXeo9DdUv7BCpuZY4N2q/CNpNwYxW2fa218xA==" />
+      <Setting name="CloudCacheTTLInHours" value="96" />
+      <Setting name="LocalCacheTTLInMinutes" value="45" />
+      <Setting name="CloudCacheCleanupInterval" value="3" />
+    </ConfigurationSettings>
+  </Role-->
+  
+  
+  <Role name="Weave.Mobilizer.WebRole">
     <Instances count="2" />
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=weave;AccountKey=uudFrra70qkI64bifaI2Rrm37CZ1HkzaBQrLMyw6U/hmzNDZehXeo9DdUv7BCpuZY4N2q/CNpNwYxW2fa218xA==" />
@@ -9,4 +22,6 @@
       <Setting name="CloudCacheCleanupInterval" value="3" />
     </ConfigurationSettings>
   </Role>
+  
+  
 </ServiceConfiguration>

@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.Mobilizer.NinjectKern
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SelesGames.WebApi", "SelesGames.WebApi\SelesGames.WebApi.csproj", "{BB3EA281-94B3-435F-A1EF-C395A7D1F25A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.Mobilizer.WebRole", "Weave.Mobilizer.WebRole\Weave.Mobilizer.WebRole.csproj", "{C816F0EB-9D9E-4484-A855-BE57B4AF147D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,10 @@ Global
 		{BB3EA281-94B3-435F-A1EF-C395A7D1F25A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB3EA281-94B3-435F-A1EF-C395A7D1F25A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB3EA281-94B3-435F-A1EF-C395A7D1F25A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C816F0EB-9D9E-4484-A855-BE57B4AF147D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C816F0EB-9D9E-4484-A855-BE57B4AF147D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C816F0EB-9D9E-4484-A855-BE57B4AF147D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C816F0EB-9D9E-4484-A855-BE57B4AF147D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -75,5 +81,6 @@ Global
 		{BB3EA281-94B3-435F-A1EF-C395A7D1F25A} = {F40BEE0B-DF4E-4407-AF75-78C75BFA48BA}
 		{438B607A-6C4A-4329-97BA-CCBAD384F9E9} = {6705E664-89A0-47BB-B0BD-E973F14EE70D}
 		{6CB9BEFC-D065-4EAA-9D5F-9DA025495B20} = {6705E664-89A0-47BB-B0BD-E973F14EE70D}
+		{C816F0EB-9D9E-4484-A855-BE57B4AF147D} = {6705E664-89A0-47BB-B0BD-E973F14EE70D}
 	EndGlobalSection
 EndGlobal

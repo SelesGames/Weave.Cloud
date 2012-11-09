@@ -1,5 +1,6 @@
 ﻿using Microsoft.WindowsAzure;
 using Ninject;
+using System.Threading.Tasks;
 using Weave.Mobilizer.Core.Cache;
 using Weave.Mobilizer.Core.Service;
 using Weave.Readability;
@@ -23,8 +24,8 @@ namespace Weave.Mobilizer.NinjectKernel
 
             Bind<ReadabilityClient>().ToConstant(rc).InSingletonScope();
             Bind<AzureClient>().ToConstant(azureClient).InSingletonScope();
-            Bind<AzureStorageCache>().ToConstant(azureCache).InSingletonScope();
-            Bind<LocalMemoryCache>().ToConstant(localCache).InSingletonScope();
+            //Bind<AzureStorageCache>().ToConstant(azureCache).InSingletonScope();
+           // Bind<LocalMemoryCache>().ToConstant(localCache).InSingletonScope();
             Bind<ReadabilityCache>().ToConstant(nLevelCache).InSingletonScope();
             //Bind<HtmlFormatter>().ToConstant(formatter).InSingletonScope();
         }

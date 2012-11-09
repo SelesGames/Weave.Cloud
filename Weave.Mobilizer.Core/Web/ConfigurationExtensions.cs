@@ -10,10 +10,11 @@ namespace Weave.Mobilizer.Core.Web
         public static void Configure(this HttpConfiguration config, IDependencyResolver resolver)
         {
             config.Routes.MapHttpRoute(
-                name: "DefaultApi",
+                name: "InstapaperFormatterRouting",
                 routeTemplate: "{controller}",
                 defaults: new
                 {
+                    routTemplate = "ipf",
                     controller = typeof(IPFController),
                 }
             );

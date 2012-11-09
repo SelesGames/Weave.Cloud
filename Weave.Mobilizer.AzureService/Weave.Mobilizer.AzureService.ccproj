@@ -37,12 +37,12 @@
     <ServiceConfiguration Include="ServiceConfiguration.Cloud.cscfg" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Weave.Mobilizer.WorkerRole\Weave.Mobilizer.WorkerRole.csproj">
-      <Name>Weave.Mobilizer.WorkerRole</Name>
-      <Project>{6cb9befc-d065-4eaa-9d5f-9da025495b20}</Project>
+    <ProjectReference Include="..\Weave.Mobilizer.WebRole\Weave.Mobilizer.WebRole.csproj">
+      <Name>Weave.Mobilizer.WebRole</Name>
+      <Project>{c816f0eb-9d9e-4484-a855-be57b4af147d}</Project>
       <Private>True</Private>
-      <RoleType>Worker</RoleType>
-      <RoleName>Weave.Mobilizer.WorkerRole</RoleName>
+      <RoleType>Web</RoleType>
+      <RoleName>Weave.Mobilizer.WebRole</RoleName>
       <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
     </ProjectReference>
   </ItemGroup>
