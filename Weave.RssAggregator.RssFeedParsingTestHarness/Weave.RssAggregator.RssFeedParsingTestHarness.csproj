@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{FB3D13AD-E388-4077-AF16-F48B657EF4C4}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Weave.RssAggregator.RssFeedParsingTestHarness</RootNamespace>
+    <AssemblyName>Weave.RssAggregator.RssFeedParsingTestHarness</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="protobuf-net">
+      <HintPath>..\..\lib\regular .net\protobuf-net.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Reactive, Version=1.0.10621.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\weave.Common.Reactive\Extension Methods\LinqToXmlExtensions.cs">
+      <Link>Library\LinqToXmlExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\weave.Common.Reactive\Extension Methods\ReactiveExtensions.cs">
+      <Link>Library\ReactiveExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\weave.Common.Reactive\Extension Methods\WebRequestExtensionMethods.cs">
+      <Link>Library\WebRequestExtensionMethods.cs</Link>
+    </Compile>
+    <Compile Include="..\weave.Common\DebugEx.cs">
+      <Link>Library\DebugEx.cs</Link>
+    </Compile>
+    <Compile Include="..\weave.Common\Guard.cs">
+      <Link>Library\Guard.cs</Link>
+    </Compile>
+    <Compile Include="..\Weave.RssAggregator.Core\DTOs\Outgoing\NewsItem.cs">
+      <Link>RSS\NewsItem.cs</Link>
+    </Compile>
+    <Compile Include="..\Weave.RssAggregator.Core\Library\StreamExtensionMethods.cs">
+      <Link>Library\StreamExtensionMethods.cs</Link>
+    </Compile>
+    <Compile Include="..\Weave.RssAggregator.Core\Services\Feed Parsing\AtomIntermediate.cs">
+      <Link>RSS\AtomIntermediate.cs</Link>
+    </Compile>
+    <Compile Include="..\Weave.RssAggregator.Core\Services\Feed Parsing\IRssIntermediate.cs">
+      <Link>RSS\IRssIntermediate.cs</Link>
+    </Compile>
+    <Compile Include="..\Weave.RssAggregator.Core\Services\Feed Parsing\NewsItemParseHelper.cs">
+      <Link>RSS\NewsItemParseHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\Weave.RssAggregator.Core\Services\Feed Parsing\Rss20Intermediate.cs">
+      <Link>RSS\Rss20Intermediate.cs</Link>
+    </Compile>
+    <Compile Include="..\Weave.RssAggregator.Core\Services\Feed Parsing\RssFeedParser.cs">
+      <Link>RSS\RssFeedParser.cs</Link>
+    </Compile>
+    <Compile Include="..\Weave.RssAggregator.Core\Services\Feed Parsing\RssHelperFunctions.cs">
+      <Link>RSS\RssHelperFunctions.cs</Link>
+    </Compile>
+    <Compile Include="..\Weave.RssAggregator.Core\Services\Feed Parsing\RssParsingMediaParserHelper.cs">
+      <Link>RSS\RssParsingMediaParserHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\Weave.RssAggregator.Core\Services\Feed Parsing\RssParsingStringExtensions.cs">
+      <Link>RSS\RssParsingStringExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Weave.RssAggregator.Core\Services\Feed Parsing\RssParsingXElementExtensions.cs">
+      <Link>RSS\RssParsingXElementExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Weave.RssAggregator.Core\Services\Feed Parsing\SyndicationIntermediate.cs">
+      <Link>RSS\SyndicationIntermediate.cs</Link>
+    </Compile>
+    <Compile Include="..\weave.RSS\SyndicationDateTimeUtility.cs">
+      <Link>Library\SyndicationDateTimeUtility.cs</Link>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
