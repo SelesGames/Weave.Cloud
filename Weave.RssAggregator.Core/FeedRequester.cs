@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
 using Weave.RssAggregator.Core.Parsing;
@@ -34,32 +35,70 @@ namespace Weave.RssAggregator.Core
         }
 
 
+        //public async Task<RequestStatus> UpdateFeed()
+        //{
+        //    var request = (HttpWebRequest)HttpWebRequest.Create(FeedUri);
+
+        //    #region CONDITIONAL GET
+
+        //    if (!string.IsNullOrEmpty(Etag))
+        //    {
+        //        request.Headers[HttpRequestHeader.IfNoneMatch] = Etag;
+        //    }
+
+        //    if (!string.IsNullOrEmpty(LastModified))
+        //    {
+        //        DateTime lastModified;
+        //        if (DateTime.TryParse(LastModified, out lastModified))
+        //            request.IfModifiedSince = lastModified;
+        //    }
+
+        //    #endregion
+
+        //    var temp = await request.GetResponseAsync().ConfigureAwait(false);
+        //    var response = (HttpWebResponse)temp;
+
+        //    if (response.StatusCode == HttpStatusCode.NotModified)
+        //    {
+        //        HandleNonModifiedResponse();
+        //        return Status;
+        //    }
+
+        //    else if (response.StatusCode == HttpStatusCode.OK)
+        //    {
+        //        HandleNewData(response);
+        //        return Status;
+        //    }
+
+        //    else
+        //    {
+        //        throw new Exception(response.StatusCode.ToString());
+        //    }
+        //}
+
+
         public async Task<RequestStatus> UpdateFeed()
         {
-            var request = (HttpWebRequest)HttpWebRequest.Create(FeedUri);
-
-
+            var request = new HttpClient();
+            request.Timeout = TimeOut;
 
             #region CONDITIONAL GET
 
             if (!string.IsNullOrEmpty(Etag))
             {
-                request.Headers[HttpRequestHeader.IfNoneMatch] = Etag;
+                request.DefaultRequestHeaders.IfNoneMatch.TryParseAdd(Etag);
             }
 
             if (!string.IsNullOrEmpty(LastModified))
             {
                 DateTime lastModified;
                 if (DateTime.TryParse(LastModified, out lastModified))
-                    request.IfModifiedSince = lastModified;
+                    request.DefaultRequestHeaders.IfModifiedSince = lastModified;
             }
 
             #endregion
 
-
-
-            var temp = await request.GetResponseAsync().ConfigureAwait(false);
-            var response = (HttpWebResponse)temp;
+            var response = await request.GetAsync(FeedUri).ConfigureAwait(false);
 
             if (response.StatusCode == HttpStatusCode.NotModified)
             {
@@ -69,7 +108,7 @@ namespace Weave.RssAggregator.Core
 
             else if (response.StatusCode == HttpStatusCode.OK)
             {
-                HandleNewData(response);
+                await HandleNewData(response).ConfigureAwait(false);
                 return Status;
             }
 
@@ -81,29 +120,60 @@ namespace Weave.RssAggregator.Core
 
         void HandleNonModifiedResponse()
         {
-            //DebugEx.WriteLine(string.Format("SERVER SIDE ### Using cached data for {0}", this.FeedUri));
             this.Status = RequestStatus.Unmodified;
         }
 
-        void HandleNewData(HttpWebResponse o)
+
+        //void HandleNewData(HttpWebResponse o)
+        //{
+        //    //DebugEx.WriteLine(string.Format("SERVER SIDE Refreshing {0} with new data", this.FeedUri));
+
+
+        //    #region CONDITIONAL GET
+
+        //    var eTag = o.Headers[HttpResponseHeader.ETag];
+        //    if (!string.IsNullOrEmpty(eTag))
+        //        this.Etag = eTag;
+
+        //    var lastModified = o.Headers[HttpResponseHeader.LastModified];
+        //    if (!string.IsNullOrEmpty(lastModified))
+        //        this.LastModified = lastModified;
+
+        //    #endregion
+
+
+        //    using (var stream = o.GetResponseStream())
+        //    {
+        //        ParseNewsFromLastRefreshTime(stream);
+        //        stream.Close();
+        //    }
+        //}
+
+
+        async Task HandleNewData(HttpResponseMessage o)//HttpWebResponse o)
         {
-            //DebugEx.WriteLine(string.Format("SERVER SIDE Refreshing {0} with new data", this.FeedUri));
-
-
             #region CONDITIONAL GET
 
-            var eTag = o.Headers[HttpResponseHeader.ETag];
-            if (!string.IsNullOrEmpty(eTag))
-                this.Etag = eTag;
+            var e = o.Headers.ETag;
+            if (e != null)
+            {
+                var eTag = o.Headers.ETag.Tag;
+                if (!string.IsNullOrEmpty(eTag))
+                    Etag = eTag;
+            }
 
-            var lastModified = o.Headers[HttpResponseHeader.LastModified];
-            if (!string.IsNullOrEmpty(lastModified))
-                this.LastModified = lastModified;
+            var lm = o.Content.Headers.LastModified;
+            if (lm != null && lm.HasValue)
+            {
+                var lastModified = lm.Value.ToString();
+                if (!string.IsNullOrEmpty(lastModified))
+                    LastModified = lastModified;
+            }
 
             #endregion
 
 
-            using (var stream = o.GetResponseStream())
+            using (var stream = await o.Content.ReadAsStreamAsync().ConfigureAwait(false))
             {
                 ParseNewsFromLastRefreshTime(stream);
                 stream.Close();
@@ -112,12 +182,9 @@ namespace Weave.RssAggregator.Core
 
         void ParseNewsFromLastRefreshTime(Stream stream)
         {
-            #region new approach using switching parsing (weave + Syndicationfeed)
-
             var elementsWithDate = stream
                 .ToRssIntermediates()
                 .ToRssIntermediatesWithDate()
-                //.ToList()
                 .OrderByDescending(o => o.Item1);
 
 
@@ -150,51 +217,6 @@ namespace Weave.RssAggregator.Core
             this.News = news;
 
             this.Status = RequestStatus.OK;
-
-            #endregion
-
-
-
-
-            #region old approach using stricly Weave parsing
-
-            //var elementsWithDate = stream
-            //    .ToXElements()
-            //    .ToXElementsWithDate()
-            //    .OrderByDescending(o => o.Item1);
-
-
-            //var previousMostRecentNewsItemPubDateString = this.MostRecentNewsItemPubDate;
-
-
-            //var mostRecentItem = elementsWithDate.FirstOrDefault();
-            //if (mostRecentItem != null)
-            //    this.MostRecentNewsItemPubDate = mostRecentItem.Item2.Element("pubDate").ValueOrDefault();
-
-            //var oldestItem = elementsWithDate.LastOrDefault();
-            //if (oldestItem != null)
-            //    this.OldestNewsItemPubDate = oldestItem.Item2.Element("pubDate").ValueOrDefault();
-
-
-            //IEnumerable<Tuple<DateTime, XElement>> filteredNews = elementsWithDate;
-
-            //var tryGetPreviousMostRecentDate = RssServiceLayer.TryGetUtcDate(previousMostRecentNewsItemPubDateString);
-            //if (tryGetPreviousMostRecentDate.Item1)
-            //{
-            //    var previousMostRecentNewsItemPubDate = tryGetPreviousMostRecentDate.Item2;
-            //    filteredNews = elementsWithDate.TakeWhile(o => o.Item1 > previousMostRecentNewsItemPubDate);
-            //}
-
-            //var news = filteredNews
-            //    .Select(o => o.Item2.ToNewsItem())
-            //    .OfType<NewsItem>()
-            //    .ToList();
-
-            //this.News = news;
-
-            //this.Status = RequestStatus.OK;
-
-            #endregion
         }
     }
 }

@@ -72,7 +72,6 @@ namespace Weave.RssAggregator.Core.Parsing
 
             try
             {
-
                 var remainder = potentialYoutube.Substring(23);
 
                 if (remainder.StartsWith("v", StringComparison.OrdinalIgnoreCase))

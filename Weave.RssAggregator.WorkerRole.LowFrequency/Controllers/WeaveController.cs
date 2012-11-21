@@ -29,7 +29,7 @@ namespace Weave.Mobilizer.Core.Controllers
             var highFrequencyFeeds = requests.Where(o => cache.Contains(o.Url)).ToList();
             var lowFrequencyFeeds = requests.Except(highFrequencyFeeds).ToList();
 
-            var lowFrequencyResults = await Task.WhenAll(lowFrequencyFeeds.Select(o => o.GetNewsAsync(AppSettings.LowFrequencyHttpWebRequestTimeout)));
+            var lowFrequencyResults = await Task.WhenAll(lowFrequencyFeeds.Select(o => o.GetNewsAsync(AppSettings.LowFrequencyHttpWebRequestTimeout))).ConfigureAwait(false);
             var highFrequencyResults = highFrequencyFeeds.Select(o => cache.ToFeedResult(o)).ToArray();
 
             var results = new List<FeedResult>(lowFrequencyResults.Length + highFrequencyResults.Length);

@@ -1,39 +1,28 @@
-﻿using Ninject.Activation;
-using Ninject.Parameters;
-using Ninject.Syntax;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Web.Http.Dependencies;
 
 namespace Ninject.WebApi
 {
     public class NinjectScope : IDependencyScope
     {
-        protected IResolutionRoot resolutionRoot;
+        readonly IKernel kernel;
 
-        public NinjectScope(IResolutionRoot kernel)
+        public NinjectScope(IKernel kernel)
         {
-            resolutionRoot = kernel;
+            this.kernel = kernel;
         }
 
         public object GetService(Type serviceType)
         {
-            IRequest request = resolutionRoot.CreateRequest(serviceType, null, new Parameter[0], true, true);
-            return resolutionRoot.Resolve(request).SingleOrDefault();
+            return kernel.TryGet(serviceType);
         }
 
         public IEnumerable<object> GetServices(Type serviceType)
         {
-            IRequest request = resolutionRoot.CreateRequest(serviceType, null, new Parameter[0], true, true);
-            return resolutionRoot.Resolve(request).ToList();
+            return kernel.GetAll(serviceType);
         }
 
-        public void Dispose()
-        {
-            IDisposable disposable = (IDisposable)resolutionRoot;
-            if (disposable != null) disposable.Dispose();
-            resolutionRoot = null;
-        }
+        public void Dispose() { }
     }
 }

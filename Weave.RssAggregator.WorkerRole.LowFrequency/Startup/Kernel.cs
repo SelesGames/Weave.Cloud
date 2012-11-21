@@ -10,13 +10,7 @@ namespace Weave.RssAggregator.Core
         public Kernel(HighFrequencyFeedRssCache hfCache)
         {
             this.hfCache = hfCache;
-        }
-
-        protected override void AddComponents()
-        {
-            base.AddComponents();
-
-            Bind<HighFrequencyFeedRssCache>().ToMethod(_ => hfCache).InSingletonScope();
+            Bind<HighFrequencyFeedRssCache>().ToConstant(hfCache).InSingletonScope();
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Weave.RssAggregator.Core;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
 
@@ -57,9 +59,23 @@ namespace Weave.RssAggregator.HighFrequency
                 }
                 this.LastFeedState = FeedState.OK;
             }
+            catch (TaskCanceledException ex)
+            {
+                DebugEx.WriteLine("!!!!!! TIMED OUT {0}  ({1}): {2}", Name, FeedUri, ex.Message);
+                this.LastFeedState = FeedState.Failed;
+            }
+            catch (HttpRequestException ex)
+            {
+                if (ex.InnerException != null)
+                    DebugEx.WriteLine("!!!!!! FAILED {0}  ({1}): {2}: {3}", Name, FeedUri, ex.Message, ex.InnerException.Message);
+                else
+                    DebugEx.WriteLine("!!!!!! FAILED {0}  ({1}): {2}", Name, FeedUri, ex.Message);
+
+                this.LastFeedState = FeedState.Failed;
+            }
             catch (Exception ex)
             {
-                DebugEx.WriteLine("FAILED {0}  ({1}): {2}", Name, FeedUri, ex.Message);
+                DebugEx.WriteLine("!!!!!! FAILED {0}  ({1}): {2}", Name, FeedUri, ex.Message);
                 this.LastFeedState = FeedState.Failed;
             }
         }

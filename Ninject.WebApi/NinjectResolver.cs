@@ -14,7 +14,7 @@ namespace Ninject.WebApi
 
         public IDependencyScope BeginScope()
         {
-            return new NinjectScope(kernel.BeginBlock());
+            return new NinjectScope(kernel);
         }
     }
 }
