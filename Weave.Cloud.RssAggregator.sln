@@ -1,0 +1,86 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SelesGames.Rest", "SelesGames.Rest\SelesGames.Rest.csproj", "{BF01AF3A-26B9-40F2-BB1E-9C702242B504}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ninject.WebApi", "Ninject.WebApi\Ninject.WebApi.csproj", "{BE97F564-16F5-4D09-9218-CC65E89DF2AC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Library", "Library", "{F40BEE0B-DF4E-4407-AF75-78C75BFA48BA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SelesGames.WebApi", "SelesGames.WebApi\SelesGames.WebApi.csproj", "{BB3EA281-94B3-435F-A1EF-C395A7D1F25A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RSS Aggregator", "RSS Aggregator", "{4825F245-9490-48C3-8238-529659C3A1C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RssAggregator.Core", "Weave.RssAggregator.Core\RssAggregator.Core.csproj", "{2F1A280D-EE75-4DC1-A36C-F8E5488E3260}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RssAggregator.WorkerRole", "Weave.RssAggregator.WorkerRole\RssAggregator.WorkerRole.csproj", "{8BC085AB-B327-4811-BF6A-7D6E5437FE6F}"
+EndProject
+Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "RssAggregator.AzureService", "Weave.RssAggregator.AzureService\RssAggregator.AzureService.ccproj", "{F08AB9B4-B0E5-4B7F-AA1C-5FEB175A6639}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RssAggregator.HighFrequency", "Weave.RssAggregator.HighFrequency\RssAggregator.HighFrequency.csproj", "{41091951-EAB3-458C-9339-C4A8219FC300}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RssAggregator.Role.LowFrequency", "Weave.RssAggregator.WorkerRole.LowFrequency\RssAggregator.Role.LowFrequency.csproj", "{1E0B8EC8-A14B-4457-905D-87D52F73D739}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Azure", "Azure", "{E941830F-661F-4D18-8A86-CA09DC180883}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RssAggregator.Role.HighFrequency", "RssAggregator.Role.HighFrequency\RssAggregator.Role.HighFrequency.csproj", "{0EF2D384-11E8-48FE-8EC3-2F67AD896628}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BF01AF3A-26B9-40F2-BB1E-9C702242B504}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF01AF3A-26B9-40F2-BB1E-9C702242B504}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF01AF3A-26B9-40F2-BB1E-9C702242B504}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF01AF3A-26B9-40F2-BB1E-9C702242B504}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE97F564-16F5-4D09-9218-CC65E89DF2AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE97F564-16F5-4D09-9218-CC65E89DF2AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE97F564-16F5-4D09-9218-CC65E89DF2AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE97F564-16F5-4D09-9218-CC65E89DF2AC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB3EA281-94B3-435F-A1EF-C395A7D1F25A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB3EA281-94B3-435F-A1EF-C395A7D1F25A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB3EA281-94B3-435F-A1EF-C395A7D1F25A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB3EA281-94B3-435F-A1EF-C395A7D1F25A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F1A280D-EE75-4DC1-A36C-F8E5488E3260}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F1A280D-EE75-4DC1-A36C-F8E5488E3260}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F1A280D-EE75-4DC1-A36C-F8E5488E3260}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F1A280D-EE75-4DC1-A36C-F8E5488E3260}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BC085AB-B327-4811-BF6A-7D6E5437FE6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BC085AB-B327-4811-BF6A-7D6E5437FE6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BC085AB-B327-4811-BF6A-7D6E5437FE6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BC085AB-B327-4811-BF6A-7D6E5437FE6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F08AB9B4-B0E5-4B7F-AA1C-5FEB175A6639}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F08AB9B4-B0E5-4B7F-AA1C-5FEB175A6639}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F08AB9B4-B0E5-4B7F-AA1C-5FEB175A6639}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F08AB9B4-B0E5-4B7F-AA1C-5FEB175A6639}.Release|Any CPU.Build.0 = Release|Any CPU
+		{41091951-EAB3-458C-9339-C4A8219FC300}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{41091951-EAB3-458C-9339-C4A8219FC300}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41091951-EAB3-458C-9339-C4A8219FC300}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{41091951-EAB3-458C-9339-C4A8219FC300}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E0B8EC8-A14B-4457-905D-87D52F73D739}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E0B8EC8-A14B-4457-905D-87D52F73D739}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E0B8EC8-A14B-4457-905D-87D52F73D739}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E0B8EC8-A14B-4457-905D-87D52F73D739}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0EF2D384-11E8-48FE-8EC3-2F67AD896628}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EF2D384-11E8-48FE-8EC3-2F67AD896628}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EF2D384-11E8-48FE-8EC3-2F67AD896628}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EF2D384-11E8-48FE-8EC3-2F67AD896628}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BE97F564-16F5-4D09-9218-CC65E89DF2AC} = {F40BEE0B-DF4E-4407-AF75-78C75BFA48BA}
+		{BF01AF3A-26B9-40F2-BB1E-9C702242B504} = {F40BEE0B-DF4E-4407-AF75-78C75BFA48BA}
+		{BB3EA281-94B3-435F-A1EF-C395A7D1F25A} = {F40BEE0B-DF4E-4407-AF75-78C75BFA48BA}
+		{2F1A280D-EE75-4DC1-A36C-F8E5488E3260} = {4825F245-9490-48C3-8238-529659C3A1C0}
+		{E941830F-661F-4D18-8A86-CA09DC180883} = {4825F245-9490-48C3-8238-529659C3A1C0}
+		{41091951-EAB3-458C-9339-C4A8219FC300} = {4825F245-9490-48C3-8238-529659C3A1C0}
+		{F08AB9B4-B0E5-4B7F-AA1C-5FEB175A6639} = {E941830F-661F-4D18-8A86-CA09DC180883}
+		{1E0B8EC8-A14B-4457-905D-87D52F73D739} = {E941830F-661F-4D18-8A86-CA09DC180883}
+		{8BC085AB-B327-4811-BF6A-7D6E5437FE6F} = {E941830F-661F-4D18-8A86-CA09DC180883}
+		{0EF2D384-11E8-48FE-8EC3-2F67AD896628} = {E941830F-661F-4D18-8A86-CA09DC180883}
+	EndGlobalSection
+EndGlobal

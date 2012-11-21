@@ -83,6 +83,11 @@ namespace Weave.RssAggregator.HighFrequency
             return feeds.ContainsKey(feedUrl);
         }
 
+        public HighFrequencyFeed Get(string feedUrl)
+        {
+            return feeds[feedUrl];
+        }
+
         public void Dispose()
         {
             disposables.Dispose();

@@ -14,20 +14,20 @@ namespace Weave.RssAggregator.Core
             LowFrequencyHttpWebRequestTimeout = TimeSpan.FromMilliseconds(milliseconds);
         }
 
-        public static TimeSpan HighFrequencyRefreshPeriod { get; private set; }
+        //public static TimeSpan HighFrequencyRefreshPeriod { get; private set; }
 
-        public static void SetHighFrequencyRefreshPeriodInMinutes(double minutes)
-        {
-            HighFrequencyRefreshPeriod = TimeSpan.FromMinutes(minutes);
-        }
+        //public static void SetHighFrequencyRefreshPeriodInMinutes(double minutes)
+        //{
+        //    HighFrequencyRefreshPeriod = TimeSpan.FromMinutes(minutes);
+        //}
 
-        public static int HighFrequencyRefreshSplit { get; set; }
+        //public static int HighFrequencyRefreshSplit { get; set; }
 
         static AppSettings()
         {
-            LowFrequencyHttpWebRequestTimeout = TimeSpan.FromSeconds(2);
-            HighFrequencyRefreshPeriod = TimeSpan.FromMinutes(8);
-            HighFrequencyRefreshSplit = 32;
+            LowFrequencyHttpWebRequestTimeout = TimeSpan.FromSeconds(10);
+            //HighFrequencyRefreshPeriod = TimeSpan.FromMinutes(8);
+            //HighFrequencyRefreshSplit = 32;
         }
     }
 }

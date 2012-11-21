@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Web.Http;
-using Weave.RssAggregator.Core.DTOs.Outgoing;
 using Weave.RssAggregator.HighFrequency;
 
 namespace Weave.Mobilizer.Core.Controllers
@@ -15,10 +13,12 @@ namespace Weave.Mobilizer.Core.Controllers
             this.cache = cache;
         }
 
-        public Task<List<FeedResult>> Get(string url)
+        public HighFrequencyFeed Get(string url)
         {
-            //if (cache.Contains(url))
-            return null;
+            if (cache.Contains(url))
+                return cache.Get(url);
+
+            else throw new KeyNotFoundException(string.Format("{0} was not a high frequency feed and not found in cache"));
         }
     }
 }

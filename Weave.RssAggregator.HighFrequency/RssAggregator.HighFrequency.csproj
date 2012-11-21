@@ -51,7 +51,6 @@
   <ItemGroup>
     <Compile Include="FeedLibraryClient.cs" />
     <Compile Include="HighFrequencyFeed.cs" />
-    <Compile Include="HighFrequencyFeedCacheService.cs" />
     <Compile Include="HighFrequencyFeedExtensions.cs" />
     <Compile Include="HighFrequencyFeedRssCache.cs" />
     <Compile Include="LinqToXmlExtensions.cs" />

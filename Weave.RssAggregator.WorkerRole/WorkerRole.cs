@@ -30,30 +30,30 @@ namespace Weave.RssAggregator.WorkerRole
             IPEndPoint ip = RoleEnvironment.CurrentRoleInstance.InstanceEndpoints["RssAggregatorService"].IPEndpoint;
             var ipString = string.Format("http://{0}", ip.ToString());
 
-            RoleEnvironment.Changed += (s, e) =>
-            {
-                var configChanges = e.Changes.OfType<RoleEnvironmentConfigurationSettingChange>().ToList();
+            //RoleEnvironment.Changed += (s, e) =>
+            //{
+            //    var configChanges = e.Changes.OfType<RoleEnvironmentConfigurationSettingChange>().ToList();
 
-                if (configChanges.Any(o =>
-                    o.ConfigurationSettingName == "DummyHighFrequencyFeedsProccer" ||
-                    o.ConfigurationSettingName == "HighFrequencyRefreshPeriod" ||
-                    o.ConfigurationSettingName == "HighFrequencyRefreshSplit"))
-                {
-                    SetHighFrequencyValues();
-                }
+            //    if (configChanges.Any(o =>
+            //        o.ConfigurationSettingName == "DummyHighFrequencyFeedsProccer" ||
+            //        o.ConfigurationSettingName == "HighFrequencyRefreshPeriod" ||
+            //        o.ConfigurationSettingName == "HighFrequencyRefreshSplit"))
+            //    {
+            //        SetHighFrequencyValues();
+            //    }
 
-                if (configChanges.Any(o => o.ConfigurationSettingName == "LowFrequencyHttpWebRequestTimeout"))
-                {
-                    SetLowFrequencyValues();
-                }
-            };
+            //    if (configChanges.Any(o => o.ConfigurationSettingName == "LowFrequencyHttpWebRequestTimeout"))
+            //    {
+            //        SetLowFrequencyValues();
+            //    }
+            //};
 
-            SetHighFrequencyValues();
-            SetLowFrequencyValues();
+            //SetHighFrequencyValues();
+            //SetLowFrequencyValues();
 
             try
             {
-                Weave.RssAggregator.Core.WcfEndpointCreator.CreateEndpoint(ipString);
+                ;// Weave.RssAggregator.Core.WcfEndpointCreator.CreateEndpoint(ipString);
             }
             catch (Exception e)
             {
@@ -67,26 +67,26 @@ namespace Weave.RssAggregator.WorkerRole
             return base.OnStart();
         }
 
-        static void SetHighFrequencyValues()
-        {
-            var temp = RoleEnvironment.GetConfigurationSettingValue("HighFrequencyRefreshPeriod");
-            var value = double.Parse(temp);
-            AppSettings.SetHighFrequencyRefreshPeriodInMinutes(value);
+        //static void SetHighFrequencyValues()
+        //{
+        //    var temp = RoleEnvironment.GetConfigurationSettingValue("HighFrequencyRefreshPeriod");
+        //    var value = double.Parse(temp);
+        //    AppSettings.SetHighFrequencyRefreshPeriodInMinutes(value);
 
-            temp = RoleEnvironment.GetConfigurationSettingValue("HighFrequencyRefreshSplit");
-            var ivalue = int.Parse(temp);
-            AppSettings.HighFrequencyRefreshSplit = ivalue;
+        //    temp = RoleEnvironment.GetConfigurationSettingValue("HighFrequencyRefreshSplit");
+        //    var ivalue = int.Parse(temp);
+        //    AppSettings.HighFrequencyRefreshSplit = ivalue;
 
-            temp = RoleEnvironment.GetConfigurationSettingValue("FeedLibraryUrl");
-            var feedLibraryUrl = temp;// "http://weavestorage.blob.core.windows.net/settings/masterfeeds.xml";
-            HighFrequencyFeedCacheService.CreateCache(feedLibraryUrl);
-        }
+        //    temp = RoleEnvironment.GetConfigurationSettingValue("FeedLibraryUrl");
+        //    var feedLibraryUrl = temp;// "http://weavestorage.blob.core.windows.net/settings/masterfeeds.xml";
+        //    HighFrequencyFeedCacheService.CreateCache(feedLibraryUrl);
+        //}
 
-        static void SetLowFrequencyValues()
-        {
-            var temp = RoleEnvironment.GetConfigurationSettingValue("LowFrequencyHttpWebRequestTimeout");
-            var value = int.Parse(temp);
-            AppSettings.SetLowFrequencyHttpWebRequestTimeoutInMilliseconds(value);
-        }
+        //static void SetLowFrequencyValues()
+        //{
+        //    var temp = RoleEnvironment.GetConfigurationSettingValue("LowFrequencyHttpWebRequestTimeout");
+        //    var value = int.Parse(temp);
+        //    AppSettings.SetLowFrequencyHttpWebRequestTimeoutInMilliseconds(value);
+        //}
     }
 }
