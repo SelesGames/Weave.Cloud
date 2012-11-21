@@ -1,22 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ServiceDefinition name="Weave.Mobilizer.AzureService" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2012-10.1.8">
-
-
-  <!--WorkerRole name="Weave.Mobilizer.WorkerRole" vmsize="ExtraSmall">
-    <Imports>
-      <Import moduleName="Diagnostics" />
-    </Imports>
-    <Runtime executionContext="elevated" />
-    <Endpoints>
-      <InputEndpoint name="MobilizerService" protocol="http" port="80" />
-    </Endpoints>
-    <ConfigurationSettings>
-      <Setting name="CloudCacheTTLInHours" />
-      <Setting name="LocalCacheTTLInMinutes" />
-      <Setting name="CloudCacheCleanupInterval" />
-    </ConfigurationSettings>
-  </WorkerRole-->
-  
+ 
   
   <WebRole name="Weave.Mobilizer.WebRole" vmsize="ExtraSmall">
     <Imports>
