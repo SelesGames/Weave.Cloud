@@ -4,13 +4,13 @@ using System.Web.Http.Dependencies;
 
 namespace Weave.RssAggregator.WorkerRole.LowFrequency
 {
-    public static class ConfigurationExtensions
+    public static class HttpConfigurationExtensions
     {
         public static void Configure(this HttpConfiguration config, IDependencyResolver resolver)
         {
             config.Routes.MapHttpRoute(
                 name: "defaultRouting",
-                routeTemplate: "api/{controller}",
+                routeTemplate: "{controller}",
                 defaults: new
                 {
                     controller = typeof(Weave.RssAggregator.WorkerRole.LowFrequency.Controllers.PingController),

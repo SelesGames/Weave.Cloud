@@ -16,7 +16,7 @@ namespace Weave.RssAggregator.Core
         {
             base.AddComponents();
 
-            Bind<HighFrequencyFeedRssCache>().ToConstant(hfCache).InSingletonScope();
+            Bind<HighFrequencyFeedRssCache>().ToMethod(_ => hfCache).InSingletonScope();
         }
     }
 }

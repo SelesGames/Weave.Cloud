@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Weave.RssAggregator.Core;
@@ -21,6 +23,9 @@ namespace Weave.Mobilizer.Core.Controllers
         [HttpPost]
         public async Task<List<FeedResult>> Get([FromBody] List<FeedRequest> requests, bool fsd)
         {
+            if (requests == null || !requests.Any())
+                CreateResponseException(HttpStatusCode.BadRequest, "You must send at least one FeedRequest object in the message body");
+
             var highFrequencyFeeds = requests.Where(o => cache.Contains(o.Url)).ToList();
             var lowFrequencyFeeds = requests.Except(highFrequencyFeeds).ToList();
 
@@ -39,6 +44,11 @@ namespace Weave.Mobilizer.Core.Controllers
             }
 
             return results;
+        }
+
+        HttpResponseException CreateResponseException(HttpStatusCode code, string reason)
+        {
+            throw new HttpResponseException(new HttpResponseMessage(code) { ReasonPhrase = reason });
         }
     }
 }

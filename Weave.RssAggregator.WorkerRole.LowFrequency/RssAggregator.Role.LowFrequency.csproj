@@ -51,19 +51,13 @@
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Web.Http.SelfHost, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
-    </Reference>
+    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Web.Http.SelfHost, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\PingController.cs" />
     <Compile Include="Startup\AppSettings.cs" />
-    <Compile Include="Startup\ConfigurationExtensions.cs" />
+    <Compile Include="Startup\HttpConfigurationExtensions.cs" />
     <Compile Include="Controllers\WeaveController.cs" />
     <Compile Include="Startup\Kernel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -78,6 +72,10 @@
     <ProjectReference Include="..\Ninject.WebApi\Ninject.WebApi.csproj">
       <Project>{be97f564-16f5-4d09-9218-cc65e89df2ac}</Project>
       <Name>Ninject.WebApi</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SelesGames.Rest\SelesGames.Rest.csproj">
+      <Project>{bf01af3a-26b9-40f2-bb1e-9c702242b504}</Project>
+      <Name>SelesGames.Rest</Name>
     </ProjectReference>
     <ProjectReference Include="..\SelesGames.WebApi\SelesGames.WebApi.csproj">
       <Project>{bb3ea281-94b3-435f-a1ef-c395a7d1f25a}</Project>
