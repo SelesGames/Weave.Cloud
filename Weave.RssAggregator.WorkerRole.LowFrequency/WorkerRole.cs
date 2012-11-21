@@ -1,12 +1,21 @@
 using Microsoft.WindowsAzure.ServiceRuntime;
+using System;
 using System.Diagnostics;
 using System.Net;
 using System.Threading;
+using Weave.RssAggregator.WorkerRole.LowFrequency.Startup;
 
 namespace Weave.RssAggregator.WorkerRole.LowFrequency
 {
     public class WorkerRole : RoleEntryPoint
     {
+        StartupTask startupTask;
+
+        public WorkerRole()
+        {
+            startupTask = new StartupTask();
+        }
+
         public override void Run()
         {
             // This is a sample worker implementation. Replace with your logic.
@@ -27,6 +36,14 @@ namespace Weave.RssAggregator.WorkerRole.LowFrequency
             // For information on handling configuration changes
             // see the MSDN topic at http://go.microsoft.com/fwlink/?LinkId=166357.
 
+            try
+            {
+                startupTask.OnStart();
+            }
+            catch (Exception e)
+            {
+                Trace.WriteLine(string.Format("failed to start mobilizer: \r\n{0}\r\n{1}\r\n", e.Message, e.StackTrace));
+            }
             return base.OnStart();
         }
     }

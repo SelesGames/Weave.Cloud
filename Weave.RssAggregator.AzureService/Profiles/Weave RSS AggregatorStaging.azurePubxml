@@ -9,7 +9,7 @@
     <AzureHostedServiceLabel>Weave RSS Aggregator</AzureHostedServiceLabel>
     <AzureEnableIntelliTrace>False</AzureEnableIntelliTrace>
     <AzureEnableProfiling>False</AzureEnableProfiling>
-    <AzureServiceConfiguration>Default</AzureServiceConfiguration>
+    <AzureServiceConfiguration>Local</AzureServiceConfiguration>
     <AzureSolutionConfiguration>Release</AzureSolutionConfiguration>
     <AzureStorageAccountName>weave</AzureStorageAccountName>
     <AzureStorageAccountLabel>weave</AzureStorageAccountLabel>

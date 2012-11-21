@@ -1,18 +1,34 @@
 ﻿using Microsoft.WindowsAzure.ServiceRuntime;
-using Ninject;
+using Ninject.WebApi;
 using System;
+using System.Diagnostics;
+using Weave.RssAggregator.Core;
 using Weave.RssAggregator.HighFrequency;
 
-namespace Weave.RssAggregator.Core
+namespace Weave.RssAggregator.WorkerRole.LowFrequency.Startup
 {
-    public class Kernel : StandardKernel
+    internal class StartupTask
     {
-        protected override void AddComponents()
-        {
-            base.AddComponents();
+        HighFrequencyFeedRssCache hsfCache;
 
-            SetHighFrequencyValues();
+        public void OnStart()
+        {
             SetLowFrequencyValues();
+            SetHighFrequencyValues();
+            CreateAndStartServer();
+        }
+
+        void CreateAndStartServer()
+        {
+            var kernel = new Kernel(hsfCache);
+            var resolver = new NinjectResolver(kernel);
+
+            var ip = RoleEnvironment.CurrentRoleInstance.InstanceEndpoints["Endpoint1"].IPEndpoint;
+            var ipString = string.Format("http://{0}", ip.ToString());
+            Trace.WriteLine(string.Format("**** IP ADDRESS: {0}", ipString));
+
+            var selfHost = new SelfHost(ipString, resolver);
+            selfHost.StartServer().Wait();
         }
 
         void SetHighFrequencyValues()
@@ -32,9 +48,7 @@ namespace Weave.RssAggregator.Core
             temp = RoleEnvironment.GetConfigurationSettingValue("FeedLibraryUrl");
             feedLibraryUrl = temp;// "http://weavestorage.blob.core.windows.net/settings/masterfeeds.xml";
 
-            Bind<HighFrequencyFeedRssCache>()
-                .ToConstant(new HighFrequencyFeedRssCache(feedLibraryUrl, highFrequencyRefreshSplit, highFrequencyRefreshPeriod))
-                .InSingletonScope();
+            hsfCache = new HighFrequencyFeedRssCache(feedLibraryUrl, highFrequencyRefreshSplit, highFrequencyRefreshPeriod);
         }
 
         void SetLowFrequencyValues()

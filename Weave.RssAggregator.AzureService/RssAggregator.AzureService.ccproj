@@ -34,8 +34,9 @@
   </PropertyGroup>
   <!-- Items for the project -->
   <ItemGroup>
+    <ServiceConfiguration Include="ServiceConfiguration.Cloud.cscfg" />
     <ServiceDefinition Include="ServiceDefinition.csdef" />
-    <ServiceConfiguration Include="ServiceConfiguration.cscfg" />
+    <ServiceConfiguration Include="ServiceConfiguration.Local.cscfg" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Profiles" />
@@ -44,14 +45,6 @@
     <PublishProfile Include="Profiles\Weave RSS AggregatorStaging.azurePubxml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RssAggregator.Role.HighFrequency\RssAggregator.Role.HighFrequency.csproj">
-      <Name>RssAggregator.Role.HighFrequency</Name>
-      <Project>{0ef2d384-11e8-48fe-8ec3-2f67ad896628}</Project>
-      <Private>True</Private>
-      <RoleType>Worker</RoleType>
-      <RoleName>RssAggregator.Role.HighFrequency</RoleName>
-      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
-    </ProjectReference>
     <ProjectReference Include="..\Weave.RssAggregator.WorkerRole.LowFrequency\RssAggregator.Role.LowFrequency.csproj">
       <Name>RssAggregator.Role.LowFrequency</Name>
       <Project>{1e0b8ec8-a14b-4457-905d-87d52f73d739}</Project>
