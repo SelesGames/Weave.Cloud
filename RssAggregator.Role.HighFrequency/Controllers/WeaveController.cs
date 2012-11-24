@@ -1,11 +1,16 @@
 ﻿using SelesGames.WebApi;
 using System.Net;
+using System.ServiceModel;
 using System.Web.Http;
 using Weave.RssAggregator.HighFrequency;
 
 namespace Weave.Mobilizer.Core.Controllers
 {
-    public class WeaveController : ApiController
+    [ServiceBehavior(
+        ConcurrencyMode = ConcurrencyMode.Multiple, 
+        InstanceContextMode = InstanceContextMode.Single
+    )]
+    public class WeaveController : ApiController, IWeaveControllerService
     {
         readonly HighFrequencyFeedCache cache;
 
@@ -17,12 +22,22 @@ namespace Weave.Mobilizer.Core.Controllers
         public HighFrequencyFeed Get(string url)
         {
             if (cache.Contains(url))
-                return cache.Get(url);
+            {
+                var result = cache.Get(url);
+                return result;
+            }
 
             else
                 throw ResponseHelper.CreateResponseException(
-                    HttpStatusCode.NotFound, 
-                    string.Format("{0} was not a high frequency feed and not found in cache"));
+                    HttpStatusCode.NotFound,
+                    string.Format("{0} was not a high frequency feed and not found in cache", url));
         }
+    }
+
+    [ServiceContract]
+    public interface IWeaveControllerService
+    {
+        [OperationContract]
+        HighFrequencyFeed Get(string url);
     }
 }

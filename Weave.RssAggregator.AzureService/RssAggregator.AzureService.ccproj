@@ -45,20 +45,12 @@
     <PublishProfile Include="Profiles\Weave RSS AggregatorStaging.azurePubxml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RssAggregator.Role.HighFrequency\RssAggregator.Role.HighFrequency.csproj">
-      <Name>RssAggregator.Role.HighFrequency</Name>
-      <Project>{0ef2d384-11e8-48fe-8ec3-2f67ad896628}</Project>
+    <ProjectReference Include="..\Weave.RssAggregator.WorkerRole\RssAggregator.Role.csproj">
+      <Name>RssAggregator.Role</Name>
+      <Project>{31e6c664-4807-43b7-8c91-59cb94717ccf}</Project>
       <Private>True</Private>
       <RoleType>Worker</RoleType>
-      <RoleName>RssAggregator.Role.HighFrequency</RoleName>
-      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
-    </ProjectReference>
-    <ProjectReference Include="..\Weave.RssAggregator.WorkerRole.LowFrequency\RssAggregator.Role.LowFrequency.csproj">
-      <Name>RssAggregator.Role.LowFrequency</Name>
-      <Project>{1e0b8ec8-a14b-4457-905d-87d52f73d739}</Project>
-      <Private>True</Private>
-      <RoleType>Worker</RoleType>
-      <RoleName>RssAggregator.Role.LowFrequency</RoleName>
+      <RoleName>RssAggregator.Role</RoleName>
       <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
     </ProjectReference>
   </ItemGroup>

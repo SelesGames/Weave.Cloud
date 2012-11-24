@@ -1,7 +1,7 @@
 ﻿using Ninject;
 using Weave.RssAggregator.HighFrequency;
 
-namespace Weave.RssAggregator.WorkerRole.HighFrequency.Startup
+namespace Weave.RssAggregator.WorkerRole.LowFrequency.Startup
 {
     public class Kernel : StandardKernel
     {
@@ -10,11 +10,6 @@ namespace Weave.RssAggregator.WorkerRole.HighFrequency.Startup
         public Kernel(HighFrequencyFeedCache hfCache)
         {
             this.hfCache = hfCache;
-        }
-
-        protected override void AddComponents()
-        {
-            base.AddComponents();
             Bind<HighFrequencyFeedCache>().ToMethod(_ => hfCache).InSingletonScope();
         }
     }

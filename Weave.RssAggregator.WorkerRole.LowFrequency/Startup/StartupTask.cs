@@ -2,6 +2,7 @@
 using Ninject.WebApi;
 using System.Diagnostics;
 using Weave.RssAggregator.HighFrequency;
+using System.Linq;
 
 namespace Weave.RssAggregator.WorkerRole.LowFrequency.Startup
 {
@@ -13,6 +14,7 @@ namespace Weave.RssAggregator.WorkerRole.LowFrequency.Startup
         {
             SetLowFrequencyValues();
             SetHighFrequencyValues();
+            SetInternalHFEndpoint();
             CreateAndStartServer();
         }
 
@@ -41,5 +43,37 @@ namespace Weave.RssAggregator.WorkerRole.LowFrequency.Startup
             var value = int.Parse(temp);
             AppSettings.SetLowFrequencyHttpWebRequestTimeoutInMilliseconds(value);
         }
+
+        void SetInternalHFEndpoint()
+        {
+            var role = RoleEnvironment.Roles["RssAggregator.Role.HighFrequency"];
+            if (role.Instances.Any())
+            {
+                var instance = role.Instances.First();
+                var endpoint = instance.InstanceEndpoints.Single(o => o.Key == "Endpoint1");
+                AppSettings.InternalHighFrequencyEndpoint = endpoint.Value.IPEndpoint.ToString();
+                //isEndpointSet = true;
+            }
+        }
+
+        //bool isEndpointSet = false;
+
+        //void RoleEnvironment_Changed(object sender, RoleEnvironmentChangedEventArgs e)
+        //{
+        //    if (isEndpointSet)
+        //        return;
+
+        //    if (e.Changes != null && e.Changes.OfType<RoleEnvironmentTopologyChange>().Any())
+        //    {
+        //        var role = RoleEnvironment.Roles["RssAggregator.Role.HighFrequency"];
+        //        if (role.Instances.Any())
+        //        {
+        //            var instance = role.Instances.First();
+        //            var endpoint = instance.InstanceEndpoints.Single(o => o.Key == "Endpoint1");
+        //            AppSettings.InternalHighFrequencyEndpoint = endpoint.Value.IPEndpoint.ToString();
+        //            isEndpointSet = true;
+        //        }
+        //    }
+        //}
     }
 }

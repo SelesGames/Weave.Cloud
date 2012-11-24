@@ -37,19 +37,19 @@ namespace Weave.RssAggregator.HighFrequency
             {
                 var requester = new FeedRequester
                 {
-                    FeedUri = this.FeedUri,
-                    Etag = this.Etag,
-                    LastModified = this.LastModified,
+                    FeedUri = FeedUri,
+                    Etag = Etag,
+                    LastModified = LastModified,
                 };
-                var result = await requester.UpdateFeed();
+                var result = await requester.UpdateFeed().ConfigureAwait(false);
 
                 if (result == FeedRequester.RequestStatus.OK)
                 {
-                    this.Etag = requester.Etag;
-                    this.LastModified = requester.LastModified;
-                    this.MostRecentNewsItemPubDate = requester.MostRecentNewsItemPubDate;
-                    this.OldestNewsItemPubDate = requester.OldestNewsItemPubDate;
-                    this.News = requester.News;
+                    Etag = requester.Etag;
+                    LastModified = requester.LastModified;
+                    MostRecentNewsItemPubDate = requester.MostRecentNewsItemPubDate;
+                    OldestNewsItemPubDate = requester.OldestNewsItemPubDate;
+                    News = requester.News;
 
                     DebugEx.WriteLine("REFRESHED {0}  ({1})", Name, FeedUri);
                 }
@@ -57,12 +57,12 @@ namespace Weave.RssAggregator.HighFrequency
                 {
                     DebugEx.WriteLine("UNMODIFIED {0}  ({1})", Name, FeedUri);
                 }
-                this.LastFeedState = FeedState.OK;
+                LastFeedState = FeedState.OK;
             }
             catch (TaskCanceledException ex)
             {
                 DebugEx.WriteLine("!!!!!! TIMED OUT {0}  ({1}): {2}", Name, FeedUri, ex.Message);
-                this.LastFeedState = FeedState.Failed;
+                LastFeedState = FeedState.Failed;
             }
             catch (HttpRequestException ex)
             {
@@ -71,12 +71,12 @@ namespace Weave.RssAggregator.HighFrequency
                 else
                     DebugEx.WriteLine("!!!!!! FAILED {0}  ({1}): {2}", Name, FeedUri, ex.Message);
 
-                this.LastFeedState = FeedState.Failed;
+                LastFeedState = FeedState.Failed;
             }
             catch (Exception ex)
             {
                 DebugEx.WriteLine("!!!!!! FAILED {0}  ({1}): {2}", Name, FeedUri, ex.Message);
-                this.LastFeedState = FeedState.Failed;
+                LastFeedState = FeedState.Failed;
             }
         }
     }
