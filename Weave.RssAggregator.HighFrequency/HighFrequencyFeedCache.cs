@@ -8,22 +8,22 @@ using Weave.RssAggregator.Core.DTOs.Outgoing;
 
 namespace Weave.RssAggregator.HighFrequency
 {
-    public class HighFrequencyFeedRssCache : IDisposable
+    public class HighFrequencyFeedCache : IDisposable
     {
         Dictionary<string, HighFrequencyFeed> feeds = new Dictionary<string, HighFrequencyFeed>();
         CompositeDisposable disposables = new CompositeDisposable();
 
-        public int HighFrequencyRefreshSplit { get; private set; }
-        public TimeSpan HighFrequencyRefreshPeriod { get; private set; }
+        int highFrequencyRefreshSplit;
+        TimeSpan highFrequencyRefreshPeriod;
 
-        public HighFrequencyFeedRssCache(string feedLibraryUrl, int highFrequencyRefreshSplit, TimeSpan highFrequencyRefreshPeriod)
+
+
+
+        #region Constructors
+
+        public HighFrequencyFeedCache(string feedLibraryUrl)
         {
-            if (string.IsNullOrEmpty(feedLibraryUrl))
-                return;
-
-            // set some default values
-            HighFrequencyRefreshPeriod = highFrequencyRefreshPeriod;
-            HighFrequencyRefreshSplit = highFrequencyRefreshSplit;
+            if (string.IsNullOrEmpty(feedLibraryUrl)) return;
 
             var feedClient = new FeedLibraryClient();
             var libraryFeeds = feedClient.GetFeeds(feedLibraryUrl);
@@ -39,25 +39,49 @@ namespace Weave.RssAggregator.HighFrequency
                     })
                 .ToList();
 
-            foreach (var feed in highFrequencyFeeds)
+            feeds = highFrequencyFeeds.ToDictionary(o => o.FeedUri);
+        }
+
+        public HighFrequencyFeedCache(string feedLibraryUrl, int highFrequencyRefreshSplit, TimeSpan highFrequencyRefreshPeriod)
+            : this(feedLibraryUrl)
+        {
+            if (string.IsNullOrEmpty(feedLibraryUrl)) return;
+
+            // set some default values
+            this.highFrequencyRefreshPeriod = highFrequencyRefreshPeriod;
+            this.highFrequencyRefreshSplit = highFrequencyRefreshSplit;
+
+            StartFeedRefreshTimer();
+        }
+
+        #endregion
+
+
+
+
+        void StartFeedRefreshTimer()
+        {
+            disposables.Clear();
+
+            var feedsList = feeds.Select(o => o.Value).ToList();
+
+            foreach (var feed in feedsList)
                 feed.Refresh();
 
-            feeds = highFrequencyFeeds.ToDictionary(o => o.FeedUri);
+            var indexedHFFeeds = feedsList.Select((hfFeed, i) => new { i, feed = hfFeed }).ToList();
 
-            var indexedHFFeeds = highFrequencyFeeds.Select((hfFeed, i) => new { i, feed = hfFeed }).ToList();
-
-            var fullPeriodInMs = HighFrequencyRefreshPeriod.TotalMilliseconds;
-            var splitInterval = fullPeriodInMs / (double)HighFrequencyRefreshSplit;
+            var fullPeriodInMs = highFrequencyRefreshPeriod.TotalMilliseconds;
+            var splitInterval = fullPeriodInMs / (double)highFrequencyRefreshSplit;
 
             var disp = Observable
                 .Interval(TimeSpan.FromMilliseconds(splitInterval))
                 .Subscribe(
                     i =>
                     {
-                        var bucket = i % HighFrequencyRefreshSplit;
+                        var bucket = i % highFrequencyRefreshSplit;
                         foreach (var indexedFeedUrl in indexedHFFeeds)
                         {
-                            if (indexedFeedUrl.i % HighFrequencyRefreshSplit == bucket)
+                            if (indexedFeedUrl.i % highFrequencyRefreshSplit == bucket)
                                 indexedFeedUrl.feed.Refresh();
                         }
                     },

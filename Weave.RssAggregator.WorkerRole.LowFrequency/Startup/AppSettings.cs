@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Weave.RssAggregator.Core
+namespace Weave.RssAggregator.WorkerRole.LowFrequency.Startup
 {
     public static class AppSettings
     {
@@ -11,20 +11,9 @@ namespace Weave.RssAggregator.Core
             LowFrequencyHttpWebRequestTimeout = TimeSpan.FromMilliseconds(milliseconds);
         }
 
-        //public static TimeSpan HighFrequencyRefreshPeriod { get; private set; }
-
-        //public static void SetHighFrequencyRefreshPeriodInMinutes(double minutes)
-        //{
-        //    HighFrequencyRefreshPeriod = TimeSpan.FromMinutes(minutes);
-        //}
-
-        //public static int HighFrequencyRefreshSplit { get; set; }
-
         static AppSettings()
         {
             LowFrequencyHttpWebRequestTimeout = TimeSpan.FromSeconds(10);
-            //HighFrequencyRefreshPeriod = TimeSpan.FromMinutes(8);
-            //HighFrequencyRefreshSplit = 32;
         }
     }
 }

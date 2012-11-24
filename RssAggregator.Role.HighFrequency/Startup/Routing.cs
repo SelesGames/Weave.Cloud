@@ -2,18 +2,18 @@
 using System.Web.Http;
 using System.Web.Http.Dependencies;
 
-namespace Weave.RssAggregator.WorkerRole.LowFrequency
+namespace Weave.RssAggregator.WorkerRole.HighFrequency.Startup
 {
-    public static class HttpConfigurationExtensions
+    public class Routing
     {
-        public static void Configure(this HttpConfiguration config, IDependencyResolver resolver)
+        public Routing(HttpConfiguration config, IDependencyResolver resolver)
         {
             config.Routes.MapHttpRoute(
                 name: "defaultRouting",
-                routeTemplate: "{controller}",
+                routeTemplate: "api/{controller}",
                 defaults: new
                 {
-                    controller = typeof(Weave.RssAggregator.WorkerRole.LowFrequency.Controllers.PingController),
+                    controller = "weave",
                 }
             );
 

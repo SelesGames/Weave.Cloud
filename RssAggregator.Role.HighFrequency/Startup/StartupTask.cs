@@ -1,9 +1,10 @@
 ﻿using Microsoft.WindowsAzure.ServiceRuntime;
 using Ninject.WebApi;
+using System;
 using System.Diagnostics;
 using Weave.RssAggregator.HighFrequency;
 
-namespace Weave.RssAggregator.WorkerRole.LowFrequency.Startup
+namespace Weave.RssAggregator.WorkerRole.HighFrequency.Startup
 {
     internal class StartupTask
     {
@@ -11,7 +12,6 @@ namespace Weave.RssAggregator.WorkerRole.LowFrequency.Startup
 
         public void OnStart()
         {
-            SetLowFrequencyValues();
             SetHighFrequencyValues();
             CreateAndStartServer();
         }
@@ -31,15 +31,22 @@ namespace Weave.RssAggregator.WorkerRole.LowFrequency.Startup
 
         void SetHighFrequencyValues()
         {
-            var feedLibraryUrl = RoleEnvironment.GetConfigurationSettingValue("FeedLibraryUrl");
-            hsfCache = new HighFrequencyFeedCache(feedLibraryUrl);
-        }
+            string feedLibraryUrl;
+            int highFrequencyRefreshSplit;
+            TimeSpan highFrequencyRefreshPeriod;
 
-        void SetLowFrequencyValues()
-        {
-            var temp = RoleEnvironment.GetConfigurationSettingValue("LowFrequencyHttpWebRequestTimeout");
-            var value = int.Parse(temp);
-            AppSettings.SetLowFrequencyHttpWebRequestTimeoutInMilliseconds(value);
+            string temp;
+
+            temp = RoleEnvironment.GetConfigurationSettingValue("HighFrequencyRefreshPeriod");
+            highFrequencyRefreshPeriod = TimeSpan.FromMinutes(double.Parse(temp));
+
+            temp = RoleEnvironment.GetConfigurationSettingValue("HighFrequencyRefreshSplit");
+            highFrequencyRefreshSplit = int.Parse(temp);
+
+            temp = RoleEnvironment.GetConfigurationSettingValue("FeedLibraryUrl");
+            feedLibraryUrl = temp;
+
+            hsfCache = new HighFrequencyFeedCache(feedLibraryUrl, highFrequencyRefreshSplit, highFrequencyRefreshPeriod);
         }
     }
 }

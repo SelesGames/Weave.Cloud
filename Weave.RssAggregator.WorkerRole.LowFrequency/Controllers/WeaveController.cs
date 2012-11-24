@@ -1,21 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using SelesGames.WebApi;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
-using Weave.RssAggregator.Core;
 using Weave.RssAggregator.Core.DTOs.Incoming;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
 using Weave.RssAggregator.HighFrequency;
+using Weave.RssAggregator.WorkerRole.LowFrequency.Startup;
 
 namespace Weave.Mobilizer.Core.Controllers
 {
     public class WeaveController : ApiController
     {
-        readonly HighFrequencyFeedRssCache cache;
+        readonly HighFrequencyFeedCache cache;
 
-        public WeaveController(HighFrequencyFeedRssCache cache)
+        public WeaveController(HighFrequencyFeedCache cache)
         {
             this.cache = cache;
         }
@@ -24,7 +24,9 @@ namespace Weave.Mobilizer.Core.Controllers
         public async Task<List<FeedResult>> Get([FromBody] List<FeedRequest> requests, bool fsd)
         {
             if (requests == null || !requests.Any())
-                CreateResponseException(HttpStatusCode.BadRequest, "You must send at least one FeedRequest object in the message body");
+                throw ResponseHelper.CreateResponseException(
+                    HttpStatusCode.BadRequest, 
+                    "You must send at least one FeedRequest object in the message body");
 
             var highFrequencyFeeds = requests.Where(o => cache.Contains(o.Url)).ToList();
             var lowFrequencyFeeds = requests.Except(highFrequencyFeeds).ToList();
@@ -44,11 +46,6 @@ namespace Weave.Mobilizer.Core.Controllers
             }
 
             return results;
-        }
-
-        HttpResponseException CreateResponseException(HttpStatusCode code, string reason)
-        {
-            throw new HttpResponseException(new HttpResponseMessage(code) { ReasonPhrase = reason });
         }
     }
 }

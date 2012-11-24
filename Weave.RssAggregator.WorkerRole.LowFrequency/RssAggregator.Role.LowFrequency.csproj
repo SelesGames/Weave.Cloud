@@ -57,7 +57,7 @@
   <ItemGroup>
     <Compile Include="Controllers\PingController.cs" />
     <Compile Include="Startup\AppSettings.cs" />
-    <Compile Include="Startup\HttpConfigurationExtensions.cs" />
+    <Compile Include="Startup\Routing.cs" />
     <Compile Include="Controllers\WeaveController.cs" />
     <Compile Include="Startup\Kernel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

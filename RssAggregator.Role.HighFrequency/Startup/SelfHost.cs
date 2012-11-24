@@ -2,7 +2,7 @@
 using System.Web.Http.Dependencies;
 using System.Web.Http.SelfHost;
 
-namespace Weave.RssAggregator.WorkerRole.LowFrequency.Startup
+namespace Weave.RssAggregator.WorkerRole.HighFrequency.Startup
 {
     public class SelfHost
     {
@@ -18,7 +18,7 @@ namespace Weave.RssAggregator.WorkerRole.LowFrequency.Startup
         public Task StartServer()
         {
             var config = new HttpSelfHostConfiguration(url);
-            new Routing(config, resolver);
+            var routing = new Routing(config, resolver);
 
             var server = new HttpSelfHostServer(config);
             return server.OpenAsync();
