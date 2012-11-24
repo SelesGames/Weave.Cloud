@@ -2,6 +2,7 @@
 using Ninject.WebApi;
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Weave.RssAggregator.HighFrequency;
 
 namespace Weave.RssAggregator.WorkerRole.LowFrequency.Startup
@@ -26,8 +27,13 @@ namespace Weave.RssAggregator.WorkerRole.LowFrequency.Startup
             var ipString = string.Format("http://{0}", ip.ToString());
             Trace.WriteLine(string.Format("**** IP ADDRESS: {0}", ipString));
 
+            var ip2 = RoleEnvironment.CurrentRoleInstance.InstanceEndpoints["Endpoint2"].IPEndpoint;
+            var ip2String = string.Format("http://{0}", ip2.ToString());
+            Trace.WriteLine(string.Format("**** IP ADDRESS: {0}", ip2String));
+
             var selfHost = new SelfHost(ipString, resolver);
-            selfHost.StartServer().Wait();
+            var selfHost2 = new SelfHost(ip2String, resolver);
+            Task.WhenAll(selfHost.StartServer(), selfHost2.StartServer()).Wait();
         }
 
         void SetHighFrequencyValues()

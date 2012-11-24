@@ -21,7 +21,7 @@ namespace Weave.Mobilizer.Core.Controllers
         }
 
         [HttpPost]
-        public async Task<List<FeedResult>> Get([FromBody] List<FeedRequest> requests, bool fsd)
+        public async Task<List<FeedResult>> Get([FromBody] List<FeedRequest> requests, bool fsd = true)
         {
             if (requests == null || !requests.Any())
                 throw ResponseHelper.CreateResponseException(

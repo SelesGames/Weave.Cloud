@@ -1,5 +1,6 @@
 ﻿using SelesGames.WebApi.Compression;
 using System.Linq;
+using System.Net.Http.Formatting;
 using System.Web.Http;
 using System.Web.Http.Dependencies;
 using System.Web.Http.Filters;
@@ -19,6 +20,10 @@ namespace Weave.RssAggregator.WorkerRole.LowFrequency.Startup
                     controller = typeof(Weave.RssAggregator.WorkerRole.LowFrequency.Controllers.PingController),
                 }
             );
+
+            var jsonFormatter = (JsonMediaTypeFormatter)config.Formatters.First();
+            jsonFormatter.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+
 
             config.DependencyResolver = resolver;
 
