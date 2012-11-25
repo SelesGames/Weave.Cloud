@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <AzureCredentials>AzureWeaveCredentials</AzureCredentials>
+    <AzureCredentials>Seles Games azure cred</AzureCredentials>
     <AzureDeploymentLabel>Weave.RssAggregator.AzureService</AzureDeploymentLabel>
     <AzureSlot>Staging</AzureSlot>
     <AzureEnableWebDeploy>False</AzureEnableWebDeploy>
@@ -9,13 +9,13 @@
     <AzureHostedServiceLabel>Weave RSS Aggregator</AzureHostedServiceLabel>
     <AzureEnableIntelliTrace>False</AzureEnableIntelliTrace>
     <AzureEnableProfiling>False</AzureEnableProfiling>
-    <AzureServiceConfiguration>Local</AzureServiceConfiguration>
+    <AzureServiceConfiguration>Cloud</AzureServiceConfiguration>
     <AzureSolutionConfiguration>Release</AzureSolutionConfiguration>
     <AzureStorageAccountName>weave</AzureStorageAccountName>
     <AzureStorageAccountLabel>weave</AzureStorageAccountLabel>
     <AzureAppendTimestampToDeploymentLabel>True</AzureAppendTimestampToDeploymentLabel>
     <AzureDeleteDeploymentOnFailure>False</AzureDeleteDeploymentOnFailure>
-    <AzureDeploymentReplacementMethod>AutomaticUpgrade</AzureDeploymentReplacementMethod>
+    <AzureDeploymentReplacementMethod>BlastUpgrade</AzureDeploymentReplacementMethod>
     <AzureEnableRemoteDesktop>True</AzureEnableRemoteDesktop>
     <AzureFallbackToDeleteAndRecreateIfUpgradeFails>True</AzureFallbackToDeleteAndRecreateIfUpgradeFails>
   </PropertyGroup>
