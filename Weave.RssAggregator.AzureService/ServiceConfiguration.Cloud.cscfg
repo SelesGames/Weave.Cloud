@@ -1,7 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ServiceConfiguration serviceName="Weave.RssAggregator.AzureService" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="3" osVersion="*" schemaVersion="2012-10.1.8">
-
-
   <!--Role name="RssAggregator.Role.LowFrequency">
     <Instances count="9" />
     <ConfigurationSettings>
@@ -21,18 +19,14 @@
       <Setting name="FeedLibraryUrl" value="http://weave.blob.core.windows.net/settings/masterfeeds.xml" />
     </ConfigurationSettings>
   </Role-->
-
-  
   <Role name="RssAggregator.Role">
     <Instances count="1" />
     <ConfigurationSettings>
-      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=weave;AccountKey=uudFrra70qkI64bifaI2Rrm37CZ1HkzaBQrLMyw6U/hmzNDZehXeo9DdUv7BCpuZY4N2q/CNpNwYxW2fa218xA==" />
       <Setting name="LowFrequencyHttpWebRequestTimeout" value="6000" />
       <Setting name="HighFrequencyRefreshPeriod" value="15" />
       <Setting name="HighFrequencyRefreshSplit" value="60" />
       <Setting name="FeedLibraryUrl" value="http://weave.blob.core.windows.net/settings/masterfeeds.xml" />
     </ConfigurationSettings>
   </Role>
-  
-  
 </ServiceConfiguration>
