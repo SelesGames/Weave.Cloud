@@ -3,9 +3,9 @@ using System;
 using System.Diagnostics;
 using System.Net;
 using System.Threading;
-using Weave.RssAggregator.WorkerRole.LowFrequency.Startup;
+using Weave.RssAggregator.WorkerRole.Startup;
 
-namespace Weave.RssAggregator.WorkerRole.LowFrequency
+namespace Weave.RssAggregator.WorkerRole
 {
     public class WorkerRole : RoleEntryPoint
     {
@@ -19,7 +19,7 @@ namespace Weave.RssAggregator.WorkerRole.LowFrequency
         public override void Run()
         {
             // This is a sample worker implementation. Replace with your logic.
-            Trace.WriteLine("Weave.RssAggregator.WorkerRole.LowFrequency entry point called", "Information");
+            Trace.WriteLine("Weave.RssAggregator.WorkerRole entry point called", "Information");
 
             while (true)
             {
@@ -42,7 +42,7 @@ namespace Weave.RssAggregator.WorkerRole.LowFrequency
             }
             catch (Exception e)
             {
-                Trace.WriteLine(string.Format("failed to start mobilizer: \r\n{0}\r\n{1}\r\n", e.Message, e.StackTrace));
+                Trace.WriteLine(string.Format("failed to start service: \r\n{0}\r\n{1}\r\n", e.Message, e.StackTrace));
             }
             return base.OnStart();
         }

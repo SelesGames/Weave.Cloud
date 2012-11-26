@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Weave.RssAggregator.WorkerRole.LowFrequency.Startup
+namespace Weave.RssAggregator.WorkerRole.Startup
 {
     public static class AppSettings
     {

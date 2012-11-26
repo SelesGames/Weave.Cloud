@@ -7,9 +7,9 @@ using System.Web.Http;
 using Weave.RssAggregator.Core.DTOs.Incoming;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
 using Weave.RssAggregator.HighFrequency;
-using Weave.RssAggregator.WorkerRole.LowFrequency.Startup;
+using Weave.RssAggregator.WorkerRole.Startup;
 
-namespace Weave.Mobilizer.Core.Controllers
+namespace Weave.RssAggregator.WorkerRole.Controllers
 {
     public class WeaveController : ApiController
     {

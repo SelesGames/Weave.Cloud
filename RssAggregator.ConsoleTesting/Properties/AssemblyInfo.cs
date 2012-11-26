@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Weave.RssAggregator.WorkerRole")]
+[assembly: AssemblyTitle("RssAggregator.ConsoleTesting")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Weave.RssAggregator.WorkerRole")]
+[assembly: AssemblyProduct("RssAggregator.ConsoleTesting")]
 [assembly: AssemblyCopyright("Copyright ©  2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("dce3e69b-fe13-48e9-8239-a93da15f6810")]
+[assembly: Guid("3e29c9bf-f8d9-4f1e-a022-2508705f1508")]
 
 // Version information for an assembly consists of the following four values:
 //

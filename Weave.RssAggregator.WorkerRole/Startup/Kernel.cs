@@ -1,7 +1,7 @@
 ﻿using Ninject;
 using Weave.RssAggregator.HighFrequency;
 
-namespace Weave.RssAggregator.WorkerRole.LowFrequency.Startup
+namespace Weave.RssAggregator.WorkerRole.Startup
 {
     public class Kernel : StandardKernel
     {

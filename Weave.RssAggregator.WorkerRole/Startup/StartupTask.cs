@@ -2,10 +2,10 @@
 using Ninject.WebApi;
 using System;
 using System.Diagnostics;
-using System.Threading.Tasks;
+using System.Web.Http.SelfHost;
 using Weave.RssAggregator.HighFrequency;
 
-namespace Weave.RssAggregator.WorkerRole.LowFrequency.Startup
+namespace Weave.RssAggregator.WorkerRole.Startup
 {
     internal class StartupTask
     {
@@ -27,13 +27,10 @@ namespace Weave.RssAggregator.WorkerRole.LowFrequency.Startup
             var ipString = string.Format("http://{0}", ip.ToString());
             Trace.WriteLine(string.Format("**** IP ADDRESS: {0}", ipString));
 
-            var ip2 = RoleEnvironment.CurrentRoleInstance.InstanceEndpoints["Endpoint2"].IPEndpoint;
-            var ip2String = string.Format("http://{0}", ip2.ToString());
-            Trace.WriteLine(string.Format("**** IP ADDRESS: {0}", ip2String));
+            var config = new HttpConfig(ipString) { DependencyResolver = resolver };
+            new HttpSelfHostServer(config).OpenAsync().Wait();
 
-            var selfHost = new SelfHost(ipString, resolver);
-            var selfHost2 = new SelfHost(ip2String, resolver);
-            Task.WhenAll(selfHost.StartServer(), selfHost2.StartServer()).Wait();
+            Trace.WriteLine("^&*^&*^&*^*&^  Both servers are up and running!!!");
         }
 
         void SetHighFrequencyValues()

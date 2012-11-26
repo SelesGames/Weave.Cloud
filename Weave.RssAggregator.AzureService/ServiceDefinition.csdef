@@ -1,38 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ServiceDefinition name="Weave.RssAggregator.AzureService" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2012-10.1.8">
-  
-  
-  <!--WorkerRole name="RssAggregator.Role.LowFrequency" vmsize="ExtraSmall">
-    <Runtime executionContext="elevated" />
-    <Imports>
-      <Import moduleName="Diagnostics" />
-    </Imports>
-    <ConfigurationSettings>
-      <Setting name="LowFrequencyHttpWebRequestTimeout" />
-      <Setting name="FeedLibraryUrl" />
-    </ConfigurationSettings>
-    <Endpoints>
-      <InputEndpoint name="Endpoint1" protocol="http" port="8086" />
-    </Endpoints>
-  </WorkerRole>
-  
-  
-  <WorkerRole name="RssAggregator.Role.HighFrequency" vmsize="Small">
-    <Runtime executionContext="elevated" />
-    <Imports>
-      <Import moduleName="Diagnostics" />
-    </Imports>
-    <ConfigurationSettings>
-      <Setting name="HighFrequencyRefreshPeriod" />
-      <Setting name="HighFrequencyRefreshSplit" />
-      <Setting name="FeedLibraryUrl" />
-    </ConfigurationSettings>
-    <Endpoints>
-      <InternalEndpoint name="Endpoint1" protocol="tcp" port="7767" />
-    </Endpoints>
-  </WorkerRole-->
-  
-  
   <WorkerRole name="RssAggregator.Role" vmsize="Medium">
     <Runtime executionContext="elevated" />
     <Imports>

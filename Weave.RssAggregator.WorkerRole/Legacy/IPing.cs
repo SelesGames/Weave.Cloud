@@ -2,7 +2,7 @@
 using System.ServiceModel;
 using System.ServiceModel.Web;
 
-namespace Weave.RssAggregator.Core
+namespace Weave.RssAggregator.WorkerRole.Legacy
 {
     [ServiceContract(SessionMode = SessionMode.NotAllowed)]
     public interface IPing

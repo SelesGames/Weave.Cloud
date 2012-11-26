@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
@@ -9,7 +8,6 @@ namespace SelesGames.WebApi.Compression
 {
     public class EncodingDelegateHandler : DelegatingHandler
     {
-        public List<string> OptOut { get; set; }
         public bool ForceCompression { get; set; }
 
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
@@ -21,8 +19,7 @@ namespace SelesGames.WebApi.Compression
                 var acceptEncoding = response.RequestMessage.Headers.AcceptEncoding;
                 var absoluteUrl = request.RequestUri.AbsolutePath.Substring(1);
 
-                if (response.IsSuccessStatusCode && 
-                    !(OptOut != null && OptOut.Any(o => absoluteUrl.StartsWith(o, StringComparison.OrdinalIgnoreCase))))
+                if (response.IsSuccessStatusCode)
                 {
                     if (ForceCompression)
                     {
