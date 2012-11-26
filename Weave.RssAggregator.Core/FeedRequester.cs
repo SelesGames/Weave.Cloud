@@ -55,7 +55,7 @@ namespace Weave.RssAggregator.Core
 
         //    #endregion
 
-        //    var temp = await request.GetResponseAsync().ConfigureAwait(false);
+        //    var temp = await request.GetResponseAsync();
         //    var response = (HttpWebResponse)temp;
 
         //    if (response.StatusCode == HttpStatusCode.NotModified)
@@ -98,7 +98,7 @@ namespace Weave.RssAggregator.Core
 
             #endregion
 
-            var response = await request.GetAsync(FeedUri).ConfigureAwait(false);
+            var response = await request.GetAsync(FeedUri);
 
             if (response.StatusCode == HttpStatusCode.NotModified)
             {
@@ -108,7 +108,7 @@ namespace Weave.RssAggregator.Core
 
             else if (response.StatusCode == HttpStatusCode.OK)
             {
-                await HandleNewData(response).ConfigureAwait(false);
+                await HandleNewData(response);
                 return Status;
             }
 
@@ -154,13 +154,7 @@ namespace Weave.RssAggregator.Core
         {
             #region CONDITIONAL GET
 
-            var e = o.Headers.ETag;
-            if (e != null)
-            {
-                var eTag = o.Headers.ETag.Tag;
-                if (!string.IsNullOrEmpty(eTag))
-                    Etag = eTag;
-            }
+            Etag = GetEtag(o);
 
             var lm = o.Content.Headers.LastModified;
             if (lm != null && lm.HasValue)
@@ -173,11 +167,31 @@ namespace Weave.RssAggregator.Core
             #endregion
 
 
-            using (var stream = await o.Content.ReadAsStreamAsync().ConfigureAwait(false))
+            using (var stream = await o.Content.ReadAsStreamAsync())
             {
                 ParseNewsFromLastRefreshTime(stream);
                 stream.Close();
             }
+        }
+
+        string GetEtag(HttpResponseMessage response)
+        {
+            var headers = response.Headers;
+
+            if (headers == null) return null;
+
+            string eTag = null;
+
+            if (headers.ETag != null)
+                eTag = headers.ETag.Tag;
+            else
+            {
+                IEnumerable<string> headerValues;
+                if (headers.TryGetValues("etag", out headerValues))
+                    eTag = headerValues.FirstOrDefault();
+            }
+
+            return eTag;
         }
 
         void ParseNewsFromLastRefreshTime(Stream stream)

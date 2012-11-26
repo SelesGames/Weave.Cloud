@@ -65,7 +65,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Legacy\LegacyHttpConfig.cs" />
-    <Compile Include="Legacy\LegacyWeaveController.cs" />
     <Compile Include="Legacy\IPing.cs" />
     <Compile Include="Legacy\IRssAggregator.cs" />
     <Compile Include="Controllers\PingController.cs" />
