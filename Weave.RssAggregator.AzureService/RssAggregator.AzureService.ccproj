@@ -45,12 +45,12 @@
     <PublishProfile Include="Profiles\Weave RSS AggregatorStaging.azurePubxml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Weave.RssAggregator.WorkerRole\RssAggregator.Role.csproj">
-      <Name>RssAggregator.Role</Name>
+    <ProjectReference Include="..\Weave.RssAggregator.WorkerRole\RssAggregator.WorkerRole.csproj">
+      <Name>RssAggregator.WorkerRole</Name>
       <Project>{31e6c664-4807-43b7-8c91-59cb94717ccf}</Project>
       <Private>True</Private>
       <RoleType>Worker</RoleType>
-      <RoleName>RssAggregator.Role</RoleName>
+      <RoleName>RssAggregator.WorkerRole</RoleName>
       <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
     </ProjectReference>
   </ItemGroup>

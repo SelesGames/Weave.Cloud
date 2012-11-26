@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ServiceDefinition name="Weave.RssAggregator.AzureService" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2012-10.1.8">
-  <WorkerRole name="RssAggregator.Role" vmsize="Medium">
+  <WorkerRole name="RssAggregator.WorkerRole" vmsize="Medium">
     <Runtime executionContext="elevated" />
     <Imports>
       <Import moduleName="Diagnostics" />

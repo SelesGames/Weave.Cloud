@@ -51,7 +51,7 @@ namespace RssAggregator.ConsoleTesting
 
             var stringRep = JsonConvert.SerializeObject(obj, Formatting.Indented);
             var response = await client.PostAsync(
-                "http://127.0.0.1:8086/legacyweave?fsd=true", 
+                "http://127.0.0.1:8086/weave?fsd=true", 
                 new StringContent(stringRep, Encoding.UTF8, "application/json"));
 
             List<FeedResult> result;

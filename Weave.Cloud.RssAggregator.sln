@@ -21,7 +21,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Azure", "Azure", "{E941830F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SelesGames.Rest.JsonDotNet", "SelesGames.Rest.JsonDotNet\SelesGames.Rest.JsonDotNet.csproj", "{9C1F9D69-3D6B-4D1C-B262-3DFCDE0746D4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RssAggregator.Role", "Weave.RssAggregator.WorkerRole\RssAggregator.Role.csproj", "{31E6C664-4807-43B7-8C91-59CB94717CCF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RssAggregator.WorkerRole", "Weave.RssAggregator.WorkerRole\RssAggregator.WorkerRole.csproj", "{31E6C664-4807-43B7-8C91-59CB94717CCF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{9F1321D3-15C6-4EF5-8E66-9020A4F0E000}"
 EndProject
