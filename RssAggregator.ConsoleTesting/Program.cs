@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO.Compression;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -51,14 +52,25 @@ namespace RssAggregator.ConsoleTesting
 
             var stringRep = JsonConvert.SerializeObject(obj, Formatting.Indented);
             var response = await client.PostAsync(
-                "http://127.0.0.1:8086/weave?fsd=true", 
+                "http://127.0.0.1:8086/legacyweave?fsd=true",
+                //"http://127.0.0.1/api/weave",
                 new StringContent(stringRep, Encoding.UTF8, "application/json"));
 
             List<FeedResult> result;
 
+            //using (var stream = await response.Content.ReadAsStreamAsync())
+            //using (var gzipStream = new GZipStream(stream, CompressionMode.Decompress, true))
+            //using (var sr = new StreamReader(gzipStream, Encoding.UTF8))
+            //using (var jsonReader = new JsonTextReader(sr))
+            //{
+            //    var serializer = new JsonSerializer();
+            //    result = serializer.Deserialize<List<FeedResult>>(jsonReader);
+            //}
+
             using (var stream = await response.Content.ReadAsStreamAsync())
+            using (var gzipStream = new GZipStream(stream, CompressionMode.Decompress, true))
             {
-                result = ProtoBuf.Serializer.Deserialize<List<FeedResult>>(stream);
+                result = ProtoBuf.Serializer.Deserialize<List<FeedResult>>(gzipStream);
             }
 
             DebugEx.WriteLine(result);
