@@ -5,7 +5,7 @@ using System.Xml.Linq;
 
 namespace Weave.RssAggregator.HighFrequency
 {
-    internal class FeedLibraryClient
+    public class FeedLibraryClient
     {
         public IEnumerable<Feed> GetFeeds(string feedLibraryUrl)
         {
