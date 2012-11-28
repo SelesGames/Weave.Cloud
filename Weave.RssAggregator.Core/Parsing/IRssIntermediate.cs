@@ -3,7 +3,7 @@ using Weave.RssAggregator.Core.DTOs.Outgoing;
 
 namespace Weave.RssAggregator.Core.Parsing
 {
-    internal interface IRssIntermediate
+    public interface IRssIntermediate
     {
         Tuple<bool, DateTime> GetTimeStamp();
         string GetPublicationDate();
