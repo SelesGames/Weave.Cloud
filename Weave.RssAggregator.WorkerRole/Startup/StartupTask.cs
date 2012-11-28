@@ -47,9 +47,9 @@ namespace Weave.RssAggregator.WorkerRole.Startup
             var ipString = string.Format("http://{0}", ip.ToString());
             Trace.WriteLine(string.Format("**** IP ADDRESS: {0}", ipString));
 
-            //WcfEndpointCreator.CreateEndpoint(ipString, hsfCache);
-            var config = new LegacyHttpConfig(ipString) { DependencyResolver = resolver };
-            new HttpSelfHostServer(config).OpenAsync().Wait();
+            WcfEndpointCreator.CreateEndpoint(ipString, hsfCache);
+            //var config = new LegacyHttpConfig(ipString) { DependencyResolver = resolver };
+            //new HttpSelfHostServer(config).OpenAsync().Wait();
 
             Trace.WriteLine("^&*^&*^&*^*&^  LEGACY SERVER IS UP AND RUNNING!!!");
         }
