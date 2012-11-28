@@ -12,7 +12,7 @@ namespace SelesGames.WebApi.Compression
 
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            return base.SendAsync(request, cancellationToken).ContinueWith<HttpResponseMessage>((responseToCompleteTask) =>
+            return base.SendAsync(request, cancellationToken).ContinueWith(responseToCompleteTask =>
             {
                 HttpResponseMessage response = responseToCompleteTask.Result;
 
