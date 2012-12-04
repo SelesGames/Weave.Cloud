@@ -6,7 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
-using Weave.RssAggregator.Core.Parsing;
+using Weave.RssAggregator.Parsing;
 
 namespace Weave.RssAggregator.Core
 {
@@ -196,41 +196,65 @@ namespace Weave.RssAggregator.Core
 
         void ParseNewsFromLastRefreshTime(Stream stream)
         {
-            var elementsWithDate = stream
-                .ToRssIntermediates()
-                .ToRssIntermediatesWithDate()
-                .OrderByDescending(o => o.Item1);
+            var intermediates = stream.ToRssIntermediates().ToList();
+            foreach (var newsItem in intermediates)
+                newsItem.ParsePublicationDate();
+
+            var orderedNews = intermediates.OrderByDescending(o => o.PublicationDate);
+
+            //var elementsWithDate = stream
+            //    .ToRssIntermediates()
+            //    .ToRssIntermediatesWithDate()
+            //    .OrderByDescending(o => o.Item1);
 
 
             var previousMostRecentNewsItemPubDateString = this.MostRecentNewsItemPubDate;
 
 
-            var mostRecentItem = elementsWithDate.FirstOrDefault();
+            var mostRecentItem = orderedNews.FirstOrDefault();
             if (mostRecentItem != null)
                 this.MostRecentNewsItemPubDate = mostRecentItem.Item2.GetPublicationDate();
 
-            var oldestItem = elementsWithDate.LastOrDefault();
+            var oldestItem = orderedNews.LastOrDefault();
             if (oldestItem != null)
                 this.OldestNewsItemPubDate = oldestItem.Item2.GetPublicationDate();
 
 
-            IEnumerable<Tuple<DateTime, IRssIntermediate>> filteredNews = elementsWithDate;
+            IEnumerable<EntryIntermediate> filteredNews = orderedNews;
 
             var tryGetPreviousMostRecentDate = RssHelperFunctions.TryGetUtcDate(previousMostRecentNewsItemPubDateString);
             if (tryGetPreviousMostRecentDate.Item1)
             {
                 var previousMostRecentNewsItemPubDate = tryGetPreviousMostRecentDate.Item2;
-                filteredNews = elementsWithDate.TakeWhile(o => o.Item1 > previousMostRecentNewsItemPubDate);
+                filteredNews = orderedNews.TakeWhile(o => o.PublicationDate.Value > previousMostRecentNewsItemPubDate);
             }
 
-            var news = filteredNews
-                .Select(o => o.Item2.ToNewsItem())
-                .OfType<NewsItem>()
-                .ToList();
+            foreach (var newsItem in filteredNews)
+                newsItem.ParseEntry();
 
+            var news = filteredNews.Select(o => o.Entry.AsNewsItem()).ToList();
             this.News = news;
 
             this.Status = RequestStatus.OK;
+        }
+    }
+
+    internal static class EntryExtensions
+    {
+        public static NewsItem AsNewsItem(this Entry entry)
+        {
+            return new NewsItem
+            {
+                Title = entry.Title,
+                PublishDateTime = entry.PublishDateTime,
+                Link = entry.Link,
+                ImageUrl = entry.ImageUrl,
+                Description = entry.Description,
+                YoutubeId = entry.YoutubeId,
+                VideoUri = entry.VideoUri,
+                PodcastUri = entry.PodcastUri,
+                ZuneAppId = entry.ZuneAppId,
+            };
         }
     }
 }

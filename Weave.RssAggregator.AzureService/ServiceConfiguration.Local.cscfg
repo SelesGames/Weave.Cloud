@@ -4,7 +4,7 @@
     <Instances count="1" />
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
-      <Setting name="LowFrequencyHttpWebRequestTimeout" value="8000" />
+      <Setting name="LowFrequencyHttpWebRequestTimeout" value="3000" />
       <Setting name="HighFrequencyRefreshPeriod" value="15" />
       <Setting name="HighFrequencyRefreshSplit" value="60" />
       <Setting name="FeedLibraryUrl" value="http://weave.blob.core.windows.net/settings/masterfeeds.xml" />

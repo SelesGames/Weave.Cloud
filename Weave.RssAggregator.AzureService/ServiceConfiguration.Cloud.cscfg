@@ -4,7 +4,7 @@
     <Instances count="1" />
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=weave;AccountKey=uudFrra70qkI64bifaI2Rrm37CZ1HkzaBQrLMyw6U/hmzNDZehXeo9DdUv7BCpuZY4N2q/CNpNwYxW2fa218xA==" />
-      <Setting name="LowFrequencyHttpWebRequestTimeout" value="6000" />
+      <Setting name="LowFrequencyHttpWebRequestTimeout" value="3000" />
       <Setting name="HighFrequencyRefreshPeriod" value="15" />
       <Setting name="HighFrequencyRefreshSplit" value="60" />
       <Setting name="FeedLibraryUrl" value="http://weave.blob.core.windows.net/settings/masterfeeds.xml" />

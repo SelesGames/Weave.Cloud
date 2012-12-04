@@ -59,6 +59,8 @@ namespace SelesGames.WebApi.Compression
             {
                 if (compressedStream != null)
                 {
+                    compressedStream.Flush();
+                    compressedStream.Close();
                     compressedStream.Dispose();
                 }
             });
