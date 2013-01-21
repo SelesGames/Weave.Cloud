@@ -1,4 +1,5 @@
-﻿using SelesGames.WebApi.Compression;
+﻿using Common.WebApi;
+using SelesGames.WebApi.Compression;
 using SelesGames.WebApi.Protobuf;
 using System.Linq;
 using System.Net.Http.Formatting;
@@ -27,6 +28,8 @@ namespace Weave.RssAggregator.WorkerRole.Startup
 
             MessageHandlers.Add(new EncodingDelegateHandler());
             Formatters.Add(new ProtobufFormatter());
+
+            MessageHandlers.Add(new InjectAcceptHandler("application/protobuf"));
         }
     }
 }

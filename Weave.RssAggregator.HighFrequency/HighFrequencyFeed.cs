@@ -21,6 +21,7 @@ namespace Weave.RssAggregator.HighFrequency
 
         public enum FeedState
         {
+            Uninitialized,
             Failed,
             OK
         }
@@ -28,7 +29,7 @@ namespace Weave.RssAggregator.HighFrequency
         public HighFrequencyFeed()
         {
             News = new List<NewsItem>();
-            LastFeedState = FeedState.Failed;
+            LastFeedState = FeedState.Uninitialized;
         }
 
         public async void Refresh()

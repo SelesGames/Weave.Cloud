@@ -11,9 +11,9 @@ namespace Weave.RssAggregator.Parsing
     {
         static readonly XNamespace atom = "http://www.w3.org/2005/Atom";
 
-        public static IEnumerable<EntryIntermediate> ToRssIntermediates(this Stream stream)
+        public static IEnumerable<IEntryIntermediate> ToRssIntermediates(this Stream stream)
         {
-            IEnumerable<EntryIntermediate> elements = null;
+            IEnumerable<IEntryIntermediate> elements = null;
 
             using (var ms = stream.ToMemoryStream())
             {
@@ -39,7 +39,7 @@ namespace Weave.RssAggregator.Parsing
 
         #region Utilize the custom Weave parser - only handles true RSS feeds
 
-        static IEnumerable<EntryIntermediate> ParseUsingCustomParser(Stream stream)
+        static IEnumerable<IEntryIntermediate> ParseUsingCustomParser(Stream stream)
         {
             var doc = XDocument.Load(stream, LoadOptions.None);
 
@@ -56,7 +56,7 @@ namespace Weave.RssAggregator.Parsing
 
         #region Utilize the built-in .NET SyndicationFeed class as a fail-safe mechanism
 
-        static IEnumerable<EntryIntermediate> ParseUsingSyndicationFeed(Stream stream)
+        static IEnumerable<IEntryIntermediate> ParseUsingSyndicationFeed(Stream stream)
         {
             using (XmlReader reader = XmlReader.Create(stream))
             {

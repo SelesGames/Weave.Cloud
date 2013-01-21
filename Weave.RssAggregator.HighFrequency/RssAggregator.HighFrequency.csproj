@@ -58,6 +58,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\RssAggregator.Parsing\RssAggregator.Parsing.csproj">
+      <Project>{92a8665a-571b-4972-8fc6-0937ee27731e}</Project>
+      <Name>RssAggregator.Parsing</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SelesGames.Rest\SelesGames.Rest.csproj">
       <Project>{bf01af3a-26b9-40f2-bb1e-9c702242b504}</Project>
       <Name>SelesGames.Rest</Name>

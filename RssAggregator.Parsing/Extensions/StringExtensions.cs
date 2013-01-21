@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace Weave.RssAggregator.Parsing
 {
-    internal static class StringExtensions
+    public static class StringExtensions
     {
         public static bool IsImageUrl(this string url)
         {

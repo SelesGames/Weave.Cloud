@@ -39,9 +39,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Feed.cs" />
+    <Compile Include="Feed.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Intermediates\AtomIntermediate.cs" />
-    <Compile Include="Intermediates\EntryIntermediate.cs" />
+    <Compile Include="Intermediates\IEntryIntermediate.cs" />
     <Compile Include="Library\Guard.cs" />
     <Compile Include="Extensions\NewsItemParseHelperExtension.cs" />
     <Compile Include="Intermediates\Rss20Intermediate.cs" />

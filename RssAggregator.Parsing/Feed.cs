@@ -24,12 +24,10 @@ namespace Weave.RssAggregator.Parsing
 
         public void Load()
         {
-            var entryIntermediates = stream.ToRssIntermediates().ToList();
-            foreach (var entry in entryIntermediates)
-                entry.ParseEntry();
+            var entryIntermediates = stream.ToRssIntermediates().Select(ParseResult.Create).ToList();
 
             var total = entryIntermediates.Count;
-            var faults = entryIntermediates.Select(o => o.ParseException).OfType<Exception>().ToList();
+            var faults = entryIntermediates.Select(o => o.Exception).OfType<Exception>().ToList();
             var faultRate = faults.Count / (double)total;
 
             Faults = faults;
@@ -37,6 +35,26 @@ namespace Weave.RssAggregator.Parsing
                 throw new AggregateException(Faults);
             else
                 News = entryIntermediates.Select(o => o.Entry).OfType<Entry>().ToList();
+        }
+
+        class ParseResult
+        {
+            public Entry Entry { get; set; }
+            public Exception Exception { get; set; }
+
+            public static ParseResult Create(IEntryIntermediate intermediate)
+            {
+                var result = new ParseResult();
+                try
+                {
+                    result.Entry = intermediate.CreateEntry();
+                }
+                catch (Exception e)
+                {
+                    result.Exception = e;
+                }
+                return result;
+            }
         }
     }
 }

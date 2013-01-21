@@ -62,12 +62,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Legacy\LegacyHttpConfig.cs" />
-    <Compile Include="Legacy\IPing.cs" />
-    <Compile Include="Legacy\IRssAggregator.cs" />
     <Compile Include="Controllers\PingController.cs" />
-    <Compile Include="Legacy\RssAggregator.cs" />
-    <Compile Include="Legacy\WcfEndpointCreator.cs" />
     <Compile Include="Startup\ProtobufFormatter.cs" />
     <Compile Include="Startup\AppSettings.cs" />
     <Compile Include="Startup\HttpConfig.cs" />

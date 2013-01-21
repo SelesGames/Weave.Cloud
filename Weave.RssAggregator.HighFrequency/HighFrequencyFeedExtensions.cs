@@ -2,7 +2,7 @@
 using System.Linq;
 using Weave.RssAggregator.Core.DTOs.Incoming;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
-using Weave.RssAggregator.Core.Parsing;
+using Weave.RssAggregator.Parsing;
 
 namespace Weave.RssAggregator.HighFrequency
 {
@@ -12,14 +12,14 @@ namespace Weave.RssAggregator.HighFrequency
         {
             try
             {
-                if (feed.LastFeedState == HighFrequencyFeed.FeedState.Failed)
+                if (feed.LastFeedState == HighFrequencyFeed.FeedState.Failed || feed.LastFeedState == HighFrequencyFeed.FeedState.Uninitialized)
                 {
                     return new FeedResult { Id = request.Id, Status = FeedResultStatus.Failed };
                 }
                 else
                 {
                     var newsWithDate = feed.News
-                        .Select(o => new { date = RssHelperFunctions.TryGetUtcDate(o.PublishDateTime), newsItem = o })
+                        .Select(o => new { date = o.PublishDateTime.TryGetUtcDate(), newsItem = o })
                         .Where(o => o.date.Item1)
                         .Select(o => new { date = o.date.Item2, newsItem = o.newsItem });
 
@@ -28,7 +28,7 @@ namespace Weave.RssAggregator.HighFrequency
 
                     var previousMostRecentNewsItemPubDateString = request.MostRecentNewsItemPubDate;
 
-                    var tryGetPreviousMostRecentDate = RssHelperFunctions.TryGetUtcDate(previousMostRecentNewsItemPubDateString);
+                    var tryGetPreviousMostRecentDate = previousMostRecentNewsItemPubDateString.TryGetUtcDate();
                     if (tryGetPreviousMostRecentDate.Item1)
                     {
                         var previousMostRecentNewsItemPubDate = tryGetPreviousMostRecentDate.Item2;

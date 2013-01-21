@@ -5,29 +5,54 @@ using System.Xml.Linq;
 
 namespace Weave.RssAggregator.Parsing
 {
-    internal class AtomIntermediate : EntryIntermediate
+    internal class AtomIntermediate : IEntryIntermediate
     {
         static readonly XNamespace atom = "http://www.w3.org/2005/Atom";
         XElement xml;
 
+        public DateTime PublicationDate { get; set; }
+        public string PublicationDateString { get; set; }
+
         public AtomIntermediate(XElement xml)
         {
             this.xml = xml;
+            InitializePublicationDate();
         }
 
-        protected override DateTime? GetPublicationDate()
+
+
+
+        #region helper functions for setting the PublicationDate field
+
+        void InitializePublicationDate()
         {
-            var val = xml.Element(atom + "published").ValueOrDefault();
-            if (val != null)
+            try
             {
-                var pubDate = val.TryGetUtcDate();
-                if (pubDate.Item1)
-                    return pubDate.Item2;
+                PublicationDateString = xml.Element(atom + "published").Value;
+                var tryParse = PublicationDateString.TryGetUtcDate();
+                if (tryParse.Item1)
+                    PublicationDate = tryParse.Item2;
+                else
+                    InitializePubDateToCurrentTime();
             }
-            return null;
+            catch
+            {
+                InitializePubDateToCurrentTime();
+            }
         }
 
-        protected override Entry ParseInternal()
+        void InitializePubDateToCurrentTime()
+        {
+            PublicationDate = DateTime.UtcNow;
+            PublicationDateString = PublicationDate.ToString();
+        }
+
+        #endregion
+
+
+
+
+        public Entry CreateEntry()
         {
             Entry e = new Entry();
 
@@ -35,13 +60,13 @@ namespace Weave.RssAggregator.Parsing
             var link = xml.Element(atom + "link");
 
             if (title == null || link == null)
-                return null;
+                throw new Exception("title or link missing - AtomIntermediate.CreateEntry()");
 
             e.Title = HttpUtility.HtmlDecode(title.Value.Trim());
             var href = link.Attributes().Where(o => o.Name == "href").SingleOrDefault();
             e.Link = href.ValueOrDefault();
             if (string.IsNullOrEmpty(e.Link))
-                return null;
+                throw new Exception("link missing - AtomIntermediate.CreateEntry()");
 
 
             XElement descriptionNode;
@@ -102,7 +127,7 @@ namespace Weave.RssAggregator.Parsing
                 e.ImageUrl = description.ParseImageUrlFromHtml();
 
 
-            e.PublishDateTime = xml.Element(atom + "published").ValueOrDefault();
+            e.PublishDateTime = PublicationDateString;
 
             return e;
         }

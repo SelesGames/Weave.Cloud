@@ -53,11 +53,12 @@ namespace RssAggregator.ConsoleTesting
 
             var protoClient = new HttpClient { Timeout = TimeSpan.FromHours(5) };
             protoClient.DefaultRequestHeaders.Accept.TryParseAdd("application/protobuf");
+            protoClient.DefaultRequestHeaders.AcceptEncoding.TryParseAdd("gzip");
 
             string url =
 //"http://a2d93f4da03c4d9587afb87173a866d9.cloudapp.net/api/weave?xxx={0}";
-"http://127.0.0.1:8086/weave?fsd=true";
-//"http://127.0.0.1/api/weave";
+//"http://127.0.0.1:8086/weave?fsd=true";
+"http://127.0.0.1/api/weave";
 
             var response = await protoClient.PostAsync(url, new StringContent(stringRep, Encoding.UTF8, "application/json"));
 

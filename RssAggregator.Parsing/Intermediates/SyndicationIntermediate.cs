@@ -4,25 +4,28 @@ using System.ServiceModel.Syndication;
 
 namespace Weave.RssAggregator.Parsing
 {
-    internal class SyndicationIntermediate : EntryIntermediate
+    internal class SyndicationIntermediate : IEntryIntermediate
     {
         SyndicationItem syndicationItem;
 
+        public DateTime PublicationDate { get; set; }
+        public string PublicationDateString { get; set; }
+
         public SyndicationIntermediate(SyndicationItem syndicationItem)
         {
+            if (syndicationItem == null)
+                throw new ArgumentNullException("syndicationItem in SyndicationIntermediate constructor");
+
             this.syndicationItem = syndicationItem;
+            PublicationDate = syndicationItem.PublishDate.UtcDateTime;
+            PublicationDateString = syndicationItem.PublishDate.UtcDateTime.ToString("M/dd/yyyy h:mm:ss tt +00:00");
         }
 
-        protected override DateTime? GetPublicationDate()
-        {
-            return syndicationItem.PublishDate.UtcDateTime;
-        }
-
-        protected override Entry ParseInternal()
+        public Entry CreateEntry()
         {
             var link = syndicationItem.Links.FirstOrDefault();
             if (link == null)
-                return null;
+                throw new Exception("invalid link in SyndicationIntermediate.CreateEntry()");
 
             string content = null;
             if (syndicationItem.Content is TextSyndicationContent)
@@ -33,7 +36,7 @@ namespace Weave.RssAggregator.Parsing
                 Title = syndicationItem.Title.Text,
                 Link = link.Uri.AbsoluteUri,
                 Description = content,
-                PublishDateTime = ParsePubDate(),
+                PublishDateTime = PublicationDateString,
                 ImageUrl = null,
             };
 
@@ -41,14 +44,5 @@ namespace Weave.RssAggregator.Parsing
 
             return e;
         }
-
-        string ParsePubDate()
-        {
-            if (syndicationItem == null)
-                return null;
-
-            return syndicationItem.PublishDate.UtcDateTime.ToString("M/dd/yyyy h:mm:ss tt +00:00");
-        }
     }
-
 }
