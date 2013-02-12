@@ -39,6 +39,9 @@ namespace Weave.RssAggregator.HighFrequency
                     })
                 .ToList();
 
+            foreach (var feed in highFrequencyFeeds)
+                feed.InitializeId();
+
             feeds = highFrequencyFeeds.ToDictionary(o => o.FeedUri);
         }
 

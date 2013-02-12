@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Weave.RssAggregator.Core.DTOs.Incoming;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
@@ -8,6 +9,11 @@ namespace Weave.RssAggregator.HighFrequency
 {
     public static class HighFrequencyFeedExtensions
     {
+        public static IEnumerable<T> TakeSince<T>(this IEnumerable<T> source, Func<T, DateTime> criteria, DateTime cutoff)
+        {
+            return source.TakeWhile(o => criteria(o) > cutoff);
+        }
+
         public static FeedResult ToFeedResult(this HighFrequencyFeed feed, FeedRequest request)
         {
             try

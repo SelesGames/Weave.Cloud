@@ -9,6 +9,7 @@ namespace Weave.RssAggregator.HighFrequency
 {
     public class HighFrequencyFeed
     {
+        public Guid FeedId { get; private set; }
         public string Name { get; set; }
         public string FeedUri { get; set; }
         public string Etag { get; set; }
@@ -30,6 +31,11 @@ namespace Weave.RssAggregator.HighFrequency
         {
             News = new List<NewsItem>();
             LastFeedState = FeedState.Uninitialized;
+        }
+
+        public void InitializeId()
+        {
+            FeedId = SelesGames.Common.Hashing.CryptoHelper.ComputeHashUsedByMobilizer(FeedUri);
         }
 
         public async void Refresh()
