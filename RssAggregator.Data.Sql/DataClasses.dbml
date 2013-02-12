@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="weave" Class="DataClassesDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=ykgd4qav8g.database.windows.net,1433;Initial Catalog=weave;User ID=aemami99" SettingsObjectName="RssAggregator.Data.Sql.Properties.Settings" SettingsPropertyName="weaveConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.NewsItem" Member="NewsItems">
+    <Type Name="NewsItem">
+      <Column Name="Id" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="FeedId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Column Name="PublishDateTime" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Title" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="PublishDateTimeString" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="Link" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="ImageUrl" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="YoutubeId" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="VideoUri" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="PodcastUri" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="ZuneAppId" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="OriginalRssXml" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="NewsItemBlob" Type="System.Data.Linq.Binary" DbType="VarBinary(MAX)" CanBeNull="true" UpdateCheck="Never" />
+    </Type>
+  </Table>
+</Database>
