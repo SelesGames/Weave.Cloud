@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SelesGames.Common.Hashing;
+using System;
 using System.Linq;
 using System.Web;
 using System.Xml.Linq;
@@ -127,7 +128,11 @@ namespace Weave.RssAggregator.Parsing
                 e.ImageUrl = description.ParseImageUrlFromHtml();
 
 
-            e.PublishDateTime = PublicationDateString;
+            e.PublishDateTimeString = PublicationDateString;
+            e.PublishDateTime = PublicationDate;
+            e.OriginalRssXml = xml.ToString();
+            e.Id = CryptoHelper.ComputeHashUsedByMobilizer(e.Link);
+
 
             return e;
         }

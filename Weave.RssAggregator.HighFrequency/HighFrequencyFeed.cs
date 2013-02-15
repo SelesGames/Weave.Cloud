@@ -1,14 +1,20 @@
-﻿using System;
+﻿using SelesGames.Common.Hashing;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Threading.Tasks;
-using Weave.RssAggregator.Core;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
+using Weave.RssAggregator.Parsing;
 
 namespace Weave.RssAggregator.HighFrequency
 {
     public class HighFrequencyFeed
     {
+        Subject<List<Entry>> feedUpdate = new Subject<List<Entry>>();
+
         public Guid FeedId { get; private set; }
         public string Name { get; set; }
         public string FeedUri { get; set; }
@@ -27,18 +33,21 @@ namespace Weave.RssAggregator.HighFrequency
             OK
         }
 
+        public IObservable<List<Entry>> FeedUpdate { get; private set; }
+
         public HighFrequencyFeed()
         {
             News = new List<NewsItem>();
             LastFeedState = FeedState.Uninitialized;
+            FeedUpdate = feedUpdate.AsObservable();
         }
 
         public void InitializeId()
         {
-            FeedId = SelesGames.Common.Hashing.CryptoHelper.ComputeHashUsedByMobilizer(FeedUri);
+            FeedId = CryptoHelper.ComputeHashUsedByMobilizer(FeedUri);
         }
 
-        public async void Refresh()
+        public async Task Refresh()
         {
             try
             {
@@ -56,7 +65,9 @@ namespace Weave.RssAggregator.HighFrequency
                     this.LastModified = requester.LastModified;
                     this.MostRecentNewsItemPubDate = requester.MostRecentNewsItemPubDate;
                     this.OldestNewsItemPubDate = requester.OldestNewsItemPubDate;
-                    this.News = requester.News;
+                    this.News = requester.News.Select(o => o.AsNewsItem()).ToList();
+
+                    feedUpdate.OnNext(requester.News);
 
                     DebugEx.WriteLine("REFRESHED {0}  ({1})", Name, FeedUri);
                 }

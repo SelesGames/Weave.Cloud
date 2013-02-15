@@ -56,18 +56,16 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DTOs\Outgoing\NewsItem.cs" />
-    <Compile Include="Library\DebugEx.cs" />
+    <Compile Include="Extensions\EntryExtensions.cs" />
     <Compile Include="DTOs\Incoming\FeedRequest.cs" />
     <Compile Include="DTOs\Outgoing\FeedResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="FeedRequester.cs" />
-    <Compile Include="DTOs\Incoming\FeedRequestExtensions.cs" />
+    <Compile Include="Extensions\FeedRequestExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">
@@ -95,6 +93,10 @@
     <ProjectReference Include="..\RssAggregator.Parsing\RssAggregator.Parsing.csproj">
       <Project>{92a8665a-571b-4972-8fc6-0937ee27731e}</Project>
       <Name>RssAggregator.Parsing</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SelesGames.Common\SelesGames.Common.csproj">
+      <Project>{5b792c4b-80d8-420d-9fa7-e567faf1f7b1}</Project>
+      <Name>SelesGames.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\SelesGames.Rest\SelesGames.Rest.csproj">
       <Project>{8574519A-5F87-4025-A817-245AB19E58A6}</Project>

@@ -1,58 +1,38 @@
 ﻿using Microsoft.WindowsAzure.ServiceRuntime;
+using Ninject;
 using Ninject.WebApi;
 using System;
 using System.Diagnostics;
 using System.Web.Http.Dependencies;
 using System.Web.Http.SelfHost;
 using Weave.RssAggregator.HighFrequency;
-//using Weave.RssAggregator.WorkerRole.Legacy;
 
 namespace Weave.RssAggregator.WorkerRole.Startup
 {
     internal class StartupTask
     {
-        HighFrequencyFeedCache hsfCache;
+        IKernel kernel;
+        HighFrequencyFeedCache hfCache;
         IDependencyResolver resolver;
 
         public void OnStart()
         {
+            kernel = new NinjectKernel();
+            resolver = new NinjectResolver(kernel); 
+            
             SetLowFrequencyValues();
             SetHighFrequencyValues();
-            CreateResolver();
             CreateAndStartServer();
-            //CreateAndStartLegacyServer();
+
+            hfCache.StartFeedRefreshTimer();
         }
 
-        void CreateResolver()
+        void SetLowFrequencyValues()
         {
-            var kernel = new Kernel(hsfCache);
-            resolver = new NinjectResolver(kernel);
+            var temp = RoleEnvironment.GetConfigurationSettingValue("LowFrequencyHttpWebRequestTimeout");
+            var value = int.Parse(temp);
+            AppSettings.SetLowFrequencyHttpWebRequestTimeoutInMilliseconds(value);
         }
-
-        void CreateAndStartServer()
-        {
-            var ip = RoleEnvironment.CurrentRoleInstance.InstanceEndpoints["Endpoint1"].IPEndpoint;
-            var ipString = string.Format("http://{0}", ip.ToString());
-            Trace.WriteLine(string.Format("**** IP ADDRESS: {0}", ipString));
-
-            var config = new HttpConfig(ipString) { DependencyResolver = resolver };
-            new HttpSelfHostServer(config).OpenAsync().Wait();
-
-            Trace.WriteLine("^&*^&*^&*^*&^  SERVER IS UP AND RUNNING!!!");
-        }
-
-        //void CreateAndStartLegacyServer()
-        //{
-        //    var ip = RoleEnvironment.CurrentRoleInstance.InstanceEndpoints["Endpoint2"].IPEndpoint;
-        //    var ipString = string.Format("http://{0}", ip.ToString());
-        //    Trace.WriteLine(string.Format("**** IP ADDRESS: {0}", ipString));
-
-        //    WcfEndpointCreator.CreateEndpoint(ipString, hsfCache);
-        //    //var config = new LegacyHttpConfig(ipString) { DependencyResolver = resolver };
-        //    //new HttpSelfHostServer(config).OpenAsync().Wait();
-
-        //    Trace.WriteLine("^&*^&*^&*^*&^  LEGACY SERVER IS UP AND RUNNING!!!");
-        //}
 
         void SetHighFrequencyValues()
         {
@@ -71,14 +51,25 @@ namespace Weave.RssAggregator.WorkerRole.Startup
             temp = RoleEnvironment.GetConfigurationSettingValue("FeedLibraryUrl");
             feedLibraryUrl = temp;
 
-            hsfCache = new HighFrequencyFeedCache(feedLibraryUrl, highFrequencyRefreshSplit, highFrequencyRefreshPeriod);
+            hfCache = new HighFrequencyFeedCache(
+                feedLibraryUrl, 
+                kernel.Get<SqlUpdater>(), 
+                highFrequencyRefreshSplit, 
+                highFrequencyRefreshPeriod);
+
+            kernel.Bind<HighFrequencyFeedCache>().ToMethod(_ => hfCache).InSingletonScope();
         }
 
-        void SetLowFrequencyValues()
+        void CreateAndStartServer()
         {
-            var temp = RoleEnvironment.GetConfigurationSettingValue("LowFrequencyHttpWebRequestTimeout");
-            var value = int.Parse(temp);
-            AppSettings.SetLowFrequencyHttpWebRequestTimeoutInMilliseconds(value);
+            var ip = RoleEnvironment.CurrentRoleInstance.InstanceEndpoints["Endpoint1"].IPEndpoint;
+            var ipString = string.Format("http://{0}", ip.ToString());
+            Trace.WriteLine(string.Format("**** IP ADDRESS: {0}", ipString));
+
+            var config = new HttpConfig(ipString) { DependencyResolver = resolver };
+            new HttpSelfHostServer(config).OpenAsync().Wait();
+
+            Trace.WriteLine("^&*^&*^&*^*&^  SERVER IS UP AND RUNNING!!!");
         }
     }
 }

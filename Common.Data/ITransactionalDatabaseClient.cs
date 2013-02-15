@@ -4,13 +4,11 @@ using System.Threading.Tasks;
 
 namespace Common.Data
 {
-    public interface ITransactionalDatabaseClient : IDisposable
+    public interface ITransactionalDatabaseClient : IDisposable, IUnitOfWork
     {
-        IUnitOfWork BeginUnitOfWork();
-
         Task<IQueryable<T>> Get<T>() where T : class;
-        Task Insert<T>(T obj) where T : class;
-        //Task Update<T>(T update) where T : class;
-        Task Delete<T>(T obj) where T : class;
+        void Insert<T>(T obj) where T : class;
+        void Update<T>(T update) where T : class;
+        void Delete<T>(T obj) where T : class;
     }
 }

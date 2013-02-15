@@ -1,17 +1,20 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Weave.RssAggregator.Core.DTOs.Incoming;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
 using Weave.RssAggregator.HighFrequency;
-using System.Linq;
-using System.Threading;
-using System.IO;
-using System.Diagnostics;
+using Weave.RssAggregator.WorkerRole.Startup;
+using Ninject;
+using Microsoft.ServiceBus.Messaging;
 
 namespace RssAggregator.ConsoleTesting
 {
@@ -21,7 +24,9 @@ namespace RssAggregator.ConsoleTesting
         {
             try
             {
-                TestService().Wait();
+                TestSendToServiceBusMessageQueue().Wait();
+                //FuckThisShit().Wait();
+                //TestService().Wait();
             }
             catch (Exception e)
             {
@@ -30,6 +35,29 @@ namespace RssAggregator.ConsoleTesting
 
             while (true)
                 Console.ReadLine();
+        }
+
+        static async Task TestSendToServiceBusMessageQueue()
+        {
+            await Task.Yield();
+            QueueConnector.Initialize();
+            var client = QueueConnector.OrdersQueueClient;
+            BrokeredMessage message;
+
+            for (int i = 0; i < 100; i++)
+            {
+                message = new BrokeredMessage("hello world " + i);
+                client.Send(message);
+            }
+        }
+
+        static async Task TestGetLatestForFeedId()
+        {
+            var kernel = new NinjectKernel();
+            var client = kernel.Get<SqlClient>();
+
+            var id = await client.GetLatestForFeedId(Guid.NewGuid());
+            Debug.Write(id);
         }
 
         static async Task TestService()

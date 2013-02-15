@@ -16,12 +16,14 @@ namespace Common.Data
             this.connectionString = connectionString;
         }
 
-        public async Task<IEnumerable<T>> GetAsync<T>(string commandText, Func<SqlDataReader, Task<T>> projection, CancellationToken cancelToken)
+        public async Task<IEnumerable<T>> GetAsync<T>(string storedProcName, Func<SqlDataReader, Task<T>> projection, CancellationToken cancelToken, params SqlParameter[] storedProcParameters)
         {
             using (var connection = new SqlConnection(connectionString))
-            using (var command = new SqlCommand(commandText, connection))
+            using (var command = new SqlCommand(storedProcName, connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
+                foreach (var parameter in storedProcParameters)
+                    command.Parameters.Add(parameter);
 
                 await connection.OpenAsync(cancelToken).ConfigureAwait(false);
 
@@ -40,9 +42,9 @@ namespace Common.Data
             }
         }
 
-        public Task<IEnumerable<T>> GetAsync<T>(string commandText, Func<SqlDataReader, Task<T>> projection)
+        public Task<IEnumerable<T>> GetAsync<T>(string storedProcName, Func<SqlDataReader, Task<T>> projection, params SqlParameter[] storedProcParameters)
         {
-            return GetAsync(commandText, projection, CancellationToken.None);
+            return GetAsync(storedProcName, projection, CancellationToken.None, storedProcParameters);
         }
     }
 }

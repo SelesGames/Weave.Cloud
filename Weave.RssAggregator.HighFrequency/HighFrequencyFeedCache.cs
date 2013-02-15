@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Weave.RssAggregator.Core.DTOs.Incoming;
@@ -21,7 +22,7 @@ namespace Weave.RssAggregator.HighFrequency
 
         #region Constructors
 
-        public HighFrequencyFeedCache(string feedLibraryUrl)
+        public HighFrequencyFeedCache(string feedLibraryUrl, SqlUpdater sqlUpdater)
         {
             if (string.IsNullOrEmpty(feedLibraryUrl)) return;
 
@@ -39,22 +40,27 @@ namespace Weave.RssAggregator.HighFrequency
                     })
                 .ToList();
 
+            QueueConnector.Initialize();
+            var serviceBusUpdater = new ServiceBusUpdater(QueueConnector.OrdersQueueClient);
+
             foreach (var feed in highFrequencyFeeds)
+            {
                 feed.InitializeId();
+                //sqlUpdater.Register(feed);
+                serviceBusUpdater.Register(feed);
+            }
 
             feeds = highFrequencyFeeds.ToDictionary(o => o.FeedUri);
         }
 
-        public HighFrequencyFeedCache(string feedLibraryUrl, int highFrequencyRefreshSplit, TimeSpan highFrequencyRefreshPeriod)
-            : this(feedLibraryUrl)
+        public HighFrequencyFeedCache(string feedLibraryUrl, SqlUpdater sqlUpdater, int highFrequencyRefreshSplit, TimeSpan highFrequencyRefreshPeriod)
+            : this(feedLibraryUrl, sqlUpdater)
         {
             if (string.IsNullOrEmpty(feedLibraryUrl)) return;
 
             // set some default values
             this.highFrequencyRefreshPeriod = highFrequencyRefreshPeriod;
             this.highFrequencyRefreshSplit = highFrequencyRefreshSplit;
-
-            StartFeedRefreshTimer();
         }
 
         #endregion
@@ -62,7 +68,7 @@ namespace Weave.RssAggregator.HighFrequency
 
 
 
-        void StartFeedRefreshTimer()
+        public void StartFeedRefreshTimer()
         {
             disposables.Clear();
 

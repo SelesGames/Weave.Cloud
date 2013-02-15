@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SelesGames.Common.Hashing;
+using System;
 using System.Linq;
 using System.ServiceModel.Syndication;
 
@@ -36,11 +37,15 @@ namespace Weave.RssAggregator.Parsing
                 Title = syndicationItem.Title.Text,
                 Link = link.Uri.AbsoluteUri,
                 Description = content,
-                PublishDateTime = PublicationDateString,
+                PublishDateTimeString = PublicationDateString,
+                PublishDateTime = PublicationDate,
                 ImageUrl = null,
             };
 
             e.ExtractYoutubeVideoAndPodcastUrlsFromDescription();
+
+            e.Id = CryptoHelper.ComputeHashUsedByMobilizer(e.Link);
+
 
             return e;
         }

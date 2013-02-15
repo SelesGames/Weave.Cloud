@@ -32,6 +32,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
@@ -39,25 +40,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Feed.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="FeedRequester.cs" />
     <Compile Include="Intermediates\AtomIntermediate.cs" />
     <Compile Include="Intermediates\IEntryIntermediate.cs" />
-    <Compile Include="Library\Guard.cs" />
     <Compile Include="Extensions\NewsItemParseHelperExtension.cs" />
     <Compile Include="Intermediates\Rss20Intermediate.cs" />
-    <Compile Include="RssFeedParser.cs" />
+    <Compile Include="Extensions\RssFeedParser.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\XElementExtensions.cs" />
     <Compile Include="Library\SyndicationDateTimeUtility.cs" />
     <Compile Include="Intermediates\SyndicationIntermediate.cs" />
-    <Compile Include="Library\LinqToXmlExtensions.cs" />
-    <Compile Include="Library\StreamExtensionMethods.cs" />
     <Compile Include="Entry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\SelesGames.Common\SelesGames.Common.csproj">
+      <Project>{5b792c4b-80d8-420d-9fa7-e567faf1f7b1}</Project>
+      <Name>SelesGames.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
