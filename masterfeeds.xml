@@ -1,0 +1,462 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Feeds>
+
+  <!-- POPULAR FEEDS -->
+
+  <Category Type="Test">
+    <Feed Name="b">http://feeds.feedburner.com/uproxx/withleather</Feed>
+    <Feed Name="e">http://actionflickchick.com/superaction/?feed=rss2</Feed>
+    <Feed Name="f">http://geekygirlslovescifi.blogspot.com//feeds/posts/default</Feed>
+    <Feed Name="h">http://dcwomenkickingass.tumblr.com/rss</Feed>
+    <Feed Name="j">http://glanceandgoradio.com/feed/</Feed>
+    <Feed Name="k">http://winsource.com/feed/</Feed>
+    <Feed Name="o">http://feeds2.feedburner.com/feliciaday</Feed>
+    <Feed Name="p">http://fatuglyorslutty.com/feed/rss/</Feed>
+  </Category> 
+  
+
+  <Category Type="Pop &amp; Geek Culture">
+    <Feed Name="Blastr">http://blastr.com/atom.xml</Feed>
+    <Feed Name="Gamma Squad">http://feeds.feedburner.com/uproxx/gammasquad</Feed>
+    <Feed Name="Uproxx">http://feeds.feedburner.com/uproxx/features</Feed>
+
+  </Category>
+  
+  <Category Type="Girl Geek">
+    <Feed Name="Frag Dolls">http://www.fragdolls.com/index.php/home/RSS/</Feed>
+    <Feed Name="Geek Mom" ViewType="ie">http://www.wired.com/geekmom/feed/</Feed>
+    <Feed Name="The Mary Sue">http://www.themarysue.com/feed/</Feed>
+  </Category>
+  
+  <Category Type="Animals">
+    <Feed Name="Cute Overload" ViewType="ie">http://cuteoverload.com/feed</Feed>
+    <Feed Name="Its Nature">http://www.itsnature.org/feed</Feed>
+    <Feed Name="BabyAnimalz.com">http://feeds.feedburner.com/babyanimalz/GxsS?format=xml</Feed>
+    <Feed Name="Discovery News">http://news.discovery.com/rss/topic/?topic=animals</Feed>
+    <Feed Name="Dogshaming">http://dog-shaming.com/rss</Feed>
+    <Feed Name="Sundays at the Shelter">http://www.shelter-cats.com/feed/</Feed>
+    <Feed Name="The Animal Blog">http://theanimalblog.tumblr.com/rss</Feed>
+    <Feed Name="The Daily Kitten">http://www.dailykitten.com/feed/</Feed>
+    <Feed Name="The Itty Bitty Kitty Committee" ViewType="ie">http://www.theittybittykittycommittee.com/feeds/posts/default</Feed>
+    <Feed Name="Zooborns" ViewType="ie">http://feeds.feedburner.com/Zooborns</Feed>
+  </Category>
+
+
+  <Category Type="Best of YouTube">
+    <Feed Name="College Humor" ViewType="ie">http://gdata.youtube.com/feeds/base/users/collegehumor/uploads?alt=rss</Feed>
+    <Feed Name="Epic Meal Time" ViewType="ie">http://gdata.youtube.com/feeds/base/users/epicmealtime/uploads?alt=rss</Feed>
+    <Feed Name="FPSRussia" ViewType="ie">http://gdata.youtube.com/feeds/base/users/FPSRussia/uploads?alt=rss</Feed>
+    <Feed Name="Household Hacker" ViewType="ie">http://gdata.youtube.com/feeds/base/users/HouseholdHacker/uploads?alt=rss</Feed>
+    <Feed Name="The Lonely Island" ViewType="ie">http://gdata.youtube.com/feeds/base/users/thelonelyisland/uploads?alt=rss</Feed>
+    <Feed Name="The Verge | YouTube" ViewType="ie">http://gdata.youtube.com/feeds/base/users/theverge/uploads?alt=rss</Feed>
+    <Feed Name="WPCentral | YouTube" ViewType="ie">http://gdata.youtube.com/feeds/base/users/wmexperts/uploads?alt=rss</Feed>
+  </Category>
+  
+  
+  <Category Type="Business">
+    <Feed Name="Business Insider">http://feeds2.feedburner.com/businessinsider</Feed>
+    <Feed Name="Fast Company">http://feeds.feedburner.com/fastcompany/headlines</Feed>
+    <Feed Name="Forbes">http://www.forbes.com/business/index.xml</Feed>
+    <Feed Name="Inc.com">http://feeds.feedburner.com/inc/headlines</Feed>
+    <Feed Name="Investors.com">http://feeds2.feedburner.com/BusinessRss</Feed>
+    <Feed Name="Reuters">http://feeds.reuters.com/reuters/businessNews</Feed>
+    <Feed Name="Signal vs. Noise">http://feeds.feedburner.com/37signals/beMH</Feed>
+    <Feed Name="The Big Picture">http://www.ritholtz.com/blog/feed/</Feed>
+    <Feed Name="The Guardian">http://www.guardian.co.uk/business/rss</Feed>
+    <Feed Name="The Telegraph">http://www.telegraph.co.uk/finance/rss</Feed>
+    <Feed Name="The Wall Street Journal">http://feeds.marketwatch.com/marketwatch/topstories/</Feed>
+  </Category>
+
+
+  <Category Type="Celebrity Gossip">
+    <Feed Name="X17 Online">http://x17online.com/index.xml</Feed>
+    <Feed Name="In Touch Weekly" ViewType="ie">http://feeds.feedburner.com/intouchweekly</Feed>
+    <Feed Name="Hollybaby">http://www.hollybaby.com/feed/</Feed>
+    <Feed Name="PopSugar">http://feeds.feedburner.com/popsugar</Feed>
+    <Feed Name="Radar Online" ViewType="ie">http://www.radaronline.com/rss</Feed>
+    <Feed Name="The Superficial">http://www.thesuperficial.com/feed</Feed>
+    <Feed Name="TMZ">http://www.tmz.com/rss.xml</Feed>
+    <Feed Name="What Would Tyler Durden Do">http://feeds2.feedburner.com/wwtdd/atom</Feed>
+  </Category>
+
+
+  <Category Type="Comic Books">
+    <Feed Name="ACB">http://feeds.feedburner.com/comicbookblog</Feed>
+    <Feed Name="Bleeding Cool">http://www.bleedingcool.com/category/comics/feed</Feed>
+    <Feed Name="Comic Booked">http://www.comicbooked.com/feed/</Feed>
+    <Feed Name="Comic Book Resources" ViewType="ie">http://www.comicbookresources.com/feed.php?feed=all</Feed>
+    <Feed Name="Comic Book Therapy">http://www.comicbooktherapy.com/category/comic-books/feed</Feed>
+    <Feed Name="IGN">http://feeds.ign.com/ign/comics-articles</Feed>
+    <Feed Name="Newsarama" ViewType="ie">http://feeds.newsarama.com/newsaramacomics?format=xml</Feed>
+    <Feed Name="Mindless Ones">http://mindlessones.com/feed/</Feed>
+    <Feed Name="MTV Geek">http://geek-news.mtv.com/feed</Feed>
+    <Feed Name="Multiversity Comics">http://feeds.feedburner.com/multiversitycomics/dzxU</Feed>
+  </Category>
+
+
+  <Category Type="Deals">
+    <Feed Name="SlickDeals" ViewType="ie">http://feeds.feedburner.com/SlickdealsnetFP</Feed>
+    <Feed Name="FatWallet" ViewType="ie">http://feeds.feedburner.com/FatwalletHotDeals</Feed>
+    <Feed Name="Techbargains" ViewType="ie">http://www.techbargains.com/rss.xml</Feed>
+    <Feed Name="Dealcatcher" ViewType="ie">http://rss.dealcatcher.com/rss.xml</Feed>
+    <Feed Name="dealspl.us" ViewType="ie">http://feeds.feedburner.com/dealsplus</Feed>
+    <Feed Name="Amazon Gold Box" ViewType="ie">http://rssfeeds.s3.amazonaws.com/goldbox</Feed>
+  </Category>
+
+
+  <Category Type="Food &amp; Wine">
+    <Feed Name="Chow">http://www.chow.com/feed/stories-and-recipes</Feed>
+    <Feed Name="Daily Dish">http://feeds.latimes.com/latimesdailydish</Feed>
+    <Feed Name="Eater National">http://feeds.feedburner.com/EaterNational</Feed>
+    <Feed Name="Food Network">http://blog.foodnetwork.com/fn-dish/feed/</Feed>
+    <Feed Name="Food Republic">http://www.foodrepublic.com/feeds_pulse.xml</Feed>
+    <Feed Name="Liquor.com">http://liquor.com/feed</Feed>
+    <Feed Name="Saveur">http://www.saveur.com/rss_newrecipes.jsp</Feed>
+    <Feed Name="Serious Eats">http://feeds.seriouseats.com/seriouseatsfeaturesvideos</Feed>
+    <Feed Name="Simply Recipes">http://feeds.feedburner.com/elise/simplyrecipes</Feed>
+    <Feed Name="The Cooking Channel">http://blog.cookingchanneltv.com/feed/</Feed>
+    <Feed Name="The Wednesday Chef">http://www.thewednesdaychef.com/the_wednesday_chef/rss.xml</Feed>
+    <Feed Name="Tasting Table">http://tastingtable.com/rss/feed_pulse.xml</Feed>
+    <Feed Name="Yummly">http://feeds.feedburner.com/yummly</Feed>
+    <Feed Name="Zagat">http://feeds.feedburner.com/zagat</Feed>
+    <Feed Name="Vinography">http://www.vinography.com/index.xml</Feed>
+    <Feed Name="Dr. Vino">http://feeds.feedburner.com/blogspot/GuSC</Feed>
+    <Feed Name="The Feiring Line">http://www.alicefeiring.com/blog/rss.xml</Feed>
+  </Category>
+
+
+  <Category Type="Gaming">
+    <Feed Name="1UP">http://www.1up.com/rss</Feed>
+    <Feed Name="Ars Technica">http://feeds.arstechnica.com/arstechnica/gaming</Feed>
+    <Feed Name="Destructoid">http://feeds.feedburner.com/Destructoid</Feed>
+    <Feed Name="EDGE">http://www.edge-online.com/feed</Feed>
+    <Feed Name="Eurogamer.net">http://www.eurogamer.net/?format=rss</Feed>
+    <Feed Name="G4">http://g4tv.com/rss/news/all</Feed>
+    <Feed Name="Gamasutra">http://feeds.feedburner.com/GamasutraNews</Feed>
+    <Feed Name="Game Informer">http://www.gameinformer.com:80/feeds/thefeedrss.aspx</Feed>
+    <Feed Name="gamesTM">http://www.gamestm.co.uk/feed</Feed>
+    <Feed Name="GiantBomb" ViewType="ie">http://feeds.feedburner.com/GiantbombAll</Feed>
+    <Feed Name="IGN.com">http://feeds.ign.com/ign/games-articles</Feed>
+    <Feed Name="Joystiq.com">http://www.joystiq.com/rss.xml</Feed>
+    <Feed Name="Kotaku">http://feeds.gawker.com/kotaku/vip</Feed>
+    <Feed Name="PC Gamer">http://www.pcgamer.com/feed/rss2</Feed>
+    <Feed Name="Penny Arcade" ViewType="ie">http://penny-arcade.com/feed</Feed>
+    <Feed Name="Penny Arcade Report" ViewType="ie">http://feeds.penny-arcade.com/pa-report</Feed>
+    <Feed Name="Rock, Paper, Shotgun">http://feeds.feedburner.com/RockPaperShotgun</Feed>
+    <Feed Name="Wired | GameLife" ViewType="ie">http://www.wired.com/gamelife/feed</Feed>
+    <Feed Name="WoW Insider">http://wow.joystiq.com/rss.xml</Feed>
+  </Category>
+
+
+  <Category Type="Humor ☺">
+    <Feed Name="xkcd">http://www.xkcd.com/rss.xml</Feed>
+    <Feed Name="Bad Machinery" ViewType="ie">http://badmachinery.com/index.xml</Feed>
+    <Feed Name="Break.com" ViewType="ie">http://rss.break.com/channel/homepage</Feed>
+    <Feed Name="Brickd" ViewType="ie">http://feeds.feedburner.com/brickd</Feed>
+    <Feed Name="CollegeHumor" ViewType="ie">http://feeds.feedburner.com/collegehumor/articles</Feed>
+    <Feed Name="Cracked">http://www.cracked.com/crackedrss/featuredarticlesfull.xml</Feed>
+    <Feed Name="Diesel Sweeties" ViewType="ie">http://www.dieselsweeties.com/ds-unifeed.xml</Feed>
+    <Feed Name="FAIL Blog" ViewType="ie">http://feeds.feedburner.com/failblog</Feed>
+    <Feed Name="Funny or Die" ViewType="ie">http://www.funnyordie.com/videos.rss</Feed>
+    <Feed Name="Gawker">http://feeds.gawker.com/gawker/vip</Feed>
+    <Feed Name="Lolcats" ViewType="ie">http://feeds.feedburner.com/ICanHasCheezburger</Feed>
+    <Feed Name="Mighty Optical Illusions">http://feeds.feedburner.com/OpticalIllusions</Feed>
+    <Feed Name="Photoshop Disasters">http://feeds.feedburner.com/psdisasters/dqgx/</Feed>
+    <Feed Name="Rage Comics" ViewType="ie">http://feeds.feedburner.com/memebase/ragecomics</Feed>
+    <Feed Name="someecards">http://www.someecards.com/combined-rss</Feed>
+    <Feed Name="The Onion">http://feeds.theonion.com/theonion/daily</Feed>
+    <Feed Name="theChive" ViewType="ie">http://feeds.feedburner.com/feedburner/ZdSV</Feed>
+  </Category>
+
+
+  <Category Type="Microsoft">
+    <Feed Name="All About Microsoft">http://www.zdnet.com/blog/microsoft/rss</Feed>
+    <Feed Name="Engadget">http://www.engadget.com/tag/microsoft/rss.xml</Feed>
+    <Feed Name="WinRumors">http://feeds.feedburner.com/WinRumors</Feed>
+    <Feed Name="All Things Digital">http://allthingsd.com/tag/microsoft/feed/</Feed>
+  </Category>
+
+
+  <Category Type="Movies">
+    <Feed Name="L.A. Times">http://feeds.latimes.com/latimes/entertainment/news/movies</Feed>
+    <Feed Name="Variety.com">http://feeds.feedburner.com/variety/news/film</Feed>
+    <Feed Name="The Hollywood Reporter">http://feeds.feedburner.com/thr/film</Feed>
+    <Feed Name="Rotten Tomatoes">http://www.rottentomatoes.com/syndication/rss/top_news.xml</Feed>
+    <Feed Name="The Hollywood Reporter | Movie Reviews">http://feeds.feedburner.com/thr/reviews/film</Feed>
+    <Feed Name="Latino Review">http://latino-review.com/feed/</Feed>
+    <Feed Name="FilmDrunk">http://filmdrunk.uproxx.com/feed</Feed>
+    <Feed Name="Film School Rejects">http://www.filmschoolrejects.com/feed</Feed>
+    <Feed Name="Hitfix.com" ViewType="ie">http://www.hitfix.com/movies.rss</Feed>
+    <Feed Name="Indiewire">http://www.indiewire.com/rss/rssFeed.jsp?id=c1c2a9e0-e876-11e0-99d1-12313931436e</Feed>
+    <Feed Name="Movieline">http://www.movieline.com/rss/index.xml</Feed>
+    <Feed Name="Very Aware">http://feeds.feedburner.com/VeryAware</Feed>
+    <Feed Name="Wired | Underwire">http://www.wired.com/underwire/feed/</Feed>
+  </Category>
+
+
+  <Category Type="Politics">
+    <Feed Name="538">http://feeds.feedburner.com/538dotcom</Feed>
+    <Feed Name="Breitbart">http://feeds.feedburner.com/BreitbartFeed</Feed>
+    <Feed Name="BuzzFeed">http://www.buzzfeed.com/politics.xml</Feed>
+    <Feed Name="CNN">http://rss.cnn.com/rss/cnn_allpolitics.rss</Feed>
+    <Feed Name="Crooks and Liars">http://feeds.feedburner.com/crooksandliars/YaCP</Feed>
+    <Feed Name="FOX News">http://feeds.foxnews.com/foxnews/politics</Feed>
+    <Feed Name="Hot Air">http://feeds.feedburner.com/hotair/main</Feed>
+    <Feed Name="NPR">http://www.npr.org/rss/rss.php?id=1014</Feed>
+    <Feed Name="RedState">http://www.redstate.com/feed/</Feed>
+    <Feed Name="Rolling Stone">http://www.rollingstone.com/siteServices/rss/politicsNewsAndFeature</Feed>
+    <Feed Name="Salon">http://www.salon.com/xml/pulse/pulse.rss</Feed>
+    <Feed Name="Slate">http://www.slate.com/articles/news_and_politics.fulltext.all.20.rss</Feed>
+    <Feed Name="The Blaze">http://www.theblaze.com/stories/feed/</Feed>
+    <Feed Name="The Daily Beast">http://feeds.feedburner.com/thedailybeast/politics</Feed>
+    <Feed Name="The Foundry">http://blog.heritage.org/feed/</Feed>
+    <Feed Name="The New Yorker">http://www.newyorker.com/online/blogs/newsdesk/rss.xml</Feed>
+  </Category>
+  
+  
+  <Category Type="Programming">
+    <Feed Name="Channel 9" ViewType="ie">http://channel9.msdn.com/Feeds/RSS</Feed>
+    <Feed Name="Coding4Fun">http://blogs.msdn.com/b/coding4fun/rss.aspx</Feed>
+    <Feed Name="Coding Horror">http://feeds.feedburner.com/codinghorror</Feed>
+    <Feed Name="Girl Developer">http://girldeveloper.typepad.com/blog/rss.xml</Feed>
+    <Feed Name="Riagenic">http://www.riagenic.com/feed</Feed>
+    <Feed Name="Scott Hanselman">http://feeds.feedburner.com/ScottHanselman</Feed>
+    <Feed Name="Scott Guthrie">http://weblogs.asp.net/scottgu/rss.aspx</Feed>
+    <Feed Name="The Daily WTF">http://syndication.thedailywtf.com/TheDailyWtf</Feed>
+  </Category>
+
+
+  <Category Type="Science &amp; Astronomy">
+    <Feed Name="Astronomy.com">http://www.astronomy.com/rss/news</Feed>
+    <Feed Name="Bad Astronomy">http://feeds.feedburner.com/BadAstronomyBlog</Feed>
+    <Feed Name="Disover Magazine">http://feeds.feedburner.com/DiscoverMag</Feed>
+    <Feed Name="Earth Techling">http://www.earthtechling.com/customfeed/</Feed>
+    <Feed Name="io9">http://feeds.gawker.com/io9/vip</Feed>
+    <Feed Name="KQED Quest">http://www.kqed.org/quest/blog/feed/</Feed>
+    <Feed Name="NASA Watch">http://feeds.feedburner.com/nasawatch/Aekt</Feed>
+    <Feed Name="NBC News: Science">http://rss.msnbc.msn.com/id/3032117/device/rss/for/mobile</Feed>
+    <Feed Name="Popular Science">http://www.popsci.com/rss.xml</Feed>
+    <Feed Name="Scientific American">http://rss.sciam.com/ScientificAmerican-Global</Feed>
+    <Feed Name="Smithsonian Science">http://smithsonianscience.org/feed/</Feed>
+    <Feed Name="Wired Science" ViewType="ie">http://www.wired.com/wiredscience/feed/</Feed>
+    <Feed Name="Universe Today">http://feeds.feedburner.com/universetoday/pYdq</Feed>
+  </Category>
+
+
+  <Category Type="Sports">
+    <Feed Name="Bleacher Report">http://bleacherreport.com/articles;feed</Feed>
+    <Feed Name="Deadspin">http://feeds.gawker.com/deadspin/vip</Feed>
+    <Feed Name="ESPN" ViewType="ie">http://sports.espn.go.com/espn/rss/news</Feed>
+    <Feed Name="L.A. Times">http://feeds.latimes.com/latimes/sports</Feed>
+    <Feed Name="SI.com" ViewType="ie">http://rss.cnn.com/rss/si_topstories.rss</Feed>
+    <Feed Name="The Guardian">http://feeds.guardian.co.uk/theguardian/sport/rss</Feed>
+    <Feed Name="Yahoo! Sports">http://sports.yahoo.com/top/rss.xml</Feed>
+  </Category>
+
+
+  <Category Type="Technology">
+    <Feed Name="All Things Digital">http://allthingsd.com/category/news/feed</Feed>
+    <Feed Name="AnandTech">http://www.anandtech.com/rss/</Feed>
+    <Feed Name="Ars Technica">http://feeds.arstechnica.com/arstechnica/index</Feed>
+    <Feed Name="Betanews">http://feeds.betanews.com/bn</Feed>
+    <Feed Name="Boing Boing">http://feeds.boingboing.net/boingboing/iBag</Feed>
+    <Feed Name="Boy Genius Report">http://www.bgr.com/feed/</Feed>
+    <Feed Name="CenterNetworks">http://feeds.feedburner.com/Centernetworks</Feed>
+    <Feed Name="CNET">http://feeds.feedburner.com/cnet/NnTv?tag=contentBody.1</Feed>
+    <Feed Name="CrunchGear">http://feeds.feedburner.com/CrunchGear</Feed>
+    <Feed Name="Digital Daily">http://digitaldaily.allthingsd.com/feed/</Feed>
+    <Feed Name="Engadget">http://www.engadget.com/rss.xml</Feed>
+    <Feed Name="Geek.com">http://www.geek.com/feed/</Feed>
+    <Feed Name="GigaOM">http://feeds.feedburner.com/ommalik</Feed>
+    <Feed Name="Gizmodo">http://feeds.gawker.com/gizmodo/vip</Feed>
+    <Feed Name="Lifehacker">http://feeds.gawker.com/lifehacker/vip</Feed>
+    <Feed Name="Mashable">http://feeds.mashable.com/Mashable</Feed>
+    <Feed Name="PandoDaily">http://pandodaily.com/feed</Feed>
+    <Feed Name="Pocketnow">http://feeds.feedburner.com/pocketnow</Feed>
+    <Feed Name="ReadWriteWeb">http://feeds.feedburner.com/readwriteweb</Feed>
+    <Feed Name="Silicon Alley Insider">http://feeds.feedburner.com/typepad/alleyinsider/silicon_alley_insider</Feed>
+    <Feed Name="SlashGear">http://feeds.slashgear.com/slashgear</Feed>
+    <Feed Name="TechCrunch">http://feeds.feedburner.com/Techcrunch</Feed>
+    <Feed Name="TechnoBuffalo">http://feeds.feedburner.com/technobuffalo/rss</Feed>
+    <Feed Name="The Next Web">http://feeds2.feedburner.com/thenextweb</Feed>
+    <Feed Name="The Verge">http://www.theverge.com/rss/index.xml</Feed>
+    <Feed Name="VentureBeat">http://feeds.venturebeat.com/Venturebeat</Feed>
+    <Feed Name="VR-Zone">http://feeds.feedburner.com/vr-zone</Feed>
+    <Feed Name="Wired.com" ViewType="ie">http://feeds.wired.com/wired/index</Feed>
+    <Feed Name="Wired.com | Gadget Lab" ViewType="ie">http://www.wired.com/gadgetlab/feed</Feed>
+    <Feed Name="ZDNet">http://www.zdnet.com/search?t=1&amp;mode=rss</Feed>
+  </Category>
+  
+
+  <Category Type="TV">
+    <Feed Name="L.A. Times">http://feeds.latimes.com/latimes/entertainment/news/tv</Feed>
+    <Feed Name="Variety.com">http://feeds.feedburner.com/variety/news/tv</Feed>
+    <Feed Name="The Hollywood Reporter">http://feeds.feedburner.com/thr/television</Feed>
+    <Feed Name="USA Today">http://rssfeeds.usatoday.com/UsatodaycomTelevision-TopStories</Feed>
+    <Feed Name="Hitfix.com" ViewType="ie">http://www.hitfix.com/tv.rss</Feed>
+    <Feed Name="The Ausiello Files">http://feeds.ew.com/entertainmentweekly/ausiellofiles</Feed>
+    <Feed Name="Ken Tucker's TV">http://feeds.ew.com/entertainmentweekly/watching-tv</Feed>
+    <Feed Name="The Hollywood Reporter | TV Reviews">http://feeds.feedburner.com/thr/reviews/tv</Feed>
+    <Feed Name="Entertainment Weekly">http://feeds.ew.com/entertainmentweekly/tvwatch</Feed>
+    <Feed Name="Warming Glow">http://warmingglow.uproxx.com/feed</Feed>
+    <Feed Name="TV Guide">http://rss.tvguide.com/breakingnews</Feed>
+  </Category>
+  
+
+  <Category Type="U.S. News">
+    <Feed Name="CNN">http://rss.cnn.com/rss/cnn_us.rss</Feed>
+    <Feed Name="L.A. Times">http://feeds.latimes.com/latimes/news/nationworld/nation</Feed>
+    <Feed Name="MSNBC" ViewType="ie">http://rss.msnbc.msn.com/id/3032524/device/rss/rss.xml</Feed>
+    <Feed Name="The Atlantic Wire">http://feeds.feedburner.com/TheAtlanticWire</Feed>
+    <Feed Name="The New Yorker">http://pipes.yahoo.com/pipes/pipe.run?_id=d0f11f71c7db0ddb409f24431f767024&amp;_render=rss</Feed>
+    <Feed Name="United Press International">http://rss.upi.com/pulse/top_news.rss</Feed>
+    <Feed Name="USA Today" ViewType="ie">http://api.usatoday.com/articles/rss-full/topnews?api_key=pulsereader</Feed>
+    <Feed Name="U.S. News &amp; World Report">http://www.usnews.com/topics/series/pulse/rss_full</Feed>
+  </Category>
+
+
+  <Category Type="Windows Phone">
+    <Feed Name="All Things Digital | WP">http://mobilized.allthingsd.com/tag/windows-phone-7/feed/</Feed>
+    <Feed Name="1800PocketPc">http://feeds.feedburner.com/RSS_1800PocketPC</Feed>
+    <Feed Name="Best WP7 Games">http://feeds.feedburner.com/bestwp7games</Feed>
+    <Feed Name="BGR | WP">http://www.bgr.com/tag/windows-phone/feed</Feed>
+    <Feed Name="Engadget | WP">http://www.engadget.com/tag/windowsphone/rss.xml</Feed>
+    <Feed Name="EverythingWM">http://feeds.feedburner.com/everythingwm</Feed>
+    <Feed Name="MobileTechWorld">http://feeds.feedburner.com/mobiletechworld/</Feed>
+    <Feed Name="Mobility Digest">http://mobilitydigest.com/category/windowsphone/feed</Feed>
+    <Feed Name="PhoneArena" ViewType="ie">http://www.phonearena.com/feed/windows/news</Feed>
+    <Feed Name="Pocket-lint">http://www.pocket-lint.com/rss.phtml?type=news&amp;channels=windows+phone+7</Feed>
+    <Feed Name="Seles Games Twitter Feed" ViewType="ie">http://twitter.com/statuses/user_timeline/168187863.rss</Feed>
+    <Feed Name="Windows Phone Metro" ViewType="ie">http://windowsphonemetro.com/feed/</Feed>
+    <Feed Name="Windows Team Blog">http://windowsteamblog.com/windows_phone/rss.aspx</Feed>
+    <Feed Name="WMPoweruser.com">http://feeds.feedburner.com/WmPowerUser</Feed>
+    <Feed Name="WPCentral.com">http://feeds.feedburner.com/wmexperts?format=xml</Feed>
+    <Feed Name="ZDNet">http://www.zdnet.com/topics/microsoft+windows+phone+7?o=1&amp;mode=rss&amp;tag=mantle_skin;content</Feed>
+  </Category>
+  
+  
+  <Category Type="World News">
+    <Feed Name="Chicago Tribune">http://feeds.chicagotribune.com/chicagotribune/news/nationworld/</Feed>
+    <Feed Name="CNN">http://rss.cnn.com/rss/cnn_world.rss</Feed>
+    <Feed Name="Huffington Post">http://www.huffingtonpost.com/feeds/android/World_pulse.xml</Feed>
+    <Feed Name="L.A. Times">http://feeds.latimes.com/latimes/news/nationworld/world</Feed>
+    <Feed Name="MSNBC">http://rss.msnbc.msn.com/id/3032506/device/rss/rss.xml</Feed>
+    <Feed Name="The Guardian">http://feeds.guardian.co.uk/theguardian/world/rss</Feed>
+    <Feed Name="The Telegraph">http://www.telegraph.co.uk/news/worldnews/rss</Feed>
+    <Feed Name="Worldcrunch">http://www.worldcrunch.com/feed</Feed>
+  </Category>
+
+
+  <!-- end POPULAR FEEDS -->
+
+
+
+
+  <!--Category Type="Podcasts">
+    <Feed Name="Windows Weekly">http://leo.am/podcasts/ww.xml</Feed>
+    <Feed Name="The Adam Corolla Show">http://feeds.feedburner.com/TheAdamCarollaPodcast</Feed>
+    <Feed Name="TWiT">http://feeds.twit.tv/twit_video_small</Feed>
+    <Feed Name="Onion News Network">http://feeds.theonion.com/onionnewsnetwork</Feed>
+    <Feed Name="Tekzilla">http://revision3.com/tekzilla/feed/MP4-hd30</Feed>
+    <Feed Name="Giant Bomb">http://www.giantbomb.com/feeds/podcast/</Feed>
+    <Feed Name="Major Nelson">http://feeds.feedburner.com/mnitunes</Feed>
+  </Category-->
+
+
+
+
+  
+  
+  <!-- NICHE FEEDS -->
+
+
+  <Category Type="Art &amp; Photography">
+    <Feed Name="FFFFOUND!">http://feeds.feedburner.com/ffffound/everyone</Feed>
+    <Feed Name="Drawn!">http://feeds.feedburner.com/drawn</Feed>
+    <Feed Name="deviantART">http://backend.deviantart.com/rss.xml</Feed>
+    <Feed Name="BOOOOOOOM!">http://feeds.feedburner.com/BoomItsABlog</Feed>
+    <Feed Name="Illustration Friday">http://illustrationfriday.com/dev/xml_rpc/rss.xml</Feed>
+
+    <Feed Name="Digital Photography School">http://feeds.feedburner.com/DigitalPhotographySchool</Feed>
+    <Feed Name="Strobist">http://feeds.feedburner.com/blogspot/WOBq</Feed>
+    <Feed Name="DIYPhotography.net">http://feeds.feedburner.com/Diyphotographynet</Feed>
+    <Feed Name="Photojojo">http://feeds.feedburner.com/Photojojo</Feed>
+  </Category>
+
+  <Category Type="Books">
+    <Feed Name="A Journey Round My Skull">http://feeds.feedburner.com/AJourneyRoundMySkull</Feed>
+    <Feed Name="Barns &amp; Noble Review">http://bnreview.barnesandnoble.com/bnreview/plugins/custom/barnesandnoble/bnreview/rss_full</Feed>
+    <Feed Name="Omnivoracious">http://www.omnivoracious.com/rss.xml</Feed>
+    <Feed Name="London Review of Books">http://www.lrb.co.uk/lrbrss.xml</Feed>
+    <Feed Name="Paulo Coelho's Blog">http://feeds.feedburner.com/PauloCoelhosBlog</Feed>
+  </Category>
+  
+  <Category Type="College">
+    <Feed Name="Study Hacks">http://feeds.feedburner.com/StudyHacks</Feed>
+    <Feed Name="CampusGrotto">http://feeds.feedburner.com/CampusGrotto</Feed>
+    <Feed Name="DormDelicious">http://feeds2.feedburner.com/dormdelicious-dormdecoratingideas</Feed>
+    <Feed Name="HackCollege">http://feeds.feedburner.com/Hackcollege</Feed>
+  </Category>
+
+  <Category Type="Cars">
+    <Feed Name="Car and Driver">http://feeds.feedburner.com/caranddriver/blog</Feed>
+  </Category>
+
+  <Category Type="Dating">
+    <Feed Name="Single-ish: Sex, Love and Life">http://feeds.glamour.com/glamour/sex_love_life</Feed>
+    <Feed Name="DontDateHimGirl.com">http://dontdatehimgirl.com/feeds/todayonddhg.php</Feed>
+    <Feed Name="GirlsAskGuys">http://www.girlsaskguys.com/rss.html</Feed>
+  </Category>
+
+  <Category Type="Design">
+    <Feed Name="Uncrate">http://feeds.feedburner.com/uncrate</Feed>
+    <Feed Name="Core77">http://feeds.feedburner.com/core77/blog</Feed>
+    <Feed Name="DesignAddict">http://feeds.feedburner.com/DesignAddict_TheBlog</Feed>
+    <Feed Name="Designboom">http://www.designboom.com/weblog/rss.php</Feed>
+    <Feed Name="Commaarts">http://feeds.commarts.com/commarts/index</Feed>
+  </Category>
+
+  <Category Type="Fashion">
+    <Feed Name="The Budget Fashionista">http://feeds.feedburner.com/TheBudgetFashionista</Feed>
+    <Feed Name="Style.com">http://www.style.com/fashionshows/rss</Feed>
+    <Feed Name="College Fashion">http://feeds.feedburner.com/collegefashion</Feed>
+    <Feed Name="WhoWhatWear.com">http://www.whowhatwear.com/rss/</Feed>
+    <Feed Name="The Sartorialist">http://thesartorialist.blogspot.com/feeds/posts/default?alt=rss</Feed>
+  </Category>
+
+  <Category Type="Gardening">
+    <Feed Name="Fine Gardening">http://www.finegardening.com/feeds/rss/blogs.xml</Feed>
+    <Feed Name="Backyard Gardening Blog">http://feeds.feedburner.com/BackyardGardeningBlog</Feed>
+    <Feed Name="Danielle's Garden Blog">http://feeds.feedburner.com/DaniellesGardenBlog</Feed>
+  </Category>
+
+  <Category Type="Health">
+    <Feed Name="MSN.com">http://health.msn.com/rss/health-news.aspx</Feed>
+    <Feed Name="KevinMD.com">http://feeds.feedburner.com/KevinMd-MedicalWeblog</Feed>
+    <Feed Name="Wall Street Journal | Health Blog">http://feeds.wsjonline.com/wsj/health/feed?format=xml</Feed>
+  </Category>
+
+  <Category Type="Music">
+    <Feed Name="PopMatters">http://www.popmatters.com/pm/feeds/</Feed>
+    <Feed Name="Stereogum">http://feeds.feedburner.com/stereogum/cBYa</Feed>
+    <Feed Name="The Hype Machine">http://hypem.com/feed/time/today/1/feed.xml</Feed>
+  </Category>
+
+  <Category Type="Travel">
+    <Feed Name="Intelligent Travel Blog">http://feeds.feedburner.com/IntelligentTravel</Feed>
+    <Feed Name="AlmostFearless.com">http://feeds.feedburner.com/Almostfearless</Feed>
+    <Feed Name="Everything Everywhere">http://feeds2.feedburner.com/EverythingEverywhere</Feed>
+    <Feed Name="Nomadic Matt's Travel Site">http://feeds.feedburner.com/MattsTravelSite</Feed>
+    <Feed Name="Gadling">http://feeds.feedburner.com/weblogsinc/gadling</Feed>
+  </Category>
+
+  <Category Type="Yoga">
+    <Feed Name="Daily Cup of Yoga">http://feeds.feedburner.com/DailyCupofYogaRSS</Feed>
+    <Feed Name="The Everything Yoga Blog">http://feeds.feedburner.com/EverythingYoga?format=xml</Feed>
+    <Feed Name="Yoga Buzz">http://feeds.feedburner.com/YogaBuzz?format=xml</Feed>
+    <Feed Name="Topix">http://www.topix.com/rss/fitness/yoga</Feed>
+  </Category>
+  <!-- end NICHE FEEDS -->
+
+
+</Feeds>

@@ -15,6 +15,7 @@ using Weave.RssAggregator.HighFrequency;
 using Weave.RssAggregator.WorkerRole.Startup;
 using Ninject;
 using Microsoft.ServiceBus.Messaging;
+using System.Threading.Tasks;
 
 namespace RssAggregator.ConsoleTesting
 {
@@ -24,7 +25,8 @@ namespace RssAggregator.ConsoleTesting
         {
             try
             {
-                TestSendToServiceBusMessageQueue().Wait();
+                TestReceiveServiceBusMessageQueue();
+                TestSendToServiceBusMessageQueue();
                 //FuckThisShit().Wait();
                 //TestService().Wait();
             }
@@ -33,18 +35,31 @@ namespace RssAggregator.ConsoleTesting
                 DebugEx.WriteLine(e);
             }
 
+            Console.WriteLine("all tests passed!");
+
             while (true)
                 Console.ReadLine();
         }
 
-        static async Task TestSendToServiceBusMessageQueue()
+        static void TestReceiveServiceBusMessageQueue()
         {
-            await Task.Yield();
+            QueueConnector.Initialize();
+            var client = QueueConnector.OrdersQueueClient;
+            BrokeredMessage receivedMessage = null;
+            receivedMessage = client.Receive();
+            Debug.WriteLine(receivedMessage);
+            var body = receivedMessage.GetBody<string>();
+            Debug.WriteLine(body);
+            receivedMessage.Complete();
+        }
+
+        static void TestSendToServiceBusMessageQueue()
+        {
             QueueConnector.Initialize();
             var client = QueueConnector.OrdersQueueClient;
             BrokeredMessage message;
 
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 10; i++)
             {
                 message = new BrokeredMessage("hello world " + i);
                 client.Send(message);

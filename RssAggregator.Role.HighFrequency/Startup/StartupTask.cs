@@ -1,53 +1,30 @@
-﻿using Microsoft.WindowsAzure.ServiceRuntime;
+﻿using Microsoft.ServiceBus;
+using Microsoft.WindowsAzure.ServiceRuntime;
 using Ninject;
 using Ninject.WebApi;
 using System;
 using System.Diagnostics;
 using System.ServiceModel;
-using Weave.Mobilizer.Core.Controllers;
+using System.Web.Http.Dependencies;
 using Weave.RssAggregator.HighFrequency;
 
-namespace Weave.RssAggregator.WorkerRole.HighFrequency.Startup
+namespace RssAggregator.Role.HighFrequency
 {
     internal class StartupTask
     {
-        HighFrequencyFeedCache hsfCache;
         IKernel kernel;
+        HighFrequencyFeedCache hfCache;
+        IDependencyResolver resolver;
 
         public void OnStart()
         {
+            kernel = new NinjectKernel();
+            resolver = new NinjectResolver(kernel); 
+            
             SetHighFrequencyValues();
             CreateAndStartServer();
-            StartWCFService();
-        }
 
-        void CreateAndStartServer()
-        {
-            kernel = new Kernel(hsfCache);
-        //    var resolver = new NinjectResolver(kernel);
-
-        //    var ip = RoleEnvironment.CurrentRoleInstance.InstanceEndpoints["Endpoint1"].IPEndpoint;
-        //    var ipString = string.Format("http://{0}", ip.ToString());
-        //    Trace.WriteLine(string.Format("**** IP ADDRESS: {0}", ipString));
-
-        //    var selfHost = new SelfHost(ipString, resolver);
-        //    selfHost.StartServer().Wait();
-        }
-
-        void StartWCFService()
-        {
-            var baseAddress = String.Format(
-                "net.tcp://{0}",
-                RoleEnvironment.CurrentRoleInstance.InstanceEndpoints["Endpoint1"].IPEndpoint
-                );
-
-            //kernel.Bind<WeaveController>().ToSelf();
-            var controller = kernel.Get<WeaveController>();
-            var host = new ServiceHost(controller, new Uri(baseAddress));
-
-            host.AddServiceEndpoint(typeof(IWeaveControllerService), new NetTcpBinding(SecurityMode.None), "api/weave");
-
-            host.Open();
+            hfCache.StartFeedRefreshTimer();
         }
 
         void SetHighFrequencyValues()
@@ -67,7 +44,40 @@ namespace Weave.RssAggregator.WorkerRole.HighFrequency.Startup
             temp = RoleEnvironment.GetConfigurationSettingValue("FeedLibraryUrl");
             feedLibraryUrl = temp;
 
-            hsfCache = new HighFrequencyFeedCache(feedLibraryUrl, highFrequencyRefreshSplit, highFrequencyRefreshPeriod);
+            hfCache = new HighFrequencyFeedCache(
+                feedLibraryUrl, 
+                kernel.Get<SqlUpdater>(), 
+                highFrequencyRefreshSplit, 
+                highFrequencyRefreshPeriod);
+
+            kernel.Bind<HighFrequencyFeedCache>().ToMethod(_ => hfCache).InSingletonScope();
+        }
+
+        void CreateAndStartServer()
+        {
+            var ip = RoleEnvironment.CurrentRoleInstance.InstanceEndpoints["Endpoint1"].IPEndpoint;
+            var ipString = string.Format("net.tcp://{0}", ip.ToString());
+            Trace.WriteLine(string.Format("**** IP ADDRESS: {0}", ipString));
+
+            var sh = new ServiceHost(typeof(HighFrequencyFeedRetriever));
+
+            sh.AddServiceEndpoint(
+               typeof(IHighFrequencyFeedRetriever), 
+               new NetTcpBinding(),
+               ipString);
+
+            sh.AddServiceEndpoint(
+               typeof(IHighFrequencyFeedRetriever), 
+               new NetTcpRelayBinding(),
+               ServiceBusEnvironment.CreateServiceUri("sb", "weave-interop", "hf"))
+                .Behaviors.Add(new TransportClientEndpointBehavior
+                {
+                    TokenProvider = TokenProvider.CreateSharedSecretTokenProvider("owner", "R92FFdAujgEDEPnjLhxMfP06fH+qhmMwwuXetdyAEZM=")
+                });
+
+            sh.Open();
+
+            Trace.WriteLine("^&*^&*^&*^*&^  SERVER IS UP AND RUNNING!!!");
         }
     }
 }

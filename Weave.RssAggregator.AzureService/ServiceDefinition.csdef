@@ -15,4 +15,18 @@
       <InputEndpoint name="Endpoint1" protocol="http" port="80" />
     </Endpoints>
   </WorkerRole>
+  <WorkerRole name="RssAggregator.Role.HighFrequency" vmsize="Small">
+    <Runtime executionContext="elevated" />
+    <Imports>
+      <Import moduleName="Diagnostics" />
+    </Imports>
+    <ConfigurationSettings>
+      <Setting name="HighFrequencyRefreshPeriod" />
+      <Setting name="HighFrequencyRefreshSplit" />
+      <Setting name="FeedLibraryUrl" />
+    </ConfigurationSettings>
+    <Endpoints>
+      <InternalEndpoint name="Endpoint1" protocol="tcp" port="9358" />
+    </Endpoints>
+  </WorkerRole>
 </ServiceDefinition>

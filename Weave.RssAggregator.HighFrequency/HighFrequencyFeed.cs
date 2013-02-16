@@ -15,7 +15,7 @@ namespace Weave.RssAggregator.HighFrequency
     {
         Subject<List<Entry>> feedUpdate = new Subject<List<Entry>>();
 
-        public Guid FeedId { get; private set; }
+        public Guid FeedId { get; set; }
         public string Name { get; set; }
         public string FeedUri { get; set; }
         public string Etag { get; set; }

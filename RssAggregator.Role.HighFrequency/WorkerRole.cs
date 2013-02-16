@@ -3,7 +3,6 @@ using System;
 using System.Diagnostics;
 using System.Net;
 using System.Threading;
-using Weave.RssAggregator.WorkerRole.HighFrequency.Startup;
 
 namespace RssAggregator.Role.HighFrequency
 {
