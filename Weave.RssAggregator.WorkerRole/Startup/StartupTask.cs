@@ -24,7 +24,7 @@ namespace Weave.RssAggregator.WorkerRole.Startup
             SetHighFrequencyValues();
             CreateAndStartServer();
 
-            hfCache.DoShit();
+            hfCache.DoShit().Wait();
 
             //hfCache.StartFeedRefreshTimer();
         }

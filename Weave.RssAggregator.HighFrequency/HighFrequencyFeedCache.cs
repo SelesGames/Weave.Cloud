@@ -127,7 +127,7 @@ namespace Weave.RssAggregator.HighFrequency
                 return new FeedResult { Id = request.Id, Status = FeedResultStatus.Failed };
         }
 
-        public void DoShit()
+        public async Task DoShit()
         {
             var cf = new ChannelFactory<IHighFrequencyFeedRetrieverChannel>(
                 new NetTcpRelayBinding(),
@@ -139,13 +139,13 @@ namespace Weave.RssAggregator.HighFrequency
                 TokenProvider = TokenProvider.CreateSharedSecretTokenProvider("owner", "R92FFdAujgEDEPnjLhxMfP06fH+qhmMwwuXetdyAEZM=") 
             });
 
-            Task.Delay(10000).Wait();
+            await Task.Delay(10000);
 
             using (var ch = cf.CreateChannel())
             {
                 foreach (var feed in feeds.Select(o => o.Value.FeedUri))
                 {
-                    var channelFeed = ch.GetFeed(feed);
+                    var channelFeed = await ch.GetFeed(feed);
                     DebugEx.WriteLine(channelFeed);
                 }
             }
@@ -232,7 +232,7 @@ namespace Weave.RssAggregator.HighFrequency
     public interface IHighFrequencyFeedRetriever
     {
         [OperationContract]
-        HighFrequencyFeed GetFeed(string feedUrl);
+        Task<HighFrequencyFeed> GetFeed(string feedUrl);
     }
 
     public interface IHighFrequencyFeedRetrieverChannel : IHighFrequencyFeedRetriever, IClientChannel { }
