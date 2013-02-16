@@ -12,6 +12,9 @@ namespace RssAggregator.Role.HighFrequency
 
     public interface IHighFrequencyFeedRetrieverChannel : IHighFrequencyFeedRetriever, IClientChannel { }
 
+    [ServiceBehavior(
+        InstanceContextMode = InstanceContextMode.Single,
+        ConcurrencyMode = ConcurrencyMode.Multiple)]
     public class HighFrequencyFeedRetriever : IHighFrequencyFeedRetriever
     {
         HighFrequencyFeedCache cache;

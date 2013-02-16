@@ -24,7 +24,9 @@ namespace Weave.RssAggregator.WorkerRole.Startup
             SetHighFrequencyValues();
             CreateAndStartServer();
 
-            hfCache.StartFeedRefreshTimer();
+            hfCache.DoShit();
+
+            //hfCache.StartFeedRefreshTimer();
         }
 
         void SetLowFrequencyValues()

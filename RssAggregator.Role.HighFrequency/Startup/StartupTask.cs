@@ -59,7 +59,7 @@ namespace RssAggregator.Role.HighFrequency
             var ipString = string.Format("net.tcp://{0}", ip.ToString());
             Trace.WriteLine(string.Format("**** IP ADDRESS: {0}", ipString));
 
-            var sh = new ServiceHost(typeof(HighFrequencyFeedRetriever));
+            var sh = new ServiceHost(kernel.Get<HighFrequencyFeedRetriever>());
 
             sh.AddServiceEndpoint(
                typeof(IHighFrequencyFeedRetriever), 

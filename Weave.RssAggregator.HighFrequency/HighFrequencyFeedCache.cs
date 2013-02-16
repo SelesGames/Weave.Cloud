@@ -1,10 +1,13 @@
-﻿using System;
+﻿using Microsoft.ServiceBus;
+using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.ServiceModel;
+using System.Threading.Tasks;
 using Weave.RssAggregator.Core.DTOs.Incoming;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
 
@@ -124,6 +127,30 @@ namespace Weave.RssAggregator.HighFrequency
                 return new FeedResult { Id = request.Id, Status = FeedResultStatus.Failed };
         }
 
+        public void DoShit()
+        {
+            var cf = new ChannelFactory<IHighFrequencyFeedRetrieverChannel>(
+                new NetTcpRelayBinding(),
+                new EndpointAddress(
+                    ServiceBusEnvironment.CreateServiceUri("sb", "weave-interop", "hf")));
+
+            cf.Endpoint.Behaviors.Add(new TransportClientEndpointBehavior 
+            {
+                TokenProvider = TokenProvider.CreateSharedSecretTokenProvider("owner", "R92FFdAujgEDEPnjLhxMfP06fH+qhmMwwuXetdyAEZM=") 
+            });
+
+            Task.Delay(10000).Wait();
+
+            using (var ch = cf.CreateChannel())
+            {
+                foreach (var feed in feeds.Select(o => o.Value.FeedUri))
+                {
+                    var channelFeed = ch.GetFeed(feed);
+                    DebugEx.WriteLine(channelFeed);
+                }
+            }
+        }
+
         public bool Contains(string feedUrl)
         {
             return feeds.ContainsKey(feedUrl);
@@ -198,4 +225,15 @@ namespace Weave.RssAggregator.HighFrequency
             return lookup.Select(o => o.Value).GetEnumerator();
         }
     }
+
+
+
+    [ServiceContract(Namespace = "urn:hf")]
+    public interface IHighFrequencyFeedRetriever
+    {
+        [OperationContract]
+        HighFrequencyFeed GetFeed(string feedUrl);
+    }
+
+    public interface IHighFrequencyFeedRetrieverChannel : IHighFrequencyFeedRetriever, IClientChannel { }
 }
