@@ -46,7 +46,7 @@ namespace RssAggregator.Role.HighFrequency
                 });
 
             Bind<TopicConnector>().ToMethod(_ => new TopicConnector(this.Get<ServiceBusCredentials>(), "FeedUpdatedTopic"))
-                .WhenInjectedExactlyInto<Weave.RssAggregator.HighFrequency.ServiceBusUpdater>()
+                .WhenInjectedExactlyInto<ServiceBusUpdater>()
                 .InSingletonScope();
 
             Bind<SequentialProcessor>().ToMethod(_ => new SequentialProcessor(
