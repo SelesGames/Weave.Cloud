@@ -1,73 +1,40 @@
-﻿using Microsoft.ServiceBus.Messaging;
+﻿using Common.Azure.ServiceBus;
+using Microsoft.ServiceBus.Messaging;
 using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Reactive.Concurrency;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
+using Weave.RssAggregator.Parsing;
 
 namespace Weave.RssAggregator.HighFrequency
 {
-    public class ServiceBusUpdater
+    public class ServiceBusUpdater : ISequentialAsyncProcessor<Tuple<HighFrequencyFeed, List<Entry>>>
     {
-        IObservable<HighFrequencyFeed> updateQueue;
-        QueueClient queueClient;
-        EventLoopScheduler singleThreadScheduler = new EventLoopScheduler();
+        TopicConnector topicConnector;
 
-        public ServiceBusUpdater(QueueClient queueClient)
+        public ServiceBusUpdater(TopicConnector topicConnector)
         {
-            this.queueClient = queueClient;
+            this.topicConnector = topicConnector;
         }
 
-        public void Register(HighFrequencyFeed feed)
+        public bool IsHandledFully { get; private set; }
+
+        public async Task ProcessAsync(Tuple<HighFrequencyFeed, List<Entry>> feedTuple)
         {
-            var feedUpdate = feed.FeedUpdate.Select(o => feed);
+            var feed = feedTuple.Item1;
+            var client = await topicConnector.GetClient();
 
-            if (updateQueue == null)
-                updateQueue = feedUpdate;
-            else
-                updateQueue = updateQueue.Merge(feedUpdate);
-
-            Resubscribe();
-        }
-
-        void Resubscribe()
-        {
-            if (updateQueue == null)
-                return;
-
-            updateQueue.ObserveOn(singleThreadScheduler).SubscribeOn(singleThreadScheduler).Subscribe(
-                SafeOnHfFeedUpdate,
-                exception =>
-                {
-                    DebugEx.WriteLine(exception);
-                    Resubscribe();
-                });
-        }
-
-        async void SafeOnHfFeedUpdate(HighFrequencyFeed update)
-        {
-            try
-            {
-                await OnHfFeedUpdate(update);
-            }
-            catch (Exception e)
-            {
-                //DebugEx.WriteLine(e);
-            }
-        }
-
-        async Task OnHfFeedUpdate(HighFrequencyFeed feed)
-        {
-            await Task.Yield();
             using (var ms = new MemoryStream())
             {
-                //ProtoBuf.Serializer.Serialize(ms, feed.News);
-                //ms.Position = 0;
-                //var message = new BrokeredMessage(ms, true);
+                ProtoBuf.Serializer.Serialize(ms, feed.News);
+                ms.Position = 0;
+                var message = new BrokeredMessage(ms, false);
                 //message.ContentType = "application/protobuf";
                 //message.Label = string.Format("{0}: {1}", feed.FeedId, feed.FeedUri);
-                var message = new BrokeredMessage("hello world");
-                queueClient.Send(message); // TODO: change to async version
+                message.Properties["FeedId"] = feed.FeedId;
+                message.TimeToLive = TimeSpan.FromHours(24);
+                await client.SendAsync(message);
+                DebugEx.WriteLine("service bus processed: {0}", feed.FeedUri);
             }
         }
     }

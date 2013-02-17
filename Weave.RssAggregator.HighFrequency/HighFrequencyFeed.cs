@@ -97,5 +97,10 @@ namespace Weave.RssAggregator.HighFrequency
                 this.LastFeedState = FeedState.Failed;
             }
         }
+
+        public override string ToString()
+        {
+            return Name + ": " + FeedUri;
+        }
     }
 }

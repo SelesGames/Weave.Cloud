@@ -24,7 +24,7 @@ namespace Weave.RssAggregator.WorkerRole.Startup
             SetHighFrequencyValues();
             CreateAndStartServer();
 
-            hfCache.DoShit().Wait();
+            //hfCache.DoShit().Wait();
 
             //hfCache.StartFeedRefreshTimer();
         }
@@ -55,7 +55,7 @@ namespace Weave.RssAggregator.WorkerRole.Startup
 
             hfCache = new HighFrequencyFeedCache(
                 feedLibraryUrl, 
-                kernel.Get<SqlUpdater>(), 
+                null, 
                 highFrequencyRefreshSplit, 
                 highFrequencyRefreshPeriod);
 

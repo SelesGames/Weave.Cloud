@@ -3,17 +3,14 @@ using SelesGames.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Concurrency;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Weave.RssAggregator.Parsing;
 using Sql = RssAggregator.Data.Sql;
 
 namespace Weave.RssAggregator.HighFrequency
 {
-    public class SqlUpdater
+    public class SqlUpdater : ISequentialAsyncProcessor<Tuple<HighFrequencyFeed, List<Entry>>>
     {
-        IObservable<Tuple<HighFrequencyFeed, List<Entry>>> updateQueue;
         SqlClient dbClient;
         IProvider<ITransactionalDatabaseClient> transactClientProvider;
 
@@ -23,51 +20,17 @@ namespace Weave.RssAggregator.HighFrequency
             this.transactClientProvider = transactClientProvider;
         }
 
-        public void Register(HighFrequencyFeed feed)
-        {
-            var feedUpdate = feed.FeedUpdate.Select(o => Tuple.Create(feed, o));
+        public bool IsHandledFully { get; private set; }
 
-            if (updateQueue == null)
-                updateQueue = feedUpdate;
-            else
-                updateQueue = updateQueue.Merge(feedUpdate);
-
-            Resubscribe();
-        }
-
-        void Resubscribe()
-        {
-            if (updateQueue == null)
-                return;
-
-            updateQueue.Subscribe(
-                SafeOnHfFeedUpdate,
-                exception =>
-                {
-                    DebugEx.WriteLine(exception);
-                    Resubscribe();
-                });
-        }
-
-        async void SafeOnHfFeedUpdate(Tuple<HighFrequencyFeed, List<Entry>> update)
-        {
-            try
-            {
-                await OnHfFeedUpdate(update);
-            }
-            catch (Exception e)
-            {
-                DebugEx.WriteLine(e);
-            }
-        }
-
-
-        async Task OnHfFeedUpdate(Tuple<HighFrequencyFeed, List<Entry>> feed)
+        public async Task ProcessAsync(Tuple<HighFrequencyFeed, List<Entry>> feed)
         {
             var latest = await dbClient.GetLatestForFeedId(feed.Item1.FeedId);
             var latestNews = feed.Item2.Where(o => o.PublishDateTime > latest).Select(Translate);
             if (!latestNews.Any())
+            {
+                IsHandledFully = true;
                 return;
+            }
 
             foreach (var newsItem in latestNews)
             {

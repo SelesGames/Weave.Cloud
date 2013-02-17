@@ -32,6 +32,10 @@ namespace Weave.RssAggregator.Parsing
         {
             this.News = new List<Entry>();
             this.TimeOut = TimeSpan.FromMinutes(1);
+
+#if DEBUG
+            this.TimeOut = TimeSpan.FromHours(1);
+#endif
         }
 
         public async Task<RequestStatus> UpdateFeed()

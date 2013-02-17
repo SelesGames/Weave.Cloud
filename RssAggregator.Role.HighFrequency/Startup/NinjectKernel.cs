@@ -1,7 +1,12 @@
-﻿using Common.Data;
+﻿using Common.Azure.ServiceBus;
+using Common.Data;
 using Common.Data.Linq;
 using Ninject;
 using SelesGames.Common;
+using System;
+using System.Collections.Generic;
+using Weave.RssAggregator.HighFrequency;
+using Weave.RssAggregator.Parsing;
 
 namespace RssAggregator.Role.HighFrequency
 {
@@ -32,6 +37,25 @@ namespace RssAggregator.Role.HighFrequency
 
 
             Bind<SqlStoredProcClient>().ToMethod(_ => new SqlStoredProcClient(connectionString));
+
+            Bind<ServiceBusCredentials>().ToConstant(new ServiceBusCredentials
+                {
+                    Namespace = "weave-interop",
+                    IssuerName = "owner",
+                    IssuerKey = "R92FFdAujgEDEPnjLhxMfP06fH+qhmMwwuXetdyAEZM=",
+                });
+
+            Bind<TopicConnector>().ToMethod(_ => new TopicConnector(this.Get<ServiceBusCredentials>(), "FeedUpdatedTopic"))
+                .WhenInjectedExactlyInto<Weave.RssAggregator.HighFrequency.ServiceBusUpdater>()
+                .InSingletonScope();
+
+            Bind<SequentialProcessor>().ToMethod(_ => new SequentialProcessor(
+                new ISequentialAsyncProcessor<Tuple<HighFrequencyFeed, List<Entry>>>[]
+                {
+                    this.Get<SqlUpdater>(),
+                    this.Get<ServiceBusUpdater>(),
+                }))
+                .InSingletonScope();
         }
     }
 }

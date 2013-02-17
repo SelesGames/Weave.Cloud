@@ -26,7 +26,7 @@ namespace Weave.RssAggregator.HighFrequency
 
         #region Constructors
 
-        public HighFrequencyFeedCache(string feedLibraryUrl, SqlUpdater sqlUpdater)
+        public HighFrequencyFeedCache(string feedLibraryUrl, SequentialProcessor processor)
         {
             if (string.IsNullOrEmpty(feedLibraryUrl)) return;
 
@@ -44,21 +44,23 @@ namespace Weave.RssAggregator.HighFrequency
                     })
                 .ToList();
 
-            QueueConnector.Initialize();
-            var serviceBusUpdater = new ServiceBusUpdater(QueueConnector.OrdersQueueClient);
-
             foreach (var feed in highFrequencyFeeds)
             {
                 feed.InitializeId();
-                //sqlUpdater.Register(feed);
-                //serviceBusUpdater.Register(feed);
+                if (processor != null)
+                    processor.Register(feed);
             }
 
             feeds = highFrequencyFeeds.ToDictionary(o => o.FeedUri);
         }
 
-        public HighFrequencyFeedCache(string feedLibraryUrl, SqlUpdater sqlUpdater, int highFrequencyRefreshSplit, TimeSpan highFrequencyRefreshPeriod)
-            : this(feedLibraryUrl, sqlUpdater)
+        public HighFrequencyFeedCache(
+                                    string feedLibraryUrl,
+                                    SequentialProcessor processor, 
+                                    int highFrequencyRefreshSplit, 
+                                    TimeSpan highFrequencyRefreshPeriod)
+
+            : this(feedLibraryUrl, processor)
         {
             if (string.IsNullOrEmpty(feedLibraryUrl)) return;
 
@@ -129,26 +131,31 @@ namespace Weave.RssAggregator.HighFrequency
 
         public async Task DoShit()
         {
-            var cf = new ChannelFactory<IHighFrequencyFeedRetrieverChannel>(
-                new NetTcpRelayBinding(),
-                new EndpointAddress(
-                    ServiceBusEnvironment.CreateServiceUri("sb", "weave-interop", "hf")));
+            await Task.Delay(20000);
 
-            cf.Endpoint.Behaviors.Add(new TransportClientEndpointBehavior 
-            {
-                TokenProvider = TokenProvider.CreateSharedSecretTokenProvider("owner", "R92FFdAujgEDEPnjLhxMfP06fH+qhmMwwuXetdyAEZM=") 
-            });
+            List<HighFrequencyFeed> channelFeeds = new List<HighFrequencyFeed>();
+            List<string> failedUris = new List<string>();
 
-            await Task.Delay(10000);
-
-            using (var ch = cf.CreateChannel())
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+            using (var client = new HighFrequencyFeedRetrieverClient())
             {
                 foreach (var feed in feeds.Select(o => o.Value.FeedUri))
                 {
-                    var channelFeed = await ch.GetFeed(feed);
-                    DebugEx.WriteLine(channelFeed);
+                    try
+                    {
+                        var channelFeed = await client.GetFeed(feed);
+                        channelFeeds.Add(channelFeed);
+                    }
+                    catch (Exception ex)
+                    {
+                        DebugEx.WriteLine(ex);
+                        failedUris.Add(feed);
+                    }
                 }
             }
+            sw.Stop();
+            DebugEx.WriteLine(channelFeeds.ToString() + sw.ElapsedMilliseconds);
+            DebugEx.WriteLine(failedUris);
         }
 
         public bool Contains(string feedUrl)
@@ -236,4 +243,100 @@ namespace Weave.RssAggregator.HighFrequency
     }
 
     public interface IHighFrequencyFeedRetrieverChannel : IHighFrequencyFeedRetriever, IClientChannel { }
+
+    public class HighFrequencyFeedRetrieverClient : IHighFrequencyFeedRetriever, IDisposable
+    {
+        ChannelFactory<IHighFrequencyFeedRetrieverChannel> currentFactory;
+        IHighFrequencyFeedRetrieverChannel currentChannel;
+        bool isLastStateFaulted = false;
+
+        public async Task<HighFrequencyFeed> GetFeed(string feedUrl)
+        {
+            EnsureActiveChannel();
+
+            try
+            {
+                var result = await currentChannel.GetFeed(feedUrl);
+                return result;
+            }
+            catch (Exception e)
+            {
+                isLastStateFaulted = true;
+                throw;
+            }
+        }
+
+        void EnsureActiveChannel()
+        {
+            if (currentChannel == null || currentFactory == null || isLastStateFaulted)
+            {
+                InitializeChannel();
+            }
+        }
+
+        void InitializeChannel()
+        {
+            Dispose();
+
+            isLastStateFaulted = false;
+
+            var relayBinding = new NetTcpRelayBinding
+            {
+                ConnectionMode = TcpRelayConnectionMode.Hybrid
+            };
+            relayBinding.Security.Mode = EndToEndSecurityMode.None;
+            //var relayBinding = new NetTcpRelayBinding();
+
+            currentFactory = new ChannelFactory<IHighFrequencyFeedRetrieverChannel>(
+                relayBinding,
+                new EndpointAddress(
+                    ServiceBusEnvironment.CreateServiceUri("sb", "weave-interop", "hf")));
+
+            //var ipString = "net.tcp://127.0.0.1:9352";
+
+            //currentFactory = new ChannelFactory<IHighFrequencyFeedRetrieverChannel>(
+            //    new NetTcpBinding(),
+            //    new EndpointAddress(ipString));
+
+            currentFactory.Endpoint.Behaviors.Add(new TransportClientEndpointBehavior
+            {
+                TokenProvider = TokenProvider.CreateSharedSecretTokenProvider("owner", "R92FFdAujgEDEPnjLhxMfP06fH+qhmMwwuXetdyAEZM=")
+            });
+
+            currentChannel = currentFactory.CreateChannel();
+
+            currentChannel.Faulted += OnFaulted;
+            currentFactory.Faulted += OnFaulted;
+        }
+
+        void OnFaulted(object sender, EventArgs e)
+        {
+            isLastStateFaulted = true;
+        }
+
+
+        public void Dispose()
+        {
+            if (currentChannel != null)
+            {
+                currentChannel.Faulted += OnFaulted;
+                try
+                {
+                    currentChannel.Close();
+                    currentChannel.Dispose();
+                }
+                catch { }
+            }
+
+            if (currentFactory != null)
+            {
+                currentFactory.Faulted += OnFaulted;
+                try
+                {
+                    currentFactory.Close();
+                }
+                catch { }
+            }
+        }
+    }
 }
