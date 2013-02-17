@@ -52,8 +52,8 @@ namespace Weave.RssAggregator.HighFrequency
                 try
                 {
                     await processor.ProcessAsync(update);
-                    //if (processor.IsHandledFully)
-                    //    return;
+                    if (processor.IsHandledFully)
+                        return;
                 }
                 catch (Exception e)
                 {

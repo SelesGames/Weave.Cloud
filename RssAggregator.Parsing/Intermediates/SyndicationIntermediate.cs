@@ -44,9 +44,6 @@ namespace Weave.RssAggregator.Parsing
 
             e.ExtractYoutubeVideoAndPodcastUrlsFromDescription();
 
-            e.Id = CryptoHelper.ComputeHashUsedByMobilizer(e.Link);
-
-
             return e;
         }
     }

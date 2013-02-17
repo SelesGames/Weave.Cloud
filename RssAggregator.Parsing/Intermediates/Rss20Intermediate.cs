@@ -141,7 +141,6 @@ namespace Weave.RssAggregator.Parsing
             ni.PublishDateTimeString = PublicationDateString;
             ni.PublishDateTime = PublicationDate;
             ni.OriginalRssXml = xml.ToString();
-            ni.Id = CryptoHelper.ComputeHashUsedByMobilizer(ni.Link);
 
 
             return ni;

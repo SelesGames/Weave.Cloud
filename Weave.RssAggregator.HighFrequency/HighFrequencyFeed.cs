@@ -53,6 +53,7 @@ namespace Weave.RssAggregator.HighFrequency
             {
                 var requester = new FeedRequester
                 {
+                    FeedId = this.FeedId,
                     FeedUri = this.FeedUri,
                     Etag = this.Etag,
                     LastModified = this.LastModified,

@@ -140,8 +140,6 @@ namespace Weave.RssAggregator.Parsing
         {
             var intermediates = stream.ToRssIntermediates().ToList();
             var orderedNews = intermediates.OrderByDescending(o => o.PublicationDate);
-            var previousMostRecentNewsItemPubDateString = this.MostRecentNewsItemPubDate;
-
 
             var mostRecentItem = orderedNews.FirstOrDefault();
             if (mostRecentItem != null)
@@ -154,18 +152,24 @@ namespace Weave.RssAggregator.Parsing
 
             IEnumerable<IEntryIntermediate> filteredNews = orderedNews;
 
-            var tryGetPreviousMostRecentDate = previousMostRecentNewsItemPubDateString.TryGetUtcDate();
-            if (tryGetPreviousMostRecentDate.Item1)
+            // If MostRecentNewsItemPubDate has been set, then take only the news that is more recent than that
+            if (!string.IsNullOrWhiteSpace(MostRecentNewsItemPubDate))
             {
-                var previousMostRecentNewsItemPubDate = tryGetPreviousMostRecentDate.Item2;
-                filteredNews = orderedNews.TakeWhile(o => o.PublicationDate > previousMostRecentNewsItemPubDate);
+                var tryGetPreviousMostRecentDate = MostRecentNewsItemPubDate.TryGetUtcDate();
+                if (tryGetPreviousMostRecentDate.Item1)
+                {
+                    var previousMostRecentNewsItemPubDate = tryGetPreviousMostRecentDate.Item2;
+                    filteredNews = orderedNews.TakeWhile(o => o.PublicationDate > previousMostRecentNewsItemPubDate);
+                }
             }
 
-            var news = filteredNews.Select(TryCreateNewsItem).OfType<Entry>().ToList();
-            this.News = news;
+            this.News = filteredNews.Select(TryCreateNewsItem).OfType<Entry>().ToList();
 
             foreach (var newsItem in News)
+            {
                 newsItem.FeedId = FeedId;
+                newsItem.Id = CryptoHelper.ComputeHashUsedByMobilizer(newsItem.Link + FeedUri);
+            }
 
             this.Status = RequestStatus.OK;
         }
