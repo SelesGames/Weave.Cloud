@@ -22,10 +22,14 @@ namespace Weave.RssAggregator.HighFrequency
 
         public bool IsHandledFully { get; private set; }
 
-        public async Task ProcessAsync(Tuple<HighFrequencyFeed, List<Entry>> feed)
+        public async Task ProcessAsync(Tuple<HighFrequencyFeed, List<Entry>> tup)
         {
-            var latest = await dbClient.GetLatestForFeedId(feed.Item1.FeedId);
-            var latestNews = feed.Item2.Where(o => o.PublishDateTime > latest).Select(Translate);
+            var feed = tup.Item1;
+            var entries = tup.Item2;
+
+            var latestNewsItemTimeStamp = await dbClient.GetLatestForFeedId(feed.FeedId);
+            var latestNews = entries.Where(o => o.PublishDateTime > latestNewsItemTimeStamp).Select(Translate);
+
             if (!latestNews.Any())
             {
                 IsHandledFully = true;

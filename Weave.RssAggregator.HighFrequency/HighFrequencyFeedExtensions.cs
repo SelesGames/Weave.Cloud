@@ -49,13 +49,6 @@ namespace Weave.RssAggregator.HighFrequency
                     }
                     else
                     {
-                        // REMOVE THE DESCRIPTION IF IT IS SUPPRESSED ON THIS FEED
-                        if (feed.IsDescriptionSuppressed)
-                        {
-                            foreach (var newsItem in newNewsList)
-                                newsItem.Description = null;
-                        }
-
                         var result = new FeedResult
                         {
                             Id = request.Id,

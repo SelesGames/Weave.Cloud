@@ -40,7 +40,6 @@ namespace Weave.RssAggregator.HighFrequency
                     {
                         Name = o.Name,
                         FeedUri = o.Url,
-                        IsDescriptionSuppressed = o.IsDescriptionSuppressed,
                     })
                 .ToList();
 

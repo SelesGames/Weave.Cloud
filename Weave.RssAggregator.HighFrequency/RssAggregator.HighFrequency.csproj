@@ -74,6 +74,8 @@
     <Compile Include="Processors\ServiceBus\ServiceBusUpdater.cs" />
     <Compile Include="Processors\Sql\SqlClient.cs" />
     <Compile Include="Processors\Sql\SqlUpdater.cs" />
+    <Compile Include="QueueConnector.cs" />
+    <Compile Include="SubscriptionAggregator.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common.Azure.ServiceBus\Common.Azure.ServiceBus.csproj">

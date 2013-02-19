@@ -24,7 +24,7 @@ namespace Weave.RssAggregator.HighFrequency
         public string OldestNewsItemPubDate { get; set; }
         public List<NewsItem> News { get; set; }
         public FeedState LastFeedState { get; set; }
-        public bool IsDescriptionSuppressed { get; set; }
+
 
         public enum FeedState
         {
@@ -32,6 +32,7 @@ namespace Weave.RssAggregator.HighFrequency
             Failed,
             OK
         }
+
 
         public IObservable<List<Entry>> FeedUpdate { get; private set; }
 

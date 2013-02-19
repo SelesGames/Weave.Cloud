@@ -38,7 +38,7 @@ namespace Weave.RssAggregator.HighFrequency
             var t = element.Attribute("sd").ValueOrDefault();
             bool.TryParse(t, out suppressDescription);
 
-            return new Feed { Name = name, Url = url, IsDescriptionSuppressed = suppressDescription };
+            return new Feed { Name = name, Url = url };
         }
     }
 
@@ -46,6 +46,5 @@ namespace Weave.RssAggregator.HighFrequency
     {
         public string Name { get; set; }
         public string Url { get; set; }
-        public bool IsDescriptionSuppressed { get; set; }
     }
 }

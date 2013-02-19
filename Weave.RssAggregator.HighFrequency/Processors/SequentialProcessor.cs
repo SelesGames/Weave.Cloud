@@ -5,43 +5,34 @@ using Weave.RssAggregator.Parsing;
 
 namespace Weave.RssAggregator.HighFrequency
 {
-    public class SequentialProcessor
+    public class SequentialProcessor : IDisposable
     {
-        IDisposable existingSub;
-        IObservable<Tuple<HighFrequencyFeed, List<Entry>>> updateQueue;
         IEnumerable<ISequentialAsyncProcessor<Tuple<HighFrequencyFeed, List<Entry>>>> processors;
+        SubscriptionAggregator<Guid, Tuple<HighFrequencyFeed, List<Entry>>> sub;
+        IDisposable subHandle;
 
         public SequentialProcessor(IEnumerable<ISequentialAsyncProcessor<Tuple<HighFrequencyFeed, List<Entry>>>> processors)
         {
             this.processors = processors;
+            InitializeSubscription();
         }
 
         public void Register(HighFrequencyFeed feed)
         {
             var feedUpdate = feed.FeedUpdate.Select(o => Tuple.Create(feed, o));
-
-            if (updateQueue == null)
-                updateQueue = feedUpdate;
-            else
-                updateQueue = updateQueue.Merge(feedUpdate);
-
-            Resubscribe();
+            sub.AddSubscription(feed.FeedId, feedUpdate);
         }
 
-        void Resubscribe()
+        void InitializeSubscription()
         {
-            if (updateQueue == null)
-                return;
+            sub = new SubscriptionAggregator<Guid, Tuple<HighFrequencyFeed, List<Entry>>>();
 
-            if (existingSub != null)
-                existingSub.Dispose();
-
-            existingSub = updateQueue.Subscribe(
+            subHandle = sub.Subscribe(
                 SafeOnHfFeedUpdate,
                 exception =>
                 {
                     DebugEx.WriteLine(exception);
-                    Resubscribe();
+                    throw exception;
                 });
         }
 
@@ -61,6 +52,12 @@ namespace Weave.RssAggregator.HighFrequency
                     return;
                 }
             }
+        }
+
+        public void Dispose()
+        {
+            if (subHandle != null)
+                subHandle.Dispose();
         }
     }
 }
