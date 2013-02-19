@@ -1,15 +1,13 @@
 ﻿using Common.Data;
 using SelesGames.Common;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Weave.RssAggregator.Parsing;
+using Weave.RssAggregator.Client;
 using Sql = RssAggregator.Data.Sql;
 
 namespace Weave.RssAggregator.HighFrequency
 {
-    public class SqlUpdater : ISequentialAsyncProcessor<Tuple<HighFrequencyFeed, List<Entry>>>
+    public class SqlUpdater : ISequentialAsyncProcessor<HighFrequencyFeedUpdateDto>
     {
         SqlClient dbClient;
         IProvider<ITransactionalDatabaseClient> transactClientProvider;
@@ -22,12 +20,11 @@ namespace Weave.RssAggregator.HighFrequency
 
         public bool IsHandledFully { get; private set; }
 
-        public async Task ProcessAsync(Tuple<HighFrequencyFeed, List<Entry>> tup)
+        public async Task ProcessAsync(HighFrequencyFeedUpdateDto update)
         {
-            var feed = tup.Item1;
-            var entries = tup.Item2;
+            var entries = update.Entries;
 
-            var latestNewsItemTimeStamp = await dbClient.GetLatestForFeedId(feed.FeedId);
+            var latestNewsItemTimeStamp = await dbClient.GetLatestForFeedId(update.FeedId);
             var latestNews = entries.Where(o => o.PublishDateTime > latestNewsItemTimeStamp).Select(Translate);
 
             if (!latestNews.Any())

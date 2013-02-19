@@ -1,9 +1,8 @@
-﻿using SelesGames.Common.Hashing;
-using System;
+﻿using System;
 using System.Web;
 using System.Xml.Linq;
 
-namespace Weave.RssAggregator.Parsing
+namespace Weave.RssAggregator.Client.Parsing.Intermediates
 {
     internal class Rss20Intermediate : IEntryIntermediate
     {

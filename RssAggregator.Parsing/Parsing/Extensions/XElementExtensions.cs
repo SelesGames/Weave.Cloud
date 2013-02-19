@@ -1,6 +1,6 @@
 ﻿using System.Xml.Linq;
 
-namespace Weave.RssAggregator.Parsing
+namespace Weave.RssAggregator.Client.Parsing
 {
     internal static class XElementExtensions
     {

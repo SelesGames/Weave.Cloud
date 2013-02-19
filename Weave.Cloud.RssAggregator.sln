@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SelesGames.WebApi", "SelesG
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RSS Aggregator", "RSS Aggregator", "{4825F245-9490-48C3-8238-529659C3A1C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RssAggregator.Core", "Weave.RssAggregator.Core\RssAggregator.Core.csproj", "{2F1A280D-EE75-4DC1-A36C-F8E5488E3260}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RssAggregator.DTOs", "Weave.RssAggregator.Core\RssAggregator.DTOs.csproj", "{2F1A280D-EE75-4DC1-A36C-F8E5488E3260}"
 EndProject
 Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "RssAggregator.AzureService", "Weave.RssAggregator.AzureService\RssAggregator.AzureService.ccproj", "{F08AB9B4-B0E5-4B7F-AA1C-5FEB175A6639}"
 EndProject
@@ -29,7 +29,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RssAggregator.ConsoleTestin
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{4FA4189F-C6C6-4AC8-BBD4-0D1ED29422F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RssAggregator.Parsing", "RssAggregator.Parsing\RssAggregator.Parsing.csproj", "{92A8665A-571B-4972-8FC6-0937EE27731E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RssAggregator.Client", "RssAggregator.Parsing\RssAggregator.Client.csproj", "{92A8665A-571B-4972-8FC6-0937EE27731E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RssAggregator.WebRole", "RssAggregator.WebRole\RssAggregator.WebRole.csproj", "{069940FA-9405-4A4D-A1FC-87886660E5CB}"
 EndProject

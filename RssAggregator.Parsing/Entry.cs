@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Weave.RssAggregator.Parsing
+namespace Weave.RssAggregator.Client
 {
     public class Entry
     {

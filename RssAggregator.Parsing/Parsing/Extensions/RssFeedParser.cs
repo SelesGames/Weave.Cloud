@@ -4,8 +4,9 @@ using System.Linq;
 using System.ServiceModel.Syndication;
 using System.Xml;
 using System.Xml.Linq;
+using Weave.RssAggregator.Client.Parsing.Intermediates;
 
-namespace Weave.RssAggregator.Parsing
+namespace Weave.RssAggregator.Client.Parsing
 {
     internal static class RssFeedParser
     {

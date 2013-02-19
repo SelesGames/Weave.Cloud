@@ -1,4 +1,4 @@
-﻿using Weave.RssAggregator.Parsing;
+﻿using Weave.RssAggregator.Client;
 
 namespace Weave.RssAggregator.Core.DTOs.Outgoing
 {
@@ -12,7 +12,7 @@ namespace Weave.RssAggregator.Core.DTOs.Outgoing
                 PublishDateTime = entry.PublishDateTimeString,
                 Link = entry.Link,
                 ImageUrl = entry.ImageUrl,
-                Description = entry.Description,
+                Description = null,//entry.Description,
                 YoutubeId = entry.YoutubeId,
                 VideoUri = entry.VideoUri,
                 PodcastUri = entry.PodcastUri,

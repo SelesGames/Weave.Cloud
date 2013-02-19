@@ -7,8 +7,8 @@
     <ProjectGuid>{92A8665A-571B-4972-8FC6-0937EE27731E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RssAggregator.Parsing</RootNamespace>
-    <AssemblyName>RssAggregator.Parsing</AssemblyName>
+    <RootNamespace>RssAggregator.Client</RootNamespace>
+    <AssemblyName>RssAggregator.Client</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -41,15 +41,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FeedRequester.cs" />
-    <Compile Include="Intermediates\AtomIntermediate.cs" />
-    <Compile Include="Intermediates\IEntryIntermediate.cs" />
-    <Compile Include="Extensions\NewsItemParseHelperExtension.cs" />
-    <Compile Include="Intermediates\Rss20Intermediate.cs" />
-    <Compile Include="Extensions\RssFeedParser.cs" />
-    <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="Extensions\XElementExtensions.cs" />
-    <Compile Include="Library\SyndicationDateTimeUtility.cs" />
-    <Compile Include="Intermediates\SyndicationIntermediate.cs" />
+    <Compile Include="Parsing\Intermediates\AtomIntermediate.cs" />
+    <Compile Include="Parsing\Intermediates\IEntryIntermediate.cs" />
+    <Compile Include="Parsing\Extensions\NewsItemParseHelperExtension.cs" />
+    <Compile Include="Parsing\Intermediates\Rss20Intermediate.cs" />
+    <Compile Include="Parsing\Extensions\RssFeedParser.cs" />
+    <Compile Include="Parsing\Extensions\StringExtensions.cs" />
+    <Compile Include="Parsing\Extensions\XElementExtensions.cs" />
+    <Compile Include="Parsing\Library\SyndicationDateTimeUtility.cs" />
+    <Compile Include="Parsing\Intermediates\SyndicationIntermediate.cs" />
     <Compile Include="Entry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

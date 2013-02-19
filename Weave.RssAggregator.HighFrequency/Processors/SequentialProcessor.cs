@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reactive.Linq;
-using Weave.RssAggregator.Parsing;
 
 namespace Weave.RssAggregator.HighFrequency
 {
     public class SequentialProcessor : IDisposable
     {
-        IEnumerable<ISequentialAsyncProcessor<Tuple<HighFrequencyFeed, List<Entry>>>> processors;
-        SubscriptionAggregator<Guid, Tuple<HighFrequencyFeed, List<Entry>>> sub;
+        IEnumerable<ISequentialAsyncProcessor<HighFrequencyFeedUpdateDto>> processors;
+        SubscriptionAggregator<Guid, HighFrequencyFeedUpdateDto> sub;
         IDisposable subHandle;
 
-        public SequentialProcessor(IEnumerable<ISequentialAsyncProcessor<Tuple<HighFrequencyFeed, List<Entry>>>> processors)
+        public SequentialProcessor(IEnumerable<ISequentialAsyncProcessor<HighFrequencyFeedUpdateDto>> processors)
         {
             this.processors = processors;
             InitializeSubscription();
@@ -19,13 +17,12 @@ namespace Weave.RssAggregator.HighFrequency
 
         public void Register(HighFrequencyFeed feed)
         {
-            var feedUpdate = feed.FeedUpdate.Select(o => Tuple.Create(feed, o));
-            sub.AddSubscription(feed.FeedId, feedUpdate);
+            sub.AddSubscription(feed.FeedId, feed.FeedUpdate);
         }
 
         void InitializeSubscription()
         {
-            sub = new SubscriptionAggregator<Guid, Tuple<HighFrequencyFeed, List<Entry>>>();
+            sub = new SubscriptionAggregator<Guid, HighFrequencyFeedUpdateDto>();
 
             subHandle = sub.Subscribe(
                 SafeOnHfFeedUpdate,
@@ -36,7 +33,7 @@ namespace Weave.RssAggregator.HighFrequency
                 });
         }
 
-        async void SafeOnHfFeedUpdate(Tuple<HighFrequencyFeed, List<Entry>> update)
+        async void SafeOnHfFeedUpdate(HighFrequencyFeedUpdateDto update)
         {
             foreach (var processor in processors)
             {

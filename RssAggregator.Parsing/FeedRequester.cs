@@ -6,8 +6,10 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Weave.RssAggregator.Client.Parsing;
+using Weave.RssAggregator.Client.Parsing.Intermediates;
 
-namespace Weave.RssAggregator.Parsing
+namespace Weave.RssAggregator.Client
 {
     public class FeedRequester
     {

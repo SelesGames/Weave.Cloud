@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text.RegularExpressions;
 
 
-namespace Weave.RssAggregator.Parsing
+namespace Weave.RssAggregator.Client.Parsing
 {
-    public static class StringExtensions
+    internal static class StringExtensions
     {
         public static bool IsImageUrl(this string url)
         {

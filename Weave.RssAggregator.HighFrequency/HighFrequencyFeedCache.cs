@@ -1,15 +1,11 @@
 ﻿using Microsoft.ServiceBus;
 using System;
-using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.ServiceModel;
 using System.Threading.Tasks;
-using Weave.RssAggregator.Core.DTOs.Incoming;
-using Weave.RssAggregator.Core.DTOs.Outgoing;
 
 namespace Weave.RssAggregator.HighFrequency
 {
@@ -35,17 +31,11 @@ namespace Weave.RssAggregator.HighFrequency
 
             var highFrequencyFeeds = libraryFeeds
                 .Distinct()
-                .Select(
-                    o => new HighFrequencyFeed
-                    {
-                        Name = o.Name,
-                        FeedUri = o.Url,
-                    })
+                .Select(o => new HighFrequencyFeed(o.Name, o.Url))
                 .ToList();
 
             foreach (var feed in highFrequencyFeeds)
             {
-                feed.InitializeId();
                 if (processor != null)
                     processor.Register(feed);
             }
@@ -104,131 +94,68 @@ namespace Weave.RssAggregator.HighFrequency
             disposables.Add(disp);
         }
 
-        public HighFrequencyFeed GetFeedByUrl(string url)
-        {
-            HighFrequencyFeed feed = null;
+        //public HighFrequencyFeed GetFeedByUrl(string url)
+        //{
+        //    HighFrequencyFeed feed = null;
 
-            if (feeds.ContainsKey(url))
-            {
-                feed = feeds[url];
-            }
+        //    if (feeds.ContainsKey(url))
+        //    {
+        //        feed = feeds[url];
+        //    }
 
-            return feed;
-        }
+        //    return feed;
+        //}
 
-        public FeedResult ToFeedResult(FeedRequest request)
-        {
-            var feedUrl = request.Url;
-            if (feeds.ContainsKey(feedUrl))
-            {
-                var feed = feeds[feedUrl];
-                return feed.ToFeedResult(request);
-            }
-            else
-                return new FeedResult { Id = request.Id, Status = FeedResultStatus.Failed };
-        }
+        //public FeedResult ToFeedResult(FeedRequest request)
+        //{
+        //    var feedUrl = request.Url;
+        //    if (feeds.ContainsKey(feedUrl))
+        //    {
+        //        var feed = feeds[feedUrl];
+        //        return feed.ToFeedResult(request);
+        //    }
+        //    else
+        //        return new FeedResult { Id = request.Id, Status = FeedResultStatus.Failed };
+        //}
 
-        public async Task DoShit()
-        {
-            await Task.Delay(20000);
+        //public async Task DoShit()
+        //{
+        //    await Task.Delay(20000);
 
-            List<HighFrequencyFeed> channelFeeds = new List<HighFrequencyFeed>();
-            List<string> failedUris = new List<string>();
+        //    List<HighFrequencyFeed> channelFeeds = new List<HighFrequencyFeed>();
+        //    List<string> failedUris = new List<string>();
 
-            var sw = System.Diagnostics.Stopwatch.StartNew();
-            using (var client = new HighFrequencyFeedRetrieverClient())
-            {
-                foreach (var feed in feeds.Select(o => o.Value.FeedUri))
-                {
-                    try
-                    {
-                        var channelFeed = await client.GetFeed(feed);
-                        channelFeeds.Add(channelFeed);
-                    }
-                    catch (Exception ex)
-                    {
-                        DebugEx.WriteLine(ex);
-                        failedUris.Add(feed);
-                    }
-                }
-            }
-            sw.Stop();
-            DebugEx.WriteLine(channelFeeds.ToString() + sw.ElapsedMilliseconds);
-            DebugEx.WriteLine(failedUris);
-        }
+        //    var sw = System.Diagnostics.Stopwatch.StartNew();
+        //    using (var client = new HighFrequencyFeedRetrieverClient())
+        //    {
+        //        foreach (var feed in feeds.Select(o => o.Value.FeedUri))
+        //        {
+        //            try
+        //            {
+        //                var channelFeed = await client.GetFeed(feed);
+        //                channelFeeds.Add(channelFeed);
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                DebugEx.WriteLine(ex);
+        //                failedUris.Add(feed);
+        //            }
+        //        }
+        //    }
+        //    sw.Stop();
+        //    DebugEx.WriteLine(channelFeeds.ToString() + sw.ElapsedMilliseconds);
+        //    DebugEx.WriteLine(failedUris);
+        //}
 
-        public bool Contains(string feedUrl)
-        {
-            return feeds.ContainsKey(feedUrl);
-        }
+        //public bool Contains(string feedUrl)
+        //{
+        //    return feeds.ContainsKey(feedUrl);
+        //}
 
         public void Dispose()
         {
             disposables.Dispose();
             feeds = null;
-        }
-    }
-
-
-
-    public abstract class ThreadSafeDelegatingCollection<TKey, T> : ICollection<T>
-    {
-        ConcurrentDictionary<TKey, T> lookup;
-
-        protected abstract void AddInternal(T item);
-        protected abstract void RemoveInternal(T item);
-        protected abstract TKey GetKey(T item);
-
-        public void Add(T item)
-        {
-            var key = GetKey(item);
-
-            lookup.AddOrUpdate(key, item, (k, i) => i);
-        }
-
-        public void Clear()
-        {
-            lookup.Clear();
-        }
-
-        public bool Contains(T item)
-        {
-            var key = GetKey(item);
-
-            return lookup.ContainsKey(key);
-        }
-
-        public void CopyTo(T[] array, int arrayIndex)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int Count
-        {
-            get { return lookup.Count; }
-        }
-
-        public bool IsReadOnly
-        {
-            get { return false; }
-        }
-
-        public bool Remove(T item)
-        {
-            T val;
-            var key = GetKey(item);
-
-            return lookup.TryRemove(key, out val);
-        }
-
-        public IEnumerator<T> GetEnumerator()
-        {
-            return lookup.Select(o => o.Value).GetEnumerator();
-        }
-
-        IEnumerator System.Collections.IEnumerable.GetEnumerator()
-        {
-            return lookup.Select(o => o.Value).GetEnumerator();
         }
     }
 

@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Weave.RssAggregator.Parsing
+namespace Weave.RssAggregator.Client.Parsing.Intermediates
 {
-    public interface IEntryIntermediate
+    internal interface IEntryIntermediate
     {
         DateTime PublicationDate { get; set; }
         string PublicationDateString { get; set; }

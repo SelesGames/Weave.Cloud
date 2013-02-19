@@ -100,9 +100,9 @@
       <Project>{bb3ea281-94b3-435f-a1ef-c395a7d1f25a}</Project>
       <Name>SelesGames.WebApi</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Weave.RssAggregator.Core\RssAggregator.Core.csproj">
+    <ProjectReference Include="..\Weave.RssAggregator.Core\RssAggregator.DTOs.csproj">
       <Project>{2f1a280d-ee75-4dc1-a36c-f8e5488e3260}</Project>
-      <Name>RssAggregator.Core</Name>
+      <Name>RssAggregator.DTOs</Name>
     </ProjectReference>
     <ProjectReference Include="..\Weave.RssAggregator.HighFrequency\RssAggregator.HighFrequency.csproj">
       <Project>{41091951-eab3-458c-9339-c4a8219fc300}</Project>

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Weave.RssAggregator.Client;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
-using Weave.RssAggregator.Parsing;
 
 namespace Weave.RssAggregator.Core.DTOs.Incoming
 {

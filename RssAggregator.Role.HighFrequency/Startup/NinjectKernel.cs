@@ -3,10 +3,7 @@ using Common.Data;
 using Common.Data.Linq;
 using Ninject;
 using SelesGames.Common;
-using System;
-using System.Collections.Generic;
 using Weave.RssAggregator.HighFrequency;
-using Weave.RssAggregator.Parsing;
 
 namespace RssAggregator.Role.HighFrequency
 {
@@ -50,7 +47,7 @@ namespace RssAggregator.Role.HighFrequency
                 .InSingletonScope();
 
             Bind<SequentialProcessor>().ToMethod(_ => new SequentialProcessor(
-                new ISequentialAsyncProcessor<Tuple<HighFrequencyFeed, List<Entry>>>[]
+                new ISequentialAsyncProcessor<HighFrequencyFeedUpdateDto>[]
                 {
                     this.Get<SqlUpdater>(),
                     this.Get<ServiceBusUpdater>(),
