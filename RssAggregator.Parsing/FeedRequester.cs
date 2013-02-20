@@ -1,4 +1,5 @@
-﻿using SelesGames.Common.Hashing;
+﻿using Common.TimeFormatting;
+using SelesGames.Common.Hashing;
 using System;
 using System.Collections.Generic;
 using System.IO;

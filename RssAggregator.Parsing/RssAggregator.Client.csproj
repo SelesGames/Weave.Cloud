@@ -48,12 +48,15 @@
     <Compile Include="Parsing\Extensions\RssFeedParser.cs" />
     <Compile Include="Parsing\Extensions\StringExtensions.cs" />
     <Compile Include="Parsing\Extensions\XElementExtensions.cs" />
-    <Compile Include="Parsing\Library\SyndicationDateTimeUtility.cs" />
     <Compile Include="Parsing\Intermediates\SyndicationIntermediate.cs" />
     <Compile Include="Entry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common.DateTime\Common.TimeFormatting.csproj">
+      <Project>{86060d7e-3115-4f54-8008-384b3d7c598e}</Project>
+      <Name>Common.TimeFormatting</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SelesGames.Common\SelesGames.Common.csproj">
       <Project>{5b792c4b-80d8-420d-9fa7-e567faf1f7b1}</Project>
       <Name>SelesGames.Common</Name>

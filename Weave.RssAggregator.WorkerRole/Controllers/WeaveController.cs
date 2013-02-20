@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Weave.RssAggregator.Core.DTOs.Incoming;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
-using Weave.RssAggregator.HighFrequency;
+using Weave.RssAggregator.LowFrequency;
 using Weave.RssAggregator.WorkerRole.Startup;
 
 namespace Weave.RssAggregator.WorkerRole.Controllers

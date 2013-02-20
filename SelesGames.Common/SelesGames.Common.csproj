@@ -43,7 +43,6 @@
     <Compile Include="DelegateProvider.cs" />
     <Compile Include="Extensions\LinqToXmlExtensions.cs" />
     <Compile Include="Extensions\StreamExtensionMethods.cs" />
-    <Compile Include="Guard.cs" />
     <Compile Include="Hashing\CryptoHelper.cs" />
     <Compile Include="IProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

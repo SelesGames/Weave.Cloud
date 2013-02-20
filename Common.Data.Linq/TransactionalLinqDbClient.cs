@@ -1,5 +1,6 @@
 ﻿using Common.Validation;
 using System;
+using System.Collections.Generic;
 using System.Data.Linq;
 using System.Linq;
 using System.Threading.Tasks;
@@ -30,6 +31,13 @@ namespace Common.Data.Linq
             var table = activeContext.GetTable<T>();
             var o = table;
             return Task.FromResult<IQueryable<T>>(o);
+        }
+
+        public Task<IEnumerable<TResult>> Get<T, TResult>(Func<IQueryable<T>, IQueryable<TResult>> operatorChain) where T : class
+        {
+            var table = activeContext.GetTable<T>();
+            var o = operatorChain(table);
+            return Task.FromResult<IEnumerable<TResult>>(o);
         }
 
         public void Insert<T>(T obj)
