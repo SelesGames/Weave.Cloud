@@ -10,7 +10,7 @@ namespace RssAggregator.Role.HighFrequency
     internal class StartupTask
     {
         IKernel kernel;
-        HighFrequencyFeedUpdater hfCache;
+        HighFrequencyFeedUpdater hfUpdater;
         IDependencyResolver resolver;
 
         public void OnStart()
@@ -19,9 +19,9 @@ namespace RssAggregator.Role.HighFrequency
             resolver = new NinjectResolver(kernel); 
             
             SetHighFrequencyValues();
-            //CreateAndStartServer();
 
-            hfCache.StartFeedRefreshTimer();
+            hfUpdater.InitializeAsync().Wait();
+            hfUpdater.StartFeedRefreshTimer();
         }
 
         void SetHighFrequencyValues()
@@ -41,13 +41,13 @@ namespace RssAggregator.Role.HighFrequency
             temp = RoleEnvironment.GetConfigurationSettingValue("FeedLibraryUrl");
             feedLibraryUrl = temp;
 
-            hfCache = new HighFrequencyFeedUpdater(
+            hfUpdater = new HighFrequencyFeedUpdater(
                 feedLibraryUrl, 
                 kernel.Get<SequentialProcessor>(), 
                 highFrequencyRefreshSplit, 
                 highFrequencyRefreshPeriod);
 
-            kernel.Bind<HighFrequencyFeedUpdater>().ToMethod(_ => hfCache).InSingletonScope();
+            kernel.Bind<HighFrequencyFeedUpdater>().ToMethod(_ => hfUpdater).InSingletonScope();
         }
 
         //void CreateAndStartServer()
