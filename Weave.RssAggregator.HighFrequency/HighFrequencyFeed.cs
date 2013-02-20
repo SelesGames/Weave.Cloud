@@ -6,24 +6,23 @@ using System.Net.Http;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
-using Weave.RssAggregator.Core.DTOs.Outgoing;
-using Weave.RssAggregator.Parsing;
+using Weave.RssAggregator.Client;
 
 namespace Weave.RssAggregator.HighFrequency
 {
     public class HighFrequencyFeed
     {
-        Subject<List<Entry>> feedUpdate = new Subject<List<Entry>>();
+        Subject<HighFrequencyFeedUpdateDto> feedUpdate = new Subject<HighFrequencyFeedUpdateDto>();
+        List<Guid> lastNewsIds;
 
-        public Guid FeedId { get; set; }
-        public string Name { get; set; }
-        public string FeedUri { get; set; }
-        public string Etag { get; set; }
-        public string LastModified { get; set; }
-        public string MostRecentNewsItemPubDate { get; set; }
-        public string OldestNewsItemPubDate { get; set; }
-        public List<NewsItem> News { get; set; }
-        public FeedState LastFeedState { get; set; }
+        public Guid FeedId { get; private set; }
+        public string Name { get; private set; }
+        public string FeedUri { get; private set; }
+        public string Etag { get; private set; }
+        public string LastModified { get; private set; }
+        public FeedState LastFeedState { get; private set; }
+
+        public IObservable<HighFrequencyFeedUpdateDto> FeedUpdate { get; private set; }
 
 
         public enum FeedState
@@ -34,18 +33,16 @@ namespace Weave.RssAggregator.HighFrequency
         }
 
 
-        public IObservable<List<Entry>> FeedUpdate { get; private set; }
-
-        public HighFrequencyFeed()
+        public HighFrequencyFeed(string name, string feedUri)
         {
-            News = new List<NewsItem>();
+            if (string.IsNullOrWhiteSpace(name))        throw new ArgumentException("name in HighFrequencyFeed ctor");
+            if (string.IsNullOrWhiteSpace(feedUri))     throw new ArgumentException("name in HighFrequencyFeed ctor");
+
+            Name = name;
+            FeedUri = feedUri;
+            InitializeId();
             LastFeedState = FeedState.Uninitialized;
             FeedUpdate = feedUpdate.AsObservable();
-        }
-
-        public void InitializeId()
-        {
-            FeedId = CryptoHelper.ComputeHashUsedByMobilizer(FeedUri);
         }
 
         public async Task Refresh()
@@ -65,11 +62,25 @@ namespace Weave.RssAggregator.HighFrequency
                 {
                     this.Etag = requester.Etag;
                     this.LastModified = requester.LastModified;
-                    this.MostRecentNewsItemPubDate = requester.MostRecentNewsItemPubDate;
-                    this.OldestNewsItemPubDate = requester.OldestNewsItemPubDate;
-                    this.News = requester.News.Select(o => o.AsNewsItem()).ToList();
 
-                    feedUpdate.OnNext(requester.News);
+                    var news = requester.News;
+
+                    if (news != null && news.Any())
+                    {
+                        if (IsNewsNew(news))
+                        {
+                            lastNewsIds = news.Select(o => o.Id).ToList();
+
+                            var update = new HighFrequencyFeedUpdateDto
+                            {
+                                FeedId = FeedId,
+                                Name = Name,
+                                FeedUri = FeedUri,
+                                Entries = news,
+                            };
+                            feedUpdate.OnNext(update);
+                        }
+                    }
 
                     DebugEx.WriteLine("REFRESHED {0}  ({1})", Name, FeedUri);
                 }
@@ -99,6 +110,38 @@ namespace Weave.RssAggregator.HighFrequency
                 this.LastFeedState = FeedState.Failed;
             }
         }
+
+
+
+
+        #region Private helper functions
+
+        void InitializeId()
+        {
+            FeedId = CryptoHelper.ComputeHashUsedByMobilizer(FeedUri);
+        }
+
+        bool IsNewsNew(List<Entry> news)
+        {
+            if (lastNewsIds == null)
+                return true;
+
+            if (news.Count != lastNewsIds.Count)
+                return true;
+
+            foreach (var idTuple in lastNewsIds.Zip(news, (i, j) => new { Id1 = i, Id2 = j.Id }))
+            {
+                if (!idTuple.Id1.Equals(idTuple.Id2))
+                    return true;
+            }
+
+            return false;
+        }
+
+        #endregion
+
+
+
 
         public override string ToString()
         {

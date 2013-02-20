@@ -5,6 +5,8 @@ using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using Weave.RssAggregator.Core.DTOs.Incoming;
+using Weave.RssAggregator.Core.DTOs.Outgoing;
 
 namespace Weave.RssAggregator.LowFrequency
 {
@@ -59,6 +61,25 @@ namespace Weave.RssAggregator.LowFrequency
 
         #endregion
 
+
+
+
+        public FeedResult ToFeedResult(FeedRequest request)
+        {
+            var feedUrl = request.Url;
+            if (feeds.ContainsKey(feedUrl))
+            {
+                var feed = feeds[feedUrl];
+                return feed.ToFeedResult(request);
+            }
+            else
+                return new FeedResult { Id = request.Id, Status = FeedResultStatus.Failed };
+        }
+
+        public bool Contains(string feedUrl)
+        {
+            return feeds.ContainsKey(feedUrl);
+        }
 
         public void Dispose()
         {
