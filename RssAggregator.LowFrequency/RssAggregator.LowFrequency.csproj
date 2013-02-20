@@ -42,7 +42,6 @@
       <HintPath>..\lib\System.Reactive.Linq.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DbClient.cs" />

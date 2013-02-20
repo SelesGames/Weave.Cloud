@@ -1,8 +1,6 @@
 ﻿using Microsoft.WindowsAzure.ServiceRuntime;
 using Ninject;
-using Ninject.WebApi;
 using System;
-using System.Web.Http.Dependencies;
 using Weave.RssAggregator.HighFrequency;
 
 namespace RssAggregator.Role.HighFrequency
@@ -11,12 +9,10 @@ namespace RssAggregator.Role.HighFrequency
     {
         IKernel kernel;
         HighFrequencyFeedUpdater hfUpdater;
-        IDependencyResolver resolver;
 
         public void OnStart()
         {
             kernel = new NinjectKernel();
-            resolver = new NinjectResolver(kernel); 
             
             SetHighFrequencyValues();
 
