@@ -7,7 +7,7 @@ using Weave.RssAggregator.Core.DTOs.Outgoing;
 
 namespace Weave.RssAggregator.LowFrequency
 {
-    public static class HighFrequencyFeedExtensions
+    public static class CachedFeedExtensions
     {
         public static IEnumerable<T> TakeSince<T>(this IEnumerable<T> source, Func<T, DateTime> criteria, DateTime cutoff)
         {
