@@ -71,7 +71,7 @@ namespace WeaveFeedTester
 
         LinkedListNode<Article> currentNode;
 
-        void Button_Click(object sender, RoutedEventArgs e)
+        async void Button_Click(object sender, RoutedEventArgs e)
         {
             if (((Button)sender).Content.ToString().Equals("next", StringComparison.OrdinalIgnoreCase))
             {
@@ -83,7 +83,14 @@ namespace WeaveFeedTester
                 if (currentNode.Previous != null)
                     currentNode = currentNode.Previous;
             }
-            GetCurrentArticle();
+            try
+            {
+                await GetCurrentArticle();
+            }
+            catch (Exception ex)
+            {
+                DebugEx.WriteLine(ex);
+            }
         }
 
         async Task GetCurrentArticle()
