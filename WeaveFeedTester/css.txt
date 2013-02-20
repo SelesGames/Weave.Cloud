@@ -1,0 +1,233 @@
+﻿<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.2//EN" "http://www.openmobilealliance.org/tech/DTD/xhtml-mobile12.dtd">
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" >
+  <meta name="HandheldFriendly" content="True">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no !important">
+
+  <style type="text/css">
+
+  /* CSS RESET **********************************************
+  *********************************************************** */
+
+  /*html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{
+	margin:0;
+	padding:0;
+	border:0;
+	font-size:100%;
+	font:inherit;
+	vertical-align:baseline;
+  }*/
+  article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{
+    display:block;
+  }
+  ol, ul {
+	list-style: none;
+  }
+  blockquote, q {
+	quotes: none;
+  }
+  blockquote:before, blockquote:after, q:before, q:after {
+	content: '';
+	content: none;
+  }
+  table {
+	border-collapse: collapse;
+	border-spacing: 0;
+  }
+  /* END CSSRESET **************************** */
+ 
+
+  body {
+	color: [FOREGROUND];
+	background-color: [BACKGROUND];
+	font-family: [FONT];
+	font-size: [FONTSIZE];
+	line-height: 1.45em;
+	padding: 0 16px;
+	margin: 0;
+	text-rendering:optimizeLegibility;
+	-webkit-text-size-adjust:100%;
+	-ms-text-size-adjust:100%;
+    text-size-adjust:100%;
+	-webkit-font-smoothing:subpixel-antialiased;
+	font-smooth:always;
+	word-wrap: break-word;
+  }
+
+  #sg_articlewrapper {
+	margin: 0 auto;
+	overflow: hidden;
+	max-width: 30em;
+	-webkit-animation: demo 6.5s 0s none;
+  }
+
+  #sg_header {
+	padding: 2.2em 0 1em 0;
+  }
+
+  h1, h2, h3, h4, h5, h6 { 
+	font-size: 1em; 
+	font-weight: bold;
+	margin: 0;
+	padding: 0;
+  }
+  
+  h1{
+    font-size: 1.5em;
+    padding: 0.313em 0 0.469em;
+  }
+
+  h2{
+    font-size: 1.333em;
+    line-height: 1.5em;
+    padding: 0.6em 0;
+  }
+
+  h3{
+    font-size: 1.167em;
+    padding: 1.518em 0;
+  }
+
+  #sg_title {
+	font-size: 1.5em;
+	line-height: 1em;
+	margin: 0;
+	padding: 0;
+  }
+
+  #sg_source {
+	padding: 0.3em 0 0 0;
+	font-size: 0.9em;
+	font-weight: 500;
+	opacity: .6;
+  }
+
+  sub,sup{
+    font-size:.75em;
+    line-height:0;
+    position:relative;
+  }
+
+  sup{
+    top:-0.5em;
+  }
+
+  sub{
+    bottom:-0.25em;
+  }
+
+  small{
+    font-size:0.833em;
+  }
+
+  big{
+    font-size:1.167em;
+  }
+
+  em,i{
+    font-style:italic;
+  }
+
+  strong,b{
+    font-weight:700;
+  }
+
+
+  p {
+	margin: 1.5em 0;
+  }
+  h1+p,h2+p,h3+p,h4+p,h5+p,h6+p {
+	margin: .2em 0 1.5em 0;
+  }
+
+
+  a:link { color: [ACCENT]; text-decoration: none; }
+  a:visited { color: [ACCENT]; text-decoration: none; }
+
+  img {
+	border: 0;
+	display: block;
+	margin: 1em auto 1em auto;
+	height: auto !important;
+	max-width: 100% !important;
+	-ms-interpolation-mode: bicubic;
+  }
+
+  blockquote {
+	border-left: 2px solid [ACCENT];
+	padding: 0 0 0 12px;
+	margin: 1.8em 0px;
+	font-style: italic;
+	font-size: 0.96em;
+	line-height: 1.25em;
+  }
+
+  object, embed, p, iframe { 
+	border: 0;
+	width: auto !important;
+	height: auto !important;
+	max-width: 100% !important;
+  }
+
+  #sg_footer {
+	margin: 2em 0;
+  }
+
+  li { margin: 0 0; }
+  ul, ol, li, dd { margin: 0; padding: 0; }
+  nav ul, nav ol { list-style: none; list-style-image: none; margin: 0; padding: 0; }
+
+
+/* Correct overflow not hidden in IE9 */
+  svg:not(:root) { overflow: hidden; }
+
+  </style>
+
+  <title>[TITLE]</title>
+</head>
+
+<body id="sg_body">
+	<article id="sg_articlewrapper">
+		<header id="sg_header">
+			<h1 id="sg_title">[TITLE]</h1>
+			<h2 id="sg_source">[SOURCE]</h2>
+		</header>
+		<div id="sg_content">[BODY]</div>
+		<footer id="sg_footer">
+			<img src="http://weavestorage.blob.core.windows.net/settings/smalllogo.png" />
+		</footer>
+	</article>
+</body>
+
+  <script type="text/javascript">
+
+	function findFirstDescendant(parent, tagname)
+	{
+		var descendants = parent.getElementsByTagName(tagname);
+		if ( descendants.length )
+			return descendants[0];
+		return null;
+	}
+
+	function colorFontAndBackground(foreground, background)
+	{
+		var body = document.getElementById("sg_body");
+		body.style.color = foreground;
+		body.style.backgroundColor = background;
+	}
+
+	function setTextSize(amountToIncrease)
+	{
+		var body = document.getElementById("sg_body");
+		body.style.fontSize = amountToIncrease;
+	}
+
+	function setFont(fontName)
+	{
+		var body = document.getElementById("sg_body");
+		body.style.fontFamily = fontName;
+	}
+
+  </script>
+</html>

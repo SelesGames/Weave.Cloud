@@ -70,7 +70,6 @@
     <Compile Include="Processors\Sql\SqlUpdater.cs" />
     <Compile Include="QueueConnector.cs" />
     <Compile Include="SubscriptionAggregator.cs" />
-    <Compile Include="ThreadSafeDelegatingCollection.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common.Azure.ServiceBus\Common.Azure.ServiceBus.csproj">
