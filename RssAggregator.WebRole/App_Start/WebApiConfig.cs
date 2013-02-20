@@ -1,6 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Common.WebApi;
+using RssAggregator.WebRole.Controllers;
+using SelesGames.WebApi.Compression;
+using SelesGames.WebApi.Protobuf;
 using System.Linq;
+using System.Net.Http.Formatting;
 using System.Web.Http;
 
 namespace RssAggregator.WebRole
@@ -10,10 +13,21 @@ namespace RssAggregator.WebRole
         public static void Register(HttpConfiguration config)
         {
             config.Routes.MapHttpRoute(
-                name: "DefaultApi",
-                routeTemplate: "api/{controller}/{id}",
-                defaults: new { id = RouteParameter.Optional }
+                name: "defaultRouting",
+                routeTemplate: "api/{controller}",
+                defaults: new
+                {
+                    controller = typeof(PingController),
+                }
             );
+
+            var jsonFormatter = (JsonMediaTypeFormatter)config.Formatters.First();
+            jsonFormatter.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+
+            config.MessageHandlers.Add(new EncodingDelegateHandler());
+            config.Formatters.Add(new ProtobufFormatter());
+
+            config.MessageHandlers.Add(new InjectAcceptHandler("application/protobuf"));
         }
     }
 }

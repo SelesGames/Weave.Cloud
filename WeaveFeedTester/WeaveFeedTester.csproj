@@ -144,7 +144,7 @@
     </ProjectReference>
     <ProjectReference Include="..\Weave.RssAggregator.Core\RssAggregator.DTOs.csproj">
       <Project>{2F1A280D-EE75-4DC1-A36C-F8E5488E3260}</Project>
-      <Name>Weave.RssAggregator.Core</Name>
+      <Name>RssAggregator.DTOs</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -53,12 +53,12 @@
       <RoleName>RssAggregator.Role.HighFrequency</RoleName>
       <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
     </ProjectReference>
-    <ProjectReference Include="..\Weave.RssAggregator.WorkerRole\RssAggregator.WorkerRole.csproj">
-      <Name>RssAggregator.WorkerRole</Name>
-      <Project>{31e6c664-4807-43b7-8c91-59cb94717ccf}</Project>
+    <ProjectReference Include="..\RssAggregator.Role.Web\RssAggregator.Role.Web.csproj">
+      <Name>RssAggregator.Role.Web</Name>
+      <Project>{3d825a12-b290-4301-a6a9-239102ae3fc5}</Project>
       <Private>True</Private>
-      <RoleType>Worker</RoleType>
-      <RoleName>RssAggregator.WorkerRole</RoleName>
+      <RoleType>Web</RoleType>
+      <RoleName>RssAggregator.Role.Web</RoleName>
       <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
     </ProjectReference>
   </ItemGroup>
