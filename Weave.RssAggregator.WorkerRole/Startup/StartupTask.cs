@@ -5,14 +5,14 @@ using System;
 using System.Diagnostics;
 using System.Web.Http.Dependencies;
 using System.Web.Http.SelfHost;
-using Weave.RssAggregator.HighFrequency;
+using Weave.RssAggregator.LowFrequency;
 
 namespace Weave.RssAggregator.WorkerRole.Startup
 {
     internal class StartupTask
     {
         IKernel kernel;
-        HighFrequencyFeedUpdater hfCache;
+        FeedCache hfCache;
         IDependencyResolver resolver;
 
         public void OnStart()
@@ -24,9 +24,7 @@ namespace Weave.RssAggregator.WorkerRole.Startup
             SetHighFrequencyValues();
             CreateAndStartServer();
 
-            //hfCache.DoShit().Wait();
-
-            //hfCache.StartFeedRefreshTimer();
+            hfCache.InitializeAsync().Wait();
         }
 
         void SetLowFrequencyValues()
@@ -53,13 +51,13 @@ namespace Weave.RssAggregator.WorkerRole.Startup
             temp = RoleEnvironment.GetConfigurationSettingValue("FeedLibraryUrl");
             feedLibraryUrl = temp;
 
-            hfCache = new HighFrequencyFeedUpdater(
+            hfCache = new FeedCache(
                 feedLibraryUrl, 
-                null, 
+                kernel.Get<DbClient>(), 
                 highFrequencyRefreshSplit, 
                 highFrequencyRefreshPeriod);
 
-            kernel.Bind<HighFrequencyFeedUpdater>().ToMethod(_ => hfCache).InSingletonScope();
+            kernel.Bind<FeedCache>().ToMethod(_ => hfCache).InSingletonScope();
         }
 
         void CreateAndStartServer()
