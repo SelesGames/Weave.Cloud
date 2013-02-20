@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("RssAggregator.LowFrequency")]
+[assembly: AssemblyTitle("RssAggregator.LibraryClient")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("RssAggregator.LowFrequency")]
+[assembly: AssemblyProduct("RssAggregator.LibraryClient")]
 [assembly: AssemblyCopyright("Copyright ©  2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("c2818b90-c94a-4e00-b681-3505e89f24dc")]
+[assembly: Guid("aa8f4638-0621-4b38-bb46-1d97eb552e18")]
 
 // Version information for an assembly consists of the following four values:
 //

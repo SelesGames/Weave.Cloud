@@ -13,9 +13,9 @@ namespace Weave.RssAggregator.WorkerRole.Controllers
 {
     public class WeaveController : ApiController
     {
-        readonly HighFrequencyFeedCache cache;
+        readonly FeedCache cache;
 
-        public WeaveController(HighFrequencyFeedCache cache)
+        public WeaveController(FeedCache cache)
         {
             this.cache = cache;
         }

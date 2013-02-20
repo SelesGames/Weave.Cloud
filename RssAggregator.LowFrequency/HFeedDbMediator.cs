@@ -7,11 +7,11 @@ namespace Weave.RssAggregator.LowFrequency
     public class HFeedDbMediator
     {
         DbClient dbClient;
-        HighFrequencyFeed feed;
+        CachedFeed feed;
 
         public Exception CurrentLoadLatestException { get; private set; }
 
-        public HFeedDbMediator(DbClient dbClient, HighFrequencyFeed feed)
+        public HFeedDbMediator(DbClient dbClient, CachedFeed feed)
         {
             if (dbClient == null) throw new ArgumentNullException("dbClient in HFeedDbMediator ctor");
             if (feed == null) throw new ArgumentNullException("feed in HFeedDbMediator ctor");
@@ -39,12 +39,12 @@ namespace Weave.RssAggregator.LowFrequency
                 feed.OldestNewsItemPubDate = oldest.PublishDateTime;
                 feed.News = news;
 
-                feed.LastFeedState = HighFrequencyFeed.FeedState.OK;
+                feed.LastFeedState = CachedFeed.FeedState.OK;
             }
             catch (Exception ex)
             {
                 CurrentLoadLatestException = ex;
-                feed.LastFeedState = HighFrequencyFeed.FeedState.Failed;
+                feed.LastFeedState = CachedFeed.FeedState.Failed;
             }
         }
     }

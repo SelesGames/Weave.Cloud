@@ -5,7 +5,7 @@ using Weave.RssAggregator.Core.DTOs.Outgoing;
 
 namespace Weave.RssAggregator.LowFrequency
 {
-    public class HighFrequencyFeed
+    public class CachedFeed
     {
         public Guid FeedId { get; private set; }
         public string Name { get; private set; }
@@ -23,7 +23,7 @@ namespace Weave.RssAggregator.LowFrequency
             OK
         }
 
-        public HighFrequencyFeed(string name, string feedUri)
+        public CachedFeed(string name, string feedUri)
         {
             if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name in HighFrequencyFeed ctor");
             if (string.IsNullOrWhiteSpace(feedUri)) throw new ArgumentException("name in HighFrequencyFeed ctor");

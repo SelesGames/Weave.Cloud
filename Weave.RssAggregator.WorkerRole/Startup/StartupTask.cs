@@ -12,7 +12,7 @@ namespace Weave.RssAggregator.WorkerRole.Startup
     internal class StartupTask
     {
         IKernel kernel;
-        HighFrequencyFeedCache hfCache;
+        HighFrequencyFeedUpdater hfCache;
         IDependencyResolver resolver;
 
         public void OnStart()
@@ -53,13 +53,13 @@ namespace Weave.RssAggregator.WorkerRole.Startup
             temp = RoleEnvironment.GetConfigurationSettingValue("FeedLibraryUrl");
             feedLibraryUrl = temp;
 
-            hfCache = new HighFrequencyFeedCache(
+            hfCache = new HighFrequencyFeedUpdater(
                 feedLibraryUrl, 
                 null, 
                 highFrequencyRefreshSplit, 
                 highFrequencyRefreshPeriod);
 
-            kernel.Bind<HighFrequencyFeedCache>().ToMethod(_ => hfCache).InSingletonScope();
+            kernel.Bind<HighFrequencyFeedUpdater>().ToMethod(_ => hfCache).InSingletonScope();
         }
 
         void CreateAndStartServer()

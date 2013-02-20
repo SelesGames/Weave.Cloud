@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using Weave.RssAggregator.Core.DTOs.Incoming;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
 using Weave.RssAggregator.HighFrequency;
+using Weave.RssAggregator.LibraryClient;
 using Weave.RssAggregator.WorkerRole.Startup;
 
 namespace RssAggregator.ConsoleTesting
@@ -118,9 +119,9 @@ namespace RssAggregator.ConsoleTesting
         static async Task TimeService()
         {
 
-            var lib = new FeedLibraryClient();
-            var feeds = lib.GetFeeds("http://weave.blob.core.windows.net/settings/masterfeeds.xml");
-            var requests = feeds.Select((o, index) => new FeedRequest { Id = index.ToString(), Url = o.Url });
+            var lib = new FeedLibraryClient("http://weave.blob.core.windows.net/settings/masterfeeds.xml");
+            var feeds = await lib.GetFeedsAsync();
+            var requests = feeds.Select((o, index) => new FeedRequest { Id = index.ToString(), Url = o.FeedUri });
             var stringRep = JsonConvert.SerializeObject(requests, Formatting.Indented);
 
             var jsonClient = new HttpClient { Timeout = TimeSpan.FromHours(5) };

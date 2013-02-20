@@ -14,11 +14,11 @@ namespace Weave.RssAggregator.LowFrequency
             return source.TakeWhile(o => criteria(o) > cutoff);
         }
 
-        public static FeedResult ToFeedResult(this HighFrequencyFeed feed, FeedRequest request)
+        public static FeedResult ToFeedResult(this CachedFeed feed, FeedRequest request)
         {
             try
             {
-                if (feed.LastFeedState == HighFrequencyFeed.FeedState.Failed || feed.LastFeedState == HighFrequencyFeed.FeedState.Uninitialized)
+                if (feed.LastFeedState == CachedFeed.FeedState.Failed || feed.LastFeedState == CachedFeed.FeedState.Uninitialized)
                 {
                     return new FeedResult { Id = request.Id, Status = FeedResultStatus.Failed };
                 }

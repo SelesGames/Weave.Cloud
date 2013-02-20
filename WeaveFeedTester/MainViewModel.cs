@@ -3,9 +3,8 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using weave;
-using Weave.FeedLibrary;
 using Weave.RssAggregator.Client;
+using Weave.RssAggregator.LibraryClient;
 
 
 namespace WeaveFeedTester
@@ -30,8 +29,8 @@ namespace WeaveFeedTester
         public async Task LoadFeeds()
         {
             //var client = new ExpandedLibrary("https://weave.blob.core.windows.net/settings/masterfeeds.xml");
-            var client = new ExpandedLibrary(@"C:\Users\Arashj\Desktop\Code\SELES GAMES\Weave.Cloud\masterfeeds.xml");
-            var feeds = await client.Feeds.Value;
+            var client = new FeedLibraryClient(@"C:\Users\Arashj\Desktop\Code\SELES GAMES\Weave.Cloud\masterfeeds.xml");
+            var feeds = await client.GetFeedsAsync();
 
             var groupedFeeds = feeds.GroupBy(o => o.Category).ToList();
 

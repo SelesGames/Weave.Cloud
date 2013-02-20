@@ -5,10 +5,9 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Navigation;
-using weave;
 using System.Windows.Data;
-using System.ComponentModel;
+using System.Windows.Navigation;
+using Weave.RssAggregator.LibraryClient;
 
 namespace WeaveFeedTester
 {

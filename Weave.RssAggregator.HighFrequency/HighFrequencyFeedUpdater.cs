@@ -3,44 +3,34 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
+using Weave.RssAggregator.LibraryClient;
 
 namespace Weave.RssAggregator.HighFrequency
 {
-    public class HighFrequencyFeedCache : IDisposable
+    public class HighFrequencyFeedUpdater : IDisposable
     {
         Dictionary<string, HighFrequencyFeed> feeds = new Dictionary<string, HighFrequencyFeed>();
         CompositeDisposable disposables = new CompositeDisposable();
 
         int highFrequencyRefreshSplit;
         TimeSpan highFrequencyRefreshPeriod;
-
+        string feedLibraryUrl;
+        SequentialProcessor processor;
 
 
 
         #region Constructors
 
-        public HighFrequencyFeedCache(string feedLibraryUrl, SequentialProcessor processor)
+        public HighFrequencyFeedUpdater(string feedLibraryUrl, SequentialProcessor processor)
         {
             if (string.IsNullOrEmpty(feedLibraryUrl)) return;
 
-            var feedClient = new FeedLibraryClient();
-            var libraryFeeds = feedClient.GetFeeds(feedLibraryUrl);
-
-            var highFrequencyFeeds = libraryFeeds
-                .Distinct()
-                .Select(o => new HighFrequencyFeed(o.Name, o.Url))
-                .ToList();
-
-            foreach (var feed in highFrequencyFeeds)
-            {
-                if (processor != null)
-                    processor.Register(feed);
-            }
-
-            feeds = highFrequencyFeeds.ToDictionary(o => o.FeedUri);
+            this.feedLibraryUrl = feedLibraryUrl;
+            this.processor = processor;
         }
 
-        public HighFrequencyFeedCache(
+        public HighFrequencyFeedUpdater(
                                     string feedLibraryUrl,
                                     SequentialProcessor processor, 
                                     int highFrequencyRefreshSplit, 
@@ -59,6 +49,26 @@ namespace Weave.RssAggregator.HighFrequency
 
 
 
+
+        public async Task InitializeAsync()
+        {
+            var feedClient = new FeedLibraryClient(feedLibraryUrl);
+
+            var libraryFeeds = await feedClient.GetFeedsAsync();
+
+            var highFrequencyFeeds = libraryFeeds
+                .Distinct()
+                .Select(o => new HighFrequencyFeed(o.FeedName, o.FeedUri))
+                .ToList();
+
+            foreach (var feed in highFrequencyFeeds)
+            {
+                if (processor != null)
+                    processor.Register(feed);
+            }
+
+            feeds = highFrequencyFeeds.ToDictionary(o => o.FeedUri);
+        }
 
         public void StartFeedRefreshTimer()
         {
