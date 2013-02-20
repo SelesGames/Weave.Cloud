@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.ServiceBus.Messaging;
+using Newtonsoft.Json;
+using Ninject;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,9 +15,6 @@ using Weave.RssAggregator.Core.DTOs.Incoming;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
 using Weave.RssAggregator.HighFrequency;
 using Weave.RssAggregator.WorkerRole.Startup;
-using Ninject;
-using Microsoft.ServiceBus.Messaging;
-using System.Threading.Tasks;
 
 namespace RssAggregator.ConsoleTesting
 {

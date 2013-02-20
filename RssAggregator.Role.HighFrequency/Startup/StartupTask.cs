@@ -1,10 +1,7 @@
-﻿using Microsoft.ServiceBus;
-using Microsoft.WindowsAzure.ServiceRuntime;
+﻿using Microsoft.WindowsAzure.ServiceRuntime;
 using Ninject;
 using Ninject.WebApi;
 using System;
-using System.Diagnostics;
-using System.ServiceModel;
 using System.Web.Http.Dependencies;
 using Weave.RssAggregator.HighFrequency;
 
