@@ -143,6 +143,8 @@ namespace Weave.RssAggregator.Client
         {
             var intermediates = stream.ToRssIntermediates().ToList();
             var orderedNews = intermediates.OrderByDescending(o => o.PublicationDate);
+            var previousMostRecentNewsItemPubDateString = this.MostRecentNewsItemPubDate;
+
 
             var mostRecentItem = orderedNews.FirstOrDefault();
             if (mostRecentItem != null)
@@ -155,10 +157,10 @@ namespace Weave.RssAggregator.Client
 
             IEnumerable<IEntryIntermediate> filteredNews = orderedNews;
 
-            // If MostRecentNewsItemPubDate has been set, then take only the news that is more recent than that
-            if (!string.IsNullOrWhiteSpace(MostRecentNewsItemPubDate))
+            // If previous MostRecentNewsItemPubDate has been set, then take only the news that is more recent than that
+            if (!string.IsNullOrWhiteSpace(previousMostRecentNewsItemPubDateString))
             {
-                var tryGetPreviousMostRecentDate = MostRecentNewsItemPubDate.TryGetUtcDate();
+                var tryGetPreviousMostRecentDate = previousMostRecentNewsItemPubDateString.TryGetUtcDate();
                 if (tryGetPreviousMostRecentDate.Item1)
                 {
                     var previousMostRecentNewsItemPubDate = tryGetPreviousMostRecentDate.Item2;
