@@ -53,12 +53,12 @@
       <RoleName>RssAggregator.Role.HighFrequency</RoleName>
       <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
     </ProjectReference>
-    <ProjectReference Include="..\RssAggregator.Role.Web\RssAggregator.Role.Web.csproj">
-      <Name>RssAggregator.Role.Web</Name>
-      <Project>{3d825a12-b290-4301-a6a9-239102ae3fc5}</Project>
+    <ProjectReference Include="..\RssAggregator.WebRole\RssAggregator.WebRole.csproj">
+      <Name>RssAggregator.WebRole</Name>
+      <Project>{069940fa-9405-4a4d-a1fc-87886660e5cb}</Project>
       <Private>True</Private>
       <RoleType>Web</RoleType>
-      <RoleName>RssAggregator.Role.Web</RoleName>
+      <RoleName>RssAggregator.WebRole</RoleName>
       <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
     </ProjectReference>
   </ItemGroup>
