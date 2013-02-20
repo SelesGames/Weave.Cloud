@@ -49,10 +49,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DbClient.cs" />
-    <Compile Include="HighFrequencyFeed.cs" />
+    <Compile Include="CachedFeed.cs" />
     <Compile Include="HFeedDbMediator.cs" />
     <Compile Include="FeedCache.cs" />
-    <Compile Include="HighFrequencyFeedExtensions.cs" />
+    <Compile Include="CachedFeedExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
