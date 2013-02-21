@@ -1,5 +1,7 @@
 ﻿using Common.WebApi;
+using Ninject.WebApi;
 using RssAggregator.WebRole.Controllers;
+using RssAggregator.WebRole.Startup;
 using SelesGames.WebApi.Compression;
 using SelesGames.WebApi.Protobuf;
 using System.Linq;
@@ -28,6 +30,8 @@ namespace RssAggregator.WebRole
             config.Formatters.Add(new ProtobufFormatter());
 
             config.MessageHandlers.Add(new InjectAcceptHandler("application/protobuf"));
+
+            config.DependencyResolver = new NinjectResolver(NinjectKernel.Current);
         }
     }
 }

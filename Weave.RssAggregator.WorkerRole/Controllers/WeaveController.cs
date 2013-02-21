@@ -20,6 +20,29 @@ namespace Weave.RssAggregator.WorkerRole.Controllers
             this.cache = cache;
         }
 
+        public async Task<FeedResult> Get(string feedUri)
+        {
+            FeedResult result = null;
+
+            var feedRequest = new FeedRequest { Url = feedUri };
+
+            if (cache.ContainsValid(feedUri))
+            {
+                result = cache.ToFeedResult(feedRequest);
+            }
+            else
+            {
+                result = await feedRequest.GetNewsAsync(AppSettings.LowFrequencyHttpWebRequestTimeout);
+            }
+
+            if (result != null && result.News != null)
+            {
+                foreach (var newsItem in result.News)
+                    newsItem.Description = null;
+            }
+            return result;
+        }
+
         [HttpPost]
         public async Task<List<FeedResult>> Get([FromBody] List<FeedRequest> requests, bool fsd = true)
         {
@@ -28,7 +51,7 @@ namespace Weave.RssAggregator.WorkerRole.Controllers
                     HttpStatusCode.BadRequest, 
                     "You must send at least one FeedRequest object in the message body");
 
-            var highFrequencyFeeds = requests.Where(o => cache.Contains(o.Url)).ToList();
+            var highFrequencyFeeds = requests.Where(o => cache.ContainsValid(o.Url)).ToList();
             var lowFrequencyFeeds = requests.Except(highFrequencyFeeds).ToList();
 
             var lowFrequencyResults = await Task.WhenAll(lowFrequencyFeeds.Select(o => o.GetNewsAsync(AppSettings.LowFrequencyHttpWebRequestTimeout)));

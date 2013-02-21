@@ -17,37 +17,22 @@ namespace Weave.RssAggregator.LowFrequency
 
         string feedLibraryUrl;
         DbClient dbClient;
-        int highFrequencyRefreshSplit;
-        TimeSpan highFrequencyRefreshPeriod;
 
 
 
 
-        #region Constructors
+        #region Constructor
 
         public FeedCache(string feedLibraryUrl, DbClient dbClient)
         {
             if (string.IsNullOrEmpty(feedLibraryUrl)) 
                 throw new ArgumentException("feedLibraryUrl cannot be null: FeedCache ctor");
 
+            if (dbClient == null)
+                throw new ArgumentNullException("dbClient cannot be null: FeedCache ctor");
+
             this.feedLibraryUrl = feedLibraryUrl;
             this.dbClient = dbClient;
-        }
-
-        public FeedCache(
-            string feedLibraryUrl,
-            DbClient dbClient,
-            int highFrequencyRefreshSplit, 
-            TimeSpan highFrequencyRefreshPeriod)
-
-            : this(feedLibraryUrl, dbClient)
-        {
-            if (string.IsNullOrEmpty(feedLibraryUrl))
-                throw new ArgumentException("feedLibraryUrl cannot be null: FeedCache ctor");
-
-            // set some default values
-            this.highFrequencyRefreshPeriod = highFrequencyRefreshPeriod;
-            this.highFrequencyRefreshSplit = highFrequencyRefreshSplit;
         }
 
         #endregion
@@ -87,9 +72,21 @@ namespace Weave.RssAggregator.LowFrequency
                 return new FeedResult { Id = request.Id, Status = FeedResultStatus.Failed };
         }
 
-        public bool Contains(string feedUrl)
+        public bool ContainsValid(string feedUrl)
         {
-            return feeds.ContainsKey(feedUrl);
+            if (feeds.ContainsKey(feedUrl))
+            {
+                var feed = feeds[feedUrl];
+                if (feed.LastFeedState != CachedFeed.FeedState.Uninitialized)
+                    return true;
+            }
+
+            return false;
+        }
+
+        public CachedFeed Get(string feedUrl)
+        {
+            return feeds[feedUrl];
         }
 
         public void Dispose()

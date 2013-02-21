@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RssAggregator.WebRole.Startup;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -22,6 +23,9 @@ namespace RssAggregator.WebRole
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            var startupTask = new StartupTask();
+            startupTask.OnStart();
         }
     }
 }

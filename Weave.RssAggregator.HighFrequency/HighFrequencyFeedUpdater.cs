@@ -70,14 +70,16 @@ namespace Weave.RssAggregator.HighFrequency
             feeds = highFrequencyFeeds.ToDictionary(o => o.FeedUri);
         }
 
-        public void StartFeedRefreshTimer()
+        public async void StartFeedRefreshTimer()
         {
             disposables.Clear();
 
             var feedsList = feeds.Select(o => o.Value).ToList();
 
-            foreach (var feed in feedsList)
-                feed.Refresh();
+            //foreach (var feed in feedsList)
+            //    feed.Refresh();
+
+            await Task.Delay(5000);
 
             var indexedHFFeeds = feedsList.Select((hfFeed, i) => new { i, feed = hfFeed }).ToList();
 

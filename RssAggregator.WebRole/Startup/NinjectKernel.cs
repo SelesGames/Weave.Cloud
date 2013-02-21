@@ -2,11 +2,33 @@
 using Common.Data.Linq;
 using Ninject;
 using SelesGames.Common;
+using System;
 
-namespace Weave.RssAggregator.WorkerRole.Startup
+namespace RssAggregator.WebRole.Startup
 {
     public class NinjectKernel : StandardKernel
     {
+        private NinjectKernel()
+        {
+            DebugEx.WriteLine("ninjectKernel ctor called");
+        }
+
+        //static Lazy<NinjectKernel> currentInstance = new Lazy<NinjectKernel>(() => new NinjectKernel(), true);
+
+        static NinjectKernel current = null;
+
+        public static NinjectKernel Current
+        {
+            get
+            {
+                if (current == null)
+                {
+                    current = new NinjectKernel();
+                }
+                return current;// currentInstance.Value;
+            }
+        }
+
         protected override void AddComponents()
         {
             base.AddComponents();

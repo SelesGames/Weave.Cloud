@@ -42,20 +42,12 @@ namespace Weave.RssAggregator.WorkerRole.Startup
 
             string temp;
 
-            temp = RoleEnvironment.GetConfigurationSettingValue("HighFrequencyRefreshPeriod");
-            highFrequencyRefreshPeriod = TimeSpan.FromMinutes(double.Parse(temp));
-
-            temp = RoleEnvironment.GetConfigurationSettingValue("HighFrequencyRefreshSplit");
-            highFrequencyRefreshSplit = int.Parse(temp);
-
             temp = RoleEnvironment.GetConfigurationSettingValue("FeedLibraryUrl");
             feedLibraryUrl = temp;
 
             hfCache = new FeedCache(
                 feedLibraryUrl, 
-                kernel.Get<DbClient>(), 
-                highFrequencyRefreshSplit, 
-                highFrequencyRefreshPeriod);
+                kernel.Get<DbClient>());
 
             kernel.Bind<FeedCache>().ToMethod(_ => hfCache).InSingletonScope();
         }

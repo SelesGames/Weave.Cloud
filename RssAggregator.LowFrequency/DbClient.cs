@@ -23,7 +23,7 @@ namespace Weave.RssAggregator.LowFrequency
             using (var client = dbClientProvider.Get())
             {
                 var news = await client.Get<Sql.NewsItem, NewsItem>(x => x
-                    .Where(o => feedId.Equals(o.Id))
+                    .Where(o => feedId.Equals(o.FeedId))
                     .OrderByDescending(o => o.PublishDateTime)
                     .Take(25)
                     .Select(o => new NewsItem

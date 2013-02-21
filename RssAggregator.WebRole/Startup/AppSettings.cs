@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Weave.RssAggregator.WorkerRole.Startup
+namespace RssAggregator.WebRole.Startup
 {
     public static class AppSettings
     {

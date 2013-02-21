@@ -19,6 +19,8 @@ namespace Weave.RssAggregator.Client
         public string ZuneAppId { get; set; }
         public string OriginalRssXml { get; set; }
 
+        public byte[] NewsItemBlob { get; set; }
+
         public override string ToString()
         {
             return Title;
