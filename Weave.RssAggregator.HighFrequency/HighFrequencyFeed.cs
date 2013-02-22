@@ -20,6 +20,7 @@ namespace Weave.RssAggregator.HighFrequency
         public string FeedUri { get; private set; }
         public string Etag { get; private set; }
         public string LastModified { get; private set; }
+        public TimeSpan RefreshTimeout { get; set; }
         public FeedState LastFeedState { get; private set; }
 
         public IObservable<HighFrequencyFeedUpdateDto> FeedUpdate { get; private set; }
@@ -43,6 +44,7 @@ namespace Weave.RssAggregator.HighFrequency
             InitializeId();
             LastFeedState = FeedState.Uninitialized;
             FeedUpdate = feedUpdate.AsObservable();
+            RefreshTimeout = TimeSpan.FromMinutes(1);
         }
 
         public async Task Refresh()
@@ -55,6 +57,7 @@ namespace Weave.RssAggregator.HighFrequency
                     FeedUri = this.FeedUri,
                     Etag = this.Etag,
                     LastModified = this.LastModified,
+                    TimeOut = this.RefreshTimeout,
                 };
                 var result = await requester.UpdateFeed();
 

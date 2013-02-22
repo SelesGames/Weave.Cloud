@@ -11,12 +11,13 @@ namespace Weave.RssAggregator.HighFrequency
     public class HighFrequencyFeedUpdater : IDisposable
     {
         Dictionary<string, HighFrequencyFeed> feeds = new Dictionary<string, HighFrequencyFeed>();
-        CompositeDisposable disposables = new CompositeDisposable();
-
-        int highFrequencyRefreshSplit;
+    
+        //int highFrequencyRefreshSplit;
         TimeSpan highFrequencyRefreshPeriod;
         string feedLibraryUrl;
         SequentialProcessor processor;
+        int currentRefreshIndex = 0;
+        IDisposable subHandle;
 
 
 
@@ -68,44 +69,90 @@ namespace Weave.RssAggregator.HighFrequency
             }
 
             feeds = highFrequencyFeeds.ToDictionary(o => o.FeedUri);
+
+            //await LoadAllFeeds();
+        }
+
+        async Task LoadAllFeeds()
+        {
+            var feedsList = feeds.Select(o => o.Value).ToList();
+
+            var longTime = TimeSpan.FromMinutes(5);
+            foreach (var feed in feedsList)
+            {
+                feed.RefreshTimeout = longTime;
+            }
+
+            //foreach (var feed in feedsList)
+            //{
+            //    await feed.Refresh();
+            //}
+            await Task.WhenAll(feedsList.Select(o => o.Refresh()));
+
+            var shortTime = TimeSpan.FromMinutes(1);
+            foreach (var feed in feedsList)
+            {
+                feed.RefreshTimeout = shortTime;
+            }
         }
 
         public async void StartFeedRefreshTimer()
         {
-            disposables.Clear();
+            if (subHandle != null)
+                subHandle.Dispose();
 
             var feedsList = feeds.Select(o => o.Value).ToList();
+            var totalNumberOfFeeds = feedsList.Count;
 
-            //foreach (var feed in feedsList)
-            //    feed.Refresh();
+            var wrappedFeeds = feedsList.Wrap().Skip(currentRefreshIndex);
 
+#if DEBUG
             await Task.Delay(5000);
+#else
+            await Task.Delay(highFrequencyRefreshPeriod);
+#endif
 
-            var indexedHFFeeds = feedsList.Select((hfFeed, i) => new { i, feed = hfFeed }).ToList();
+            //var indexedHFFeeds = feedsList.Select((hfFeed, i) => new { i, feed = hfFeed }).ToList();
 
             var fullPeriodInMs = highFrequencyRefreshPeriod.TotalMilliseconds;
-            var splitInterval = fullPeriodInMs / (double)highFrequencyRefreshSplit;
+            var pulseInterval = fullPeriodInMs / totalNumberOfFeeds;
 
-            var disp = Observable
-                .Interval(TimeSpan.FromMilliseconds(splitInterval))
-                .Subscribe(
-                    i =>
-                    {
-                        var bucket = i % highFrequencyRefreshSplit;
-                        foreach (var indexedFeedUrl in indexedHFFeeds)
-                        {
-                            if (indexedFeedUrl.i % highFrequencyRefreshSplit == bucket)
-                                indexedFeedUrl.feed.Refresh();
-                        }
-                    },
-                    exception => { ; });
+            //var disp = Observable
+            //    .Interval(TimeSpan.FromMilliseconds(pulseInterval))
+            //    .Subscribe(
+            //        i =>
+            //        {
+            //            var bucket = i % highFrequencyRefreshSplit;
+            //            foreach (var indexedFeedUrl in indexedHFFeeds)
+            //            {
+            //                if (indexedFeedUrl.i % highFrequencyRefreshSplit == bucket)
+            //                    indexedFeedUrl.feed.Refresh();
+            //            }
+            //        },
+            //        exception => { ; });
 
-            disposables.Add(disp);
+            subHandle = Observable
+                .Interval(TimeSpan.FromMilliseconds(pulseInterval))
+                .Zip(wrappedFeeds, (_, feed) => feed)
+                .Subscribe(feed =>
+                {
+                    feed.Refresh();
+                    IncrementCurrentIndex();
+                }, 
+                exception => { ; });
+        }
+
+        void IncrementCurrentIndex()
+        {
+            currentRefreshIndex++;
+            currentRefreshIndex = currentRefreshIndex % feeds.Count;
         }
 
         public void Dispose()
         {
-            disposables.Dispose();
+            if (subHandle != null)
+                subHandle.Dispose();
+
             feeds = null;
         }
     }

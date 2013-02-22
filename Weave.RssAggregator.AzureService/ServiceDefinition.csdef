@@ -19,7 +19,7 @@
   </WorkerRole-->
   
   
-  <WorkerRole name="RssAggregator.Role.HighFrequency" vmsize="Small">
+  <WorkerRole name="RssAggregator.Role.HighFrequency" vmsize="ExtraSmall">
     <Runtime executionContext="elevated" />
     <Imports>
       <Import moduleName="Diagnostics" />

@@ -11,9 +11,12 @@ namespace Common.Data
     {
         string connectionString;
 
+        public TimeSpan CommandTimeout { get; set; }
+
         public SqlStoredProcClient(string connectionString)
         {
             this.connectionString = connectionString;
+            CommandTimeout = TimeSpan.FromMinutes(1);
         }
 
         public async Task<IEnumerable<T>> GetAsync<T>(string storedProcName, Func<SqlDataReader, Task<T>> projection, CancellationToken cancelToken, params SqlParameter[] storedProcParameters)
@@ -24,6 +27,8 @@ namespace Common.Data
                 command.CommandType = CommandType.StoredProcedure;
                 foreach (var parameter in storedProcParameters)
                     command.Parameters.Add(parameter);
+
+                command.CommandTimeout = (int)CommandTimeout.TotalSeconds;
 
                 await connection.OpenAsync(cancelToken).ConfigureAwait(false);
 

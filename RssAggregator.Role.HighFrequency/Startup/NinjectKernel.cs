@@ -49,6 +49,8 @@ namespace RssAggregator.Role.HighFrequency
             Bind<SequentialProcessor>().ToMethod(_ => new SequentialProcessor(
                 new ISequentialAsyncProcessor<HighFrequencyFeedUpdateDto>[]
                 {
+                    this.Get<SqlSelectOnlyLatestNews>(),
+                    this.Get<EntryToBinaryUpdater>(),
                     this.Get<SqlUpdater>(),
                     this.Get<ServiceBusUpdater>(),
                 }))

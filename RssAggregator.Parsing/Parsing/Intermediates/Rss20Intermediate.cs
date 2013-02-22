@@ -138,8 +138,8 @@ namespace Weave.RssAggregator.Client.Parsing.Intermediates
             if (string.IsNullOrEmpty(ni.ImageUrl))
                 ni.ImageUrl = description.ParseImageUrlFromHtml();
 
-            ni.PublishDateTimeString = PublicationDateString;
-            ni.PublishDateTime = PublicationDate;
+            ni.PublishDateTimeOriginalString = PublicationDateString;
+            ni.UtcPublishDateTime = PublicationDate;
             ni.OriginalRssXml = xml.ToString();
 
 

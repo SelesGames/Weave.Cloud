@@ -128,8 +128,8 @@ namespace Weave.RssAggregator.Client.Parsing.Intermediates
                 e.ImageUrl = description.ParseImageUrlFromHtml();
 
 
-            e.PublishDateTimeString = PublicationDateString;
-            e.PublishDateTime = PublicationDate;
+            e.PublishDateTimeOriginalString = PublicationDateString;
+            e.UtcPublishDateTime = PublicationDate;
             e.OriginalRssXml = xml.ToString();
 
 

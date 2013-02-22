@@ -6,10 +6,10 @@ namespace Weave.RssAggregator.Client
     {
         public Guid Id { get; set; }
         public Guid FeedId { get; set; }
-        public DateTime PublishDateTime { get; set; }
+        public DateTime UtcPublishDateTime { get; set; }
 
         public string Title { get; set; }
-        public string PublishDateTimeString { get; set; }
+        public string PublishDateTimeOriginalString { get; set; }
         public string Link { get; set; }
         public string ImageUrl { get; set; }
         public string Description { get; set; }
@@ -20,6 +20,13 @@ namespace Weave.RssAggregator.Client
         public string OriginalRssXml { get; set; }
 
         public byte[] NewsItemBlob { get; set; }
+
+        // display in Universal Sortable format
+        // more info http://msdn.microsoft.com/en-us/library/az4se3k1.aspx#UniversalSortable
+        public string UtcPublishDateTimeString
+        {
+            get { return UtcPublishDateTime.ToString("u"); }
+        }
 
         public override string ToString()
         {
