@@ -1,17 +1,20 @@
-﻿using System;
+﻿using SelesGames.Common;
+using System;
 using System.Collections.Generic;
+using System.Reactive.Concurrency;
+using System.Reactive.Linq;
 
 namespace Weave.RssAggregator.HighFrequency
 {
     public class SequentialProcessor : IDisposable
     {
-        IEnumerable<ISequentialAsyncProcessor<HighFrequencyFeedUpdateDto>> processors;
+        IEnumerable<IProvider<ISequentialAsyncProcessor<HighFrequencyFeedUpdateDto>>> processorProviders;
         SubscriptionAggregator<Guid, HighFrequencyFeedUpdateDto> sub;
         IDisposable subHandle;
 
-        public SequentialProcessor(IEnumerable<ISequentialAsyncProcessor<HighFrequencyFeedUpdateDto>> processors)
+        public SequentialProcessor(IEnumerable<IProvider<ISequentialAsyncProcessor<HighFrequencyFeedUpdateDto>>> processorProviders)
         {
-            this.processors = processors;
+            this.processorProviders = processorProviders;
             InitializeSubscription();
         }
 
@@ -24,21 +27,24 @@ namespace Weave.RssAggregator.HighFrequency
         {
             sub = new SubscriptionAggregator<Guid, HighFrequencyFeedUpdateDto>();
 
-            subHandle = sub.Subscribe(
-                SafeOnHfFeedUpdate,
-                exception =>
-                {
-                    DebugEx.WriteLine(exception);
-                    throw exception;
-                });
+            subHandle = sub
+                .SubscribeOn(TaskPoolScheduler.Default)
+                .Subscribe(
+                    SafeOnHfFeedUpdate,
+                    exception =>
+                    {
+                        DebugEx.WriteLine(exception);
+                        throw exception;
+                    });
         }
 
         async void SafeOnHfFeedUpdate(HighFrequencyFeedUpdateDto update)
         {
-            foreach (var processor in processors)
+            foreach (var provider in processorProviders)
             {
                 try
                 {
+                    var processor = provider.Get();
                     await processor.ProcessAsync(update);
                     if (processor.IsHandledFully)
                         return;

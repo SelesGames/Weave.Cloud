@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Weave.RssAggregator.LibraryClient;
@@ -34,7 +33,6 @@ namespace Weave.RssAggregator.HighFrequency
         public HighFrequencyFeedUpdater(
                                     string feedLibraryUrl,
                                     SequentialProcessor processor, 
-                                    int highFrequencyRefreshSplit, 
                                     TimeSpan highFrequencyRefreshPeriod)
 
             : this(feedLibraryUrl, processor)
@@ -43,7 +41,6 @@ namespace Weave.RssAggregator.HighFrequency
 
             // set some default values
             this.highFrequencyRefreshPeriod = highFrequencyRefreshPeriod;
-            this.highFrequencyRefreshSplit = highFrequencyRefreshSplit;
         }
 
         #endregion
@@ -73,28 +70,28 @@ namespace Weave.RssAggregator.HighFrequency
             //await LoadAllFeeds();
         }
 
-        async Task LoadAllFeeds()
-        {
-            var feedsList = feeds.Select(o => o.Value).ToList();
+        //async Task LoadAllFeeds()
+        //{
+        //    var feedsList = feeds.Select(o => o.Value).ToList();
 
-            var longTime = TimeSpan.FromMinutes(5);
-            foreach (var feed in feedsList)
-            {
-                feed.RefreshTimeout = longTime;
-            }
+        //    var longTime = TimeSpan.FromMinutes(5);
+        //    foreach (var feed in feedsList)
+        //    {
+        //        feed.RefreshTimeout = longTime;
+        //    }
 
-            //foreach (var feed in feedsList)
-            //{
-            //    await feed.Refresh();
-            //}
-            await Task.WhenAll(feedsList.Select(o => o.Refresh()));
+        //    //foreach (var feed in feedsList)
+        //    //{
+        //    //    await feed.Refresh();
+        //    //}
+        //    await Task.WhenAll(feedsList.Select(o => o.Refresh()));
 
-            var shortTime = TimeSpan.FromMinutes(1);
-            foreach (var feed in feedsList)
-            {
-                feed.RefreshTimeout = shortTime;
-            }
-        }
+        //    var shortTime = TimeSpan.FromMinutes(1);
+        //    foreach (var feed in feedsList)
+        //    {
+        //        feed.RefreshTimeout = shortTime;
+        //    }
+        //}
 
         public async void StartFeedRefreshTimer()
         {
@@ -112,24 +109,8 @@ namespace Weave.RssAggregator.HighFrequency
             await Task.Delay(highFrequencyRefreshPeriod);
 #endif
 
-            //var indexedHFFeeds = feedsList.Select((hfFeed, i) => new { i, feed = hfFeed }).ToList();
-
             var fullPeriodInMs = highFrequencyRefreshPeriod.TotalMilliseconds;
             var pulseInterval = fullPeriodInMs / totalNumberOfFeeds;
-
-            //var disp = Observable
-            //    .Interval(TimeSpan.FromMilliseconds(pulseInterval))
-            //    .Subscribe(
-            //        i =>
-            //        {
-            //            var bucket = i % highFrequencyRefreshSplit;
-            //            foreach (var indexedFeedUrl in indexedHFFeeds)
-            //            {
-            //                if (indexedFeedUrl.i % highFrequencyRefreshSplit == bucket)
-            //                    indexedFeedUrl.feed.Refresh();
-            //            }
-            //        },
-            //        exception => { ; });
 
             subHandle = Observable
                 .Interval(TimeSpan.FromMilliseconds(pulseInterval))

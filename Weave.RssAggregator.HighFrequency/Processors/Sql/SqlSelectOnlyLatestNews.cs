@@ -26,11 +26,15 @@ namespace Weave.RssAggregator.HighFrequency
             if (!latestNews.Any())
             {
                 IsHandledFully = true;
+                DebugEx.WriteLine("SqlSelectOnlyLatestNews processed: {0}, NO NEW NEWS", update.FeedUri);
                 return;
             }
             else
             {
+                int totalCount = update.Entries.Count;
                 update.Entries = latestNews;
+                int filteredCount = update.Entries.Count;
+                DebugEx.WriteLine("SqlSelectOnlyLatestNews processed: {0}, filtered from {1} down to {2} articles", update.FeedUri, totalCount, filteredCount);
             }
         }
     }

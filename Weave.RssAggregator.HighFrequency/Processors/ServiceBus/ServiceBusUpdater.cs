@@ -23,11 +23,12 @@ namespace Weave.RssAggregator.HighFrequency
 
             using (var ms = new MemoryStream())
             {
-                ProtoBuf.Serializer.Serialize(ms, update);
-                ms.Position = 0;
-                var message = new BrokeredMessage(ms, false);
+                //ProtoBuf.Serializer.Serialize(ms, update);
+                //ms.Position = 0;
+                //var message = new BrokeredMessage(ms, false);
                 //message.ContentType = "application/protobuf";
                 //message.Label = string.Format("{0}: {1}", feed.FeedId, feed.FeedUri);
+                var message = new BrokeredMessage();
                 message.Properties["FeedId"] = update.FeedId;
                 message.TimeToLive = TimeSpan.FromHours(24);
                 await client.SendAsync(message);

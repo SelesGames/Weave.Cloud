@@ -31,16 +31,12 @@ namespace RssAggregator.Role.HighFrequency
             temp = RoleEnvironment.GetConfigurationSettingValue("HighFrequencyRefreshPeriod");
             highFrequencyRefreshPeriod = TimeSpan.FromMinutes(double.Parse(temp));
 
-            temp = RoleEnvironment.GetConfigurationSettingValue("HighFrequencyRefreshSplit");
-            highFrequencyRefreshSplit = int.Parse(temp);
-
             temp = RoleEnvironment.GetConfigurationSettingValue("FeedLibraryUrl");
             feedLibraryUrl = temp;
 
             hfUpdater = new HighFrequencyFeedUpdater(
                 feedLibraryUrl, 
                 kernel.Get<SequentialProcessor>(), 
-                highFrequencyRefreshSplit, 
                 highFrequencyRefreshPeriod);
 
             kernel.Bind<HighFrequencyFeedUpdater>().ToMethod(_ => hfUpdater).InSingletonScope();

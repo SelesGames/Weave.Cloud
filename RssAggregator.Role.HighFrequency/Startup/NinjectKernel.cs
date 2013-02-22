@@ -47,12 +47,12 @@ namespace RssAggregator.Role.HighFrequency
                 .InSingletonScope();
 
             Bind<SequentialProcessor>().ToMethod(_ => new SequentialProcessor(
-                new ISequentialAsyncProcessor<HighFrequencyFeedUpdateDto>[]
+                new IProvider<ISequentialAsyncProcessor<HighFrequencyFeedUpdateDto>>[]
                 {
-                    this.Get<SqlSelectOnlyLatestNews>(),
-                    this.Get<EntryToBinaryUpdater>(),
-                    this.Get<SqlUpdater>(),
-                    this.Get<ServiceBusUpdater>(),
+                    DelegateProvider.Create(() => this.Get<SqlSelectOnlyLatestNews>()),
+                    DelegateProvider.Create(() => this.Get<EntryToBinaryUpdater>()),
+                    DelegateProvider.Create(() => this.Get<SqlUpdater>()),
+                    DelegateProvider.Create(() => this.Get<ServiceBusUpdater>()),
                 }))
                 .InSingletonScope();
         }

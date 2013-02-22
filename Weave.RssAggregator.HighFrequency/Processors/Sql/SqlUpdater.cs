@@ -19,10 +19,13 @@ namespace Weave.RssAggregator.HighFrequency
 
         public async Task ProcessAsync(HighFrequencyFeedUpdateDto update)
         {
+            int successCount = 0;
             foreach (var newsItem in Enumerable.Reverse(update.Entries))
             {
-                await TryInsertAsync(newsItem);
+                if (await TryInsertAsync(newsItem))
+                    successCount++;
             }
+            DebugEx.WriteLine("SqlUpdater processed: {0}, {1} inserted into database", update.FeedUri, successCount);
         }
 
 
