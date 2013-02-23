@@ -36,7 +36,7 @@ namespace Weave.RssAggregator.Client.Parsing.Intermediates
                 Title = syndicationItem.Title.Text,
                 Link = link.Uri.AbsoluteUri,
                 Description = content,
-                PublishDateTimeOriginalString = PublicationDateString,
+                OriginalPublishDateTimeString = PublicationDateString,
                 UtcPublishDateTime = PublicationDate,
                 ImageUrl = null,
             };

@@ -11,7 +11,6 @@ namespace Weave.RssAggregator.HighFrequency
     {
         Dictionary<string, HighFrequencyFeed> feeds = new Dictionary<string, HighFrequencyFeed>();
     
-        //int highFrequencyRefreshSplit;
         TimeSpan highFrequencyRefreshPeriod;
         string feedLibraryUrl;
         SequentialProcessor processor;
@@ -28,6 +27,9 @@ namespace Weave.RssAggregator.HighFrequency
 
             this.feedLibraryUrl = feedLibraryUrl;
             this.processor = processor;
+
+            // set some default values
+            this.highFrequencyRefreshPeriod = TimeSpan.FromMinutes(20);
         }
 
         public HighFrequencyFeedUpdater(
@@ -39,7 +41,6 @@ namespace Weave.RssAggregator.HighFrequency
         {
             if (string.IsNullOrEmpty(feedLibraryUrl)) return;
 
-            // set some default values
             this.highFrequencyRefreshPeriod = highFrequencyRefreshPeriod;
         }
 
@@ -66,32 +67,7 @@ namespace Weave.RssAggregator.HighFrequency
             }
 
             feeds = highFrequencyFeeds.ToDictionary(o => o.FeedUri);
-
-            //await LoadAllFeeds();
         }
-
-        //async Task LoadAllFeeds()
-        //{
-        //    var feedsList = feeds.Select(o => o.Value).ToList();
-
-        //    var longTime = TimeSpan.FromMinutes(5);
-        //    foreach (var feed in feedsList)
-        //    {
-        //        feed.RefreshTimeout = longTime;
-        //    }
-
-        //    //foreach (var feed in feedsList)
-        //    //{
-        //    //    await feed.Refresh();
-        //    //}
-        //    await Task.WhenAll(feedsList.Select(o => o.Refresh()));
-
-        //    var shortTime = TimeSpan.FromMinutes(1);
-        //    foreach (var feed in feedsList)
-        //    {
-        //        feed.RefreshTimeout = shortTime;
-        //    }
-        //}
 
         public async void StartFeedRefreshTimer()
         {
@@ -138,3 +114,33 @@ namespace Weave.RssAggregator.HighFrequency
         }
     }
 }
+
+
+
+
+#region unused
+
+//async Task LoadAllFeeds()
+//{
+//    var feedsList = feeds.Select(o => o.Value).ToList();
+
+//    var longTime = TimeSpan.FromMinutes(5);
+//    foreach (var feed in feedsList)
+//    {
+//        feed.RefreshTimeout = longTime;
+//    }
+
+//    //foreach (var feed in feedsList)
+//    //{
+//    //    await feed.Refresh();
+//    //}
+//    await Task.WhenAll(feedsList.Select(o => o.Refresh()));
+
+//    var shortTime = TimeSpan.FromMinutes(1);
+//    foreach (var feed in feedsList)
+//    {
+//        feed.RefreshTimeout = shortTime;
+//    }
+//}
+
+#endregion

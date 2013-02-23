@@ -52,15 +52,16 @@ namespace Weave.RssAggregator.HighFrequency
                 new SqlParameter("p4", entry.Title) { SqlDbType = System.Data.SqlDbType.NVarChar },
                 new SqlParameter("p5", entry.Link) { SqlDbType = System.Data.SqlDbType.NVarChar },
                 new SqlParameter("p6", entry.Description) { SqlDbType = System.Data.SqlDbType.NVarChar },
-                new SqlParameter("p7", entry.PublishDateTimeOriginalString) { SqlDbType = System.Data.SqlDbType.NVarChar },
+                new SqlParameter("p7", entry.OriginalPublishDateTimeString) { SqlDbType = System.Data.SqlDbType.NVarChar },
+                new SqlParameter("p8", entry.UtcPublishDateTimeString) { SqlDbType = System.Data.SqlDbType.NVarChar },
 
-                new SqlParameter("p8", (object)entry.ImageUrl ?? DBNull.Value) { SqlDbType = System.Data.SqlDbType.NVarChar, IsNullable = true },
-                new SqlParameter("p9", (object)entry.VideoUri ?? DBNull.Value) { SqlDbType = System.Data.SqlDbType.NVarChar, IsNullable = true },
-                new SqlParameter("p10", (object)entry.YoutubeId ?? DBNull.Value) { SqlDbType = System.Data.SqlDbType.NVarChar, IsNullable = true },
-                new SqlParameter("p11", (object)entry.PodcastUri ?? DBNull.Value) { SqlDbType = System.Data.SqlDbType.NVarChar, IsNullable = true },
-                new SqlParameter("p12", (object)entry.ZuneAppId ?? DBNull.Value) { SqlDbType = System.Data.SqlDbType.NVarChar, IsNullable = true },
-                new SqlParameter("p13", (object)entry.OriginalRssXml ?? DBNull.Value) { SqlDbType = System.Data.SqlDbType.NVarChar, IsNullable = true },
-                new SqlParameter("p14", (object)entry.NewsItemBlob ?? DBNull.Value) { SqlDbType = System.Data.SqlDbType.VarBinary, IsNullable = true });
+                new SqlParameter("p9", (object)entry.ImageUrl ?? DBNull.Value) { SqlDbType = System.Data.SqlDbType.NVarChar, IsNullable = true },
+                new SqlParameter("p10", (object)entry.VideoUri ?? DBNull.Value) { SqlDbType = System.Data.SqlDbType.NVarChar, IsNullable = true },
+                new SqlParameter("p11", (object)entry.YoutubeId ?? DBNull.Value) { SqlDbType = System.Data.SqlDbType.NVarChar, IsNullable = true },
+                new SqlParameter("p12", (object)entry.PodcastUri ?? DBNull.Value) { SqlDbType = System.Data.SqlDbType.NVarChar, IsNullable = true },
+                new SqlParameter("p13", (object)entry.ZuneAppId ?? DBNull.Value) { SqlDbType = System.Data.SqlDbType.NVarChar, IsNullable = true },
+                new SqlParameter("p14", (object)entry.OriginalRssXml ?? DBNull.Value) { SqlDbType = System.Data.SqlDbType.NVarChar, IsNullable = true },
+                new SqlParameter("p15", (object)entry.NewsItemBlob ?? DBNull.Value) { SqlDbType = System.Data.SqlDbType.VarBinary, IsNullable = true });
 
             return rows.FirstOrDefault();
         }

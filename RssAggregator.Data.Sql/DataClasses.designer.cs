@@ -88,7 +88,7 @@ namespace RssAggregator.Data.Sql
 		
 		private string _Title;
 		
-		private string _PublishDateTimeString;
+		private string _OriginalPublishDateTimeString;
 		
 		private string _Link;
 		
@@ -108,6 +108,8 @@ namespace RssAggregator.Data.Sql
 		
 		private System.Data.Linq.Binary _NewsItemBlob;
 		
+		private string _UtcPublishDateTimeString;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -120,8 +122,8 @@ namespace RssAggregator.Data.Sql
     partial void OnPublishDateTimeChanged();
     partial void OnTitleChanging(string value);
     partial void OnTitleChanged();
-    partial void OnPublishDateTimeStringChanging(string value);
-    partial void OnPublishDateTimeStringChanged();
+    partial void OnOriginalPublishDateTimeStringChanging(string value);
+    partial void OnOriginalPublishDateTimeStringChanged();
     partial void OnLinkChanging(string value);
     partial void OnLinkChanged();
     partial void OnImageUrlChanging(string value);
@@ -140,6 +142,8 @@ namespace RssAggregator.Data.Sql
     partial void OnOriginalRssXmlChanged();
     partial void OnNewsItemBlobChanging(System.Data.Linq.Binary value);
     partial void OnNewsItemBlobChanged();
+    partial void OnUtcPublishDateTimeStringChanging(string value);
+    partial void OnUtcPublishDateTimeStringChanged();
     #endregion
 		
 		public NewsItem()
@@ -227,22 +231,22 @@ namespace RssAggregator.Data.Sql
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PublishDateTimeString", DbType="NVarChar(MAX) NOT NULL", CanBeNull=false)]
-		public string PublishDateTimeString
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OriginalPublishDateTimeString", DbType="NVarChar(MAX) NOT NULL", CanBeNull=false)]
+		public string OriginalPublishDateTimeString
 		{
 			get
 			{
-				return this._PublishDateTimeString;
+				return this._OriginalPublishDateTimeString;
 			}
 			set
 			{
-				if ((this._PublishDateTimeString != value))
+				if ((this._OriginalPublishDateTimeString != value))
 				{
-					this.OnPublishDateTimeStringChanging(value);
+					this.OnOriginalPublishDateTimeStringChanging(value);
 					this.SendPropertyChanging();
-					this._PublishDateTimeString = value;
-					this.SendPropertyChanged("PublishDateTimeString");
-					this.OnPublishDateTimeStringChanged();
+					this._OriginalPublishDateTimeString = value;
+					this.SendPropertyChanged("OriginalPublishDateTimeString");
+					this.OnOriginalPublishDateTimeStringChanged();
 				}
 			}
 		}
@@ -423,6 +427,26 @@ namespace RssAggregator.Data.Sql
 					this._NewsItemBlob = value;
 					this.SendPropertyChanged("NewsItemBlob");
 					this.OnNewsItemBlobChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UtcPublishDateTimeString", DbType="NVarChar(MAX)")]
+		public string UtcPublishDateTimeString
+		{
+			get
+			{
+				return this._UtcPublishDateTimeString;
+			}
+			set
+			{
+				if ((this._UtcPublishDateTimeString != value))
+				{
+					this.OnUtcPublishDateTimeStringChanging(value);
+					this.SendPropertyChanging();
+					this._UtcPublishDateTimeString = value;
+					this.SendPropertyChanged("UtcPublishDateTimeString");
+					this.OnUtcPublishDateTimeStringChanged();
 				}
 			}
 		}
