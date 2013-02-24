@@ -1,6 +1,9 @@
-﻿using Microsoft.ServiceBus.Messaging;
+﻿using Common.Data;
+using Microsoft.ServiceBus.Messaging;
 using Newtonsoft.Json;
 using Ninject;
+using ProtoBuf;
+using SelesGames.Common;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,11 +14,14 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Weave.RssAggregator.Client;
 using Weave.RssAggregator.Core.DTOs.Incoming;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
 using Weave.RssAggregator.HighFrequency;
 using Weave.RssAggregator.LibraryClient;
 using Weave.RssAggregator.WorkerRole.Startup;
+using Sql = RssAggregator.Data.Sql;
+
 
 namespace RssAggregator.ConsoleTesting
 {
@@ -25,8 +31,9 @@ namespace RssAggregator.ConsoleTesting
         {
             try
             {
-                TestReceiveServiceBusMessageQueue();
-                TestSendToServiceBusMessageQueue();
+                FixUnsetBlobs().Wait();
+                //TestReceiveServiceBusMessageQueue();
+                //TestSendToServiceBusMessageQueue();
                 //FuckThisShit().Wait();
                 //TestService().Wait();
             }
@@ -39,6 +46,68 @@ namespace RssAggregator.ConsoleTesting
 
             while (true)
                 Console.ReadLine();
+        }
+
+        static async Task FixUnsetBlobs()
+        {
+            var kernel = new NinjectKernel();
+            var provider = kernel.Get<IProvider<ITransactionalDatabaseClient>>();
+
+            int takeCount = 5;
+            int skipCount = 0;
+
+            while (true)
+            {
+                using (var client = provider.Get())
+                {
+                    //var news = await client.GetAllByCriteria<Sql.NewsItem>(o => o.NewsItemBlob == null || o.UtcPublishDateTimeString == null);
+                    var news = await client.Get<Sql.NewsItem>().ConfigureAwait(false);
+                    news = news.Where(o => o.NewsItemBlob == null || o.UtcPublishDateTimeString == null).Skip(skipCount).Take(takeCount);
+
+                    if (!news.Any())
+                        return;
+
+                    foreach (var o in news)
+                    {
+                        var entry = new Entry
+                        {
+                            Id = o.Id,
+                            FeedId = o.FeedId,
+                            Title = o.Title,
+                            Link = o.Link,
+                            OriginalPublishDateTimeString = o.OriginalPublishDateTimeString,
+                            UtcPublishDateTime = o.PublishDateTime,
+                            ImageUrl = o.ImageUrl,
+                            VideoUri = o.VideoUri,
+                            YoutubeId = o.YoutubeId,
+                            PodcastUri = o.PodcastUri,
+                            ZuneAppId = o.ZuneAppId,
+                        };
+
+                        if (o.NewsItemBlob == null)
+                        {
+                            var newsItem = entry.AsNewsItem();
+
+                            using (var ms = new MemoryStream())
+                            {
+                                Serializer.Serialize(ms, newsItem);
+                                ms.Position = 0;
+                                var byteArray = ms.ToArray();
+                                o.NewsItemBlob = byteArray;
+                            }
+                        }
+
+                        if (o.UtcPublishDateTimeString == null)
+                        {
+                            o.UtcPublishDateTimeString = entry.UtcPublishDateTimeString;
+                        }
+
+                        await client.SubmitChanges();
+                    }
+                }
+
+                //skipCount += takeCount;
+            }
         }
 
         static void TestReceiveServiceBusMessageQueue()

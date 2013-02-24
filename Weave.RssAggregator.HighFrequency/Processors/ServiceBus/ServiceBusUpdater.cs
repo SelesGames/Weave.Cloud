@@ -32,7 +32,7 @@ namespace Weave.RssAggregator.HighFrequency
                 message.Properties["FeedId"] = update.FeedId;
                 message.TimeToLive = TimeSpan.FromHours(24);
                 await client.SendAsync(message);
-                DebugEx.WriteLine("service bus processed: {0}", update.FeedUri);
+                DebugEx.WriteLine("** SERVICE BUS ** processed: {0}", update.FeedUri);
             }
         }
     }

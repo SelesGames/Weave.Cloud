@@ -14,7 +14,7 @@
 	[PodcastUri] NVARCHAR(MAX) NULL, 
 	[ZuneAppId] NVARCHAR(MAX) NULL, 
 	[OriginalRssXml] NVARCHAR(MAX) NULL, 
-	[NewsItemBlob] VARBINARY(MAX) NULL 
+	[NewsItemBlob] VARBINARY(MAX) NOT NULL 
 )
 
 GO

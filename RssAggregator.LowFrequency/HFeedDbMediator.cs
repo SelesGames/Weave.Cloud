@@ -26,7 +26,7 @@ namespace Weave.RssAggregator.LowFrequency
 
             try
             {
-                var news = await dbClient.GetLatestNewsForFeedId(feed.FeedId);
+                var news = await dbClient.GetLatestNNewsAsBlobList(feed.FeedId);
 
                 // if there is no news, assume something is wrong and leave it in the Uninitialized FeedState
                 if (news == null || !news.Any())

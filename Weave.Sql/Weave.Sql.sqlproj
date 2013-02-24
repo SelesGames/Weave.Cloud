@@ -61,6 +61,7 @@
     <Build Include="NewsItem.sql" />
     <Build Include="GetLatestPublicationDateTimeForFeedId.sql" />
     <Build Include="InsertNewsItemIfNotExists.sql" />
+    <Build Include="GetLatestNNewsAsBlobList.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="Weave.Sql.refactorlog" />
