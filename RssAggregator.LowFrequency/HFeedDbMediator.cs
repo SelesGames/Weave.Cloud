@@ -60,6 +60,7 @@ namespace Weave.RssAggregator.LowFrequency
         public void Subscribe(IObservable<BrokeredMessage> observable)
         {
             observable
+                .Retry()
                 .Where(m => m.Properties.ContainsKey("FeedId") && m.Properties["FeedId"].Equals(feed.FeedId))
                 .Where(m => m.Properties.ContainsKey("RefreshTime") && ((DateTime)m.Properties["RefreshTime"]) > LastRefresh)
                 .Subscribe(_ => LoadLatestNews());

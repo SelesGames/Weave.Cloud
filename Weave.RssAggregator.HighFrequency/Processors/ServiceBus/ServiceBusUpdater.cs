@@ -23,15 +23,11 @@ namespace Weave.RssAggregator.HighFrequency
 
             using (var ms = new MemoryStream())
             {
-                //ProtoBuf.Serializer.Serialize(ms, update);
-                //ms.Position = 0;
-                //var message = new BrokeredMessage(ms, false);
-                //message.ContentType = "application/protobuf";
-                //message.Label = string.Format("{0}: {1}", feed.FeedId, feed.FeedUri);
                 var message = new BrokeredMessage();
                 message.Properties["FeedId"] = update.FeedId;
                 message.Properties["RefreshTime"] = update.RefreshTime;
-                message.TimeToLive = TimeSpan.FromHours(1);
+                message.Properties["FeedUri"] = update.FeedUri;
+                message.TimeToLive = TimeSpan.FromMinutes(15);
                 await client.SendAsync(message);
                 DebugEx.WriteLine("** SERVICE BUS ** processed: {0}", update.FeedUri);
             }

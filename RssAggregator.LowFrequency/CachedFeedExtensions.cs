@@ -84,6 +84,8 @@ namespace Weave.RssAggregator.LowFrequency
                 VideoUri = o.VideoUri,
                 PodcastUri = o.PodcastUri,
                 ZuneAppId = o.ZuneAppId,
+                Id = o.Id,
+                FeedId = o.FeedId,
             };
         }
     }
