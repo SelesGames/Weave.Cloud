@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.ServiceBus.Messaging;
+using System;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 
 namespace Weave.RssAggregator.LowFrequency
@@ -53,6 +55,14 @@ namespace Weave.RssAggregator.LowFrequency
                 CurrentLoadLatestException = ex;
                 feed.LastFeedState = CachedFeed.FeedState.Failed;
             }
+        }
+
+        public void Subscribe(IObservable<BrokeredMessage> observable)
+        {
+            observable
+                .Where(m => m.Properties.ContainsKey("FeedId") && m.Properties["FeedId"].Equals(feed.FeedId))
+                .Where(m => m.Properties.ContainsKey("RefreshTime") && ((DateTime)m.Properties["RefreshTime"]) > LastRefresh)
+                .Subscribe(_ => LoadLatestNews());
         }
     }
 }

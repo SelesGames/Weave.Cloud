@@ -1,5 +1,4 @@
-﻿using Common.Azure.ServiceBus;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Disposables;
@@ -7,8 +6,6 @@ using System.Threading.Tasks;
 using Weave.RssAggregator.Core.DTOs.Incoming;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
 using Weave.RssAggregator.LibraryClient;
-using Common.Azure.ServiceBus.Reactive;
-using System.Reactive.Linq;
 
 namespace Weave.RssAggregator.LowFrequency
 {
@@ -44,9 +41,6 @@ namespace Weave.RssAggregator.LowFrequency
 
         public async Task InitializeAsync()
         {
-            //var client = await subscriptionConnector.CreateClient();
-            var observable = await subscriptionConnector.CreateObservable();// client.AsObservable();
-
             var feedClient = new FeedLibraryClient(feedLibraryUrl);
             var libraryFeeds = await feedClient.GetFeedsAsync();
 
@@ -58,24 +52,12 @@ namespace Weave.RssAggregator.LowFrequency
             feeds = highFrequencyFeeds.ToDictionary(o => o.FeedUri);
 
             var mediators = highFrequencyFeeds.Select(o => new HFeedDbMediator(dbClient, o));
+            var observable = await subscriptionConnector.CreateObservable();
 
             foreach (var mediator in mediators)
             {
                 await mediator.LoadLatestNews();
-            }
-
-            //await Task.WhenAll(mediators.Select(o => o.LoadLatestNews()));
-
-
-            foreach (var o in highFrequencyFeeds.Zip(mediators, (f, m) => new { feed = f, mediator = m }))
-            {
-                var feed = o.feed;
-                var mediator = o.mediator;
-
-                observable
-                    .Where(m => m.Properties.ContainsKey("FeedId") && m.Properties["FeedId"].Equals(feed.FeedId))
-                    .Where(m => m.Properties.ContainsKey("RefreshTime") && ((DateTime)m.Properties["RefreshTime"]) > mediator.LastRefresh)
-                    .Subscribe(_ => mediator.LoadLatestNews());
+                mediator.Subscribe(observable);
             }
         }
 

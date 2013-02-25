@@ -21,12 +21,27 @@ namespace Common.Azure.ServiceBus.Reactive
 
                     Observable.StartAsync(async () =>
                     {
+                        bool shouldPause = false;
+
                         while (shouldContinue)
                         {
-                            var message = await client.ReceiveAsync();
-                            if (message != null)
-                                observer.OnNext(message);
-                            else
+                            try
+                            {
+                                var message = await client.ReceiveAsync();
+                                if (message != null)
+                                {
+                                    observer.OnNext(message);
+                                    shouldPause = false;
+                                }
+                                else
+                                    shouldPause = true;
+                            }
+                            catch
+                            {
+                                shouldPause = true;
+                            }
+
+                            if (shouldPause)
                                 await Task.Delay(5000);
                         }
                     });
