@@ -41,7 +41,7 @@
     <Reference Include="Ninject">
       <HintPath>..\lib\Ninject.dll</HintPath>
     </Reference>
-    <Reference Include="protobuf-net, Version=1.0.0.282, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
+    <Reference Include="protobuf-net">
       <HintPath>..\lib\protobuf-net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -56,7 +56,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\PingController.cs" />
-    <Compile Include="Startup\ProtobufFormatter.cs" />
     <Compile Include="Startup\AppSettings.cs" />
     <Compile Include="Startup\HttpConfig.cs" />
     <Compile Include="Controllers\WeaveController.cs" />
@@ -96,6 +95,10 @@
     <ProjectReference Include="..\SelesGames.Rest\SelesGames.Rest.csproj">
       <Project>{bf01af3a-26b9-40f2-bb1e-9c702242b504}</Project>
       <Name>SelesGames.Rest</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SelesGames.WebApi.Protobuf\SelesGames.WebApi.Protobuf.csproj">
+      <Project>{c829e120-9b78-4640-bf91-fefcf060e2b8}</Project>
+      <Name>SelesGames.WebApi.Protobuf</Name>
     </ProjectReference>
     <ProjectReference Include="..\SelesGames.WebApi\SelesGames.WebApi.csproj">
       <Project>{bb3ea281-94b3-435f-a1ef-c395a7d1f25a}</Project>

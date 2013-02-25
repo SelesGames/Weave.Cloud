@@ -60,7 +60,7 @@ namespace RssAggregator.ConsoleTesting
             var kernel = new NinjectKernel();
             var connector = kernel.Get<SubscriptionConnector>();
 
-            var client = await connector.CreateClient(null);
+            var client = await connector.CreateClient();
 
             var message = await client.ReceiveAsync();
             DebugEx.WriteLine(message);
