@@ -5,15 +5,13 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>1.8</ProductVersion>
-    <ProjectGuid>{f08ab9b4-b0e5-4b7f-aa1c-5feb175a6639}</ProjectGuid>
+    <ProjectGuid>b38bcaa8-f20c-487c-9b74-9431c0550611</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Weave.RssAggregator.AzureService</RootNamespace>
-    <AssemblyName>Weave.RssAggregator.AzureService</AssemblyName>
+    <RootNamespace>RssAggregator.Azure.UpdaterService</RootNamespace>
+    <AssemblyName>RssAggregator.Azure.UpdaterService</AssemblyName>
     <StartDevelopmentStorage>True</StartDevelopmentStorage>
-    <Name>RssAggregator.AzureService</Name>
-    <FullDeploy>true</FullDeploy>
-    <UseIISExpressByDefault>False</UseIISExpressByDefault>
+    <Name>RssAggregator.Azure.UpdaterService</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,29 +32,29 @@
   </PropertyGroup>
   <!-- Items for the project -->
   <ItemGroup>
-    <ServiceConfiguration Include="ServiceConfiguration.Cloud.cscfg" />
     <ServiceDefinition Include="ServiceDefinition.csdef" />
     <ServiceConfiguration Include="ServiceConfiguration.Local.cscfg" />
+    <ServiceConfiguration Include="ServiceConfiguration.Cloud.cscfg" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RssAggregator.Role.HighFrequency\RssAggregator.Role.HighFrequency.csproj">
+      <Name>RssAggregator.Role.HighFrequency</Name>
+      <Project>{0ef2d384-11e8-48fe-8ec3-2f67ad896628}</Project>
+      <Private>True</Private>
+      <RoleType>Worker</RoleType>
+      <RoleName>RssAggregator.Role.HighFrequency</RoleName>
+      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Profiles" />
   </ItemGroup>
   <ItemGroup>
-    <PublishProfile Include="Profiles\Weave RSS AggregatorStaging.azurePubxml" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Weave.RssAggregator.WorkerRole\RssAggregator.WorkerRole.csproj">
-      <Name>RssAggregator.WorkerRole</Name>
-      <Project>{31e6c664-4807-43b7-8c91-59cb94717ccf}</Project>
-      <Private>True</Private>
-      <RoleType>Worker</RoleType>
-      <RoleName>RssAggregator.WorkerRole</RoleName>
-      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
-    </ProjectReference>
+    <PublishProfile Include="Profiles\weave-updater.azurePubxml" />
   </ItemGroup>
   <!-- Import the target files for this project template -->
   <PropertyGroup>
-    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
     <CloudExtensionsDir Condition=" '$(CloudExtensionsDir)' == '' ">$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Windows Azure Tools\1.8\</CloudExtensionsDir>
   </PropertyGroup>
   <Import Project="$(CloudExtensionsDir)Microsoft.WindowsAzure.targets" />

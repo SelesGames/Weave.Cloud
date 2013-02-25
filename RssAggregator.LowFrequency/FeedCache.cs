@@ -64,18 +64,19 @@ namespace Weave.RssAggregator.LowFrequency
                 await mediator.LoadLatestNews();
             }
 
+            //await Task.WhenAll(mediators.Select(o => o.LoadLatestNews()));
+
+
             foreach (var o in highFrequencyFeeds.Zip(mediators, (f, m) => new { feed = f, mediator = m }))
             {
                 var feed = o.feed;
                 var mediator = o.mediator;
 
                 observable
-                    .Where(m => m.Properties["FeedId"].Equals(feed.FeedId))
-                    .Where(m => ((DateTime)m.Properties["RefreshTime"]) > mediator.LastRefresh)
+                    .Where(m => m.Properties.ContainsKey("FeedId") && m.Properties["FeedId"].Equals(feed.FeedId))
+                    .Where(m => m.Properties.ContainsKey("RefreshTime") && ((DateTime)m.Properties["RefreshTime"]) > mediator.LastRefresh)
                     .Subscribe(_ => mediator.LoadLatestNews());
             }
-
-            //await Task.WhenAll(mediators.Select(o => o.LoadLatestNews()));
         }
 
         public FeedResult ToFeedResult(FeedRequest request)

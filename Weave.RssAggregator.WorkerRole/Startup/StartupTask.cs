@@ -1,8 +1,6 @@
-﻿using Common.Azure.ServiceBus;
-using Microsoft.WindowsAzure.ServiceRuntime;
+﻿using Microsoft.WindowsAzure.ServiceRuntime;
 using Ninject;
 using Ninject.WebApi;
-using System;
 using System.Diagnostics;
 using System.Web.Http.Dependencies;
 using System.Web.Http.SelfHost;
@@ -37,14 +35,7 @@ namespace Weave.RssAggregator.WorkerRole.Startup
 
         void SetHighFrequencyValues()
         {
-            string feedLibraryUrl;
-            int highFrequencyRefreshSplit;
-            TimeSpan highFrequencyRefreshPeriod;
-
-            string temp;
-
-            temp = RoleEnvironment.GetConfigurationSettingValue("FeedLibraryUrl");
-            feedLibraryUrl = temp;
+            var feedLibraryUrl = RoleEnvironment.GetConfigurationSettingValue("FeedLibraryUrl");
 
             hfCache = new FeedCache(
                 feedLibraryUrl,
