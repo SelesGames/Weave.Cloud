@@ -23,7 +23,6 @@ namespace RssAggregator.Role.HighFrequency
         void SetHighFrequencyValues()
         {
             string feedLibraryUrl;
-            int highFrequencyRefreshSplit;
             TimeSpan highFrequencyRefreshPeriod;
 
             string temp;
