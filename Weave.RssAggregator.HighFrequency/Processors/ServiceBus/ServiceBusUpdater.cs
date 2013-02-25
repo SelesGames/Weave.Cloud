@@ -30,6 +30,7 @@ namespace Weave.RssAggregator.HighFrequency
                 //message.Label = string.Format("{0}: {1}", feed.FeedId, feed.FeedUri);
                 var message = new BrokeredMessage();
                 message.Properties["FeedId"] = update.FeedId;
+                message.Properties["RefreshTime"] = update.RefreshTime;
                 message.TimeToLive = TimeSpan.FromHours(24);
                 await client.SendAsync(message);
                 DebugEx.WriteLine("** SERVICE BUS ** processed: {0}", update.FeedUri);

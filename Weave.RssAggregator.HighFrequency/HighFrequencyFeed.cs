@@ -51,6 +51,8 @@ namespace Weave.RssAggregator.HighFrequency
         {
             try
             {
+                var refreshTime = DateTime.UtcNow;
+
                 var requester = new FeedRequester
                 {
                     FeedId = this.FeedId,
@@ -79,6 +81,7 @@ namespace Weave.RssAggregator.HighFrequency
                                 FeedId = FeedId,
                                 Name = Name,
                                 FeedUri = FeedUri,
+                                RefreshTime = refreshTime,
                                 Entries = news,
                             };
                             feedUpdate.OnNext(update);

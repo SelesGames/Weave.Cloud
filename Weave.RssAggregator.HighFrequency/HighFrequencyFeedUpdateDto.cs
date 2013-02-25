@@ -9,6 +9,7 @@ namespace Weave.RssAggregator.HighFrequency
         public Guid FeedId { get; set; }
         public string Name { get; set; }
         public string FeedUri { get; set; }
+        public DateTime RefreshTime { get; set; }
         public List<Entry> Entries { get; set; }
     }
 }

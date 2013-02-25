@@ -76,6 +76,10 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common.Azure.ServiceBus\Common.Azure.ServiceBus.csproj">
+      <Project>{84165f70-4beb-46e2-a122-01ada235950f}</Project>
+      <Name>Common.Azure.ServiceBus</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common.Data.Linq\Common.Data.Linq.csproj">
       <Project>{f741017d-fd83-4f35-98a4-57af366c1b53}</Project>
       <Name>Common.Data.Linq</Name>

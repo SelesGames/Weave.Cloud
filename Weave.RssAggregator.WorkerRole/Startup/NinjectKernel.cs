@@ -1,7 +1,9 @@
-﻿using Common.Data;
+﻿using Common.Azure.ServiceBus;
+using Common.Data;
 using Common.Data.Linq;
 using Ninject;
 using SelesGames.Common;
+using Weave.RssAggregator.LowFrequency;
 
 namespace Weave.RssAggregator.WorkerRole.Startup
 {
@@ -10,9 +12,8 @@ namespace Weave.RssAggregator.WorkerRole.Startup
         protected override void AddComponents()
         {
             base.AddComponents();
-        //}
-        //public NinjectKernel()
-        //{
+
+
             var connectionString =
 "Server=tcp:ykgd4qav8g.database.windows.net,1433;Database=weave;User ID=aemami99@ykgd4qav8g;Password=rzarecta99!;Trusted_Connection=False;Encrypt=True;Connection Timeout=30;";
 
@@ -20,12 +21,18 @@ namespace Weave.RssAggregator.WorkerRole.Startup
                 .ToConstant(new SqlServerCredentials { ConnectionString = connectionString })
                 .InSingletonScope();
 
-    //        var azureCredentials = AzureStorageCredentials.Create(
-    //"eentertainmentcms", "Y96IzFM79dM1WxQn6FwOEdv5DvDHWZOBsEuOiDbFN7YKNf5eeWzk9KNltroyUMmafCgovpSw0q66oTCpSFNoJA==", useHttps: false);
+            var serviceBusCredentials = new ServiceBusCredentials
+            {
+                Namespace = "weave-interop",
+                IssuerName = "owner",
+                IssuerKey = "R92FFdAujgEDEPnjLhxMfP06fH+qhmMwwuXetdyAEZM=",
+            };
+            var clientFactory = new ClientFactory(serviceBusCredentials);
+            var subscriptionConnector = new SubscriptionConnector(clientFactory, "FeedUpdatedTopic");
 
-    //        Bind<AzureStorageCredentials>().ToConstant(azureCredentials).InSingletonScope();
-
-    //        Bind<ValidationEngine>().To<CMSValidationEngine>().InThreadScope();
+            Bind<ServiceBusCredentials>().ToConstant(serviceBusCredentials);
+            Bind<ClientFactory>().ToConstant(clientFactory);
+            Bind<SubscriptionConnector>().ToConstant(subscriptionConnector);
 
             Bind<IProvider<ITransactionalDatabaseClient>>().ToMethod(_ =>
             {

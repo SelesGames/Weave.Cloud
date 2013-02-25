@@ -1,4 +1,5 @@
-﻿using Common.Data;
+﻿using Common.Azure.ServiceBus;
+using Common.Data;
 using Microsoft.ServiceBus.Messaging;
 using Newtonsoft.Json;
 using Ninject;
@@ -21,6 +22,11 @@ using Weave.RssAggregator.HighFrequency;
 using Weave.RssAggregator.LibraryClient;
 using Weave.RssAggregator.WorkerRole.Startup;
 using Sql = RssAggregator.Data.Sql;
+using System.Reactive.Linq;
+using Common.Azure.ServiceBus.Reactive;
+using System.Reactive.Threading.Tasks;
+using System.Reactive.Threading;
+using Weave.RssAggregator.LowFrequency;
 
 
 namespace RssAggregator.ConsoleTesting
@@ -31,7 +37,8 @@ namespace RssAggregator.ConsoleTesting
         {
             try
             {
-                FixUnsetBlobs().Wait();
+                TestSub().Wait();
+                //FixUnsetBlobs().Wait();
                 //TestReceiveServiceBusMessageQueue();
                 //TestSendToServiceBusMessageQueue();
                 //FuckThisShit().Wait();
@@ -46,6 +53,27 @@ namespace RssAggregator.ConsoleTesting
 
             while (true)
                 Console.ReadLine();
+        }
+
+        static async Task TestSub()
+        {
+            var kernel = new NinjectKernel();
+            var connector = kernel.Get<SubscriptionConnector>();
+
+            var client = await connector.CreateClient(null);
+
+            var message = await client.ReceiveAsync();
+            DebugEx.WriteLine(message);
+            //await client.AsObservable().Do(message =>
+            //{
+            //    DebugEx.WriteLine("Body: " + message.GetBody<string>());
+            //    DebugEx.WriteLine("MessageID: " + message.MessageId);
+            //    //DebugEx.WriteLine("MessageNumber: " + message.Properties["MessageNumber"]);
+            //    DebugEx.WriteLine("FeedId: " + message.Properties["FeedId"]);
+
+            //    // Remove message from subscription
+            //    //message.Complete();
+            //}).ToTask();
         }
 
         static async Task FixUnsetBlobs()

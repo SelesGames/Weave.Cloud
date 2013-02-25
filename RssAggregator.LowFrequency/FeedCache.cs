@@ -1,4 +1,4 @@
-﻿//using Microsoft.ServiceBus;
+﻿using Common.Azure.ServiceBus;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Weave.RssAggregator.Core.DTOs.Incoming;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
 using Weave.RssAggregator.LibraryClient;
+using Common.Azure.ServiceBus.Reactive;
+using System.Reactive.Linq;
 
 namespace Weave.RssAggregator.LowFrequency
 {
@@ -17,22 +19,22 @@ namespace Weave.RssAggregator.LowFrequency
 
         string feedLibraryUrl;
         DbClient dbClient;
+        SubscriptionConnector subscriptionConnector;
 
 
 
 
         #region Constructor
 
-        public FeedCache(string feedLibraryUrl, DbClient dbClient)
+        public FeedCache(string feedLibraryUrl, DbClient dbClient, SubscriptionConnector subscriptionConnector)
         {
-            if (string.IsNullOrEmpty(feedLibraryUrl)) 
-                throw new ArgumentException("feedLibraryUrl cannot be null: FeedCache ctor");
-
-            if (dbClient == null)
-                throw new ArgumentNullException("dbClient cannot be null: FeedCache ctor");
+            if (string.IsNullOrEmpty(feedLibraryUrl)) throw new ArgumentException("feedLibraryUrl cannot be null: FeedCache ctor");
+            if (dbClient == null) throw new ArgumentNullException("dbClient cannot be null: FeedCache ctor");
+            if (subscriptionConnector == null) throw new ArgumentNullException("subscriptionConnector cannot be null: FeedCache ctor");
 
             this.feedLibraryUrl = feedLibraryUrl;
             this.dbClient = dbClient;
+            this.subscriptionConnector = subscriptionConnector;
         }
 
         #endregion
@@ -42,6 +44,9 @@ namespace Weave.RssAggregator.LowFrequency
 
         public async Task InitializeAsync()
         {
+            //var client = await subscriptionConnector.CreateClient();
+            var observable = await subscriptionConnector.CreateObservable();// client.AsObservable();
+
             var feedClient = new FeedLibraryClient(feedLibraryUrl);
             var libraryFeeds = await feedClient.GetFeedsAsync();
 
@@ -58,6 +63,19 @@ namespace Weave.RssAggregator.LowFrequency
             {
                 await mediator.LoadLatestNews();
             }
+
+            foreach (var o in highFrequencyFeeds.Zip(mediators, (f, m) => new { feed = f, mediator = m }))
+            {
+                var feed = o.feed;
+                var mediator = o.mediator;
+
+                observable
+                    .Where(m => m.Properties["FeedId"].Equals(feed.FeedId))
+                    .Where(m => ((DateTime)m.Properties["RefreshTime"]) > mediator.LastRefresh)
+                    .Subscribe(_ => mediator.LoadLatestNews());
+            }
+
+            //await Task.WhenAll(mediators.Select(o => o.LoadLatestNews()));
         }
 
         public FeedResult ToFeedResult(FeedRequest request)

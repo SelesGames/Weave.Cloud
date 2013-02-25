@@ -1,4 +1,5 @@
-﻿using Microsoft.WindowsAzure.ServiceRuntime;
+﻿using Common.Azure.ServiceBus;
+using Microsoft.WindowsAzure.ServiceRuntime;
 using Ninject;
 using Weave.RssAggregator.LowFrequency;
 
@@ -32,7 +33,8 @@ namespace RssAggregator.WebRole.Startup
 
             hfCache = new FeedCache(
                 feedLibraryUrl, 
-                kernel.Get<DbClient>());
+                kernel.Get<DbClient>(),
+                kernel.Get<SubscriptionConnector>());
 
             kernel.Bind<FeedCache>().ToMethod(_ => hfCache).InSingletonScope();
         }

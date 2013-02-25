@@ -1,4 +1,5 @@
-﻿using Microsoft.WindowsAzure.ServiceRuntime;
+﻿using Common.Azure.ServiceBus;
+using Microsoft.WindowsAzure.ServiceRuntime;
 using Ninject;
 using Ninject.WebApi;
 using System;
@@ -46,8 +47,9 @@ namespace Weave.RssAggregator.WorkerRole.Startup
             feedLibraryUrl = temp;
 
             hfCache = new FeedCache(
-                feedLibraryUrl, 
-                kernel.Get<DbClient>());
+                feedLibraryUrl,
+                kernel.Get<DbClient>(), 
+                kernel.Get<SubscriptionConnector>());
 
             kernel.Bind<FeedCache>().ToMethod(_ => hfCache).InSingletonScope();
         }
