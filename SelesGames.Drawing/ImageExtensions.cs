@@ -27,6 +27,44 @@ namespace System.Drawing
             return Image.FromStream(stream);
         }
 
+        public static Image CropAndResizeTo(this Image img, int targetWidth, int targetHeight)
+        {
+            var originalAspectRatio = (double)img.Width / (double)img.Height;
+            var targetAspectRatio = (double)targetWidth / (double)targetHeight;
+
+            if (originalAspectRatio < targetAspectRatio)
+            {
+                var scale = (double)targetWidth / (double)img.Width;
+                var resizeWidth = (int)(img.Width * scale);
+                var resizeHeight = (int)(img.Height * scale);
+
+                using (var resized = Resize(img, resizeWidth, resizeHeight))
+                {
+                    var yOffset = (int)Math.Max(0, (0.5d * resizeHeight) - (0.5d * targetHeight));
+
+                    var cropWindow = new Rectangle(0, yOffset, targetWidth, targetHeight);
+
+                    return Crop(resized, cropWindow);
+                }
+            }
+
+            else
+            {
+                var scale = (double)targetHeight / (double)img.Height;
+                var resizeWidth = (int)(img.Width * scale);
+                var resizeHeight = (int)(img.Height * scale);
+
+                using (var resized = Resize(img, resizeWidth, resizeHeight))
+                {
+                    var xOffset = (int)Math.Max(0, (0.5d * resizeWidth) - (0.5d * targetWidth));
+
+                    var cropWindow = new Rectangle(xOffset, 0, targetWidth, targetHeight);
+
+                    return Crop(resized, cropWindow);
+                }
+            }
+        }
+
         public static Image Resize(this Image imgToResize, int targetWidth, int targetHeight)
         {
             Bitmap b = new Bitmap(targetWidth, targetHeight);
