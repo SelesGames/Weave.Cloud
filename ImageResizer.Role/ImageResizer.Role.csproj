@@ -56,9 +56,6 @@
     <Compile Include="Startup\StartupTask.cs" />
     <Compile Include="WorkerRole.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-  </ItemGroup>
   <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\SelesGames.Drawing\SelesGames.Drawing.csproj">

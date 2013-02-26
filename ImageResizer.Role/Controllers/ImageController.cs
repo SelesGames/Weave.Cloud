@@ -9,7 +9,7 @@ namespace ImageResizer.Role.Controllers
 {
     public class ImageController : ApiController
     {
-        public async Task<HttpResponseMessage> GetImageCacheInfo(string url, int width, int height)
+        public async Task<HttpResponseMessage> GetImageCacheInfo(string url, int width, int height, string contentType = "image/jpeg")
         {
             int originalImageWidth;
             int originalImageHeight;
@@ -27,12 +27,15 @@ namespace ImageResizer.Role.Controllers
                 originalImageHeight = image.Height;
 
                 using (var resizedAndCropped = image.CropAndResizeTo(width, height))
-                using (var ms = new MemoryStream())
-                {
-                    resizedAndCropped.WriteToStream(ms, "image/jpeg", 92L);
+                { 
+                    var ms = new MemoryStream();
+                    resizedAndCropped.WriteToStream(ms, contentType, 92L);
                     ms.Position = 0;
 
-                    return new HttpResponseMessage(HttpStatusCode.OK) { Content = new StreamContent(ms) };
+                    var content = new StreamContent(ms);
+                    content.Headers.Add("Content-Type", contentType);
+
+                    return new HttpResponseMessage(HttpStatusCode.OK) { Content = content };
                 }
             }
         }
