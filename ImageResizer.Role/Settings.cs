@@ -17,5 +17,14 @@ namespace ImageResizer.Role
     {
         public string AppendString { get; set; }
         public Size Size { get; set; }
+
+        public static OutputSize Create(string appendString, int width, int height)
+        {
+            return new OutputSize
+            {
+                AppendString = appendString,
+                Size = new Size(width, height),
+            };
+        }
     }
 }

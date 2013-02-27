@@ -1,4 +1,6 @@
 ﻿using Ninject;
+using System.Collections.Generic;
+using System.Drawing;
 
 namespace ImageResizer.Role.Startup
 {
@@ -8,7 +10,21 @@ namespace ImageResizer.Role.Startup
         {
             base.AddComponents();
 
+            var settings = new Settings
+            {
+                AzureStorageAccountName = "weave",
+                AzureStorageKey = "uudFrra70qkI64bifaI2Rrm37CZ1HkzaBQrLMyw6U/hmzNDZehXeo9DdUv7BCpuZY4N2q/CNpNwYxW2fa218xA==",
+                BlobImageContainer = "images",
+                OutputContentType = "image/jpeg",
+                OutputFileExtension = "jpg",
+                OutputSizes = new List<OutputSize>
+                {
+                    OutputSize.Create("sd", 690, 390),
+                    OutputSize.Create("small", 120, 120),
+                },
+            };
 
+            Bind<Settings>().ToConstant(settings);
         }
     }
 }

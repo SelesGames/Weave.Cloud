@@ -58,7 +58,10 @@ namespace ImageResizer.Role.Controllers
 
                         var blobFileName = string.Format("{0}-{1}.{2}", blobBaseFileName, outputSize.AppendString, settings.OutputFileExtension);
                         await blobClient.Save(blobFileName, ms);
-                        savedFileNames.Add(blobFileName);
+
+
+                        var fullFilePath = string.Format("{0}{1}/{2}", blobClient.BlobEndpoint, settings.BlobImageContainer, blobFileName);
+                        savedFileNames.Add(fullFilePath);
                     }                
                 }
             }
