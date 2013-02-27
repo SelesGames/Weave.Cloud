@@ -69,6 +69,12 @@ namespace Weave.RssAggregator.HighFrequency
             feeds = highFrequencyFeeds.ToDictionary(o => o.FeedUri);
         }
 
+        public Task RefreshAllFeedsImmediately()
+        {
+            var feedsList = feeds.Select(o => o.Value).ToList();
+            return Task.WhenAll(feedsList.Select(o => o.Refresh()));
+        }
+
         public async void StartFeedRefreshTimer()
         {
             if (subHandle != null)

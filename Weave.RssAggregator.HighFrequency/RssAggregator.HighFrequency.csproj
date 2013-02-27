@@ -34,6 +34,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\Microsoft.ServiceBus.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\lib\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="protobuf-net">
       <HintPath>..\lib\protobuf-net.dll</HintPath>
     </Reference>
@@ -59,6 +62,7 @@
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web" />
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
@@ -67,6 +71,7 @@
     <Compile Include="HighFrequencyFeedUpdater.cs" />
     <Compile Include="HighFrequencyFeedUpdateDto.cs" />
     <Compile Include="Processors\BinaryConverter\EntryToBinaryUpdater.cs" />
+    <Compile Include="Processors\ImageScaler\ImageScalerUpdater.cs" />
     <Compile Include="Processors\ISequentialAsyncProcessor.cs" />
     <Compile Include="Processors\Sql\SqlSelectOnlyLatestNews.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

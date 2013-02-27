@@ -17,6 +17,9 @@ namespace RssAggregator.Role.HighFrequency
             SetHighFrequencyValues();
 
             hfUpdater.InitializeAsync().Wait();
+#if DEBUG
+            hfUpdater.RefreshAllFeedsImmediately().Wait();
+#endif
             hfUpdater.StartFeedRefreshTimer();
         }
 
