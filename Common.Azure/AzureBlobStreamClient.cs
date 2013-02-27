@@ -43,7 +43,7 @@ namespace Common.Azure
             return ms;
         }
 
-        public Task Save(string fileName, Stream obj)
+        public Task Save(string fileName, Stream stream)
         {
             var client = account.CreateCloudBlobClient();
             var container = client.GetContainerReference(this.container);
@@ -51,19 +51,13 @@ namespace Common.Azure
 
             if (!string.IsNullOrEmpty(ContentType))
                 blob.Properties.ContentType = ContentType;
-            ////blob.Properties.ContentEncoding = "gzip";
+
 
             BlobRequestOptions options = new BlobRequestOptions();
             options.AccessCondition = AccessCondition.None;
             options.Timeout = WriteTimeout;
 
-            //using (var ms = new MemoryStream())
-            //{
-            //    await obj.CopyToAsync(ms);
-            //    ms.Position = 0;
-            //    await blob.UploadFromStreamAsync(ms, options);
-            //}
-            return blob.UploadFromStreamAsync(obj, options);
+            return blob.UploadFromStreamAsync(stream, options);
         }
 
         public Task Delete(string fileName)
