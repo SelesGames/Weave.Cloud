@@ -9,7 +9,7 @@ namespace ImageResizer.Role.Controllers
 {
     public class ImageController : ApiController
     {
-        public async Task<HttpResponseMessage> GetImageCacheInfo(string url, int width, int height, string contentType = "image/jpeg")
+        public async Task<HttpResponseMessage> GetImageCacheInfo(string url, int width, int height, string contentType = "image/jpeg", long imageQuality = 90L)
         {
             var client = new HttpClient();
             var response = await client.GetAsync(url);
@@ -23,7 +23,7 @@ namespace ImageResizer.Role.Controllers
                 using (var resizedAndCropped = image.CropAndResizeTo(width, height))
                 { 
                     var ms = new MemoryStream();
-                    resizedAndCropped.WriteToStream(ms, contentType, 92L);
+                    resizedAndCropped.WriteToStream(ms, contentType, imageQuality);
                     ms.Position = 0;
 
                     var content = new StreamContent(ms);

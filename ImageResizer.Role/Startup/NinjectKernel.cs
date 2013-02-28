@@ -17,6 +17,7 @@ namespace ImageResizer.Role.Startup
                 BlobImageContainer = "images",
                 OutputContentType = "image/jpeg",
                 OutputFileExtension = "jpg",
+                ImageQuality = 90L,
                 OutputSizes = new List<OutputSize>
                 {
                     OutputSize.Create("sd", 690, 390),

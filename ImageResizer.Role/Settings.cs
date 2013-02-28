@@ -11,6 +11,7 @@ namespace ImageResizer.Role
         public List<OutputSize> OutputSizes { get; set; }
         public string OutputContentType { get; set; }
         public string OutputFileExtension { get; set; }
+        public long ImageQuality { get; set; }
     }
 
     public class OutputSize

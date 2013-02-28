@@ -53,8 +53,8 @@ namespace ImageResizer.Role.Controllers
                     var height = outputSize.Size.Height;
 
                     // don't bother upscaling images
-                    if (width > originalImageWidth && height > originalImageHeight)
-                        continue;
+                    //if (width > originalImageWidth && height > originalImageHeight)
+                    //    continue;
 
 
                     blobFileName = string.Format("{0}-{1}.{2}", blobBaseFileName, outputSize.AppendString, settings.OutputFileExtension);
@@ -63,7 +63,7 @@ namespace ImageResizer.Role.Controllers
                     {
                         using (var resizedAndCropped = image.CropAndResizeTo(width, height))
                         {
-                            resizedAndCropped.WriteToStream(ms, contentType, 92L);
+                            resizedAndCropped.WriteToStream(ms, contentType, settings.ImageQuality);
                             ms.Position = 0;
                         }
 
@@ -80,7 +80,7 @@ namespace ImageResizer.Role.Controllers
 
                 //    using (var ms = new MemoryStream())
                 //    {
-                //        image.WriteToStream(ms, contentType, 92L);
+                //        image.WriteToStream(ms, contentType, settings.ImageQuality);
                 //        ms.Position = 0;
                 //        await blobClient.Save(blobFileName, ms);
                 //    }
