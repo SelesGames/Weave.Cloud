@@ -24,6 +24,7 @@ namespace System.Drawing
     {
         public static Image ReadImage(this Stream stream)
         {
+            //return new Bitmap(stream, false);
             return Image.FromStream(stream);
         }
 
@@ -35,7 +36,7 @@ namespace System.Drawing
             if (originalAspectRatio < targetAspectRatio)
             {
                 var scale = (double)targetWidth / (double)img.Width;
-                var resizeWidth = (int)(img.Width * scale);
+                var resizeWidth = targetWidth;// = (int)(img.Width * scale);
                 var resizeHeight = (int)(img.Height * scale);
 
                 using (var resized = Resize(img, resizeWidth, resizeHeight))
@@ -52,7 +53,7 @@ namespace System.Drawing
             {
                 var scale = (double)targetHeight / (double)img.Height;
                 var resizeWidth = (int)(img.Width * scale);
-                var resizeHeight = (int)(img.Height * scale);
+                var resizeHeight = targetHeight;// = (int)(img.Height * scale);
 
                 using (var resized = Resize(img, resizeWidth, resizeHeight))
                 {
@@ -68,10 +69,19 @@ namespace System.Drawing
         public static Image Resize(this Image imgToResize, int targetWidth, int targetHeight)
         {
             Bitmap b = new Bitmap(targetWidth, targetHeight);
+            // set the resolutions the same to avoid cropping due to resolution differences
+            b.SetResolution(imgToResize.HorizontalResolution, imgToResize.VerticalResolution);
+            
             using (Graphics g = Graphics.FromImage((Image)b))
             {
+                g.CompositingQuality = CompositingQuality.HighQuality;
                 g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                g.DrawImage(imgToResize, 0, 0, targetWidth, targetHeight);
+                g.SmoothingMode = SmoothingMode.HighQuality;
+                g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                g.CompositingMode = CompositingMode.SourceCopy;
+                //var imageAttributes = new ImageAttributes();
+                //imageAttributes.SetWrapMode(WrapMode.TileFlipXY);
+                g.DrawImage(imgToResize, 0, 0, targetWidth, targetHeight);//, GraphicsUnit.Pixel, imageAttributes);
             }
             return b;
         }

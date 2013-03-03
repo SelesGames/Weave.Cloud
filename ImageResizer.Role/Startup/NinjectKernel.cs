@@ -20,7 +20,7 @@ namespace ImageResizer.Role.Startup
                 ImageQuality = 90L,
                 OutputSizes = new List<OutputSize>
                 {
-                    OutputSize.Create("sd", 690, 390),
+                    OutputSize.Create("sd", 691, 390),
                     OutputSize.Create("small", 120, 120),
                 },
             };
