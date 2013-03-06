@@ -89,7 +89,7 @@ namespace ImageResizer.Role.Controllers
                 //}
             }
 
-            return savedFileNames;
+            return new { ImageWidth = originalImageWidth, ImageHeight = originalImageHeight, SavedFileNames = savedFileNames };
         }
 
         AzureBlobStreamClient CreateBlobClient(string contentType)

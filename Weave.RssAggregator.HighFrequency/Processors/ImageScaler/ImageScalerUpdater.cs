@@ -41,9 +41,14 @@ namespace Weave.RssAggregator.HighFrequency
                 var response = await client.GetStringAsync(url);
                 if (string.IsNullOrWhiteSpace(response))
                     return;
-                
-                var urlList = JsonConvert.DeserializeObject<List<string>>(response);
-                if (!urlList.Any())
+
+                var result = JsonConvert.DeserializeObject<imageServiceResult>(response);
+                if (result == null)
+                    return;
+
+                var urlList = result.SavedFileNames;
+
+                if (urlList == null || !urlList.Any())
                     return;
 
                 var sd = urlList.FirstOrDefault(o => o.EndsWith("-sd.jpg"));
@@ -51,6 +56,13 @@ namespace Weave.RssAggregator.HighFrequency
                     e.ImageUrl = urlList.First();
             }
             catch { }
+        }
+
+        class imageServiceResult
+        {
+            public int ImageWidth { get; set; }
+            public int ImageHeight { get; set; }
+            public List<string> SavedFileNames { get; set; }
         }
     }
 }
