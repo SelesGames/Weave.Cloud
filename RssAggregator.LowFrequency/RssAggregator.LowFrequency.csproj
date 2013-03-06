@@ -60,7 +60,6 @@
     <Compile Include="FeedCache.cs" />
     <Compile Include="CachedFeedExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SubscriptionConnector.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common.Azure.ServiceBus.Reactive\Common.Azure.ServiceBus.Reactive.csproj">

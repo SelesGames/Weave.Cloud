@@ -1,9 +1,9 @@
 ﻿using Common.Azure.ServiceBus;
+using Common.Azure.ServiceBus.Reactive;
 using Common.Data;
 using Common.Data.Linq;
 using Ninject;
 using SelesGames.Common;
-using Weave.RssAggregator.LowFrequency;
 
 namespace Weave.RssAggregator.WorkerRole.Startup
 {
@@ -28,7 +28,7 @@ namespace Weave.RssAggregator.WorkerRole.Startup
                 IssuerKey = "R92FFdAujgEDEPnjLhxMfP06fH+qhmMwwuXetdyAEZM=",
             };
             var clientFactory = new ClientFactory(serviceBusCredentials);
-            var subscriptionConnector = new SubscriptionConnector(clientFactory, "FeedUpdatedTopic");
+            var subscriptionConnector = new SubscriptionConnector(clientFactory, "FeedUpdatedTopic", "test");
 
             Bind<ServiceBusCredentials>().ToConstant(serviceBusCredentials);
             Bind<ClientFactory>().ToConstant(clientFactory);

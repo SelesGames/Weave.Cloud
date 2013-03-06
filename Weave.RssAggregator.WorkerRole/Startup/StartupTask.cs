@@ -1,4 +1,5 @@
-﻿using Microsoft.WindowsAzure.ServiceRuntime;
+﻿using Common.Azure.ServiceBus.Reactive;
+using Microsoft.WindowsAzure.ServiceRuntime;
 using Ninject;
 using Ninject.WebApi;
 using System.Diagnostics;
