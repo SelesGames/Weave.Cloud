@@ -58,9 +58,9 @@ namespace RssAggregator.ConsoleTesting
         static async Task TestSub()
         {
             var kernel = new NinjectKernel();
-            var connector = kernel.Get<SubscriptionConnector>();
+            var connector = kernel.Get<ClientFactory>();
 
-            var client = await connector.CreateClient();
+            var client = await connector.CreateSubscriptionClient("FeedUpdatedTopic", "test");
 
             var message = await client.ReceiveAsync();
             DebugEx.WriteLine(message);

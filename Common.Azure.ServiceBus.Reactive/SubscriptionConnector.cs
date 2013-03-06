@@ -18,11 +18,6 @@ namespace Common.Azure.ServiceBus.Reactive
             this.subscriptionName = subscriptionName;
         }
 
-        public Task<SubscriptionClient> CreateClient()
-        {
-            return factory.CreateSubscriptionClient(topicPath, subscriptionName);
-        }
-
         public async Task<IObservable<BrokeredMessage>> CreateObservable()
         {
             var client = await CreateClient();
@@ -32,6 +27,11 @@ namespace Common.Azure.ServiceBus.Reactive
             client.AsObservable().Subscribe(sub.OnNext, sub.OnError, sub.OnCompleted);
 
             return sub.AsObservable();
+        }
+
+        Task<SubscriptionClient> CreateClient()
+        {
+            return factory.CreateSubscriptionClient(topicPath, subscriptionName);
         }
     }
 }
