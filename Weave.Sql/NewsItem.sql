@@ -14,7 +14,11 @@
 	[PodcastUri] NVARCHAR(MAX) NULL, 
 	[ZuneAppId] NVARCHAR(MAX) NULL, 
 	[OriginalRssXml] NVARCHAR(MAX) NULL, 
-	[NewsItemBlob] VARBINARY(MAX) NOT NULL 
+	[NewsItemBlob] VARBINARY(MAX) NOT NULL, 
+    [ImageWidth] INT NULL, 
+    [ImageHeight] INT NULL, 
+    [BaseResizedImageUrl] VARCHAR(MAX) NULL, 
+    [SupportedFormats] VARCHAR(MAX) NULL 
 )
 
 GO

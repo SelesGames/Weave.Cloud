@@ -19,7 +19,6 @@ namespace Weave.RssAggregator.Client
         public string ZuneAppId { get; set; }
         public string OriginalRssXml { get; set; }
 
-        public byte[] NewsItemBlob { get; set; }
 
         // display in Universal Sortable format
         // more info http://msdn.microsoft.com/en-us/library/az4se3k1.aspx#UniversalSortable

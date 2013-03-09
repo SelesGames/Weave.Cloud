@@ -39,10 +39,12 @@
   <ItemGroup>
     <Compile Include="DebugEx.cs" />
     <Compile Include="DelegateProvider.cs" />
+    <Compile Include="Extensions\ConvertExtension.cs" />
     <Compile Include="Extensions\IEnumerableExtensions.cs" />
     <Compile Include="Extensions\LinqToXmlExtensions.cs" />
     <Compile Include="Extensions\StreamExtensionMethods.cs" />
     <Compile Include="Hashing\CryptoHelper.cs" />
+    <Compile Include="IConverter.cs" />
     <Compile Include="IProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
