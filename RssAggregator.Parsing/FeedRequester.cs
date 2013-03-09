@@ -170,10 +170,16 @@ namespace Weave.RssAggregator.Client
 
             this.News = filteredNews.Select(TryCreateNewsItem).OfType<Entry>().ToList();
 
+            var now = DateTime.UtcNow;
+
             foreach (var newsItem in News)
             {
                 newsItem.FeedId = FeedId;
                 newsItem.Id = CryptoHelper.ComputeHashUsedByMobilizer(newsItem.Link + FeedUri);
+
+                // cap the publishdatetime as no later than the current time
+                if (newsItem.UtcPublishDateTime > now)
+                    newsItem.UtcPublishDateTime = now;
             }
 
             this.Status = RequestStatus.OK;
