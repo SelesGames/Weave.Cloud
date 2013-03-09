@@ -22,11 +22,6 @@ using Weave.RssAggregator.HighFrequency;
 using Weave.RssAggregator.LibraryClient;
 using Weave.RssAggregator.WorkerRole.Startup;
 using Sql = RssAggregator.Data.Sql;
-using System.Reactive.Linq;
-using Common.Azure.ServiceBus.Reactive;
-using System.Reactive.Threading.Tasks;
-using System.Reactive.Threading;
-using Weave.RssAggregator.LowFrequency;
 
 
 namespace RssAggregator.ConsoleTesting

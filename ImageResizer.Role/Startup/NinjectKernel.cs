@@ -1,6 +1,5 @@
 ﻿using Ninject;
 using System.Collections.Generic;
-using System.Drawing;
 
 namespace ImageResizer.Role.Startup
 {
