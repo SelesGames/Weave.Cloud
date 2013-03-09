@@ -5,7 +5,7 @@ namespace Weave.RssAggregator.HighFrequency
 {
     public class EntryWithPostProcessInfoToNewsItemConverter : IConverter<EntryWithPostProcessInfo, NewsItem>
     {
-        public static EntryWithPostProcessInfoToNewsItemConverter Instance = new EntryWithPostProcessInfoToNewsItemConverter();
+        public static readonly EntryWithPostProcessInfoToNewsItemConverter Instance = new EntryWithPostProcessInfoToNewsItemConverter();
 
         public NewsItem Convert(EntryWithPostProcessInfo e)
         {

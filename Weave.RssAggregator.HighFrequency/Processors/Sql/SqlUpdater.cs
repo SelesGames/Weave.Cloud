@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Weave.RssAggregator.Client;
 
 namespace Weave.RssAggregator.HighFrequency
 {
@@ -33,7 +32,7 @@ namespace Weave.RssAggregator.HighFrequency
 
         #region private helper functions
 
-        async Task<bool> TryInsertAsync(Entry entry)
+        async Task<bool> TryInsertAsync(EntryWithPostProcessInfo entry)
         {
             try
             {

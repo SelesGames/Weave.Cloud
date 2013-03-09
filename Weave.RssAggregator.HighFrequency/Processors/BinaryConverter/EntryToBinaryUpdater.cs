@@ -1,7 +1,7 @@
 ﻿using ProtoBuf;
+using SelesGames.Common;
 using System.IO;
 using System.Threading.Tasks;
-using Weave.RssAggregator.Client;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
 
 namespace Weave.RssAggregator.HighFrequency
@@ -27,7 +27,7 @@ namespace Weave.RssAggregator.HighFrequency
 
             foreach (var entry in update.Entries)
             {
-                var newsItem = entry.AsNewsItem();
+                var newsItem = entry.Convert(EntryWithPostProcessInfoToNewsItemConverter.Instance);
 
                 using (var ms = new MemoryStream())
                 {

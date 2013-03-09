@@ -60,6 +60,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Outgoing\Image.cs" />
     <Compile Include="Outgoing\NewsItem.cs" />
     <Compile Include="Extensions\EntryExtensions.cs" />
     <Compile Include="Incoming\FeedRequest.cs" />

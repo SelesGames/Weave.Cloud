@@ -17,6 +17,7 @@ namespace Weave.RssAggregator.Core.DTOs.Outgoing
         [ProtoMember (9)] public string ZuneAppId { get; set; }
         [ProtoMember(10)] public Guid Id { get; set; }
         [ProtoMember(11)] public Guid FeedId { get; set; }
+        [ProtoMember(12)] public Image Image { get; set; }
 
         public override string ToString()
         {

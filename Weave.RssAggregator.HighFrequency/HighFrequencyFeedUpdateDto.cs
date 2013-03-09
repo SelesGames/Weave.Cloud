@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Weave.RssAggregator.Client;
 
 namespace Weave.RssAggregator.HighFrequency
 {
@@ -10,6 +9,6 @@ namespace Weave.RssAggregator.HighFrequency
         public string Name { get; set; }
         public string FeedUri { get; set; }
         public DateTime RefreshTime { get; set; }
-        public List<Entry> Entries { get; set; }
+        public List<EntryWithPostProcessInfo> Entries { get; set; }
     }
 }

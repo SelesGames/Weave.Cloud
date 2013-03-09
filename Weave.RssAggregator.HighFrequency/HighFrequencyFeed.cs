@@ -1,4 +1,5 @@
-﻿using SelesGames.Common.Hashing;
+﻿using SelesGames.Common;
+using SelesGames.Common.Hashing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -82,7 +83,7 @@ namespace Weave.RssAggregator.HighFrequency
                                 Name = Name,
                                 FeedUri = FeedUri,
                                 RefreshTime = refreshTime,
-                                Entries = news,
+                                Entries = news.Select(o => o.Convert(EntryToEntryWithPostProcessInfoConverter.Instance)).ToList(),
                             };
                             feedUpdate.OnNext(update);
                         }

@@ -3,7 +3,6 @@ using System;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
-using Weave.RssAggregator.Client;
 
 namespace Weave.RssAggregator.HighFrequency
 {
@@ -39,7 +38,7 @@ namespace Weave.RssAggregator.HighFrequency
         /// </summary>
         /// <param name="entry">The Entry to be added</param>
         /// <returns>True if the Entry was added to the database, False if the Entry already existed.</returns>
-        public async Task<bool> InsertNewsItemIfNotExists(Entry entry)
+        public async Task<bool> InsertNewsItemIfNotExists(EntryWithPostProcessInfo entry)
         {
             var storedProcName = "InsertNewsItemIfNotExists";
 
@@ -55,13 +54,18 @@ namespace Weave.RssAggregator.HighFrequency
                 new SqlParameter("p7", entry.OriginalPublishDateTimeString) { SqlDbType = System.Data.SqlDbType.NVarChar },
                 new SqlParameter("p8", entry.UtcPublishDateTimeString) { SqlDbType = System.Data.SqlDbType.NVarChar },
 
-                new SqlParameter("p9", (object)entry.ImageUrl ?? DBNull.Value) { SqlDbType = System.Data.SqlDbType.NVarChar, IsNullable = true },
+                new SqlParameter("p9", (object)entry.OriginalImageUrl ?? DBNull.Value) { SqlDbType = System.Data.SqlDbType.NVarChar, IsNullable = true },
                 new SqlParameter("p10", (object)entry.VideoUri ?? DBNull.Value) { SqlDbType = System.Data.SqlDbType.NVarChar, IsNullable = true },
                 new SqlParameter("p11", (object)entry.YoutubeId ?? DBNull.Value) { SqlDbType = System.Data.SqlDbType.NVarChar, IsNullable = true },
                 new SqlParameter("p12", (object)entry.PodcastUri ?? DBNull.Value) { SqlDbType = System.Data.SqlDbType.NVarChar, IsNullable = true },
                 new SqlParameter("p13", (object)entry.ZuneAppId ?? DBNull.Value) { SqlDbType = System.Data.SqlDbType.NVarChar, IsNullable = true },
                 new SqlParameter("p14", (object)entry.OriginalRssXml ?? DBNull.Value) { SqlDbType = System.Data.SqlDbType.NVarChar, IsNullable = true },
-                new SqlParameter("p15", (object)entry.NewsItemBlob ?? DBNull.Value) { SqlDbType = System.Data.SqlDbType.VarBinary, IsNullable = true });
+                new SqlParameter("p15", entry.NewsItemBlob) { SqlDbType = System.Data.SqlDbType.VarBinary },
+                new SqlParameter("p16", (object)entry.ImageWidth ?? DBNull.Value) { SqlDbType = System.Data.SqlDbType.Int, IsNullable = true },
+                new SqlParameter("p17", (object)entry.ImageHeight ?? DBNull.Value) { SqlDbType = System.Data.SqlDbType.Int, IsNullable = true },
+                new SqlParameter("p18", (object)entry.BaseResizedImageUrl ?? DBNull.Value) { SqlDbType = System.Data.SqlDbType.VarChar, IsNullable = true },
+                new SqlParameter("p19", (object)entry.SupportedFormats ?? DBNull.Value) { SqlDbType = System.Data.SqlDbType.VarChar, IsNullable = true }
+                );
 
             return rows.FirstOrDefault();
         }
