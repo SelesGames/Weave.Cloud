@@ -1,11 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
-using Weave.RssAggregator.Client;
 
 namespace Weave.RssAggregator.HighFrequency
 {
@@ -30,39 +28,79 @@ namespace Weave.RssAggregator.HighFrequency
             return Task.WhenAll(o.Entries.Select(ProcessEntry)); 
         }
 
-        async Task ProcessEntry(Entry e)
+        async Task ProcessEntry(EntryWithPostProcessInfo e)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(e.ImageUrl))
+                var imageUrl = e.OriginalImageUrl;
+                e.PreferredImageUrl = imageUrl;
+
+                if (string.IsNullOrWhiteSpace(imageUrl))
                     return;
 
-                var url = string.Format(urlFormat, HttpUtility.UrlEncode(e.ImageUrl));
+                var url = string.Format(urlFormat, HttpUtility.UrlEncode(imageUrl));
                 var response = await client.GetStringAsync(url);
                 if (string.IsNullOrWhiteSpace(response))
                     return;
 
-                var result = JsonConvert.DeserializeObject<imageServiceResult>(response);
+                var result = JsonConvert.DeserializeObject<ImageServiceResult>(response);
                 if (result == null)
                     return;
 
-                var urlList = result.SavedFileNames;
 
-                if (urlList == null || !urlList.Any())
-                    return;
-
-                var sd = urlList.FirstOrDefault(o => o.EndsWith("-sd.jpg"));
-                if (sd != null)
-                    e.ImageUrl = urlList.First();
+                e.ImageWidth = result.ImageWidth;
+                e.ImageHeight = result.ImageHeight;
+                e.BaseResizedImageUrl = result.BaseImageUrl;
+                e.SupportedFormats = result.SupportedFormats;
+                
+                if (!string.IsNullOrWhiteSpace(result.BaseImageUrl) &&
+                    (result.ImageWidth * result.ImageHeight > 100) &&
+                    result.SupportedFormatsList != null && 
+                    result.SupportedFormatsList.Any(o => "sd".Equals(o, StringComparison.OrdinalIgnoreCase)))
+                {
+                    var resizeUrl = string.Format("{0}-sd.jpg", result.BaseImageUrl);
+                    e.PreferredImageUrl = resizeUrl;
+                    e.IsResizedImageSet = true;
+                }
             }
             catch { }
         }
-
-        class imageServiceResult
-        {
-            public int ImageWidth { get; set; }
-            public int ImageHeight { get; set; }
-            public List<string> SavedFileNames { get; set; }
-        }
     }
 }
+
+
+
+
+//if (e.ResizedImagesUrls == null || !e.ResizedImagesUrls.Any())
+//    return;
+
+//var sd = e.ResizedImagesUrls.FirstOrDefault(o => o.EndsWith("-sd.jpg"));
+//if (sd != null)
+//    e.ImageUrl = e.ResizedImagesUrls.First();
+
+
+        //string EvaluateForAspectRatio(imageServiceResult result)
+        //{
+        //    var width = result.ImageWidth;
+        //    var height = result.ImageHeight;
+
+        //    var aspect = (double)width / (double)height;
+
+        //    // a 5:4 ratio is the cutoff for landscape
+        //    if (aspect > 1.25)
+        //        return "landscape";
+
+        //    // a 4:5 ratio is cutoff for portrait
+        //    if (aspect < 0.8)
+        //        return "portrait";
+
+        //    return "square";
+        //}
+
+        //bool EvaluateForImageQuality(imageServiceResult result)
+        //{
+        //    var width = result.ImageWidth;
+        //    var height = result.ImageHeight;
+
+        //    return (width * height) > 120000;
+        //}
