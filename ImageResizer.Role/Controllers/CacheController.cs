@@ -5,6 +5,7 @@ using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -23,8 +24,8 @@ namespace ImageResizer.Role.Controllers
         {
             int originalImageWidth;
             int originalImageHeight;
-            string blobFileName;
             string fullFilePath;
+            string baseImageUrl;
 
             var client = new HttpClient();
             var response = await client.GetAsync(url);
@@ -34,6 +35,8 @@ namespace ImageResizer.Role.Controllers
 
 
             var savedFileNames = new List<string>();
+            var supportedFormats = new StringBuilder();
+
 
             var contentType = settings.OutputContentType;
 
@@ -47,6 +50,8 @@ namespace ImageResizer.Role.Controllers
                 var blobClient = CreateBlobClient(contentType);
 
 
+                baseImageUrl = string.Format("{0}{1}/{2}", blobClient.BlobEndpoint, settings.BlobImageContainer, blobBaseFileName);
+
                 foreach (var outputSize in settings.OutputSizes)
                 {
                     var width = outputSize.Size.Width;
@@ -57,7 +62,7 @@ namespace ImageResizer.Role.Controllers
                     //    continue;
 
 
-                    blobFileName = string.Format("{0}-{1}.{2}", blobBaseFileName, outputSize.AppendString, settings.OutputFileExtension);
+                    var blobFileName = string.Format("{0}-{1}.{2}", blobBaseFileName, outputSize.AppendString, settings.OutputFileExtension);
 
                     using (var ms = new MemoryStream())
                     {
@@ -72,24 +77,22 @@ namespace ImageResizer.Role.Controllers
 
                     fullFilePath = string.Format("{0}{1}/{2}", blobClient.BlobEndpoint, settings.BlobImageContainer, blobFileName);
                     savedFileNames.Add(fullFilePath);
+                    supportedFormats.Append(string.Format("{0},", outputSize.AppendString));
                 }
 
-                //if (!savedFileNames.Any())
-                //{
-                //    blobFileName = string.Format("{0}.{2}", blobBaseFileName, settings.OutputFileExtension);
-
-                //    using (var ms = new MemoryStream())
-                //    {
-                //        image.WriteToStream(ms, contentType, settings.ImageQuality);
-                //        ms.Position = 0;
-                //        await blobClient.Save(blobFileName, ms);
-                //    }
-                //    fullFilePath = string.Format("{0}{1}/{2}", blobClient.BlobEndpoint, settings.BlobImageContainer, blobFileName);
-                //    savedFileNames.Add(fullFilePath);
-                //}
+                if (supportedFormats.Length >= 1)
+                    supportedFormats.Remove(supportedFormats.Length - 1, 1);
             }
 
-            return new { ImageWidth = originalImageWidth, ImageHeight = originalImageHeight, SavedFileNames = savedFileNames };
+            return new 
+            { 
+                ImageWidth = originalImageWidth, 
+                ImageHeight = originalImageHeight,
+                BaseImageUrl = baseImageUrl,
+                SupportedFormats = supportedFormats.ToString(),
+                FileExtension = settings.OutputFileExtension,
+                SavedFileNames = savedFileNames,
+            };
         }
 
         AzureBlobStreamClient CreateBlobClient(string contentType)

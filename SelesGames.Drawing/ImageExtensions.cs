@@ -74,11 +74,14 @@ namespace System.Drawing
             
             using (Graphics g = Graphics.FromImage((Image)b))
             {
+                var fill = new SolidBrush(Color.FromArgb(255, 30, 30, 30));
+                g.FillRectangle(fill, 0, 0, targetWidth, targetHeight);
+
                 g.CompositingQuality = CompositingQuality.HighQuality;
                 g.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 g.SmoothingMode = SmoothingMode.HighQuality;
                 g.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                g.CompositingMode = CompositingMode.SourceCopy;
+                g.CompositingMode = CompositingMode.SourceOver;
                 //var imageAttributes = new ImageAttributes();
                 //imageAttributes.SetWrapMode(WrapMode.TileFlipXY);
                 g.DrawImage(imgToResize, 0, 0, targetWidth, targetHeight);//, GraphicsUnit.Pixel, imageAttributes);
