@@ -43,7 +43,9 @@ namespace Weave.RssAggregator.LowFrequency
         public async Task InitializeAsync()
         {
             var feedClient = new FeedLibraryClient(feedLibraryUrl);
-            var libraryFeeds = await feedClient.GetFeedsAsync();
+
+            await feedClient.LoadFeedsAsync();
+            var libraryFeeds = feedClient.Feeds;
 
             var highFrequencyFeeds = libraryFeeds
                 .Distinct()

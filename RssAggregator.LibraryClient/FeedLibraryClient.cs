@@ -1,8 +1,7 @@
-﻿using SelesGames.Rest;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -11,17 +10,51 @@ namespace Weave.RssAggregator.LibraryClient
     public class FeedLibraryClient
     {
         string libraryUrl;
-        Lazy<Task<List<FeedSource>>> feeds;
+        ConditionalHttpClient<List<FeedSource>> client;
+
+        public List<FeedSource> Feeds { get; private set; }
+        public event EventHandler FeedsUpdated;
 
         public FeedLibraryClient(string libraryUrl)
         {
             this.libraryUrl = libraryUrl;
-            feeds = new Lazy<Task<List<FeedSource>>>(GetFeedsFromUriAsync);
+            client = new ConditionalHttpClient<List<FeedSource>>(libraryUrl, Parse);
+            ListenForChanges();
         }
 
-        public Task<List<FeedSource>> GetFeedsAsync()
+        public async Task LoadFeedsAsync()
         {
-            return feeds.Value;
+            if (Uri.IsWellFormedUriString(libraryUrl, UriKind.Absolute))
+            {
+                if (client.LatestValue != null)
+                    Feeds = client.LatestValue;
+
+                else
+                {
+                    if (await client.CheckForUpdate())
+                        Feeds = client.LatestValue;
+                    else
+                        throw new Exception("unable to load feeds!");
+                }
+            }
+            else
+            {
+                var xdoc = XDocument.Load(libraryUrl);
+                Feeds = Parse(xdoc.Root);
+            }
+        }
+
+        void ListenForChanges()
+        {
+            var poller = new WebResourcePoller<List<FeedSource>>(TimeSpan.FromSeconds(10), client);
+            poller.Subscribe(OnChange);
+        }
+
+        void OnChange(List<FeedSource> feeds)
+        {
+            Feeds = feeds;
+            if (FeedsUpdated != null)
+                FeedsUpdated(this, EventArgs.Empty);
         }
 
 
@@ -29,19 +62,10 @@ namespace Weave.RssAggregator.LibraryClient
 
         #region Load Feeds and Categories XML files
 
-        async Task<List<FeedSource>> GetFeedsFromUriAsync()
+        List<FeedSource> Parse(Stream stream)
         {
-            if (Uri.IsWellFormedUriString(libraryUrl, UriKind.Absolute))
-            {
-                var client = new LinqToXmlRestClient<List<FeedSource>> { UseGzip = true };
-                var feeds = await client.GetAndParseAsync(libraryUrl, Parse, CancellationToken.None);
-                return feeds;
-            }
-            else
-            {
-                var xdoc = XDocument.Load(libraryUrl);
-                return Parse(xdoc.Root);
-            }
+            var doc = XElement.Load(stream);
+            return Parse(doc);
         }
 
         List<FeedSource> Parse(XElement doc)
