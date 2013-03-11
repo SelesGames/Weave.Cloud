@@ -19,7 +19,7 @@ namespace Weave.RssAggregator.LibraryClient
         {
             this.libraryUrl = libraryUrl;
             client = new ConditionalHttpClient<List<FeedSource>>(libraryUrl, Parse);
-            ListenForChanges();
+            //ListenForChanges();
         }
 
         public async Task LoadFeedsAsync()
