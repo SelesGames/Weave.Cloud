@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArticleViewingType.cs" />
+    <Compile Include="ConditionalHttpClient.cs" />
     <Compile Include="FeedLibraryClient.cs" />
     <Compile Include="FeedSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
