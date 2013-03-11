@@ -32,7 +32,8 @@ namespace RssAggregator.ConsoleTesting
         {
             try
             {
-                TestSub().Wait();
+                TestChangeProccer().Wait();
+                //TestSub().Wait();
                 //FixUnsetBlobs().Wait();
                 //TestReceiveServiceBusMessageQueue();
                 //TestSendToServiceBusMessageQueue();
@@ -48,6 +49,29 @@ namespace RssAggregator.ConsoleTesting
 
             while (true)
                 Console.ReadLine();
+        }
+
+        static async Task TestChangeProccer()
+        {
+            var lib = new FeedLibraryClient("http://weave.blob.core.windows.net/settings/testFeeds.xml");
+            await lib.LoadFeedsAsync();
+            DumpFeeds(lib.Feeds);
+
+            lib.FeedsUpdated += (s, e) =>
+            {
+                DebugEx.WriteLine("feeds changed");
+                DumpFeeds(lib.Feeds);
+            };
+        }
+
+        static void DumpFeeds(List<FeedSource> feeds)
+        {
+            foreach (var feed in feeds)
+            {
+                Console.WriteLine(feed.FeedUri);
+            }
+            Console.WriteLine();
+            Console.WriteLine();
         }
 
         static async Task TestSub()
@@ -212,7 +236,9 @@ namespace RssAggregator.ConsoleTesting
         {
 
             var lib = new FeedLibraryClient("http://weave.blob.core.windows.net/settings/masterfeeds.xml");
-            var feeds = await lib.GetFeedsAsync();
+            await lib.LoadFeedsAsync();
+            var feeds = lib.Feeds;
+
             var requests = feeds.Select((o, index) => new FeedRequest { Id = index.ToString(), Url = o.FeedUri });
             var stringRep = JsonConvert.SerializeObject(requests, Formatting.Indented);
 

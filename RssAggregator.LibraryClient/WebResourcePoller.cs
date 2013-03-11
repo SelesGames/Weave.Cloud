@@ -13,9 +13,7 @@ namespace Weave.RssAggregator.LibraryClient
 {
     public class ConditionalHttpClient<T>
     {
-        string eTag;
-        //DateTimeOffset? lastModified;
-        string lastModified;
+        string eTag, lastModified;
         string resourceUrl;
         Func<Stream, T> map;
         IEqualityComparer<T> comparer;
@@ -40,10 +38,12 @@ namespace Weave.RssAggregator.LibraryClient
         /// <returns>A boolean specifying whether the resource was updated</returns>
         public async Task<bool> CheckForUpdate()
         {
-            var request = new HttpClient();//new HttpClientHandler
+            var handler = new SelesGames.WebApi.HttpClientCompressionHandler();
             //{
             //    AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-            //}, true);
+            //};
+
+            var request = new HttpClient(handler);
 
             request.Timeout = RequestTimeout;
 
@@ -52,21 +52,12 @@ namespace Weave.RssAggregator.LibraryClient
 
             if (!string.IsNullOrEmpty(eTag))
             {
-                /// this approach works
                 request.DefaultRequestHeaders.TryAddWithoutValidation("If-None-Match", eTag);
-
-                // test this approach too DOES NOT WORK
-                //request.DefaultRequestHeaders.IfNoneMatch.TryParseAdd(eTag);
             }
 
-            //if (lastModified.HasValue)
             if (!string.IsNullOrEmpty(lastModified))
             {
-                /// this approach works
                 request.DefaultRequestHeaders.TryAddWithoutValidation("If-Modified-Since", lastModified);
-
-                // this approach could generate errors
-                //request.DefaultRequestHeaders.IfModifiedSince = lastModified.Value;
             }
 
             #endregion
@@ -108,35 +99,9 @@ namespace Weave.RssAggregator.LibraryClient
 
         void SetConditionalHeaders(HttpResponseMessage o)
         {
-            eTag = o.Headers.GetValueForHeader("ETag");// GetEtag(o);
+            eTag = o.Headers.GetValueForHeader("ETag");
             lastModified = o.Content.Headers.GetValueForHeader("Last-Modified");
-
-            //var lm = o.Content.Headers.LastModified;
-            //if (lm != null && lm.HasValue)
-            //{
-            //    lastModified = lm.Value;
-            //}
         }
-
-        //string GetEtag(HttpResponseMessage response)
-        //{
-        //    var headers = response.Headers;
-
-        //    if (headers == null) return null;
-
-        //    string eTag = null;
-
-        //    if (headers.ETag != null)
-        //        eTag = headers.ETag.Tag;
-        //    else
-        //    {
-        //        IEnumerable<string> headerValues;
-        //        if (headers.TryGetValues("etag", out headerValues))
-        //            eTag = headerValues.FirstOrDefault();
-        //    }
-
-        //    return eTag;
-        //}
     }
 
     public static class HttpResponseMessageExtensions

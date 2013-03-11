@@ -111,10 +111,6 @@
       <Project>{5b792c4b-80d8-420d-9fa7-e567faf1f7b1}</Project>
       <Name>SelesGames.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SelesGames.Rest\SelesGames.Rest.csproj">
-      <Project>{bf01af3a-26b9-40f2-bb1e-9c702242b504}</Project>
-      <Name>SelesGames.Rest</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Weave.RssAggregator.Core\RssAggregator.DTOs.csproj">
       <Project>{2f1a280d-ee75-4dc1-a36c-f8e5488e3260}</Project>
       <Name>RssAggregator.DTOs</Name>

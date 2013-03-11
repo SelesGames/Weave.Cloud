@@ -17,7 +17,6 @@ namespace SelesGames.WebApi.Compression
                 HttpResponseMessage response = responseToCompleteTask.Result;
 
                 var acceptEncoding = response.RequestMessage.Headers.AcceptEncoding;
-                var absoluteUrl = request.RequestUri.AbsolutePath.Substring(1);
 
                 if (response.IsSuccessStatusCode)
                 {

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
@@ -8,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace SelesGames.WebApi.Compression
 {
-    public class CompressedContent : HttpContent
+    public class DecompressedContent : HttpContent
     {
         private HttpContent originalContent;
         private string encodingType;
 
-        public CompressedContent(HttpContent content, string encodingType)
+        public DecompressedContent(HttpContent content, string encodingType)
         {
             if (content == null) throw new ArgumentNullException("content");
             if (encodingType == null) throw new ArgumentNullException("encodingType");
@@ -31,8 +30,6 @@ namespace SelesGames.WebApi.Compression
             {
                 this.Headers.TryAddWithoutValidation(header.Key, header.Value);
             }
-
-            this.Headers.ContentEncoding.Add(encodingType);
         }
 
         protected override bool TryComputeLength(out long length)
@@ -42,28 +39,29 @@ namespace SelesGames.WebApi.Compression
             return false;
         }
 
-        protected override Task SerializeToStreamAsync(Stream stream, TransportContext context)
+        protected override async Task SerializeToStreamAsync(Stream stream, TransportContext context)
         {
-            Stream compressedStream = null;
+            using (var ogStream = await originalContent.ReadAsStreamAsync().ConfigureAwait(false))
+            using (var gzip = CreateDecompressionsStream(ogStream))
+            {
+                await gzip.CopyToAsync(stream).ConfigureAwait(false);
+                gzip.Close();
+                ogStream.Close();
+            }
+        }
 
+        Stream CreateDecompressionsStream(Stream stream)
+        {
             if (encodingType == "gzip")
             {
-                compressedStream = new GZipStream(stream, CompressionMode.Compress, leaveOpen: true);
+                return new GZipStream(stream, CompressionMode.Decompress, leaveOpen: false);
             }
             else if (encodingType == "deflate")
             {
-                compressedStream = new DeflateStream(stream, CompressionMode.Compress, leaveOpen: true);
+                return new DeflateStream(stream, CompressionMode.Decompress, leaveOpen: false);
             }
 
-            return originalContent.CopyToAsync(compressedStream).ContinueWith(tsk =>
-            {
-                if (compressedStream != null)
-                {
-                    compressedStream.Flush();
-                    compressedStream.Close();
-                    compressedStream.Dispose();
-                }
-            });
+            else throw new Exception();
         }
     }
 }

@@ -58,9 +58,9 @@
       <Project>{5b792c4b-80d8-420d-9fa7-e567faf1f7b1}</Project>
       <Name>SelesGames.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SelesGames.Rest\SelesGames.Rest.csproj">
-      <Project>{bf01af3a-26b9-40f2-bb1e-9c702242b504}</Project>
-      <Name>SelesGames.Rest</Name>
+    <ProjectReference Include="..\SelesGames.WebApi\SelesGames.WebApi.csproj">
+      <Project>{bb3ea281-94b3-435f-a1ef-c395a7d1f25a}</Project>
+      <Name>SelesGames.WebApi</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -41,7 +41,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Compression\CompressedContent.cs" />
+    <Compile Include="Compression\DecompressedContent.cs" />
     <Compile Include="Compression\EncodingDelegateHandler.cs" />
+    <Compile Include="HttpClientCompressionHandler.cs" />
     <Compile Include="InjectAcceptHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResponseHelper.cs" />
