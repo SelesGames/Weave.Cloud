@@ -20,27 +20,10 @@ namespace Weave.RssAggregator.WorkerRole.Controllers
             this.cache = cache;
         }
 
-        public async Task<FeedResult> Get(string feedUri)
+        public Task<FeedResult> Get(string feedUri)
         {
-            FeedResult result = null;
-
             var feedRequest = new FeedRequest { Url = feedUri };
-
-            if (cache.ContainsValid(feedUri))
-            {
-                result = cache.ToFeedResult(feedRequest);
-            }
-            else
-            {
-                result = await feedRequest.GetNewsAsync(AppSettings.LowFrequencyHttpWebRequestTimeout);
-            }
-
-            if (result != null && result.News != null)
-            {
-                foreach (var newsItem in result.News)
-                    newsItem.Description = null;
-            }
-            return result;
+            return GetResultFromRequest(feedRequest);
         }
 
         [HttpPost]
@@ -51,24 +34,48 @@ namespace Weave.RssAggregator.WorkerRole.Controllers
                     HttpStatusCode.BadRequest, 
                     "You must send at least one FeedRequest object in the message body");
 
-            var highFrequencyFeeds = requests.Where(o => cache.ContainsValid(o.Url)).ToList();
-            var lowFrequencyFeeds = requests.Except(highFrequencyFeeds).ToList();
+            var temp = await Task.WhenAll(requests.Select(o => GetResultFromRequest(o, fsd)));
+            var results = temp.ToList();
 
-            var lowFrequencyResults = await Task.WhenAll(lowFrequencyFeeds.Select(o => o.GetNewsAsync(AppSettings.LowFrequencyHttpWebRequestTimeout)));
-            var highFrequencyResults = highFrequencyFeeds.Select(o => cache.ToFeedResult(o)).ToArray();
+            //var highFrequencyFeeds = requests.Where(o => cache.ContainsValid(o.Url)).ToList();
+            //var lowFrequencyFeeds = requests.Except(highFrequencyFeeds).ToList();
 
-            var results = new List<FeedResult>(lowFrequencyResults.Length + highFrequencyResults.Length);
-            results.AddRange(lowFrequencyResults);
-            results.AddRange(highFrequencyResults);
+            //var lowFrequencyResults = await Task.WhenAll(lowFrequencyFeeds.Select(o => o.GetNewsAsync(AppSettings.LowFrequencyHttpWebRequestTimeout)));
+            //var highFrequencyResults = highFrequencyFeeds.Select(o => cache.ToFeedResult(o)).ToArray();
 
-            if (fsd && results != null)
-            {
-                foreach (var r in results.Where(o => o.News != null))
-                    foreach (var newsItem in r.News)
-                        newsItem.Description = null;
-            }
+            //var results = new List<FeedResult>(lowFrequencyResults.Length + highFrequencyResults.Length);
+            //results.AddRange(lowFrequencyResults);
+            //results.AddRange(highFrequencyResults);
+
+            //if (fsd && results != null)
+            //{
+            //    foreach (var r in results.Where(o => o.News != null))
+            //        foreach (var newsItem in r.News)
+            //            newsItem.Description = null;
+            //}
 
             return results;
+        }
+
+        public async Task<FeedResult> GetResultFromRequest(FeedRequest feedRequest, bool fsd = true)
+        {
+            FeedResult result = null;
+
+            if (cache.ContainsValid(feedRequest.Url))
+            {
+                result = cache.ToFeedResult(feedRequest);
+            }
+            else
+            {
+                result = await feedRequest.GetNewsAsync(AppSettings.LowFrequencyHttpWebRequestTimeout);
+            }
+
+            if (result != null && result.News != null && fsd)
+            {
+                foreach (var newsItem in result.News)
+                    newsItem.Description = null;
+            }
+            return result;
         }
     }
 }

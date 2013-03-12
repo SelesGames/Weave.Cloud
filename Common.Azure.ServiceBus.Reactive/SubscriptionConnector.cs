@@ -10,12 +10,14 @@ namespace Common.Azure.ServiceBus.Reactive
     {
         ClientFactory factory;
         string topicPath, subscriptionName;
+        ReceiveMode receiveMode;
 
-        public SubscriptionConnector(ClientFactory factory, string topicPath, string subscriptionName)
+        public SubscriptionConnector(ClientFactory factory, string topicPath, string subscriptionName, ReceiveMode receiveMode = ReceiveMode.PeekLock)
         {
             this.factory = factory;
             this.topicPath = topicPath;
             this.subscriptionName = subscriptionName;
+            this.receiveMode = receiveMode;
         }
 
         public async Task<IObservable<BrokeredMessage>> CreateObservable()
@@ -31,7 +33,7 @@ namespace Common.Azure.ServiceBus.Reactive
 
         Task<SubscriptionClient> CreateClient()
         {
-            return factory.CreateSubscriptionClient(topicPath, subscriptionName);
+            return factory.CreateSubscriptionClient(topicPath, subscriptionName, receiveMode);
         }
     }
 }

@@ -43,7 +43,7 @@ namespace Weave.RssAggregator.WorkerRole.Startup
                 kernel.Get<DbClient>(), 
                 kernel.Get<SubscriptionConnector>());
 
-            kernel.Bind<FeedCache>().ToMethod(_ => hfCache).InSingletonScope();
+            kernel.Bind<FeedCache>().ToConstant(hfCache);
         }
 
         void CreateAndStartServer()

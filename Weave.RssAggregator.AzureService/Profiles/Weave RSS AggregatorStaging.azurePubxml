@@ -3,7 +3,7 @@
   <PropertyGroup>
     <AzureCredentials>selesgamessub</AzureCredentials>
     <AzureDeploymentLabel>Weave Web Service/Cache</AzureDeploymentLabel>
-    <AzureSlot>Production</AzureSlot>
+    <AzureSlot>Staging</AzureSlot>
     <AzureEnableWebDeploy>False</AzureEnableWebDeploy>
     <AzureHostedServiceName>weave2</AzureHostedServiceName>
     <AzureHostedServiceLabel>weave2</AzureHostedServiceLabel>
@@ -15,7 +15,7 @@
     <AzureStorageAccountLabel>weave</AzureStorageAccountLabel>
     <AzureAppendTimestampToDeploymentLabel>True</AzureAppendTimestampToDeploymentLabel>
     <AzureDeleteDeploymentOnFailure>False</AzureDeleteDeploymentOnFailure>
-    <AzureDeploymentReplacementMethod>AutomaticUpgrade</AzureDeploymentReplacementMethod>
+    <AzureDeploymentReplacementMethod>BlastUpgrade</AzureDeploymentReplacementMethod>
     <AzureEnableRemoteDesktop>True</AzureEnableRemoteDesktop>
     <AzureFallbackToDeleteAndRecreateIfUpgradeFails>True</AzureFallbackToDeleteAndRecreateIfUpgradeFails>
   </PropertyGroup>

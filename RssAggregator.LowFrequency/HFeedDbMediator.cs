@@ -1,4 +1,5 @@
-﻿using Microsoft.ServiceBus.Messaging;
+﻿using Common.Azure.ServiceBus;
+using Microsoft.ServiceBus.Messaging;
 using System;
 using System.Linq;
 using System.Reactive.Linq;
@@ -62,8 +63,27 @@ namespace Weave.RssAggregator.LowFrequency
             observable
                 .Retry()
                 .Where(m => m.Properties.ContainsKey("FeedId") && m.Properties["FeedId"].Equals(feed.FeedId))
-                .Where(m => m.Properties.ContainsKey("RefreshTime") && ((DateTime)m.Properties["RefreshTime"]) > LastRefresh)
-                .Subscribe(_ => LoadLatestNews());
+                //.Where(m => m.Properties.ContainsKey("RefreshTime") && ((DateTime)m.Properties["RefreshTime"]) > LastRefresh)
+                .Subscribe(OnBrokeredMessageUpdateReceived);
+        }
+
+        async void OnBrokeredMessageUpdateReceived(BrokeredMessage message)
+        {
+            try
+            {
+                if (message.Properties.ContainsKey("RefreshTime") && ((DateTime)message.Properties["RefreshTime"]) > LastRefresh)
+                    await LoadLatestNews();
+
+                await message.CompleteAsync();
+            }
+#if DEBUG
+            catch (Exception e)
+            {
+                DebugEx.WriteLine(e);
+            }
+#else
+            catch { }
+#endif
         }
     }
 }

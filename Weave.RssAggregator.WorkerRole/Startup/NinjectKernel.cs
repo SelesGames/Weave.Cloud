@@ -2,8 +2,10 @@
 using Common.Azure.ServiceBus.Reactive;
 using Common.Data;
 using Common.Data.Linq;
+using Microsoft.WindowsAzure.ServiceRuntime;
 using Ninject;
 using SelesGames.Common;
+using SelesGames.Common.Hashing;
 
 namespace Weave.RssAggregator.WorkerRole.Startup
 {
@@ -28,7 +30,17 @@ namespace Weave.RssAggregator.WorkerRole.Startup
                 IssuerKey = "R92FFdAujgEDEPnjLhxMfP06fH+qhmMwwuXetdyAEZM=",
             };
             var clientFactory = new ClientFactory(serviceBusCredentials);
-            var subscriptionConnector = new SubscriptionConnector(clientFactory, "FeedUpdatedTopic", "test");
+
+            var roleId = RoleEnvironment.CurrentRoleInstance.UpdateDomain;
+            var roleInstanceHash = CryptoHelper.ComputeHashUsedByMobilizer(RoleEnvironment.CurrentRoleInstance.Role.Name).ToString();
+            roleInstanceHash = roleInstanceHash.Replace("-", null).Substring(0, 16);
+
+            var subName = RoleEnvironment.IsEmulated ?
+                string.Format("Role_Instance_{0}_emulator_{1}", roleId, roleInstanceHash)
+                :
+                string.Format("Role_Instance_{0}_{1}", roleId, roleInstanceHash);
+
+            var subscriptionConnector = new SubscriptionConnector(clientFactory, "FeedUpdatedTopic", subName);
 
             Bind<ServiceBusCredentials>().ToConstant(serviceBusCredentials);
             Bind<ClientFactory>().ToConstant(clientFactory);

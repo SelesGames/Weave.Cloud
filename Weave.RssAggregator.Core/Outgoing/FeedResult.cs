@@ -20,17 +20,19 @@ namespace Weave.RssAggregator.Core.DTOs.Outgoing
         [ProtoMember(5)] public string Etag { get; set; }  //optional
         [ProtoMember(6)] public string LastModified { get; set; }  //optional
         [ProtoMember(7)] public List<NewsItem> News { get; set; }
+        [ProtoMember(8)] public bool FromCache { get; set; }
 
         public override string ToString()
         {
-            return string.Format("{0}: Id:{1}  MostRecent:{2}  Oldest:{3}  Etag:{4}  LastModified:{5}  NewsCount:{6}",
+            return string.Format("{0}: Id:{1}  MostRecent:{2}  Oldest:{3}  Etag:{4}  LastModified:{5}  NewsCount:{6}  FromCache:{7}",
                 Status.ToString(),
                 Id,
                 MostRecentNewsItemPubDate ?? "{null}",
                 OldestNewsItemPubDate ?? "{null}",
                 Etag ?? "{null}",
                 LastModified ?? "{null}",
-                News == null ? "{null}" : News.Count.ToString());
+                News == null ? "{null}" : News.Count.ToString(),
+                FromCache);
         }
     }
 }

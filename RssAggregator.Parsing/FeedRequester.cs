@@ -1,5 +1,6 @@
 ﻿using Common.TimeFormatting;
 using SelesGames.Common.Hashing;
+using SelesGames.WebApi.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -45,24 +46,39 @@ namespace Weave.RssAggregator.Client
         {
             EnsureFeedIdIsSet();
 
-            var request = new HttpClient();
+            var handler = new SelesGames.WebApi.HttpClientCompressionHandler();
+
+            var request = new HttpClient(handler);
             request.Timeout = TimeOut;
+            request.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Encoding", new[] { "gzip", "deflate" });
+
 
             #region CONDITIONAL GET
 
+            //if (!string.IsNullOrEmpty(Etag))
+            //{
+            //    request.DefaultRequestHeaders.IfNoneMatch.TryParseAdd(Etag);
+            //}
+
+            //if (!string.IsNullOrEmpty(LastModified))
+            //{
+            //    DateTime lastModified;
+            //    if (DateTime.TryParse(LastModified, out lastModified))
+            //        request.DefaultRequestHeaders.IfModifiedSince = lastModified;
+            //}
+
             if (!string.IsNullOrEmpty(Etag))
             {
-                request.DefaultRequestHeaders.IfNoneMatch.TryParseAdd(Etag);
+                request.DefaultRequestHeaders.TryAddWithoutValidation("If-None-Match", Etag);
             }
 
             if (!string.IsNullOrEmpty(LastModified))
             {
-                DateTime lastModified;
-                if (DateTime.TryParse(LastModified, out lastModified))
-                    request.DefaultRequestHeaders.IfModifiedSince = lastModified;
+                request.DefaultRequestHeaders.TryAddWithoutValidation("If-Modified-Since", LastModified);
             }
 
             #endregion
+
 
             var response = await request.GetAsync(FeedUri);
 
@@ -99,15 +115,18 @@ namespace Weave.RssAggregator.Client
         {
             #region CONDITIONAL GET
 
-            Etag = GetEtag(o);
+            //Etag = GetEtag(o);
 
-            var lm = o.Content.Headers.LastModified;
-            if (lm != null && lm.HasValue)
-            {
-                var lastModified = lm.Value.ToString();
-                if (!string.IsNullOrEmpty(lastModified))
-                    LastModified = lastModified;
-            }
+            //var lm = o.Content.Headers.LastModified;
+            //if (lm != null && lm.HasValue)
+            //{
+            //    var lastModified = lm.Value.ToString();
+            //    if (!string.IsNullOrEmpty(lastModified))
+            //        LastModified = lastModified;
+            //}
+
+            Etag = o.Headers.GetValueForHeader("ETag");
+            LastModified = o.Content.Headers.GetValueForHeader("Last-Modified");
 
             #endregion
 
@@ -119,25 +138,25 @@ namespace Weave.RssAggregator.Client
             }
         }
 
-        string GetEtag(HttpResponseMessage response)
-        {
-            var headers = response.Headers;
+        //string GetEtag(HttpResponseMessage response)
+        //{
+        //    var headers = response.Headers;
 
-            if (headers == null) return null;
+        //    if (headers == null) return null;
 
-            string eTag = null;
+        //    string eTag = null;
 
-            if (headers.ETag != null)
-                eTag = headers.ETag.Tag;
-            else
-            {
-                IEnumerable<string> headerValues;
-                if (headers.TryGetValues("etag", out headerValues))
-                    eTag = headerValues.FirstOrDefault();
-            }
+        //    if (headers.ETag != null)
+        //        eTag = headers.ETag.Tag;
+        //    else
+        //    {
+        //        IEnumerable<string> headerValues;
+        //        if (headers.TryGetValues("etag", out headerValues))
+        //            eTag = headerValues.FirstOrDefault();
+        //    }
 
-            return eTag;
-        }
+        //    return eTag;
+        //}
 
         void ParseNewsFromLastRefreshTime(Stream stream)
         {

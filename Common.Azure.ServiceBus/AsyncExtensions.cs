@@ -122,5 +122,17 @@ namespace Common.Azure.ServiceBus
         }
 
         #endregion
+
+
+
+
+        #region BrokeredMessage extensions
+
+        public static Task CompleteAsync(this BrokeredMessage message)
+        {
+            return Task.Factory.FromAsync(message.BeginComplete, message.EndComplete, null);
+        }
+
+        #endregion
     }
 }
