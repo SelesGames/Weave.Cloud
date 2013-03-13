@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Common.JsonDotNet;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.IO;
 using System.Text;
@@ -28,31 +29,36 @@ namespace Common.Azure
 
         protected override T ReadObject(System.IO.Stream stream)
         {
-            using (var streamReader = new StreamReader(stream, Encoding))
-            using (var jsonTextReader = new JsonTextReader(streamReader))
-            {
-                var serializer = JsonSerializer.Create(SerializerSettings);
-                return serializer.Deserialize<T>(jsonTextReader);
-            }
+            return stream.ReadObject<T>(SerializerSettings, Encoding);
+
+            //using (var streamReader = new StreamReader(stream, Encoding))
+            //using (var jsonTextReader = new JsonTextReader(streamReader))
+            //{
+            //    var serializer = JsonSerializer.Create(SerializerSettings);
+            //    return serializer.Deserialize<T>(jsonTextReader);
+            //}
         }
 
         protected override async Task<Stream> CreateStream(T obj)
         {
-            var returnStream = new MemoryStream();
+            var ms = new MemoryStream();
+            await ms.WriteObject(obj, SerializerSettings, Encoding);
+            return ms;
+            //var returnStream = new MemoryStream();
 
-            using (var ms = new MemoryStream())
-            using (var streamWriter = new StreamWriter(ms, Encoding))
-            using (var jsonTextWriter = new JsonTextWriter(streamWriter))
-            {
-                var serializer = JsonSerializer.Create(SerializerSettings);
-                serializer.Serialize(jsonTextWriter, obj);
-                jsonTextWriter.Flush();
-                ms.Position = 0;
-                await ms.CopyToAsync(returnStream);
-            }
+            //using (var ms = new MemoryStream())
+            //using (var streamWriter = new StreamWriter(ms, Encoding))
+            //using (var jsonTextWriter = new JsonTextWriter(streamWriter))
+            //{
+            //    var serializer = JsonSerializer.Create(SerializerSettings);
+            //    serializer.Serialize(jsonTextWriter, obj);
+            //    jsonTextWriter.Flush();
+            //    ms.Position = 0;
+            //    await ms.CopyToAsync(returnStream);
+            //}
 
-            returnStream.Position = 0;
-            return returnStream;
+            //returnStream.Position = 0;
+            //return returnStream;
         }
 
         //int bufferSize = 1024 * 1024;

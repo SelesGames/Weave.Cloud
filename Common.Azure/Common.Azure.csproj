@@ -47,6 +47,9 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Common.JsonDotNet\JsonDotNetExtensions.cs">
+      <Link>JsonDotNetExtensions.cs</Link>
+    </Compile>
     <Compile Include="AzureBlobStreamClient.cs" />
     <Compile Include="CloudExtensions.cs" />
     <Compile Include="AzureJsonDotNetBlobClient.cs" />

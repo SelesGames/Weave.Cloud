@@ -46,6 +46,7 @@
     <Compile Include="Hashing\CryptoHelper.cs" />
     <Compile Include="IConverter.cs" />
     <Compile Include="IProvider.cs" />
+    <Compile Include="IStreamHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

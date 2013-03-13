@@ -6,6 +6,7 @@ using Microsoft.WindowsAzure.ServiceRuntime;
 using Ninject;
 using SelesGames.Common;
 using SelesGames.Common.Hashing;
+using System;
 
 namespace Weave.RssAggregator.WorkerRole.Startup
 {
@@ -35,10 +36,12 @@ namespace Weave.RssAggregator.WorkerRole.Startup
             var roleInstanceHash = CryptoHelper.ComputeHashUsedByMobilizer(RoleEnvironment.CurrentRoleInstance.Role.Name).ToString();
             roleInstanceHash = roleInstanceHash.Replace("-", null).Substring(0, 16);
 
+            var now = DateTime.UtcNow.ToString("yyyy-MM-dd_HH.mm");
+
             var subName = RoleEnvironment.IsEmulated ?
-                string.Format("Role_Instance_{0}_emulator_{1}", roleId, roleInstanceHash)
+                string.Format("Role_{0}_{1}_emulator_{2}", roleId, now, roleInstanceHash)
                 :
-                string.Format("Role_Instance_{0}_{1}", roleId, roleInstanceHash);
+                string.Format("Role_{0}_{1}_{2}", roleId, now, roleInstanceHash);
 
             var subscriptionConnector = new SubscriptionConnector(clientFactory, "FeedUpdatedTopic", subName);
 
