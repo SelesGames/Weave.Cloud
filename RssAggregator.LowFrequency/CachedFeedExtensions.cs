@@ -20,7 +20,7 @@ namespace Weave.RssAggregator.LowFrequency
             {
                 if (feed.LastFeedState == CachedFeed.FeedState.Failed || feed.LastFeedState == CachedFeed.FeedState.Uninitialized)
                 {
-                    return new FeedResult { Id = request.Id, Status = FeedResultStatus.Failed };
+                    return new FeedResult { Id = request.Id, Status = FeedResultStatus.Failed, FromCache = true };
                 }
                 else
                 {
@@ -45,11 +45,11 @@ namespace Weave.RssAggregator.LowFrequency
                         }
                     }
 
-                    var newNewsList = filteredNews.Select(o => Copy(o.newsItem)).ToList();
+                    var newNewsList = filteredNews.Select(o => o.newsItem).ToList();
 
                     if (newNewsList.Count == 0)
                     {
-                        return new FeedResult { Id = request.Id, Status = FeedResultStatus.Unmodified };
+                        return new FeedResult { Id = request.Id, Status = FeedResultStatus.Unmodified, FromCache = true };
                     }
                     else
                     {
@@ -60,6 +60,7 @@ namespace Weave.RssAggregator.LowFrequency
                             OldestNewsItemPubDate = feed.OldestNewsItemPubDate,
                             News = newNewsList,
                             Status = FeedResultStatus.OK,
+                            FromCache = true,
                         };
                         return result;
                     }
@@ -67,26 +68,27 @@ namespace Weave.RssAggregator.LowFrequency
             }
             catch (Exception)
             {
-                return new FeedResult { Id = request.Id, Status = FeedResultStatus.Failed };
+                return new FeedResult { Id = request.Id, Status = FeedResultStatus.Failed, FromCache = true };
             }
-        }
-
-        static NewsItem Copy(NewsItem o)
-        {
-            return new NewsItem
-            {
-                Title = o.Title,
-                PublishDateTime = o.PublishDateTime,
-                Link = o.Link,
-                ImageUrl = o.ImageUrl,
-                Description = o.Description,
-                YoutubeId = o.YoutubeId,
-                VideoUri = o.VideoUri,
-                PodcastUri = o.PodcastUri,
-                ZuneAppId = o.ZuneAppId,
-                Id = o.Id,
-                FeedId = o.FeedId,
-            };
         }
     }
 }
+
+
+//static NewsItem Copy(NewsItem o)
+//{
+//    return new NewsItem
+//    {
+//        Title = o.Title,
+//        PublishDateTime = o.PublishDateTime,
+//        Link = o.Link,
+//        ImageUrl = o.ImageUrl,
+//        Description = o.Description,
+//        YoutubeId = o.YoutubeId,
+//        VideoUri = o.VideoUri,
+//        PodcastUri = o.PodcastUri,
+//        ZuneAppId = o.ZuneAppId,
+//        Id = o.Id,
+//        FeedId = o.FeedId,
+//    };
+//}

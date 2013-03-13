@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System.IO;
 using System.Text;
 
 namespace SelesGames.Rest.JsonDotNet
@@ -17,12 +16,12 @@ namespace SelesGames.Rest.JsonDotNet
 
         protected override T ReadObject(System.IO.Stream stream)
         {
-            var serializer = JsonSerializer.Create(SerializerSettings);
-            using (var streamReader = new StreamReader(stream, Encoding))
-            using (var jsonTextReader = new JsonTextReader(streamReader))
-            {
-                return serializer.Deserialize<T>(jsonTextReader);
-            }
+            var mapper = new StreamToJson<T> 
+            { 
+                Encoding = Encoding, 
+                SerializerSettings = SerializerSettings 
+            };
+            return mapper.Map(stream);
         }
     }
 }

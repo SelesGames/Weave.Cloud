@@ -12,7 +12,7 @@ namespace Weave.RssAggregator.LowFrequency
         public string FeedUri { get; private set; }
         public string MostRecentNewsItemPubDate { get; set; }
         public string OldestNewsItemPubDate { get; set; }
-        public List<NewsItem> News { get; set; }
+        public IReadOnlyList<NewsItem> News { get; set; }
         public FeedState LastFeedState { get; set; }
 
 
