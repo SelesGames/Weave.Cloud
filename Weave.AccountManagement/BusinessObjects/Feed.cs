@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Weave.AccountManagement.DTOs
+namespace Weave.AccountManagement
 {
     public class Feed
     {

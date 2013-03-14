@@ -39,11 +39,13 @@ namespace Common.Azure
             //}
         }
 
-        protected override async Task<Stream> CreateStream(T obj)
+        protected override Task WriteObject(Stream stream, T obj)
         {
-            var ms = new MemoryStream();
-            await ms.WriteObject(obj, SerializerSettings, Encoding);
-            return ms;
+            return stream.WriteObject(obj, SerializerSettings, Encoding);
+        }
+
+        //protected override async Task<Stream> CreateStream(T obj)
+        //{
             //var returnStream = new MemoryStream();
 
             //using (var ms = new MemoryStream())
@@ -59,7 +61,7 @@ namespace Common.Azure
 
             //returnStream.Position = 0;
             //return returnStream;
-        }
+        //}
 
         //int bufferSize = 1024 * 1024;
 

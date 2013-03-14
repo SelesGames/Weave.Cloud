@@ -1,5 +1,5 @@
 ﻿
-namespace Weave.AccountManagement.DTOs
+namespace Weave.AccountManagement
 {
     public enum ArticleViewingType
     {

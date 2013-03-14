@@ -34,8 +34,6 @@ namespace Common.JsonDotNet
                 serializer.Serialize(jsonTextWriter, obj);
                 jsonTextWriter.Flush();
 
-                serializer.Serialize(jsonTextWriter, obj);
-                jsonTextWriter.Flush();
                 ms.Position = 0;
                 await ms.CopyToAsync(writeStream).ConfigureAwait(false);
 

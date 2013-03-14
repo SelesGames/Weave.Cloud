@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Http;
+﻿using Common.WebApi;
 using Newtonsoft.Json.Serialization;
+using Ninject.WebApi;
+using System.Web.Http;
+using Weave.AccountManagement.WebRole.Controllers;
+using Weave.AccountManagement.WebRole.Startup;
 
 namespace Weave.AccountManagement.WebRole
 {
@@ -27,6 +28,35 @@ namespace Weave.AccountManagement.WebRole
 
             // Use camel case for JSON data.
             config.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+
+
+            //config.Routes.MapHttpRoute(
+            //    name: "DefaultApi",
+            //    routeTemplate: "api/{controller}/{id}",
+            //    defaults: new
+            //    {
+            //        id = RouteParameter.Optional,
+            //        controller = typeof(ComparisonGameController),
+            //    }
+            //);
+
+            config.Routes.MapHttpRoute(
+                name: "actions",
+                routeTemplate: "api/{controller}/{action}",
+                defaults: new
+                {
+                    action = RouteParameter.Optional,
+                    controller = typeof(UserController),
+                }
+            );
+
+            config.MessageHandlers.Add(new AcceptAndContentTypeViaQueryParameterHandler("Content-Type"));
+            config.MessageHandlers.Add(new InjectContentTypeHandler("application/json"));
+
+            config.Filters.Add(new ExceptionHandlingAttribute());
+            config.Filters.Add(new CORSActionFilterAttribute());
+
+            config.DependencyResolver = new NinjectResolver(new NinjectKernel());
         }
     }
 }

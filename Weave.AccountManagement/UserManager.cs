@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Weave.AccountManagement
+namespace Weave.AccountManagement.DTOs
 {
-    public class UserManager : IAzureBlobClient<UserInfo>
+    public class UserManager
     {
         AzureBlobClient<UserInfo> client;
         ValidationEngine validationEngine;
@@ -23,17 +23,31 @@ namespace Weave.AccountManagement
 
         #region simple CRUD operations against the UserInfo
 
+        /// <summary>
+        /// Retrieves a User from blob storage
+        /// </summary>
         public Task<UserInfo> Get(Guid userId)
         {
             return client.Get(userId);
         }
 
-        public Task Save(UserInfo obj)
+        /// <summary>
+        /// Adds or updates a User to blob storage
+        /// </summary>
+        public Task Save(UserInfo user)
         {
-            var id = obj.Id;
-            return client.Save(id, obj);
+            if (validationEngine != null)
+                validationEngine.Validate(user);
+
+            var id = user.Id;
+
+            user.FeedCount = user.Feeds.Count;
+            return client.Save(id, user);
         }
 
+        /// <summary>
+        /// Delets a user from blob storage
+        /// </summary>
         public Task Delete(Guid userId)
         {
             return client.Delete(userId);
@@ -55,6 +69,9 @@ namespace Weave.AccountManagement
 
             foreach (var feed in feeds)
             {
+                if (validationEngine != null)
+                    validationEngine.Validate(feed);
+
                 var existing = usersFeeds.SingleOrDefault(o => o.Id.Equals(feed.Id));
 
                 if (existing != null)

@@ -4,15 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F2EBC608-083A-485A-969D-012DE7A576B2}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{1DCED3EF-C22B-4E84-8684-D434482C0360}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Weave.AccountManagement</RootNamespace>
-    <AssemblyName>Weave.AccountManagement</AssemblyName>
+    <RootNamespace>Test.AccountManagement</RootNamespace>
+    <AssemblyName>Test.AccountManagement</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,6 +23,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -30,26 +32,35 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject">
+      <HintPath>..\lib\Ninject.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DTOs\ArticleViewingType.cs" />
-    <Compile Include="DTOs\Feed.cs" />
+    <Compile Include="..\Weave.AccountManagement.WebRole\Startup\NinjectKernel.cs">
+      <Link>NinjectKernel.cs</Link>
+    </Compile>
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="DTOs\UserInfo.cs" />
-    <Compile Include="UserInfoValidator.cs" />
-    <Compile Include="UserManager.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common.Azure\Common.Azure.csproj">
-      <Project>{6211d4f0-8390-4dfa-a1d2-ba4aa7c28348}</Project>
+      <Project>{6211D4F0-8390-4DFA-A1D2-BA4AA7C28348}</Project>
       <Name>Common.Azure</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Common.Validation\Common.Validation.csproj">
-      <Project>{937bb6dc-7d95-4bd9-ad2c-cab94df4c1da}</Project>
-      <Name>Common.Validation</Name>
+    <ProjectReference Include="..\Weave.AccountManagement\Weave.AccountManagement.csproj">
+      <Project>{f2ebc608-083a-485a-969d-012de7a576b2}</Project>
+      <Name>Weave.AccountManagement</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

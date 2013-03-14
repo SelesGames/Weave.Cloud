@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Weave.AccountManagement
+namespace Weave.AccountManagement.DTOs
 {
     public class UserInfo
     {

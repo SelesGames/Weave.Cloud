@@ -10,6 +10,11 @@ namespace Common.Azure
     {
         AzureBlobStreamClient blobClient;
 
+
+
+
+        #region Public Properties delegate to the underlying AzureBlobStreamClient
+
         public TimeSpan ReadTimeout
         {
             get { return blobClient.ReadTimeout; }
@@ -25,6 +30,16 @@ namespace Common.Azure
             get { return blobClient.ContentType; }
             set { blobClient.ContentType = value; }
         }
+        public bool UseGzipOnUpload
+        {
+            get { return blobClient.UseGzipOnUpload; }
+            set { blobClient.UseGzipOnUpload = value; }
+        }
+
+        #endregion
+
+
+
 
         public AzureBlobClient(string storageAccountName, string key, string container, bool useHttps)
         {
@@ -57,9 +72,11 @@ namespace Common.Azure
 
         public async Task Save(string blobId, T obj)
         {
-            using (var stream = await CreateStream(obj))
+            using (var ms = new MemoryStream())
             {
-                await blobClient.Save(blobId, stream);
+                await WriteObject(ms, obj);
+                ms.Position = 0;
+                await blobClient.Save(blobId, ms);
             }
         }
 
@@ -97,6 +114,6 @@ namespace Common.Azure
 
         // Serialization override functions
         protected abstract T ReadObject(Stream stream);
-        protected abstract Task<Stream> CreateStream(T obj);
+        protected abstract Task WriteObject(Stream stream, T obj);
     }
 }

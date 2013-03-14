@@ -2,7 +2,9 @@
 using Microsoft.WindowsAzure.StorageClient;
 using System;
 using System.IO;
+using System.IO.Compression;
 using System.Threading.Tasks;
+using Common.Azure.Compression;
 
 namespace Common.Azure
 {
@@ -15,6 +17,7 @@ namespace Common.Azure
         public TimeSpan WriteTimeout { get; set; }
         public string ContentType { get; set; }
         public string BlobEndpoint { get; private set; }
+        public bool UseGzipOnUpload { get; set; }
 
         public AzureBlobStreamClient(string storageAccountName, string key, string container, bool useHttps)
         {
@@ -36,14 +39,29 @@ namespace Common.Azure
             BlobRequestOptions options = new BlobRequestOptions();
             options.AccessCondition = AccessCondition.None;
             options.Timeout = ReadTimeout;
+            //options.BlobListingDetails
 
             var ms = new MemoryStream();
             await blob.DownloadToStreamAsync(ms, options);
             ms.Position = 0;
+
+            if ("gzip".Equals(blob.Properties.ContentEncoding, StringComparison.OrdinalIgnoreCase))
+            {
+                byte[] byteArray = ms.ToArray();
+
+                ms.Dispose();
+                ms = new MemoryStream();
+
+                using (var compressStream = new MemoryStream(byteArray))
+                using (var decompressor = new GZipStream(compressStream, CompressionMode.Decompress))
+                    decompressor.CopyTo(ms);
+
+                ms.Position = 0;
+            }
             return ms;
         }
 
-        public Task Save(string fileName, Stream stream)
+        public async Task Save(string fileName, Stream stream)
         {
             var client = account.CreateCloudBlobClient();
             var container = client.GetContainerReference(this.container);
@@ -57,7 +75,30 @@ namespace Common.Azure
             options.AccessCondition = AccessCondition.None;
             options.Timeout = WriteTimeout;
 
-            return blob.UploadFromStreamAsync(stream, options);
+            if (UseGzipOnUpload)
+            {
+                blob.Properties.ContentEncoding = "gzip";
+
+                using (var compressedStream = await stream.Compress())
+                    await blob.UploadFromStreamAsync(compressedStream, options);
+
+
+                //byte[] byteArray;
+
+                //using (var compressStream = new MemoryStream())
+                //using (var compressor = new GZipStream(compressStream, CompressionMode.Compress))
+                //{
+                //    await stream.CopyToAsync(compressor);
+                //    compressor.Close();
+                //    byteArray = compressStream.ToArray();
+                //}
+                //using (var ms = new MemoryStream(byteArray))
+                //    await blob.UploadFromStreamAsync(ms, options);
+            }
+            else
+            {
+                await blob.UploadFromStreamAsync(stream, options);
+            }
         }
 
         public Task Delete(string fileName)

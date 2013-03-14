@@ -1,5 +1,6 @@
 ﻿using Common.Validation;
 using System.Linq;
+using Weave.AccountManagement.DTOs;
 
 namespace Weave.AccountManagement
 {
