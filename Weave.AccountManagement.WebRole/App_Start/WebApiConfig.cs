@@ -1,6 +1,8 @@
 ﻿using Common.WebApi;
 using Newtonsoft.Json.Serialization;
 using Ninject.WebApi;
+using SelesGames.WebApi.Compression;
+using SelesGames.WebApi.Protobuf;
 using System.Web.Http;
 using Weave.AccountManagement.WebRole.Controllers;
 using Weave.AccountManagement.WebRole.Startup;
@@ -52,6 +54,8 @@ namespace Weave.AccountManagement.WebRole
 
             config.MessageHandlers.Add(new AcceptAndContentTypeViaQueryParameterHandler("Content-Type"));
             config.MessageHandlers.Add(new InjectContentTypeHandler("application/json"));
+            config.MessageHandlers.Add(new EncodingDelegateHandler());
+            config.Formatters.Add(new ProtobufFormatter());
 
             config.Filters.Add(new ExceptionHandlingAttribute());
             config.Filters.Add(new CORSActionFilterAttribute());

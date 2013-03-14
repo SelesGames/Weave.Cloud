@@ -15,12 +15,12 @@ namespace Weave.AccountManagement.WebRole.Controllers
             this.manager = manager;
         }
 
-        public Task<UserInfo> Get(Guid userId)
+        public Task<UserInfo> Get(Guid id)
         {
-            return manager.Get(userId);
+            return manager.Get(id);
         }
 
-        public Task Save(UserInfo user)
+        public Task Post([FromBody] UserInfo user)
         {
             return manager.Save(user);
         }
@@ -30,14 +30,32 @@ namespace Weave.AccountManagement.WebRole.Controllers
             return manager.Delete(userId);
         }
 
-        public Task SaveFeed(Guid userId, List<Feed> feeds)
+        [HttpPost]
+        [ActionName("SaveFeeds")]
+        public Task SaveFeeds(Guid userId, [FromBody] List<Feed> feeds)
         {
             return manager.SaveFeed(userId, feeds);
         }
 
-        public Task RemoveFeeds(Guid userId, List<Guid> feedIds)
+        [HttpPost]
+        [ActionName("RemoveFeeds")]
+        public Task RemoveFeeds(Guid userId, [FromBody] List<Guid> feedIds)
         {
             return manager.RemoveFeeds(userId, feedIds);
+        }
+
+        [HttpPost]
+        [ActionName("SaveFeed")]
+        public Task SaveFeed(Guid userId, [FromBody] Feed feed)
+        {
+            return manager.SaveFeed(userId, new[] { feed });
+        }
+
+        [HttpPost]
+        [ActionName("RemoveFeed")]
+        public Task RemoveFeed(Guid userId, Guid feedId)
+        {
+            return manager.RemoveFeeds(userId, new[] { feedId });
         }
     }
 }
