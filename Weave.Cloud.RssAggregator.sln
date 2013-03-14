@@ -94,6 +94,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SelesGames.Rest", "SelesGam
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.AccountManagement", "Test.AccountManagement\Test.AccountManagement.csproj", "{1DCED3EF-C22B-4E84-8684-D434482C0360}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.AccountManagement.Sql", "Weave.AccountManagement.Sql\Weave.AccountManagement.Sql.csproj", "{84FBFAC6-0B41-4089-9B82-3938BEE57206}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -529,6 +531,18 @@ Global
 		{1DCED3EF-C22B-4E84-8684-D434482C0360}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{1DCED3EF-C22B-4E84-8684-D434482C0360}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{1DCED3EF-C22B-4E84-8684-D434482C0360}.Release|x86.ActiveCfg = Release|Any CPU
+		{84FBFAC6-0B41-4089-9B82-3938BEE57206}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84FBFAC6-0B41-4089-9B82-3938BEE57206}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84FBFAC6-0B41-4089-9B82-3938BEE57206}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{84FBFAC6-0B41-4089-9B82-3938BEE57206}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{84FBFAC6-0B41-4089-9B82-3938BEE57206}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{84FBFAC6-0B41-4089-9B82-3938BEE57206}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{84FBFAC6-0B41-4089-9B82-3938BEE57206}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84FBFAC6-0B41-4089-9B82-3938BEE57206}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84FBFAC6-0B41-4089-9B82-3938BEE57206}.Release|ARM.ActiveCfg = Release|Any CPU
+		{84FBFAC6-0B41-4089-9B82-3938BEE57206}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{84FBFAC6-0B41-4089-9B82-3938BEE57206}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{84FBFAC6-0B41-4089-9B82-3938BEE57206}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -573,5 +587,6 @@ Global
 		{B848FABD-9FA5-4D8B-AFF7-1D972FECCE9D} = {5A5D04A7-7E63-45E2-BB7A-C52E2ED308BF}
 		{F2973574-2CDD-486D-BDCC-B87C8AEF0100} = {5A5D04A7-7E63-45E2-BB7A-C52E2ED308BF}
 		{F2EBC608-083A-485A-969D-012DE7A576B2} = {5A5D04A7-7E63-45E2-BB7A-C52E2ED308BF}
+		{84FBFAC6-0B41-4089-9B82-3938BEE57206} = {5A5D04A7-7E63-45E2-BB7A-C52E2ED308BF}
 	EndGlobalSection
 EndGlobal

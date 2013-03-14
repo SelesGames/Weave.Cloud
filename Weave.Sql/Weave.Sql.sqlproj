@@ -56,12 +56,15 @@
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
   <ItemGroup>
     <Folder Include="Properties" />
+    <Folder Include="Tables" />
+    <Folder Include="StoredProcedures" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="NewsItem.sql" />
-    <Build Include="GetLatestPublicationDateTimeForFeedId.sql" />
-    <Build Include="InsertNewsItemIfNotExists.sql" />
-    <Build Include="GetLatestNNewsAsBlobList.sql" />
+    <Build Include="StoredProcedures\InsertNewsItemIfNotExists.sql" />
+    <Build Include="StoredProcedures\GetLatestPublicationDateTimeForFeedId.sql" />
+    <Build Include="StoredProcedures\GetLatestNNewsAsBlobList.sql" />
+    <Build Include="Tables\NewsItem.sql" />
+    <Build Include="Tables\UserInfo.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="Weave.Sql.refactorlog" />

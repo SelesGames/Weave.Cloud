@@ -56,6 +56,7 @@
     <Compile Include="AzureBlobClient.cs" />
     <Compile Include="AzureTableClient.cs" />
     <Compile Include="CloudTableQueryExtensions.cs" />
+    <Compile Include="Compression\MemoryStreamExtensions.cs" />
     <Compile Include="IAzureBlobClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
