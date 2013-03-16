@@ -30,9 +30,9 @@ namespace Weave.AccountManagement.Sql.Linq
         
     #region Extensibility Method Definitions
     partial void OnCreated();
-    partial void InsertUserInfo(UserInfo instance);
-    partial void UpdateUserInfo(UserInfo instance);
-    partial void DeleteUserInfo(UserInfo instance);
+    partial void InsertAuthInfo(AuthInfo instance);
+    partial void UpdateAuthInfo(AuthInfo instance);
+    partial void DeleteAuthInfo(AuthInfo instance);
     #endregion
         
         public DataClassesDataContext() : 
@@ -65,17 +65,17 @@ namespace Weave.AccountManagement.Sql.Linq
             OnCreated();
         }
         
-        internal System.Data.Linq.Table<UserInfo> UserInfos
+        internal System.Data.Linq.Table<AuthInfo> AuthInfos
         {
             get
             {
-                return this.GetTable<UserInfo>();
+                return this.GetTable<AuthInfo>();
             }
         }
     }
     
-    [global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.UserInfo")]
-    internal partial class UserInfo : INotifyPropertyChanging, INotifyPropertyChanged
+    [global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.AuthInfo")]
+    internal partial class AuthInfo : INotifyPropertyChanging, INotifyPropertyChanged
     {
         
         private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
@@ -110,7 +110,7 @@ namespace Weave.AccountManagement.Sql.Linq
     partial void OnGoogleAuthStringChanged();
     #endregion
         
-        public UserInfo()
+        public AuthInfo()
         {
             OnCreated();
         }
