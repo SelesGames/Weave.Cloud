@@ -14,24 +14,28 @@ namespace Weave.AccountManagement.WebRole.Controllers
             this.dal = dal;
         }
 
-        public Task<Guid> GetUserIdFromFacebookToken(string facebookToken)
+        [ActionName("facebook_token")]
+        public Task<Guid> GetUserIdFromFacebookToken(string token)
         {
-            return dal.GetUserIdFromFacebookToken(facebookToken);
+            return dal.GetUserIdFromFacebookToken(token);
         }
 
-        public Task<Guid> GetUserIdFromTwitterToken(string twitterToken)
+        [ActionName("twitter_token")]
+        public Task<Guid> GetUserIdFromTwitterToken(string token)
         {
-            return dal.GetUserIdFromTwitterToken(twitterToken);
+            return dal.GetUserIdFromTwitterToken(token);
         }
 
-        public Task<Guid> GetUserIdFromMicrosoftToken(string microsoftToken)
+        [ActionName("microsoft_token")]
+        public Task<Guid> GetUserIdFromMicrosoftToken(string token)
         {
-            return dal.GetUserIdFromMicrosoftToken(microsoftToken);
+            return dal.GetUserIdFromMicrosoftToken(token);
         }
 
-        public Task<Guid> GetUserIdFromGoogleToken(string googleToken)
+        [ActionName("google_token")]
+        public Task<Guid> GetUserIdFromGoogleToken(string token)
         {
-            return dal.GetUserIdFromGoogleToken(googleToken);
+            return dal.GetUserIdFromGoogleToken(token);
         }
 
         [HttpPut]

@@ -22,7 +22,7 @@ namespace Weave.AccountManagement.Sql
 
             using (var client = clientProvider.Get())
             {
-                var id = await client.Get<Linq.UserInfo, Guid>(o => o
+                var id = await client.Get<Linq.AuthInfo, Guid>(o => o
                     .Where(x => facebookToken.Equals(x.FacebookAuthString))
                     .Select(x => x.UserId));
 
@@ -37,7 +37,7 @@ namespace Weave.AccountManagement.Sql
 
             using (var client = clientProvider.Get())
             {
-                var id = await client.Get<Linq.UserInfo, Guid>(o => o
+                var id = await client.Get<Linq.AuthInfo, Guid>(o => o
                     .Where(x => twitterToken.Equals(x.TwitterAuthString))
                     .Select(x => x.UserId));
 
@@ -52,7 +52,7 @@ namespace Weave.AccountManagement.Sql
 
             using (var client = clientProvider.Get())
             {
-                var id = await client.Get<Linq.UserInfo, Guid>(o => o
+                var id = await client.Get<Linq.AuthInfo, Guid>(o => o
                     .Where(x => microsoftToken.Equals(x.MicrosoftAuthString))
                     .Select(x => x.UserId));
 
@@ -67,7 +67,7 @@ namespace Weave.AccountManagement.Sql
 
             using (var client = clientProvider.Get())
             {
-                var id = await client.Get<Linq.UserInfo, Guid>(o => o
+                var id = await client.Get<Linq.AuthInfo, Guid>(o => o
                     .Where(x => googleToken.Equals(x.GoogleAuthString))
                     .Select(x => x.UserId));
 
@@ -97,9 +97,9 @@ namespace Weave.AccountManagement.Sql
             }
         }
 
-        Linq.UserInfo Convert(AuthInfo user)
+        Linq.AuthInfo Convert(AuthInfo user)
         {
-            return new Linq.UserInfo
+            return new Linq.AuthInfo
             {
                 UserId = user.UserId,
                 FacebookAuthString = user.FacebookAuthToken,

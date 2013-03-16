@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ServiceDefinition name="Weave.AccountManagement.Service" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2012-10.1.8">
-  <WebRole name="Weave.AccountManagement.WebRole" vmsize="ExtraSmall">
+  <WebRole name="Weave.AccountManagement.Service.WebRole" vmsize="ExtraSmall">
     <Sites>
       <Site name="Web">
         <Bindings>
