@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Database Name="weave" Class="DataClassesDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
   <Connection Mode="AppSettings" ConnectionString="Data Source=ykgd4qav8g.database.windows.net,1433;Initial Catalog=weave;User ID=aemami99" SettingsObjectName="Weave.AccountManagement.Sql.Properties.Settings" SettingsPropertyName="weaveConnectionString" Provider="System.Data.SqlClient" />
-  <Table Name="dbo.UserInfo" Member="UserInfos" AccessModifier="Internal">
-    <Type Name="UserInfo" AccessModifier="Internal">
+  <Table Name="dbo.AuthInfo" Member="AuthInfos" AccessModifier="Internal">
+    <Type Name="AuthInfo" AccessModifier="Internal">
       <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="UserId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
       <Column Name="FacebookAuthString" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />

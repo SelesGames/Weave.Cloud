@@ -18,7 +18,7 @@ namespace SelesGames.WebApi.Compression
 
                 var acceptEncoding = response.RequestMessage.Headers.AcceptEncoding;
 
-                if (response.IsSuccessStatusCode)
+                if (response.IsSuccessStatusCode && response.Content != null)
                 {
                     if (ForceCompression)
                     {

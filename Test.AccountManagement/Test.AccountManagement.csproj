@@ -58,6 +58,18 @@
       <Project>{6211D4F0-8390-4DFA-A1D2-BA4AA7C28348}</Project>
       <Name>Common.Azure</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Common.Data.Linq\Common.Data.Linq.csproj">
+      <Project>{f741017d-fd83-4f35-98a4-57af366c1b53}</Project>
+      <Name>Common.Data.Linq</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common.Data\Common.Data.csproj">
+      <Project>{cad7cc28-36e9-4b39-ba90-df99815904eb}</Project>
+      <Name>Common.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SelesGames.Common\SelesGames.Common.csproj">
+      <Project>{5b792c4b-80d8-420d-9fa7-e567faf1f7b1}</Project>
+      <Name>SelesGames.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Weave.AccountManagement\Weave.AccountManagement.csproj">
       <Project>{f2ebc608-083a-485a-969d-012de7a576b2}</Project>
       <Name>Weave.AccountManagement</Name>

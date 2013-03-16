@@ -64,7 +64,9 @@
     <Build Include="StoredProcedures\GetLatestPublicationDateTimeForFeedId.sql" />
     <Build Include="StoredProcedures\GetLatestNNewsAsBlobList.sql" />
     <Build Include="Tables\NewsItem.sql" />
-    <Build Include="Tables\UserInfo.sql" />
+    <Build Include="Tables\AuthInfo.sql" />
+    <Build Include="Tables\FavoriteNewsItem.sql" />
+    <Build Include="Tables\ReadNewsItem.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="Weave.Sql.refactorlog" />

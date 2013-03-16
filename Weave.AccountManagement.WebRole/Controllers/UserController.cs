@@ -31,28 +31,28 @@ namespace Weave.AccountManagement.WebRole.Controllers
         }
 
         [HttpPost]
-        [ActionName("SaveFeeds")]
+        [ActionName("save_feeds")]
         public Task SaveFeeds(Guid userId, [FromBody] List<Feed> feeds)
         {
             return manager.SaveFeed(userId, feeds);
         }
 
         [HttpPost]
-        [ActionName("RemoveFeeds")]
+        [ActionName("remove_feeds")]
         public Task RemoveFeeds(Guid userId, [FromBody] List<Guid> feedIds)
         {
             return manager.RemoveFeeds(userId, feedIds);
         }
 
         [HttpPost]
-        [ActionName("SaveFeed")]
+        [ActionName("save_feed")]
         public Task SaveFeed(Guid userId, [FromBody] Feed feed)
         {
             return manager.SaveFeed(userId, new[] { feed });
         }
 
         [HttpPost]
-        [ActionName("RemoveFeed")]
+        [ActionName("remove_feed")]
         public Task RemoveFeed(Guid userId, Guid feedId)
         {
             return manager.RemoveFeeds(userId, new[] { feedId });

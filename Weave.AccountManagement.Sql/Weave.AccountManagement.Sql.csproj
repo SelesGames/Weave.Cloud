@@ -49,7 +49,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="UserInfo.cs" />
+    <Compile Include="AuthInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common.Data.Linq\Common.Data.Linq.csproj">

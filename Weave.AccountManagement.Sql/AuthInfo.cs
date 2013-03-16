@@ -2,9 +2,9 @@
 
 namespace Weave.AccountManagement.Sql
 {
-    public class UserInfo
+    public class AuthInfo
     {
-        public Guid Id { get; set; }
+        public Guid UserId { get; set; }
         public string FacebookAuthToken { get; set; }
         public string TwitterAuthToken { get; set; }
         public string MicrosoftAuthToken { get; set; }

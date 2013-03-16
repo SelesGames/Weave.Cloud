@@ -3,7 +3,7 @@
   <DataContextMoniker Name="/DataClassesDataContext" />
   <nestedChildShapes>
     <classShape Id="f8320925-4886-406d-abb7-a253d448c434" absoluteBounds="2.125, 2, 2, 1.9631982421875">
-      <DataClassMoniker Name="/DataClassesDataContext/UserInfo" />
+      <DataClassMoniker Name="/DataClassesDataContext/AuthInfo" />
       <nestedChildShapes>
         <elementListCompartment Id="a81fe948-1665-4861-bb5d-974f0d19da39" absoluteBounds="2.14, 2.46, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>

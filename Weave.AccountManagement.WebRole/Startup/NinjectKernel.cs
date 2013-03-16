@@ -1,6 +1,9 @@
 ﻿using Common.Azure;
+using Common.Data;
+using Common.Data.Linq;
 using Newtonsoft.Json;
 using Ninject;
+using SelesGames.Common;
 using Weave.AccountManagement.DTOs;
 
 namespace Weave.AccountManagement.WebRole.Startup
@@ -20,6 +23,15 @@ namespace Weave.AccountManagement.WebRole.Startup
             var userManager = new UserManager(blobClient);
 
             Bind<UserManager>().ToConstant(userManager);
+
+            var connectionString =
+"Server=tcp:ykgd4qav8g.database.windows.net,1433;Database=weave;User ID=aemami99@ykgd4qav8g;Password=rzarecta99!;Trusted_Connection=False;Encrypt=True;Connection Timeout=30;";
+
+            var credentials = new SqlServerCredentials { ConnectionString = connectionString };
+            Bind<SqlServerCredentials>().ToConstant(credentials);
+            Bind<IProvider<ITransactionalDatabaseClient>>()
+                .ToMethod(_ => new DelegateProvider<ITransactionalDatabaseClient>(() => new TransactionalLinqDbClient(credentials)))
+                .InSingletonScope();
         }
     }
 }
