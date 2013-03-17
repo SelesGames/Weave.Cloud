@@ -36,6 +36,16 @@
     <ServiceConfiguration Include="ServiceConfiguration.Local.cscfg" />
     <ServiceConfiguration Include="ServiceConfiguration.Cloud.cscfg" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Weave.Article.Service.WorkerRole\Weave.Article.Service.WorkerRole.csproj">
+      <Name>Weave.Article.Service.WorkerRole</Name>
+      <Project>{f1b9b4e0-bd01-453c-b7c5-bf58ac032180}</Project>
+      <Private>True</Private>
+      <RoleType>Worker</RoleType>
+      <RoleName>Weave.Article.Service.WorkerRole</RoleName>
+      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
+    </ProjectReference>
+  </ItemGroup>
   <!-- Import the target files for this project template -->
   <PropertyGroup>
     <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>

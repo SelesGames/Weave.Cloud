@@ -67,6 +67,7 @@
     <Build Include="Tables\AuthInfo.sql" />
     <Build Include="Tables\FavoriteNewsItem.sql" />
     <Build Include="Tables\ReadNewsItem.sql" />
+    <Build Include="StoredProcedures\MarkNewsItemRead.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="Weave.Sql.refactorlog" />
