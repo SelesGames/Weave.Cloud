@@ -58,5 +58,34 @@ namespace Weave.Article.Service.WorkerRole
 
             return rows.FirstOrDefault();
         }
+
+        public async Task<bool> AddNewsItemFavorite(Guid userId, NewsItem n)
+        {
+            var storedProcName = "AddNewsItemFavorite";
+
+            byte[] blob;
+            using (var ms = new MemoryStream())
+            {
+                Serializer.Serialize(ms, n);
+                ms.Position = 0;
+                blob = ms.ToArray();
+            }
+
+            var pubDate = DateTime.Parse(n.PublishDateTime, CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AdjustToUniversal);
+
+            var rows = await storedProcClient.GetAsync<bool>(
+                storedProcName,
+                o => o.GetFieldValueAsync<bool>(0),
+                new SqlParameter("p1", n.Id) { SqlDbType = SqlDbType.UniqueIdentifier },
+                new SqlParameter("p2", userId) { SqlDbType = SqlDbType.UniqueIdentifier },
+                new SqlParameter("p3", n.FeedId) { SqlDbType = SqlDbType.UniqueIdentifier },
+                new SqlParameter("p4", pubDate) { SqlDbType = SqlDbType.DateTime },
+                new SqlParameter("p5", n.Title) { SqlDbType = SqlDbType.VarChar },
+                new SqlParameter("p6", n.Link) { SqlDbType = SqlDbType.VarChar },
+                new SqlParameter("p7", blob) { SqlDbType = SqlDbType.VarBinary }
+                );
+
+            return rows.FirstOrDefault();
+        }
     }
 }
