@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Weave.Article.Service.WorkerRole.DTOs;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
 
 namespace Weave.Article.Service.WorkerRole
@@ -59,7 +60,7 @@ namespace Weave.Article.Service.WorkerRole
             return rows.FirstOrDefault();
         }
 
-        public async Task<bool> AddNewsItemFavorite(Guid userId, NewsItem n)
+        public async Task<bool> AddNewsItemFavorite(Guid userId, FavoriteNewsItem n)
         {
             var storedProcName = "AddNewsItemFavorite";
 
