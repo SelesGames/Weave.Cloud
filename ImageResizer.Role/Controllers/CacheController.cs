@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -13,6 +14,8 @@ namespace ImageResizer.Role.Controllers
 {
     public class CacheController : ApiController
     {
+        static Guid jpegGuid = ImageFormat.Jpeg.Guid;
+
         Settings settings;
 
         public CacheController(Settings settings)
@@ -57,9 +60,14 @@ namespace ImageResizer.Role.Controllers
                     var width = outputSize.Size.Width;
                     var height = outputSize.Size.Height;
 
-                    // don't bother upscaling images
-                    //if (width > originalImageWidth && height > originalImageHeight)
-                    //    continue;
+                    if (image.RawFormat != null && image.RawFormat.Guid == jpegGuid)
+                    {
+                        var originalArea = originalImageWidth * originalImageHeight;
+                        var requestedArea = width * height;
+                        // don't bother upscaling images
+                        if ((1.618 * requestedArea) > originalArea)
+                            continue;
+                    }
 
 
                     var blobFileName = string.Format("{0}-{1}.{2}", blobBaseFileName, outputSize.AppendString, settings.OutputFileExtension);
