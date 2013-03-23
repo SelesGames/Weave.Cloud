@@ -8,12 +8,6 @@ namespace Weave.AccountManagement.DTOs
         public string FeedName { get; set; }
         public string FeedUri { get; set; }
         public string Category { get; set; }
-        public string Etag { get; set; }
-        public string LastModified { get; set; }
-        public string MostRecentNewsItemPubDate { get; set; }
-        public DateTime LastRefreshedOn { get; set; }
-        //public Guid NewsHash { get; set; }
         public ArticleViewingType ArticleViewingType { get; set; }
-        //public List<UpdateParameters> UpdateHistory { get; set; }
     }
 }

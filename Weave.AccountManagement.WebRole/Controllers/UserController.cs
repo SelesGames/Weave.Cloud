@@ -32,9 +32,9 @@ namespace Weave.AccountManagement.WebRole.Controllers
 
         [HttpPost]
         [ActionName("save_feeds")]
-        public Task SaveFeeds(Guid userId, [FromBody] List<Feed> feeds)
+        public Task AddOrUpdateFeeds(Guid userId, [FromBody] List<Feed> feeds)
         {
-            return manager.SaveFeed(userId, feeds);
+            return manager.AddOrUpdateFeeds(userId, feeds);
         }
 
         [HttpPost]
@@ -46,9 +46,9 @@ namespace Weave.AccountManagement.WebRole.Controllers
 
         [HttpPost]
         [ActionName("save_feed")]
-        public Task SaveFeed(Guid userId, [FromBody] Feed feed)
+        public Task AddOrUpdateFeed(Guid userId, [FromBody] Feed feed)
         {
-            return manager.SaveFeed(userId, new[] { feed });
+            return manager.AddOrUpdateFeeds(userId, new[] { feed });
         }
 
         [HttpPost]

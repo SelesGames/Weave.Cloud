@@ -5,23 +5,32 @@ using System.Runtime.Serialization.Json;
 
 namespace SelesGames.Rest
 {
-    public class JsonRestClient<T> : RestClient<T>
+    public class JsonRestClient : RestClient
     {
-        DataContractJsonSerializer deserializer;
-
-        public JsonRestClient(IEnumerable<Type> knownTypes)
-        {
-            deserializer = new DataContractJsonSerializer(typeof(T), knownTypes);
-        }
+        IEnumerable<Type> knownTypes;
 
         public JsonRestClient()
         {
-            deserializer = new DataContractJsonSerializer(typeof(T));
+            Headers.Accept = "application/json";
+            Headers.ContentType = "application/json";
         }
 
-        protected override T ReadObject(Stream stream)
+        public JsonRestClient(IEnumerable<Type> knownTypes)
+            : this()
         {
-            return (T)deserializer.ReadObject(stream);
+            this.knownTypes = knownTypes;
+        }
+
+        protected override T ReadObject<T>(Stream readStream)
+        {
+            var deserializer = new DataContractJsonSerializer(typeof(T), knownTypes);
+            return (T)deserializer.ReadObject(readStream);
+        }
+
+        protected override void WriteObject<T>(Stream writeStream, T obj)
+        {
+            var serializer = new DataContractJsonSerializer(typeof(T), knownTypes);
+            serializer.WriteObject(writeStream, obj);
         }
     }
 }

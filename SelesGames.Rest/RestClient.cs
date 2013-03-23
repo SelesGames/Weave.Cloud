@@ -7,51 +7,129 @@ using System.Threading.Tasks;
 
 namespace SelesGames.Rest
 {
-    public abstract class RestClient<T>
+    public abstract class RestClient : BaseRestClient
     {
-        public bool UseGzip { get; set; }
+        public RestClient()
+        {
+            Headers = new Headers();
+        }
 
-        public Task<T> GetAsync(string url, CancellationToken cancellationToken)
+        public Task<T> GetAsync<T>(string url, CancellationToken cancellationToken)
         {
             var request = (HttpWebRequest)HttpWebRequest.Create(url);
+
+            if (!string.IsNullOrEmpty(Headers.Accept))
+                request.Accept = Headers.Accept;
 
             if (UseGzip)
                 request.Headers[HttpRequestHeader.AcceptEncoding] = "gzip";
 
-            return request.GetResponseAsync()
-                .ContinueWith(task =>
-                {
-                    if (task.Exception != null)
-                        throw new AggregateException(string.Format("Error calling {0}", url), task.Exception.InnerExceptions);
-
-                    var response = (HttpWebResponse)task.Result;
-                    if (response.StatusCode != HttpStatusCode.OK)
-                        throw new WebException("Status code was not OK", null, WebExceptionStatus.UnknownError, response);
-
-                    T result;
-
-                    using (var stream = response.GetResponseStream())
+            return request
+                .GetResponseAsync()
+                .ContinueWith(
+                    task =>
                     {
-                        var contentEncoding = response.Headers["Content-Encoding"];
-                        if (UseGzip || "gzip".Equals(contentEncoding, StringComparison.OrdinalIgnoreCase))
-                        {
-                            using (var gzip = new GZipStream(stream, CompressionMode.Decompress, false))
-                            {
-                                result = ReadObject(gzip);
-                                gzip.Close();
-                            }
-                        }
-                        else
-                        {
-                            result = ReadObject(stream);
-                        }
-                        stream.Close();
-                    }
-                    return result;
-                },
-                cancellationToken);
+                        var response = (HttpWebResponse)task.Result;
+                        if (response.StatusCode != HttpStatusCode.OK)
+                            throw new WebException(string.Format("Status code: {0}", response.StatusCode), null, WebExceptionStatus.UnknownError, response);
+
+                        return ReadObjectFromWebResponse<T>(response);
+                    },
+                    cancellationToken,
+                    TaskContinuationOptions.OnlyOnRanToCompletion,
+                    TaskScheduler.Default
+                );
         }
 
-        protected abstract T ReadObject(Stream stream);
+        public async Task<TResult> PostAsync<TPost, TResult>(string url, TPost obj, CancellationToken cancelToken)
+        {
+            var request = HttpWebRequest.CreateHttp(url);
+            request.Method = "POST";
+
+            if (!string.IsNullOrEmpty(Headers.ContentType))
+                request.ContentType = Headers.ContentType;
+
+            if (!string.IsNullOrEmpty(Headers.Accept))
+                request.Accept = Headers.Accept;
+
+            if (UseGzip)
+                request.Headers[HttpRequestHeader.AcceptEncoding] = "gzip";
+
+            using (var requestStream = await request.GetRequestStreamAsync().ConfigureAwait(false))
+            {
+                cancelToken.ThrowIfCancellationRequested();
+                WriteObject(requestStream, obj);
+                requestStream.Close();
+            }
+
+            var response = await request.GetResponseAsync().ConfigureAwait(false);
+
+            cancelToken.ThrowIfCancellationRequested();
+
+            return ReadObjectFromWebResponse<TResult>((HttpWebResponse)response);
+        }
+
+        public async Task<bool> PostAsync<TPost>(string url, TPost obj, CancellationToken cancelToken)
+        {
+            var request = HttpWebRequest.CreateHttp(url);
+            request.Method = "POST";
+
+            if (!string.IsNullOrEmpty(Headers.ContentType))
+                request.ContentType = Headers.ContentType;
+
+            if (!string.IsNullOrEmpty(Headers.Accept))
+                request.Accept = Headers.Accept;
+
+            if (UseGzip)
+                request.Headers[HttpRequestHeader.AcceptEncoding] = "gzip";
+
+            using (var requestStream = await request.GetRequestStreamAsync().ConfigureAwait(false))
+            {
+                cancelToken.ThrowIfCancellationRequested();
+                WriteObject(requestStream, obj);
+                requestStream.Close();
+            }
+
+            var response = await request.GetResponseAsync().ConfigureAwait(false);
+            var httpResponse = (HttpWebResponse)response;
+            return httpResponse.StatusCode == HttpStatusCode.Created;
+        }
+
+
+
+
+        #region helper methods
+
+        T ReadObjectFromWebResponse<T>(HttpWebResponse response)
+        {
+            T result;
+
+            using (var stream = response.GetResponseStream())
+            {
+                var contentEncoding = response.Headers["Content-Encoding"];
+                if (UseGzip || "gzip".Equals(contentEncoding, StringComparison.OrdinalIgnoreCase))
+                {
+                    using (var gzip = new GZipStream(stream, CompressionMode.Decompress, false))
+                    {
+                        result = ReadObject<T>(gzip);
+                        gzip.Close();
+                    }
+                }
+                else
+                {
+                    result = ReadObject<T>(stream);
+                }
+                stream.Close();
+            }
+            return result;
+        }
+
+        #endregion
+
+
+
+
+        protected abstract T ReadObject<T>(Stream readStream);
+        protected abstract void WriteObject<T>(Stream writeStream, T obj);
     }
 }

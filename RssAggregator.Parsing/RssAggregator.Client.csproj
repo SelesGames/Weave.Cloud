@@ -33,23 +33,12 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EntryExtensions.cs" />
     <Compile Include="FeedRequester.cs" />
-    <Compile Include="Parsing\Intermediates\AtomIntermediate.cs" />
-    <Compile Include="Parsing\Intermediates\IEntryIntermediate.cs" />
-    <Compile Include="Parsing\Extensions\NewsItemParseHelperExtension.cs" />
-    <Compile Include="Parsing\Intermediates\Rss20Intermediate.cs" />
-    <Compile Include="Parsing\Extensions\RssFeedParser.cs" />
-    <Compile Include="Parsing\Extensions\StringExtensions.cs" />
-    <Compile Include="Parsing\Extensions\XElementExtensions.cs" />
-    <Compile Include="Parsing\Intermediates\SyndicationIntermediate.cs" />
-    <Compile Include="Entry.cs" />
+    <Compile Include="FeedRequestExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -64,6 +53,14 @@
     <ProjectReference Include="..\SelesGames.WebApi\SelesGames.WebApi.csproj">
       <Project>{bb3ea281-94b3-435f-a1ef-c395a7d1f25a}</Project>
       <Name>SelesGames.WebApi</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Weave.Parsing\Weave.Parsing.csproj">
+      <Project>{a9731e9c-72fc-4171-ba99-9a6f97cd379f}</Project>
+      <Name>Weave.Parsing</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Weave.RssAggregator.Core\RssAggregator.DTOs.csproj">
+      <Project>{2f1a280d-ee75-4dc1-a36c-f8e5488e3260}</Project>
+      <Name>RssAggregator.DTOs</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

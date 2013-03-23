@@ -8,8 +8,8 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Weave.RssAggregator.Client.Parsing;
-using Weave.RssAggregator.Client.Parsing.Intermediates;
+using Weave.Parsing;
+using Weave.Parsing.Intermediates;
 
 namespace Weave.RssAggregator.Client
 {

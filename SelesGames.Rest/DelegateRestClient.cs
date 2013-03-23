@@ -3,26 +3,31 @@ using System.IO;
 
 namespace SelesGames.Rest
 {
-    public class DelegateRestClient<T> : RestClient<T>
+    public class DelegateRestClient : RestClient
     {
-        Func<Stream, T> map;
+        Func<Stream, object> map;
 
-        public DelegateRestClient(Func<Stream, T> map)
+        public DelegateRestClient(Func<Stream, object> map)
         {
             this.map = map;
         }
 
-        protected override T ReadObject(Stream stream)
+        protected override T ReadObject<T>(Stream stream)
         {
-            return map(stream);
+            return (T)map(stream);
+        }
+
+        protected override void WriteObject<T>(Stream writeStream, T obj)
+        {
+            throw new NotImplementedException();
         }
     }
 
-    public static class RestClient
-    {
-        public static DelegateRestClient<T> Create<T>(Func<Stream, T> map, bool useGzip = false)
-        {
-            return new DelegateRestClient<T>(map) { UseGzip = useGzip };
-        }
-    }
+    //public static class RestClient
+    //{
+    //    public static DelegateRestClient<T> Create<T>(Func<Stream, T> map, bool useGzip = false)
+    //    {
+    //        return new DelegateRestClient<T>(map) { UseGzip = useGzip };
+    //    }
+    //}
 }

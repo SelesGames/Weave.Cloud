@@ -58,7 +58,7 @@ namespace Weave.AccountManagement.DTOs
 
 
 
-        public async Task SaveFeed(Guid userId, IEnumerable<Feed> feeds)
+        public async Task AddOrUpdateFeeds(Guid userId, IEnumerable<Feed> feeds)
         {
             var userInfo = await client.Get(userId);
 

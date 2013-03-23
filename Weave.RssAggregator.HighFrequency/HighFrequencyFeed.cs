@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
+using Weave.Parsing;
 using Weave.RssAggregator.Client;
 
 namespace Weave.RssAggregator.HighFrequency

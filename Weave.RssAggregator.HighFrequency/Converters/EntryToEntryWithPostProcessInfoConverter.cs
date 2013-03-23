@@ -1,5 +1,5 @@
 ﻿using SelesGames.Common;
-using Weave.RssAggregator.Client;
+using Weave.Parsing;
 
 namespace Weave.RssAggregator.HighFrequency
 {

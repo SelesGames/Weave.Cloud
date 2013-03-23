@@ -69,11 +69,7 @@ namespace Test.AccountManagement
                 FeedName = "Engadget", 
                 Category = "Technology", 
                 ArticleViewingType = ArticleViewingType.Mobilizer,
-                Etag = "asdfasdf",
                 FeedUri = "http://www.engadget.com/rss.xml",
-                LastModified = "asdfasdfa", 
-                LastRefreshedOn = DateTime.Now,
-                MostRecentNewsItemPubDate = "mostrecentnewsitem",
             });
             Add(new Feed
             {
@@ -81,11 +77,7 @@ namespace Test.AccountManagement
                 FeedName = "GigaOM",
                 Category = null,
                 ArticleViewingType = ArticleViewingType.Mobilizer,
-                Etag = "yrtyrty",
                 FeedUri = "http://feeds.feedburner.com/ommalik",
-                LastModified = "ytyuuuu",
-                LastRefreshedOn = DateTime.Now,
-                MostRecentNewsItemPubDate = "mostrecentnewsitem",
             });
 
             Add(new Feed
@@ -94,11 +86,7 @@ namespace Test.AccountManagement
                 FeedName = "Mashable",
                 Category = "Technology",
                 ArticleViewingType = ArticleViewingType.Mobilizer,
-                Etag = "asdfasdf",
                 FeedUri = "http://feeds.mashable.com/Mashable",
-                LastModified = "asdfasdfa",
-                LastRefreshedOn = DateTime.Now,
-                MostRecentNewsItemPubDate = "mostrecentnewsitem",
             });
 
             Add(new Feed
@@ -107,11 +95,7 @@ namespace Test.AccountManagement
                 FeedName = "The Verge",
                 Category = "Technology",
                 ArticleViewingType = ArticleViewingType.Mobilizer,
-                Etag = "asdfasdf",
                 FeedUri = "http://www.theverge.com/rss/index.xml",
-                LastModified = "asdfasdfa",
-                LastRefreshedOn = DateTime.Now,
-                MostRecentNewsItemPubDate = "mostrecentnewsitem",
             });
         }
     }
