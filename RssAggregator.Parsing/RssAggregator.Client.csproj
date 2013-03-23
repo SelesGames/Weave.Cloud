@@ -36,9 +36,9 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EntryExtensions.cs" />
+    <Compile Include="Converters\EntryToNewsItemConverter.cs" />
     <Compile Include="FeedRequester.cs" />
-    <Compile Include="FeedRequestExtensions.cs" />
+    <Compile Include="RequestClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

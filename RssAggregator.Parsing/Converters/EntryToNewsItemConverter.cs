@@ -1,11 +1,14 @@
-﻿using Weave.Parsing;
-using Weave.RssAggregator.Client;
+﻿using SelesGames.Common;
+using Weave.Parsing;
+using Weave.RssAggregator.Core.DTOs.Outgoing;
 
-namespace Weave.RssAggregator.Core.DTOs.Outgoing
+namespace RssAggregator.Client.Converters
 {
-    public static class EntryExtensions
+    internal class EntryToNewsItemConverter : IConverter<Entry, NewsItem>
     {
-        public static NewsItem AsNewsItem(this Entry e)
+        public static readonly EntryToNewsItemConverter Instance = new EntryToNewsItemConverter();
+
+        public NewsItem Convert(Entry e)
         {
             return new NewsItem
             {

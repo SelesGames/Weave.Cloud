@@ -134,7 +134,7 @@ namespace RssAggregator.ConsoleTesting
 
                         if (o.NewsItemBlob == null)
                         {
-                            var newsItem = entry.AsNewsItem();
+                            var newsItem = Convert(entry);
 
                             using (var ms = new MemoryStream())
                             {
@@ -156,6 +156,24 @@ namespace RssAggregator.ConsoleTesting
 
                 //skipCount += takeCount;
             }
+        }
+
+        static NewsItem Convert(Entry e)
+        {
+            return new NewsItem
+            {
+                Title = e.Title,
+                Link = e.Link,
+                ImageUrl = e.ImageUrl,
+                PublishDateTime = e.UtcPublishDateTimeString,
+                Description = null,//entry.Description,
+                VideoUri = e.VideoUri,
+                YoutubeId = e.YoutubeId,
+                PodcastUri = e.PodcastUri,
+                ZuneAppId = e.ZuneAppId,
+                Id = e.Id,
+                FeedId = e.FeedId,
+            };
         }
 
         static void TestReceiveServiceBusMessageQueue()

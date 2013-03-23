@@ -1,4 +1,6 @@
-﻿using System;
+﻿using RssAggregator.Client.Converters;
+using SelesGames.Common;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Weave.RssAggregator.Client;
@@ -6,14 +8,21 @@ using Weave.RssAggregator.Core.DTOs.Outgoing;
 
 namespace Weave.RssAggregator.Core.DTOs.Incoming
 {
-    public static class FeedRequestExtensions
+    public class RequestClient
     {
-        public async static Task<FeedResult> GetNewsAsync(this FeedRequest request, TimeSpan timeout)
+        public TimeSpan RequestTimeout { get; set; }
+
+        public RequestClient()
+        {
+            RequestTimeout = TimeSpan.FromSeconds(30);
+        }
+
+        public async Task<FeedResult> GetNewsAsync(FeedRequest request)
         {
             FeedResult result;
             try
             {
-                var requester = CreateRequester(request, timeout);
+                var requester = CreateRequester(request, RequestTimeout);
                 var requestStatus = await requester.UpdateFeed();
 
                 if (requestStatus == FeedRequester.RequestStatus.Unmodified)
@@ -30,7 +39,7 @@ namespace Weave.RssAggregator.Core.DTOs.Incoming
                         LastModified = requester.LastModified,
                         MostRecentNewsItemPubDate = requester.MostRecentNewsItemPubDate,
                         OldestNewsItemPubDate = requester.OldestNewsItemPubDate,
-                        News = requester.News.Select(o => o.AsNewsItem()).ToList(),
+                        News = requester.News.Select(o => o.Convert(EntryToNewsItemConverter.Instance)).ToList(),
                     };
                 }
             }

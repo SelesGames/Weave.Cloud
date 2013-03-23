@@ -75,6 +75,10 @@
       <Project>{2f1a280d-ee75-4dc1-a36c-f8e5488e3260}</Project>
       <Name>RssAggregator.DTOs</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Weave.User.DTOs\Weave.User.DTOs.csproj">
+      <Project>{458cbdea-f41c-4209-9dec-b2f285c217ab}</Project>
+      <Name>Weave.User.DTOs</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

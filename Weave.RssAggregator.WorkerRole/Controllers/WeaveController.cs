@@ -36,24 +36,6 @@ namespace Weave.RssAggregator.WorkerRole.Controllers
 
             var temp = await Task.WhenAll(requests.Select(o => GetResultFromRequest(o, fsd)));
             var results = temp.ToList();
-
-            //var highFrequencyFeeds = requests.Where(o => cache.ContainsValid(o.Url)).ToList();
-            //var lowFrequencyFeeds = requests.Except(highFrequencyFeeds).ToList();
-
-            //var lowFrequencyResults = await Task.WhenAll(lowFrequencyFeeds.Select(o => o.GetNewsAsync(AppSettings.LowFrequencyHttpWebRequestTimeout)));
-            //var highFrequencyResults = highFrequencyFeeds.Select(o => cache.ToFeedResult(o)).ToArray();
-
-            //var results = new List<FeedResult>(lowFrequencyResults.Length + highFrequencyResults.Length);
-            //results.AddRange(lowFrequencyResults);
-            //results.AddRange(highFrequencyResults);
-
-            //if (fsd && results != null)
-            //{
-            //    foreach (var r in results.Where(o => o.News != null))
-            //        foreach (var newsItem in r.News)
-            //            newsItem.Description = null;
-            //}
-
             return results;
         }
 
@@ -67,7 +49,8 @@ namespace Weave.RssAggregator.WorkerRole.Controllers
             }
             else
             {
-                result = await feedRequest.GetNewsAsync(AppSettings.LowFrequencyHttpWebRequestTimeout);
+                var requestClient = new RequestClient { RequestTimeout = AppSettings.LowFrequencyHttpWebRequestTimeout };
+                result = await requestClient.GetNewsAsync(feedRequest);
             }
 
             if (result != null && result.News != null && fsd)
