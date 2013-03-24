@@ -19,8 +19,8 @@ namespace Weave.Readability
 #if DEBUG
             System.Diagnostics.Debug.WriteLine(string.Format("calling {0}", url), "READABILITY");
 #endif
-            return new JsonRestClient<ReadabilityResult> { UseGzip = true }
-                .GetAsync(fullUrl, System.Threading.CancellationToken.None);
+            return new JsonRestClient { UseGzip = true }
+                .GetAsync<ReadabilityResult>(fullUrl, System.Threading.CancellationToken.None);
         }
     }
 }
