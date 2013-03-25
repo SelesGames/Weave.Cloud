@@ -1,4 +1,4 @@
-﻿using SelesGames.WebApi.Compression;
+﻿using Common.Net.Http.Compression;
 using System.Web.Http;
 using System.Web.Http.Dependencies;
 using Weave.Mobilizer.Core.Controllers;

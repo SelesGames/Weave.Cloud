@@ -1,4 +1,5 @@
-﻿using SelesGames.WebApi.Extensions;
+﻿using Common.Net.Http.Compression;
+using SelesGames.WebApi.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -35,7 +36,7 @@ namespace Weave.RssAggregator.LibraryClient
         /// <returns>A boolean specifying whether the resource was updated</returns>
         public async Task<bool> CheckForUpdate()
         {
-            var handler = new SelesGames.WebApi.HttpClientCompressionHandler();
+            var handler = new HttpClientCompressionHandler();
             //{
             //    AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
             //};

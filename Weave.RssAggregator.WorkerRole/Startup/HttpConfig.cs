@@ -1,5 +1,5 @@
-﻿using Common.WebApi;
-using SelesGames.WebApi.Compression;
+﻿using Common.Net.Http.Compression;
+using Common.WebApi;
 using SelesGames.WebApi.Protobuf;
 using System.Linq;
 using System.Net.Http.Formatting;

@@ -9,13 +9,22 @@ using System.Threading.Tasks;
 
 namespace SelesGames.HttpClient
 {
+    /// <summary>
+    /// A version of HttpClient that reads the Content-Type header to deserialize a web request response into an object.  
+    /// It also auto-decompresses responses.
+    /// 
+    /// By default, requests compressed Json objects
+    /// </summary>
     public class SmartHttpClient : System.Net.Http.HttpClient
     {
         MediaTypeFormatterCollection formatters;
         ContentEncoderSettings encoderSettings;
         CompressionSettings compressionSettings;
-        
 
+
+
+
+        #region Constructors
 
         public SmartHttpClient(CompressionSettings compressionSettings = CompressionSettings.OnRequest | CompressionSettings.OnContent)
             : this(CreateDefaultMediaTypeFormatters(), ContentEncoderSettings.Json, compressionSettings) { }
@@ -42,6 +51,12 @@ namespace SelesGames.HttpClient
                 DefaultRequestHeaders.TryAddWithoutValidation("Accept-Encoding", new[] { "gzip", "deflate" });
         }
 
+        #endregion
+
+
+
+
+        #region Get
 
         public Task<T> GetAsync<T>(string url)
         {
@@ -57,6 +72,13 @@ namespace SelesGames.HttpClient
             return result;
         }
 
+        #endregion
+
+
+
+
+        #region Post
+
         public Task<TResult> PostAsync<TPost, TResult>(string url, TPost obj)
         {
             return PostAsync<TPost, TResult>(url, obj, CancellationToken.None);
@@ -64,24 +86,30 @@ namespace SelesGames.HttpClient
 
         public async Task<TResult> PostAsync<TPost, TResult>(string url, TPost obj, CancellationToken cancelToken)
         {
-            var mediaType = new MediaTypeHeaderValue(encoderSettings.ContentType);
-            var formatter = FindFormatter<TPost>(mediaType);
-
-            var response = await this.PostAsync<TPost>(url, obj, formatter, mediaType, cancelToken).ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-
+            var response = await GetValidPostResponseAsync<TPost>(url, obj, cancelToken);
             var result = await response.Content.ReadAsAsync<TResult>(formatters).ConfigureAwait(false);
             return result;
         }
 
-        public async Task PostAsync<TPost>(string url, TPost obj, CancellationToken cancelToken)
+        public Task PostAsync<TPost>(string url, TPost obj, CancellationToken cancelToken)
+        {
+            return GetValidPostResponseAsync<TPost>(url, obj, cancelToken);
+        }
+
+        async Task<HttpResponseMessage> GetValidPostResponseAsync<T>(string url, T obj, CancellationToken cancelToken)
         {
             var mediaType = new MediaTypeHeaderValue(encoderSettings.ContentType);
-            var formatter = FindFormatter<TPost>(mediaType);
+            var formatter = FindFormatter<T>(mediaType);
 
-            var response = await this.PostAsync<TPost>(url, obj, formatter, mediaType, cancelToken).ConfigureAwait(false);
+            var content = new ObjectContent<T>(obj, formatter, mediaType);
+            content.Headers.ContentType = mediaType;
+
+            var response = await base.PostAsync(url, content, cancelToken).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
+            return response;
         }
+
+        #endregion
 
 
 

@@ -40,15 +40,11 @@
     <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Compression\CompressedContent.cs" />
-    <Compile Include="Compression\DecompressedContent.cs" />
-    <Compile Include="Compression\EncodingDelegateHandler.cs" />
     <Compile Include="CrossDomain\AcceptAndContentTypeViaQueryParameterHandler.cs" />
     <Compile Include="CrossDomain\CORSActionFilterAttribute.cs" />
     <Compile Include="CrossDomain\InjectContentTypeHandler.cs" />
     <Compile Include="ExceptionHandlingAttribute.cs" />
     <Compile Include="Extensions\HttpResponseMessageExtensions.cs" />
-    <Compile Include="HttpClientCompressionHandler.cs" />
     <Compile Include="InjectAcceptHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResponseHelper.cs" />

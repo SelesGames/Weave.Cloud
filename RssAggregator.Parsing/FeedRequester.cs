@@ -1,4 +1,5 @@
-﻿using Common.TimeFormatting;
+﻿using Common.Net.Http.Compression;
+using Common.TimeFormatting;
 using SelesGames.Common.Hashing;
 using SelesGames.WebApi.Extensions;
 using System;
@@ -46,7 +47,7 @@ namespace Weave.RssAggregator.Client
         {
             EnsureFeedIdIsSet();
 
-            var handler = new SelesGames.WebApi.HttpClientCompressionHandler();
+            var handler = new HttpClientCompressionHandler();
 
             var request = new HttpClient(handler);
             request.Timeout = TimeOut;

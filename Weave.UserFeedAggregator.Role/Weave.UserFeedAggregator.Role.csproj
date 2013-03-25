@@ -48,6 +48,8 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Services.Client" />
+    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Web.Http.SelfHost, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -55,6 +57,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\UserFeedController.cs" />
     <Compile Include="ServiceClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WorkerRole.cs" />
@@ -63,6 +66,10 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common.Azure\Common.Azure.csproj">
+      <Project>{6211d4f0-8390-4dfa-a1d2-ba4aa7c28348}</Project>
+      <Name>Common.Azure</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SelesGames.Rest.Protobuf\SelesGames.Rest.Protobuf.csproj">
       <Project>{dbfebe00-4ae2-41c0-965c-0da9911246a5}</Project>
       <Name>SelesGames.Rest.Protobuf</Name>

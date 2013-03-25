@@ -1,7 +1,7 @@
-﻿using Common.WebApi;
+﻿using Common.Net.Http.Compression;
+using Common.WebApi;
 using Newtonsoft.Json.Serialization;
 using Ninject.WebApi;
-using SelesGames.WebApi.Compression;
 using SelesGames.WebApi.Protobuf;
 using System.Web.Http;
 using Weave.AccountManagement.WebRole.Controllers;

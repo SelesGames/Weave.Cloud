@@ -391,6 +391,10 @@
       <Project>{cad7cc28-36e9-4b39-ba90-df99815904eb}</Project>
       <Name>Common.Data</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Common.Net.Http.Compression\Common.Net.Http.Compression.csproj">
+      <Project>{c3e23ea5-8542-464a-9598-d4d126e1eb97}</Project>
+      <Name>Common.Net.Http.Compression</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Ninject.WebApi\Ninject.WebApi.csproj">
       <Project>{be97f564-16f5-4d09-9218-cc65e89df2ac}</Project>
       <Name>Ninject.WebApi</Name>
