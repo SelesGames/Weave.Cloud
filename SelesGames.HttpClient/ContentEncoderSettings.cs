@@ -19,10 +19,17 @@ namespace SelesGames.HttpClient
             Accept = "application/json",
             ContentType = "application/json"
         };
+
         public static readonly ContentEncoderSettings Protobuf = new ContentEncoderSettings
         {
             Accept = "application/protobuf",
             ContentType = "application/protobuf"
+        };
+
+        public static readonly ContentEncoderSettings Xml = new ContentEncoderSettings
+        {
+            Accept = "text/xml",
+            ContentType = "text/xml"
         };
 
         #endregion

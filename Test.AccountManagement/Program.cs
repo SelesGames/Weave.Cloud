@@ -1,20 +1,33 @@
 ﻿using Ninject;
+using ProtoBuf;
+using SelesGames.HttpClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using Weave.AccountManagement.DTOs;
 using Weave.AccountManagement.WebRole.Startup;
+using Weave.RssAggregator.Core.DTOs.Incoming;
+using Weave.RssAggregator.Core.DTOs.Outgoing;
 
 namespace Test.AccountManagement
 {
+    [ProtoContract]
+    public class test
+    {
+        [ProtoMember(1)] public string blah { get; set; }
+        [ProtoMember(2)] public string harumph { get; set; }
+    }
+
     class Program
     {
         static void Main(string[] args)
         {
             try
             {
-                TestUserCreationRetrievalEtc().Wait();
+                TestSmartHttpClient().Wait();
+                //TestUserCreationRetrievalEtc().Wait();
                 Console.WriteLine("all tests passed!");
             }
             catch (Exception e)
@@ -24,6 +37,17 @@ namespace Test.AccountManagement
 
             while (true)
                 Console.ReadLine();
+        }
+
+        static async Task TestSmartHttpClient()
+        {
+            var client = new SmartHttpClient(ContentEncoderSettings.Json, CompressionSettings.None);
+
+            var result = await client.PostAsync<List<FeedRequest>, List<FeedResult>>("http://weave2.cloudapp.net/api/Weave", new List<FeedRequest>
+            {
+                new FeedRequest { Id="1", Url = "http://www.theverge.com/rss/index.xml" }
+            });
+            DebugEx.WriteLine(result);
         }
 
         static async Task TestUserCreationRetrievalEtc()

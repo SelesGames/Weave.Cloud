@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using SelesGames.HttpClient;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Weave.RssAggregator.Core.DTOs.Incoming;
@@ -12,7 +13,7 @@ namespace Weave.UserFeedAggregator.Role
 
         public async Task<List<FeedResult>> GetFeedResultsAsync(List<FeedRequest> outgoingFeedRequests)
         {
-            var client = new SelesGames.Rest.Protobuf.ProtobufRestClient { UseGzip = false };
+            var client = new SmartHttpClient(ContentEncoderSettings.Protobuf, CompressionSettings.None);
             var results = await client.PostAsync<List<FeedRequest>, List<FeedResult>>(SERVICE_URL, outgoingFeedRequests, CancellationToken.None);
             return results;
         }

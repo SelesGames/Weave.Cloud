@@ -47,6 +47,10 @@
       <Project>{c3e23ea5-8542-464a-9598-d4d126e1eb97}</Project>
       <Name>Common.Net.Http.Compression</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SelesGames.WebApi.Protobuf\SelesGames.WebApi.Protobuf.csproj">
+      <Project>{c829e120-9b78-4640-bf91-fefcf060e2b8}</Project>
+      <Name>SelesGames.WebApi.Protobuf</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
