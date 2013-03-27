@@ -49,6 +49,7 @@ namespace Common.Azure.SmartBlobClient
         {
             blobClient = new AzureBlobStreamClient(storageAccountName, key, container, useHttps);
             ContentType = ContentEncoderSettings.Json;
+            formatters = CreateDefaultMediaTypeFormatters();
         }
 
         public async Task<T> Get(string blobId)
@@ -57,7 +58,7 @@ namespace Common.Azure.SmartBlobClient
             {
                 var contentType = content.Properties.ContentType;
                 var mediaHeader = new MediaTypeHeaderValue(contentType);
-                var deserializer = FindWriteFormatter<T>(mediaHeader);
+                var deserializer = FindWriteFormatter(mediaHeader);
 
                 var result = await deserializer.ReadFromStreamAsync(typeof(T), content.Content, null, null);
                 return (T)result;
@@ -69,7 +70,7 @@ namespace Common.Azure.SmartBlobClient
             using (var ms = new MemoryStream())
             {
                 var mediaHeader = new MediaTypeHeaderValue(ContentType);
-                var serializer = FindWriteFormatter<T>(mediaHeader);
+                var serializer = FindWriteFormatter(mediaHeader);
 
                 await serializer.WriteToStreamAsync(typeof(T), obj, ms, null, null);
                 ms.Position = 0;
@@ -87,7 +88,7 @@ namespace Common.Azure.SmartBlobClient
 
         #region helper methods
 
-        MediaTypeFormatter FindWriteFormatter<T>(MediaTypeHeaderValue mediaType)
+        MediaTypeFormatter FindWriteFormatter(MediaTypeHeaderValue mediaType)
         {
             MediaTypeFormatter formatter = null;
 

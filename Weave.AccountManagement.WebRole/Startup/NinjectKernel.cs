@@ -1,4 +1,5 @@
 ﻿using Common.Azure;
+using Common.Azure.SmartBlobClient;
 using Common.Data;
 using Common.Data.Linq;
 using Newtonsoft.Json;
@@ -14,11 +15,21 @@ namespace Weave.AccountManagement.WebRole.Startup
         {
             base.AddComponents();
 
-            var blobClient = new AzureJsonDotNetBlobClient<UserInfo>(
+            //var blobClient = new AzureJsonDotNetBlobClient<UserInfo>(
+            //    "weave",
+            //    "uudFrra70qkI64bifaI2Rrm37CZ1HkzaBQrLMyw6U/hmzNDZehXeo9DdUv7BCpuZY4N2q/CNpNwYxW2fa218xA==",
+            //    "userinfo",
+            //    false) { SerializerSettings = new JsonSerializerSettings { Formatting = Formatting.Indented }, UseGzipOnUpload = true };
+
+            var blobClient = new SmartBlobClient<UserInfo>(
                 "weave",
                 "uudFrra70qkI64bifaI2Rrm37CZ1HkzaBQrLMyw6U/hmzNDZehXeo9DdUv7BCpuZY4N2q/CNpNwYxW2fa218xA==",
                 "userinfo",
-                false) { SerializerSettings = new JsonSerializerSettings { Formatting = Formatting.Indented }, UseGzipOnUpload = true };
+                false) 
+                { 
+                    ContentType = "application/json",
+                    UseGzipOnUpload = false 
+                };
 
             var userManager = new UserManager(blobClient);
 

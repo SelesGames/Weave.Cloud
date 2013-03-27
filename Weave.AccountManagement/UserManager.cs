@@ -9,10 +9,10 @@ namespace Weave.AccountManagement.DTOs
 {
     public class UserManager
     {
-        AzureBlobClient<UserInfo> client;
+        IAzureBlobClient<UserInfo> client;
         ValidationEngine validationEngine;
 
-        public UserManager(AzureBlobClient<UserInfo> client)
+        public UserManager(IAzureBlobClient<UserInfo> client)
         {
             this.client = client;
             this.validationEngine = new UserInfoValidator();

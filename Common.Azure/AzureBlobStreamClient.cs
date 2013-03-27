@@ -3,7 +3,6 @@ using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.StorageClient;
 using System;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Common.Azure
@@ -42,19 +41,18 @@ namespace Common.Azure
             await blob.DownloadToStreamAsync(ms, options);
             ms.Position = 0;
 
-            //if ("gzip".Equals(blob.Properties.ContentEncoding, StringComparison.OrdinalIgnoreCase))
-            //{
+            if ("gzip".Equals(blob.Properties.ContentEncoding, StringComparison.OrdinalIgnoreCase))
+            {
                 byte[] byteArray = ms.ToArray();
 
-                var firstTwo = BitConverter.ToString(byteArray.Take(2).ToArray());
-                if (firstTwo.Equals("1F-8B"))
-                {
-
-                    ms.Dispose();
-                    var streamContent = await byteArray.DecompressToStream();
-                    return BlobContent.Create(blob, streamContent);
-                }
-            //}
+                //var magicNumber = BitConverter.ToString(byteArray.Take(3).ToArray());
+                //if (magicNumber.Equals("1F-8B-08"))
+                //{
+                ms.Dispose();
+                var streamContent = await byteArray.DecompressToStream();
+                return BlobContent.Create(blob, streamContent);
+                //}
+            }
             return BlobContent.Create(blob, ms);
         }
 

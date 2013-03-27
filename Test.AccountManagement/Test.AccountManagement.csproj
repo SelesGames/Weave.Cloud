@@ -80,6 +80,10 @@
       <Project>{bf0dc853-b353-4a92-b718-0a0ad067bfdf}</Project>
       <Name>SelesGames.HttpClient</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SelesGames.SmartBlobClient\Common.Azure.SmartBlobClient.csproj">
+      <Project>{d115cf60-990a-4138-8496-538a6ce74541}</Project>
+      <Name>Common.Azure.SmartBlobClient</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Weave.AccountManagement\Weave.AccountManagement.csproj">
       <Project>{f2ebc608-083a-485a-969d-012de7a576b2}</Project>
       <Name>Weave.AccountManagement</Name>

@@ -13,21 +13,14 @@ using Weave.RssAggregator.Core.DTOs.Outgoing;
 
 namespace Test.AccountManagement
 {
-    [ProtoContract]
-    public class test
-    {
-        [ProtoMember(1)] public string blah { get; set; }
-        [ProtoMember(2)] public string harumph { get; set; }
-    }
-
     class Program
     {
         static void Main(string[] args)
         {
             try
             {
-                TestSmartHttpClient().Wait();
-                //TestUserCreationRetrievalEtc().Wait();
+                //TestSmartHttpClient().Wait();
+                TestUserCreationRetrievalEtc().Wait();
                 Console.WriteLine("all tests passed!");
             }
             catch (Exception e)
@@ -57,22 +50,24 @@ namespace Test.AccountManagement
             var kernel = new NinjectKernel();
             var manager = kernel.Get<UserManager>();
 
-            var id = Guid.NewGuid();
+            var id = Guid.Parse("6bfb9049-5c48-47d0-95c6-da97e7922bf6");
 
-            var user = new UserInfo
-            {
-                Id = id,
-                Feeds = feeds.Take(2).ToList(),
-            };
+            //var id = Guid.NewGuid();
 
-            await manager.Save(user);
+            //var user = new UserInfo
+            //{
+            //    Id = id,
+            //    Feeds = feeds.Take(2).ToList(),
+            //};
 
-            user = null;
+            //await manager.Save(user);
 
-            user = await manager.Get(id);
+            //user = null;
+
+            var user = await manager.Get(id);
             Console.WriteLine(user.Feeds.Count);
 
-            user.Feeds.AddRange(feeds.Skip(2).Take(1));
+            user.Feeds.AddRange(feeds.Skip(3).Take(1));
 
             await manager.Save(user);
 
