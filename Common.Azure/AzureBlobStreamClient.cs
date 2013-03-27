@@ -1,10 +1,10 @@
-﻿using Microsoft.WindowsAzure;
+﻿using Common.Azure.Compression;
+using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.StorageClient;
 using System;
 using System.IO;
-using System.IO.Compression;
+using System.Linq;
 using System.Threading.Tasks;
-using Common.Azure.Compression;
 
 namespace Common.Azure
 {
@@ -30,46 +30,40 @@ namespace Common.Azure
             WriteTimeout = TimeSpan.FromMinutes(1);
         }
 
-        public async Task<Stream> Get(string fileName)
+        public async Task<BlobContent> Get(string fileName)
         {
-            var client = account.CreateCloudBlobClient();
-            var container = client.GetContainerReference(this.container);
-            var blob = container.GetBlobReference(fileName);
+            var blob = GetBlobHandle(fileName);
 
             BlobRequestOptions options = new BlobRequestOptions();
             options.AccessCondition = AccessCondition.None;
             options.Timeout = ReadTimeout;
-            //options.BlobListingDetails
 
             var ms = new MemoryStream();
             await blob.DownloadToStreamAsync(ms, options);
             ms.Position = 0;
 
-            if ("gzip".Equals(blob.Properties.ContentEncoding, StringComparison.OrdinalIgnoreCase))
-            {
+            //if ("gzip".Equals(blob.Properties.ContentEncoding, StringComparison.OrdinalIgnoreCase))
+            //{
                 byte[] byteArray = ms.ToArray();
 
-                ms.Dispose();
-                ms = new MemoryStream();
+                var firstTwo = BitConverter.ToString(byteArray.Take(2).ToArray());
+                if (firstTwo.Equals("1F-8B"))
+                {
 
-                using (var compressStream = new MemoryStream(byteArray))
-                using (var decompressor = new GZipStream(compressStream, CompressionMode.Decompress))
-                    decompressor.CopyTo(ms);
-
-                ms.Position = 0;
-            }
-            return ms;
+                    ms.Dispose();
+                    var streamContent = await byteArray.DecompressToStream();
+                    return BlobContent.Create(blob, streamContent);
+                }
+            //}
+            return BlobContent.Create(blob, ms);
         }
 
         public async Task Save(string fileName, Stream stream)
         {
-            var client = account.CreateCloudBlobClient();
-            var container = client.GetContainerReference(this.container);
-            var blob = container.GetBlobReference(fileName);
+            var blob = GetBlobHandle(fileName);
 
             if (!string.IsNullOrEmpty(ContentType))
                 blob.Properties.ContentType = ContentType;
-
 
             BlobRequestOptions options = new BlobRequestOptions();
             options.AccessCondition = AccessCondition.None;
@@ -79,21 +73,11 @@ namespace Common.Azure
             {
                 blob.Properties.ContentEncoding = "gzip";
 
-                using (var compressedStream = await stream.Compress())
+                var compressedArray = await stream.CompressToByteArray();
+                using (var compressedStream = new MemoryStream(compressedArray))
+                {
                     await blob.UploadFromStreamAsync(compressedStream, options);
-
-
-                //byte[] byteArray;
-
-                //using (var compressStream = new MemoryStream())
-                //using (var compressor = new GZipStream(compressStream, CompressionMode.Compress))
-                //{
-                //    await stream.CopyToAsync(compressor);
-                //    compressor.Close();
-                //    byteArray = compressStream.ToArray();
-                //}
-                //using (var ms = new MemoryStream(byteArray))
-                //    await blob.UploadFromStreamAsync(ms, options);
+                }
             }
             else
             {
@@ -103,11 +87,21 @@ namespace Common.Azure
 
         public Task Delete(string fileName)
         {
+            return GetBlobHandle(fileName).DeleteAsync();
+        }
+
+
+
+
+        #region Helper methods
+
+        CloudBlob GetBlobHandle(string fileName)
+        {
             var client = account.CreateCloudBlobClient();
             var container = client.GetContainerReference(this.container);
-            var blob = container.GetBlobReference(fileName);
-
-            return blob.DeleteAsync();
+            return container.GetBlobReference(fileName);
         }
+
+        #endregion
     }
 }

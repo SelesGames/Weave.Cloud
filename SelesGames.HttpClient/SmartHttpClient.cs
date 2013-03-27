@@ -27,7 +27,7 @@ namespace SelesGames.HttpClient
         #region Constructors
 
         public SmartHttpClient(CompressionSettings compressionSettings = CompressionSettings.OnRequest | CompressionSettings.OnContent)
-            : this(CreateDefaultMediaTypeFormatters(), ContentEncoderSettings.Json, compressionSettings) { }
+            : this(CreateDefaultMediaTypeFormatters(), ContentEncoderSettings.Default, compressionSettings) { }
 
         public SmartHttpClient(ContentEncoderSettings encoderSettings, CompressionSettings compressionSettings = CompressionSettings.OnRequest | CompressionSettings.OnContent)
             : this(CreateDefaultMediaTypeFormatters(), encoderSettings, compressionSettings) { }
@@ -43,6 +43,7 @@ namespace SelesGames.HttpClient
             this.encoderSettings = encoderSettings;
             this.compressionSettings = compressionSettings;
 
+            //DefaultRequestHeaders.
             var accept = encoderSettings.Accept;
             if (!string.IsNullOrEmpty(accept))
                 DefaultRequestHeaders.TryAddWithoutValidation("Accept", accept);
@@ -84,6 +85,12 @@ namespace SelesGames.HttpClient
             return PostAsync<TPost, TResult>(url, obj, CancellationToken.None);
         }
 
+        public Task PostAsync<TPost>(string url, TPost obj)
+        {
+            return PostAsync(url, obj, CancellationToken.None);
+        }
+
+
         public async Task<TResult> PostAsync<TPost, TResult>(string url, TPost obj, CancellationToken cancelToken)
         {
             var response = await GetValidPostResponseAsync<TPost>(url, obj, cancelToken);
@@ -99,10 +106,10 @@ namespace SelesGames.HttpClient
         async Task<HttpResponseMessage> GetValidPostResponseAsync<T>(string url, T obj, CancellationToken cancelToken)
         {
             var mediaType = new MediaTypeHeaderValue(encoderSettings.ContentType);
-            var formatter = FindFormatter<T>(mediaType);
+            var formatter = FindWriteFormatter<T>(mediaType);
 
             var content = new ObjectContent<T>(obj, formatter, mediaType);
-            content.Headers.ContentType = mediaType;
+            //content.Headers.ContentType = mediaType;
 
             var response = await base.PostAsync(url, content, cancelToken).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
@@ -116,30 +123,27 @@ namespace SelesGames.HttpClient
 
         #region helper methods
 
-        MediaTypeFormatter FindFormatter<T>(MediaTypeHeaderValue mediaType)
+        MediaTypeFormatter FindWriteFormatter<T>(MediaTypeHeaderValue mediaType)
         {
             MediaTypeFormatter formatter = null;
 
             var type = typeof(T);
             if (mediaType != null)
             {
-                formatter = formatters.FindReader(type, mediaType);
+                formatter = formatters.FindWriter(type, mediaType);
             }
 
             if (formatter == null)
-            {
-                formatter = formatters.FirstOrDefault();
-            }
-
-            if (formatter == null)
-                throw new Exception("unable to find a valid MediaTypeFormatter, and none exist to use as default");
+                throw new Exception(string.Format("unable to find a valid MediaTypeFormatter that matches {0}", mediaType));
 
             return formatter;
         }
 
         static MediaTypeFormatterCollection CreateDefaultMediaTypeFormatters()
         {
-            return new MediaTypeFormatterCollection();
+            var collection = new MediaTypeFormatterCollection();
+            collection.Add(new SelesGames.WebApi.Protobuf.ProtobufFormatter());
+            return collection;
         }
 
         #endregion

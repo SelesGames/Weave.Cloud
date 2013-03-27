@@ -14,6 +14,12 @@ namespace SelesGames.HttpClient
 
         #region Included encoder settings
 
+        internal static readonly ContentEncoderSettings Default = new ContentEncoderSettings
+        {
+            Accept = null,
+            ContentType = "application/json"
+        };
+
         public static readonly ContentEncoderSettings Json = new ContentEncoderSettings
         {
             Accept = "application/json",
