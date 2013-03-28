@@ -7,17 +7,17 @@ namespace Common.Azure
 {
     public static class IAzureBlobClientExtensions
     {
-        public static Task<T> Get<T>(this IAzureBlobClient<T> client, Guid blobId)
+        public static Task<T> Get<T>(this IAzureBlobClient client, Guid blobId)
         {
-            return client.Get(blobId.ToString());
+            return client.Get<T>(blobId.ToString());
         }
 
-        public static async Task<T> Get<T>(this IAzureBlobClient<T> client, Guid blobId, T defaultValueOnBlobDoesNotExist)
+        public static async Task<T> Get<T>(this IAzureBlobClient client, Guid blobId, T defaultValueOnBlobDoesNotExist)
         {
             T result;
             try
             {
-                result = await client.Get(blobId);
+                result = await client.Get<T>(blobId);
             }
             catch (StorageClientException e)
             {
@@ -27,11 +27,11 @@ namespace Common.Azure
             return result;
         }
 
-        public static Task Save<T>(this IAzureBlobClient<T> client, Guid blobId, T obj)
+        public static Task Save<T>(this IAzureBlobClient client, Guid blobId, T obj)
         {
             return client.Save(blobId.ToString(), obj);
         }
-        public static Task Delete<T>(this IAzureBlobClient<T> client, Guid blobId)
+        public static Task Delete(this IAzureBlobClient client, Guid blobId)
         {
             return client.Delete(blobId.ToString());
         }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Common.Azure.SmartBlobClient
 {
-    public class SmartBlobClient<T> : IAzureBlobClient<T>
+    public class SmartBlobClient : IAzureBlobClient
     {
         MediaTypeFormatterCollection formatters;
         AzureBlobStreamClient blobClient;
@@ -52,25 +52,25 @@ namespace Common.Azure.SmartBlobClient
             formatters = CreateDefaultMediaTypeFormatters();
         }
 
-        public async Task<T> Get(string blobId)
+        public async Task<T> Get<T>(string blobId)
         {
             using (var content = await blobClient.Get(blobId))
             {
                 var contentType = content.Properties.ContentType;
                 var mediaHeader = new MediaTypeHeaderValue(contentType);
-                var deserializer = FindWriteFormatter(mediaHeader);
+                var deserializer = FindReadFormatter<T>(mediaHeader);
 
                 var result = await deserializer.ReadFromStreamAsync(typeof(T), content.Content, null, null);
                 return (T)result;
             }
         }
 
-        public async Task Save(string blobId, T obj)
+        public async Task Save<T>(string blobId, T obj)
         {
             using (var ms = new MemoryStream())
             {
                 var mediaHeader = new MediaTypeHeaderValue(ContentType);
-                var serializer = FindWriteFormatter(mediaHeader);
+                var serializer = FindWriteFormatter<T>(mediaHeader);
 
                 await serializer.WriteToStreamAsync(typeof(T), obj, ms, null, null);
                 ms.Position = 0;
@@ -88,7 +88,23 @@ namespace Common.Azure.SmartBlobClient
 
         #region helper methods
 
-        MediaTypeFormatter FindWriteFormatter(MediaTypeHeaderValue mediaType)
+        MediaTypeFormatter FindReadFormatter<T>(MediaTypeHeaderValue mediaType)
+        {
+            MediaTypeFormatter formatter = null;
+
+            var type = typeof(T);
+            if (mediaType != null)
+            {
+                formatter = formatters.FindReader(type, mediaType);
+            }
+
+            if (formatter == null)
+                throw new Exception(string.Format("unable to find a valid MediaTypeFormatter that matches {0}", mediaType));
+
+            return formatter;
+        }
+
+        MediaTypeFormatter FindWriteFormatter<T>(MediaTypeHeaderValue mediaType)
         {
             MediaTypeFormatter formatter = null;
 
