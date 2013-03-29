@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Weave.RssAggregator.Core.DTOs.Incoming;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
 
-namespace Weave.UserFeedAggregator.Role
+namespace Weave.UserFeedAggregator
 {
     public class ServiceClient
     {

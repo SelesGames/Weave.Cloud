@@ -1,5 +1,5 @@
 ﻿
-namespace Weave.User.DTOs
+namespace Weave.User.DataStore
 {
     public enum ArticleViewingType
     {

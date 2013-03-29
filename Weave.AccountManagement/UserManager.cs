@@ -9,10 +9,10 @@ namespace Weave.AccountManagement.DTOs
 {
     public class UserManager
     {
-        IAzureBlobClient<UserInfo> client;
+        IAzureBlobClient client;
         ValidationEngine validationEngine;
 
-        public UserManager(IAzureBlobClient<UserInfo> client)
+        public UserManager(IAzureBlobClient client)
         {
             this.client = client;
             this.validationEngine = new UserInfoValidator();
@@ -28,7 +28,7 @@ namespace Weave.AccountManagement.DTOs
         /// </summary>
         public Task<UserInfo> Get(Guid userId)
         {
-            return client.Get(userId);
+            return client.Get<UserInfo>(userId);
         }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace Weave.AccountManagement.DTOs
 
         public async Task AddOrUpdateFeeds(Guid userId, IEnumerable<Feed> feeds)
         {
-            var userInfo = await client.Get(userId);
+            var userInfo = await client.Get<UserInfo>(userId);
 
             if (userInfo.Feeds == null)
                 userInfo.Feeds = new List<Feed>();
@@ -85,7 +85,7 @@ namespace Weave.AccountManagement.DTOs
 
         public async Task RemoveFeeds(Guid userId, IEnumerable<Guid> feedIds)
         {
-            var userInfo = await client.Get(userId);
+            var userInfo = await client.Get<UserInfo>(userId);
 
             var usersFeeds = userInfo.Feeds;
 

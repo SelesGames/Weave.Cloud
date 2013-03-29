@@ -48,6 +48,7 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Weave.AccountManagement.WebRole\Startup\NinjectKernel.cs">
@@ -91,6 +92,18 @@
     <ProjectReference Include="..\Weave.RssAggregator.Core\RssAggregator.DTOs.csproj">
       <Project>{2f1a280d-ee75-4dc1-a36c-f8e5488e3260}</Project>
       <Name>RssAggregator.DTOs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Weave.User.DTOs\Weave.User.DataStore.csproj">
+      <Project>{458cbdea-f41c-4209-9dec-b2f285c217ab}</Project>
+      <Name>Weave.User.DataStore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Weave.UserFeedAggregator.Role\Weave.UserFeedAggregator.Role.csproj">
+      <Project>{a8e71851-2046-4176-b9ce-6d6cc659e567}</Project>
+      <Name>Weave.UserFeedAggregator.Role</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Weave.UserFeedAggregator\Weave.UserFeedAggregator.csproj">
+      <Project>{335a5059-6c45-4ca7-b799-18b9cdb6c61b}</Project>
+      <Name>Weave.UserFeedAggregator</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

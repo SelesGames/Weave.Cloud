@@ -55,11 +55,11 @@ namespace Weave.RssAggregator.LowFrequency
                     {
                         var result = new FeedResult
                         {
+                            Status = FeedResultStatus.OK,
                             Id = request.Id,
                             MostRecentNewsItemPubDate = feed.MostRecentNewsItemPubDate,
                             OldestNewsItemPubDate = feed.OldestNewsItemPubDate,
                             News = newNewsList,
-                            Status = FeedResultStatus.OK,
                             FromCache = true,
                         };
                         return result;

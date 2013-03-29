@@ -114,7 +114,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SelesGames.Rest.JsonDotNet"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SelesGames.Rest.Protobuf", "SelesGames.Rest.Protobuf\SelesGames.Rest.Protobuf.csproj", "{DBFEBE00-4AE2-41C0-965C-0DA9911246A5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.User.DTOs", "Weave.User.DTOs\Weave.User.DTOs.csproj", "{458CBDEA-F41C-4209-9DEC-B2F285C217AB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.User.DataStore", "Weave.User.DTOs\Weave.User.DataStore.csproj", "{458CBDEA-F41C-4209-9DEC-B2F285C217AB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mobilizer", "Mobilizer", "{2E1B1CEA-00ED-4945-8050-1C1A80E91AC3}"
 EndProject
@@ -135,6 +135,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Net.Http.Compression", "Common.Net.Http.Compression\Common.Net.Http.Compression.csproj", "{C3E23EA5-8542-464A-9598-D4D126E1EB97}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Azure.SmartBlobClient", "SelesGames.SmartBlobClient\Common.Azure.SmartBlobClient.csproj", "{D115CF60-990A-4138-8496-538A6CE74541}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.UserFeedAggregator", "Weave.UserFeedAggregator\Weave.UserFeedAggregator.csproj", "{335A5059-6C45-4CA7-B799-18B9CDB6C61B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -787,6 +789,18 @@ Global
 		{D115CF60-990A-4138-8496-538A6CE74541}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{D115CF60-990A-4138-8496-538A6CE74541}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{D115CF60-990A-4138-8496-538A6CE74541}.Release|x86.ActiveCfg = Release|Any CPU
+		{335A5059-6C45-4CA7-B799-18B9CDB6C61B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{335A5059-6C45-4CA7-B799-18B9CDB6C61B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{335A5059-6C45-4CA7-B799-18B9CDB6C61B}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{335A5059-6C45-4CA7-B799-18B9CDB6C61B}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{335A5059-6C45-4CA7-B799-18B9CDB6C61B}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{335A5059-6C45-4CA7-B799-18B9CDB6C61B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{335A5059-6C45-4CA7-B799-18B9CDB6C61B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{335A5059-6C45-4CA7-B799-18B9CDB6C61B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{335A5059-6C45-4CA7-B799-18B9CDB6C61B}.Release|ARM.ActiveCfg = Release|Any CPU
+		{335A5059-6C45-4CA7-B799-18B9CDB6C61B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{335A5059-6C45-4CA7-B799-18B9CDB6C61B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{335A5059-6C45-4CA7-B799-18B9CDB6C61B}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -846,6 +860,7 @@ Global
 		{61B4683A-8296-48CD-AAC0-AC5288D7EA86} = {B3E30122-CA46-48C2-9A99-FFCE69AE7166}
 		{A8E71851-2046-4176-B9CE-6D6CC659E567} = {B3E30122-CA46-48C2-9A99-FFCE69AE7166}
 		{458CBDEA-F41C-4209-9DEC-B2F285C217AB} = {B3E30122-CA46-48C2-9A99-FFCE69AE7166}
+		{335A5059-6C45-4CA7-B799-18B9CDB6C61B} = {B3E30122-CA46-48C2-9A99-FFCE69AE7166}
 		{438B607A-6C4A-4329-97BA-CCBAD384F9E9} = {2E1B1CEA-00ED-4945-8050-1C1A80E91AC3}
 		{C816F0EB-9D9E-4484-A855-BE57B4AF147D} = {2E1B1CEA-00ED-4945-8050-1C1A80E91AC3}
 		{AC94F729-4CC5-4ADC-B531-EFCBD9131FCF} = {2E1B1CEA-00ED-4945-8050-1C1A80E91AC3}

@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Weave.User.DataStore")]
+[assembly: AssemblyTitle("Weave.UserFeedAggregator")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Weave.User.DataStore")]
+[assembly: AssemblyProduct("Weave.UserFeedAggregator")]
 [assembly: AssemblyCopyright("Copyright ©  2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("cb6eb1fb-d40f-4a2e-b929-0075ccb2d52f")]
+[assembly: Guid("a882383b-f334-4b4b-9fee-ac0fac87bae1")]
 
 // Version information for an assembly consists of the following four values:
 //

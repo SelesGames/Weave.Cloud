@@ -1,8 +1,6 @@
-﻿using Common.Azure;
-using Common.Azure.SmartBlobClient;
+﻿using Common.Azure.SmartBlobClient;
 using Common.Data;
 using Common.Data.Linq;
-using Newtonsoft.Json;
 using Ninject;
 using SelesGames.Common;
 using Weave.AccountManagement.DTOs;
@@ -21,7 +19,7 @@ namespace Weave.AccountManagement.WebRole.Startup
             //    "userinfo",
             //    false) { SerializerSettings = new JsonSerializerSettings { Formatting = Formatting.Indented }, UseGzipOnUpload = true };
 
-            var blobClient = new SmartBlobClient<UserInfo>(
+            var blobClient = new SmartBlobClient(
                 "weave",
                 "uudFrra70qkI64bifaI2Rrm37CZ1HkzaBQrLMyw6U/hmzNDZehXeo9DdUv7BCpuZY4N2q/CNpNwYxW2fa218xA==",
                 "userinfo",
