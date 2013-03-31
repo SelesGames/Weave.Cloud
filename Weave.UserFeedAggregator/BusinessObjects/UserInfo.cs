@@ -24,6 +24,64 @@ namespace Weave.UserFeedAggregator.BusinessObjects
             await RefreshFeeds(feeds);
         }
 
+        public void AddFeed(Feed feed)
+        {
+            if (Feeds == null || !Feeds.Any() || feed == null)
+                return;
+
+            // if any existing feed has a matching Id, don't add it
+            if (Feeds.Any(o => o.Id.Equals(feed.Id)))
+                return;
+
+            Feeds.Add(feed);
+        }
+
+        public void RemoveFeed(Feed feed)
+        {
+            if (Feeds == null || !Feeds.Any() || feed == null)
+                return;
+
+            RemoveFeed(feed.Id);
+        }
+
+        public void RemoveFeed(Guid feedId)
+        {
+            if (Feeds == null || !Feeds.Any())
+                return;
+
+            var matching = Feeds.FirstOrDefault(o => o.Id.Equals(feedId));
+            if (matching != null)
+            {
+                Feeds.Remove(matching);
+            }
+        }
+
+        public void UpdateFeed(Feed feed)
+        {
+            if (Feeds == null || !Feeds.Any() || feed == null)
+                return;
+
+            var matching = Feeds.FirstOrDefault(o => o.Id.Equals(feed.Id));
+            if (matching != null)
+            {
+                // the only 3 fields the user can change are category, feed name, and article viewing type
+                matching.Category = feed.Category;
+                matching.FeedName = feed.FeedName;
+                matching.ArticleViewingType = feed.ArticleViewingType;
+            }
+        }
+
+        public void MarkNewsItemRead(Guid feedId, Guid newsItemId)
+        {
+            ToggleMarkNewsItemRead(feedId, newsItemId, true);
+        }
+
+        public void MarkNewsItemUnread(Guid feedId, Guid newsItemId)
+        {
+            ToggleMarkNewsItemRead(feedId, newsItemId, false);
+        }
+
+
 
 
 
@@ -40,6 +98,19 @@ namespace Weave.UserFeedAggregator.BusinessObjects
 
             client.SendRequests();
             await Task.WhenAll(feeds.Select(o => o.CurrentRefresh));
+        }
+
+        void ToggleMarkNewsItemRead(Guid feedId, Guid newsItemId, bool isRead)
+        {
+            if (Feeds == null || !Feeds.Any())
+                return;
+
+            var newsItem = Feeds
+                .Where(o => o.Id.Equals(feedId))
+                .SelectMany(o => o.News)
+                .FirstOrDefault(o => o.Id.Equals(newsItemId));
+
+            newsItem.HasBeenViewed = isRead;
         }
 
         #endregion
