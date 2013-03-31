@@ -17,14 +17,32 @@ namespace Weave.UserFeedAggregator.Role.Controllers
             this.userRepo = userRepo;
         }
 
-        //public async Task Get(Guid userId)
-        //{
-        //    var user = await userClient.Get<UserInfo>(userId.ToString());
-        //}
+        public async Task<User.DataStore.UserInfo> GetUserInfoWithNoNews(Guid userId)
+        {
+            var user = await userRepo.Get(userId);
+            foreach (var feed in user.Feeds)
+                feed.News = null;
+
+            return user;
+        }
+
+        public async Task<User.DataStore.UserInfo> GetUserInfoWithRefreshedNewsCount(Guid userId)
+        {
+            var user = await userRepo.Get(userId);
+            var userBO = user.Convert<User.DataStore.UserInfo, UserInfo>(Converters.Instance);
+            await userBO.RefreshAllFeeds();
+            user = userBO.Convert<UserInfo, User.DataStore.UserInfo>(Converters.Instance);
+            await userRepo.Save(user);
+            
+            foreach (var feed in user.Feeds)
+                feed.News = null;
+
+            return user;
+        }
 
         [HttpPost]
         [ActionName("createUser")]
-        public async Task<User.DataStore.UserInfo> AddUserAndReturnNews([FromBody] User.DataStore.UserInfo user)
+        public async Task<User.DataStore.UserInfo> AddUserAndReturnNewNews([FromBody] User.DataStore.UserInfo user)
         {
             await userRepo.Save(user);
             var userBO = user.Convert<User.DataStore.UserInfo, UserInfo>(Converters.Instance);
