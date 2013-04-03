@@ -1,0 +1,221 @@
+﻿using SelesGames.Common;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Web.Http;
+using Weave.UserFeedAggregator.BusinessObjects;
+using Weave.UserFeedAggregator.Repositories;
+using Incoming = Weave.UserFeedAggregator.DTOs.ServerIncoming;
+using Outgoing = Weave.UserFeedAggregator.DTOs.ServerOutgoing;
+
+namespace Weave.UserFeedAggregator.Role.Controllers
+{
+    public class UserController : ApiController
+    {
+        UserRepository userRepo;
+
+        public UserController(UserRepository userRepo)
+        {
+            this.userRepo = userRepo;
+        }
+
+
+
+
+        #region User management
+
+        [HttpPost]
+        [ActionName("create")]
+        public async Task<Outgoing.UserInfo> AddUserAndReturnNewNews([FromBody] Incoming.UserInfo incomingUser)
+        {
+            var user = ConvertToDataStore(incomingUser);
+            await userRepo.Save(user);
+            var userBO = ConvertToBusinessObject(user);
+            await userBO.RefreshAllFeeds();
+            user = ConvertToDataStore(userBO);
+            await userRepo.Save(user);
+            var outgoing = ConvertToOutgoing(userBO);
+            return outgoing;
+        }
+
+        public async Task<Outgoing.UserInfo> GetUserInfoWithNoNews(Guid userId)
+        {
+            var user = await userRepo.Get(userId);
+            foreach (var feed in user.Feeds)
+                feed.News = null;
+
+            var outgoing = ConvertToOutgoing(user);
+            return outgoing;
+        }
+
+        public async Task<Outgoing.UserInfo> GetUserInfoWithRefreshedNewsCount(Guid userId)
+        {
+            var user = await userRepo.Get(userId);
+            var userBO = ConvertToBusinessObject(user);
+            await userBO.RefreshAllFeeds();
+            user = ConvertToDataStore(userBO);
+            await userRepo.Save(user);
+            
+            foreach (var feed in user.Feeds)
+                feed.News = null;
+
+            var outgoing = ConvertToOutgoing(user);
+            return outgoing;
+        }
+
+        [ActionName("refresh_all")]
+        public async Task<Outgoing.UserInfo> RefreshAndReturnNews(Guid userId)
+        {
+            var user = await userRepo.Get(userId);
+            var userBO = ConvertToBusinessObject(user);
+            await userBO.RefreshAllFeeds();
+            user = ConvertToDataStore(userBO);
+            await userRepo.Save(user);
+            var outgoing = ConvertToOutgoing(user);
+            return outgoing;
+        }
+
+        /// <summary>
+        /// Refresh only some of the feeds for a given user, then return the full UserInfo graph.
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="feedIds">The ids of the feeds to refresh</param>
+        /// <returns>UserInfo graph</returns>
+        [HttpPost]
+        [ActionName("refresh")]
+        public async Task<Outgoing.UserInfo> RefreshAndReturnNews(Guid userId, [FromBody] List<Guid> feedIds)
+        {
+            var user = await userRepo.Get(userId);
+            var userBO = ConvertToBusinessObject(user);
+            await userBO.RefreshFeedsMatchingIds(feedIds);
+            user = ConvertToDataStore(userBO);
+            await userRepo.Save(user);
+            var outgoing = ConvertToOutgoing(user);
+            return outgoing;
+        }
+
+        #endregion
+
+
+
+
+        #region Feed management
+
+        [HttpPost]
+        [ActionName("add_feed")]
+        public async Task AddFeed(Guid userId, [FromBody] Incoming.Feed feed)
+        {
+            var user = await userRepo.Get(userId);
+            var userBO = ConvertToBusinessObject(user);
+            var feedBO = ConvertToBusinessObject(feed);
+            userBO.AddFeed(feedBO);
+            user = ConvertToDataStore(userBO);
+            await userRepo.Save(user);
+        }
+
+        [HttpPost]
+        [ActionName("remove_feed")]
+        public async Task RemoveFeed(Guid userId, [FromBody] Incoming.Feed feed)
+        {
+            var user = await userRepo.Get(userId);
+            var userBO = ConvertToBusinessObject(user);
+            var feedBO = ConvertToBusinessObject(feed);
+            userBO.RemoveFeed(feedBO);
+            user = ConvertToDataStore(userBO);
+            await userRepo.Save(user);
+        }
+
+        [ActionName("remove_feed")]
+        public async Task RemoveFeed(Guid userId, Guid feedId)
+        {
+            var user = await userRepo.Get(userId);
+            var userBO = ConvertToBusinessObject(user);
+            userBO.RemoveFeed(feedId);
+            user = ConvertToDataStore(userBO);
+            await userRepo.Save(user);
+        }
+
+        [HttpPost]
+        [ActionName("update_feed")]
+        public async Task UpdateFeed(Guid userId, [FromBody] Incoming.Feed feed)
+        {
+            var user = await userRepo.Get(userId);
+            var userBO = ConvertToBusinessObject(user);
+            var feedBO = ConvertToBusinessObject(feed);
+            userBO.UpdateFeed(feedBO);
+            user = ConvertToDataStore(userBO);
+            await userRepo.Save(user);
+        }
+
+        #endregion
+
+
+
+
+        #region Article management
+
+        [ActionName("mark_read")]
+        public async Task MarkArticleRead(Guid userId, Guid feedId, Guid newsItemId)
+        {
+            var user = await userRepo.Get(userId);
+            var userBO = ConvertToBusinessObject(user);
+            userBO.MarkNewsItemRead(feedId, newsItemId);
+            user = ConvertToDataStore(userBO);
+            await userRepo.Save(user);
+        }
+
+        [ActionName("mark_unread")]
+        public async Task MarkArticleUnread(Guid userId, Guid feedId, Guid newsItemId)
+        {
+            var user = await userRepo.Get(userId);
+            var userBO = ConvertToBusinessObject(user);
+            userBO.MarkNewsItemUnread(feedId, newsItemId);
+            user = ConvertToDataStore(userBO);
+            await userRepo.Save(user);
+        }
+
+        #endregion
+
+
+
+
+        #region Conversion Helpers
+
+        User.DataStore.UserInfo ConvertToDataStore(Incoming.UserInfo user)
+        {
+            return user.Convert<Incoming.UserInfo, User.DataStore.UserInfo>(null);
+        }
+
+        User.DataStore.UserInfo ConvertToDataStore(UserInfo user)
+        {
+            return user.Convert<UserInfo, User.DataStore.UserInfo>(Converters.Instance);
+        }
+
+        UserInfo ConvertToBusinessObject(User.DataStore.UserInfo user)
+        {
+            return user.Convert<User.DataStore.UserInfo, UserInfo>(Converters.Instance);
+        }
+
+        Feed ConvertToBusinessObject(User.DataStore.Feed user)
+        {
+            return user.Convert<User.DataStore.Feed, Feed>(Converters.Instance);
+        }
+
+        Feed ConvertToBusinessObject(Incoming.Feed user)
+        {
+            return user.Convert<Incoming.Feed, Feed>(null);
+        }
+
+        Outgoing.UserInfo ConvertToOutgoing(UserInfo user)
+        {
+            return user.Convert<UserInfo, Outgoing.UserInfo>(null);
+        }
+
+        Outgoing.UserInfo ConvertToOutgoing(User.DataStore.UserInfo user)
+        {
+            return user.Convert<User.DataStore.UserInfo, Outgoing.UserInfo>(null);
+        }
+
+        #endregion
+    }
+}
