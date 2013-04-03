@@ -60,6 +60,18 @@ namespace Weave.Article.Service.WorkerRole
             return rows.FirstOrDefault();
         }
 
+        public async Task RemoveNewsItemRead(Guid userId, Guid newsItemId)
+        {
+            var storedProcName = "RemoveNewsItemRead";
+
+            await storedProcClient.GetAsync<object>(
+                storedProcName,
+                o => null,
+                new SqlParameter("p1", userId) {        SqlDbType = SqlDbType.UniqueIdentifier },
+                new SqlParameter("p2", newsItemId) {    SqlDbType = SqlDbType.UniqueIdentifier }
+                );
+        }
+
         public async Task<bool> AddNewsItemFavorite(Guid userId, FavoriteNewsItem n)
         {
             var storedProcName = "AddNewsItemFavorite";

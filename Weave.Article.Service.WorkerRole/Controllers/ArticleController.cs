@@ -29,6 +29,16 @@ namespace Weave.Article.Service.WorkerRole.Controllers
         }
 
         [HttpPost]
+        [ActionName("remove_read")]
+        public async Task RemoveRead(Guid userId, Guid newsItemId)
+        {
+            if (userId == Guid.Empty) throw ResponseHelper.CreateResponseException(HttpStatusCode.BadRequest, "Not a valid userId");
+            if (newsItemId == Guid.Empty) throw ResponseHelper.CreateResponseException(HttpStatusCode.BadRequest, "Not a valid newsItemId");
+
+            await client.RemoveNewsItemRead(userId, newsItemId);
+        }
+
+        [HttpPost]
         [ActionName("add_favorite")]
         public async Task<bool> AddFavorite(Guid userId, [FromBody] FavoriteNewsItem newsItem)
         {
