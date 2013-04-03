@@ -86,6 +86,7 @@
     <Feed Name="Comic Booked">http://www.comicbooked.com/feed/</Feed>
     <Feed Name="Comic Book Resources" ViewType="ie">http://www.comicbookresources.com/feed.php?feed=all</Feed>
     <Feed Name="Comic Book Therapy">http://www.comicbooktherapy.com/category/comic-books/feed</Feed>
+    <Feed Name="Comic Vine">http://feeds.feedburner.com/ComicvineSiteMashup</Feed>
     <Feed Name="IGN">http://feeds.ign.com/ign/comics-articles</Feed>
     <Feed Name="Newsarama" ViewType="ie">http://feeds.newsarama.com/newsaramacomics?format=xml</Feed>
     <Feed Name="Mindless Ones">http://mindlessones.com/feed/</Feed>
@@ -418,7 +419,6 @@
 
   <Category Type="Fashion">
     <Feed Name="The Budget Fashionista">http://feeds.feedburner.com/TheBudgetFashionista</Feed>
-    <Feed Name="Style.com">http://www.style.com/fashionshows/rss</Feed>
     <Feed Name="College Fashion">http://feeds.feedburner.com/collegefashion</Feed>
     <Feed Name="WhoWhatWear.com">http://www.whowhatwear.com/rss/</Feed>
     <Feed Name="The Sartorialist">http://thesartorialist.blogspot.com/feeds/posts/default?alt=rss</Feed>
