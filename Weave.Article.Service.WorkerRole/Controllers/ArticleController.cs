@@ -3,7 +3,7 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
-using Weave.Article.Service.WorkerRole.DTOs;
+using Weave.Article.Service.DTOs;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
 
 namespace Weave.Article.Service.WorkerRole.Controllers

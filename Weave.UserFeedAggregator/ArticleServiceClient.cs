@@ -14,8 +14,8 @@ namespace Weave.UserFeedAggregator
 
         public Task MarkRead(Guid userId, NewsItem newsItem)
         {
-            //if (userId == Guid.Empty) throw ResponseHelper.CreateResponseException(HttpStatusCode.BadRequest, "Not a valid userId");
-            //if (newsItem == null) throw ResponseHelper.CreateResponseException(HttpStatusCode.BadRequest, "Missing NewsItem object in message body");
+            if (userId == Guid.Empty) throw new ArgumentException("Not a valid userId");
+            if (newsItem == null) throw new ArgumentNullException("newsItem can't be null");
 
             var url = string.Format("{0}?mark_read?userId={1}" + SERVICE_URL, userId);
             return client.PostAsync(url, newsItem, CancellationToken.None);
