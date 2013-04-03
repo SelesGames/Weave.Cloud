@@ -44,7 +44,7 @@ namespace Test.AccountManagement
         {
             var blobClient = new SmartBlobClient("weaveuser", "GBzJEaV/B5JQTmLFj/N7VJoYGZBQcEhasXha3RKbd4BRUVN5aaJ01KMo0MNNtNHnVhzJmqlDgqEyk4CPEvX56A==", "user", false);
             var userRepo = new UserRepository(blobClient);
-            var controller = new UserFeedController(userRepo);
+            var controller = new UserController(userRepo);
 
             var user = await controller.RefreshAndReturnNews(Guid.Parse("19060d80-f525-4b62-b907-75e02819b28b"));
             DebugEx.WriteLine(user);
@@ -54,50 +54,50 @@ namespace Test.AccountManagement
         {
             var blobClient = new SmartBlobClient("weaveuser", "GBzJEaV/B5JQTmLFj/N7VJoYGZBQcEhasXha3RKbd4BRUVN5aaJ01KMo0MNNtNHnVhzJmqlDgqEyk4CPEvX56A==", "user", false);
             var userRepo = new UserRepository(blobClient);
-            var controller = new UserFeedController(userRepo);
+            var controller = new UserController(userRepo);
 
             var feeds = new MockFeeds();
-            var user = new UserInfo
+            var user = new Weave.UserFeedAggregator.DTOs.ServerIncoming.UserInfo
             {
                 Id = Guid.NewGuid(),
                 Feeds = feeds,
             };
 
-            user = await controller.AddUserAndReturnNews(user);
-            DebugEx.WriteLine(user);
+            var ouser = await controller.AddUserAndReturnNewNews(user);
+            DebugEx.WriteLine(ouser);
         }
 
         static async Task TestUserAccounts2()
         {
-            var blobClient = new SmartBlobClient("weaveuser", "GBzJEaV/B5JQTmLFj/N7VJoYGZBQcEhasXha3RKbd4BRUVN5aaJ01KMo0MNNtNHnVhzJmqlDgqEyk4CPEvX56A==", "user", false);
-            var userRepo = new UserRepository(blobClient);
+            //var blobClient = new SmartBlobClient("weaveuser", "GBzJEaV/B5JQTmLFj/N7VJoYGZBQcEhasXha3RKbd4BRUVN5aaJ01KMo0MNNtNHnVhzJmqlDgqEyk4CPEvX56A==", "user", false);
+            //var userRepo = new UserRepository(blobClient);
 
 
-            var feeds = new MockFeeds();
+            //var feeds = new MockFeeds();
 
-            var id = Guid.NewGuid();
+            //var id = Guid.NewGuid();
 
-            var user = new UserInfo
-            {
-                Id = id,
-                Feeds = feeds.Take(2).ToList(),
-            };
+            //var user = new Weave.UserFeedAggregator.DTOs.ServerIncoming.UserInfo
+            //{
+            //    Id = id,
+            //    Feeds = feeds.Take(2).ToList(),
+            //};
 
-            await userRepo.Save(user);
+            //await userRepo.Save(user);
 
-            user = null;
+            //user = null;
 
-            user = await userRepo.Get(id);
-            Console.WriteLine(user.Feeds.Count);
+            //user = await userRepo.Get(id);
+            //Console.WriteLine(user.Feeds.Count);
 
-            user.Feeds.AddRange(feeds.Skip(3).Take(1));
+            //user.Feeds.AddRange(feeds.Skip(3).Take(1));
 
-            await userRepo.Save(user);
+            //await userRepo.Save(user);
 
-            user = null;
+            //user = null;
 
-            user = await userRepo.Get(id);
-            Console.WriteLine(user.Feeds.Count);
+            //user = await userRepo.Get(id);
+            //Console.WriteLine(user.Feeds.Count);
         }
 
         static async Task TestSmartHttpClient()
@@ -146,42 +146,42 @@ namespace Test.AccountManagement
         //}
     }
 
-    class MockFeeds : List<Feed>
+    class MockFeeds : List<Weave.UserFeedAggregator.DTOs.ServerIncoming.Feed>
     {
         public MockFeeds()
         {
-            Add(new Feed 
+            Add(new Weave.UserFeedAggregator.DTOs.ServerIncoming.Feed 
             { 
                 Id = Guid.NewGuid(), 
                 FeedName = "Engadget", 
-                Category = "Technology", 
-                ArticleViewingType = ArticleViewingType.Mobilizer,
+                Category = "Technology",
+                ArticleViewingType = Weave.UserFeedAggregator.DTOs.ArticleViewingType.Mobilizer,
                 FeedUri = "http://www.engadget.com/rss.xml",
             });
-            Add(new Feed
+            Add(new Weave.UserFeedAggregator.DTOs.ServerIncoming.Feed
             {
                 Id = Guid.NewGuid(),
                 FeedName = "GigaOM",
                 Category = null,
-                ArticleViewingType = ArticleViewingType.Mobilizer,
+                ArticleViewingType = Weave.UserFeedAggregator.DTOs.ArticleViewingType.Mobilizer,
                 FeedUri = "http://feeds.feedburner.com/ommalik",
             });
 
-            Add(new Feed
+            Add(new Weave.UserFeedAggregator.DTOs.ServerIncoming.Feed
             {
                 Id = Guid.NewGuid(),
                 FeedName = "Mashable",
                 Category = "Technology",
-                ArticleViewingType = ArticleViewingType.Mobilizer,
+                ArticleViewingType = Weave.UserFeedAggregator.DTOs.ArticleViewingType.Mobilizer,
                 FeedUri = "http://feeds.mashable.com/Mashable",
             });
 
-            Add(new Feed
+            Add(new Weave.UserFeedAggregator.DTOs.ServerIncoming.Feed
             {
                 Id = Guid.NewGuid(),
                 FeedName = "The Verge",
                 Category = "Technology",
-                ArticleViewingType = ArticleViewingType.Mobilizer,
+                ArticleViewingType = Weave.UserFeedAggregator.DTOs.ArticleViewingType.Mobilizer,
                 FeedUri = "http://www.theverge.com/rss/index.xml",
             });
         }

@@ -97,6 +97,10 @@
       <Project>{458cbdea-f41c-4209-9dec-b2f285c217ab}</Project>
       <Name>Weave.User.DataStore</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Weave.UserFeedAggregator.DTOs\Weave.UserFeedAggregator.DTOs.csproj">
+      <Project>{75f2f4b1-beb2-4ac6-a935-5a795c5a79a0}</Project>
+      <Name>Weave.UserFeedAggregator.DTOs</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Weave.UserFeedAggregator.Role\Weave.UserFeedAggregator.Role.csproj">
       <Project>{a8e71851-2046-4176-b9ce-6d6cc659e567}</Project>
       <Name>Weave.UserFeedAggregator.Role</Name>

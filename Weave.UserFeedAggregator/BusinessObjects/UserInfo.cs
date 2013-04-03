@@ -29,6 +29,8 @@ namespace Weave.UserFeedAggregator.BusinessObjects
             if (Feeds == null || !Feeds.Any() || feed == null)
                 return;
 
+            feed.EnsureGuidIsSet();
+
             // if any existing feed has a matching Id, don't add it
             if (Feeds.Any(o => o.Id.Equals(feed.Id)))
                 return;
@@ -40,6 +42,8 @@ namespace Weave.UserFeedAggregator.BusinessObjects
         {
             if (Feeds == null || !Feeds.Any() || feed == null)
                 return;
+
+            feed.EnsureGuidIsSet();
 
             RemoveFeed(feed.Id);
         }
@@ -61,6 +65,8 @@ namespace Weave.UserFeedAggregator.BusinessObjects
             if (Feeds == null || !Feeds.Any() || feed == null)
                 return;
 
+            feed.EnsureGuidIsSet();
+
             var matching = Feeds.FirstOrDefault(o => o.Id.Equals(feed.Id));
             if (matching != null)
             {
@@ -80,7 +86,6 @@ namespace Weave.UserFeedAggregator.BusinessObjects
         {
             ToggleMarkNewsItemRead(feedId, newsItemId, false);
         }
-
 
 
 

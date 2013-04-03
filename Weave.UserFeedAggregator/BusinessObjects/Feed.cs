@@ -1,5 +1,6 @@
 ﻿using Common.TimeFormatting;
 using SelesGames.Common;
+using SelesGames.Common.Hashing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +30,12 @@ namespace Weave.UserFeedAggregator.BusinessObjects
         public Task CurrentRefresh { get; private set; }
         public bool IsModified { get; private set; }
 
+
+        public void EnsureGuidIsSet()
+        {
+            if (Guid.Empty.Equals(Id))
+                Id = CryptoHelper.ComputeHashUsedByMobilizer(FeedUri);
+        }
 
         public void RefreshNews(NewsServer client)
         {
