@@ -93,23 +93,17 @@ namespace SelesGames.HttpClient
 
         public async Task<TResult> PostAsync<TPost, TResult>(string url, TPost obj, CancellationToken cancelToken)
         {
-            var response = await GetValidPostResponseAsync<TPost>(url, obj, cancelToken);
+            var response = await PostAsync(url, obj, cancelToken);
             var result = await response.Content.ReadAsAsync<TResult>(formatters).ConfigureAwait(false);
             return result;
         }
 
-        public Task PostAsync<TPost>(string url, TPost obj, CancellationToken cancelToken)
-        {
-            return GetValidPostResponseAsync<TPost>(url, obj, cancelToken);
-        }
-
-        async Task<HttpResponseMessage> GetValidPostResponseAsync<T>(string url, T obj, CancellationToken cancelToken)
+        public async Task<HttpResponseMessage> PostAsync<T>(string url, T obj, CancellationToken cancelToken)
         {
             var mediaType = new MediaTypeHeaderValue(encoderSettings.ContentType);
             var formatter = FindWriteFormatter<T>(mediaType);
 
             var content = new ObjectContent<T>(obj, formatter, mediaType);
-            //content.Headers.ContentType = mediaType;
 
             var response = await base.PostAsync(url, content, cancelToken).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
