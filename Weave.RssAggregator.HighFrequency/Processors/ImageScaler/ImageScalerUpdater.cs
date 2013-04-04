@@ -60,8 +60,9 @@ namespace Weave.RssAggregator.HighFrequency
                 {
                     var resizeUrl = string.Format("{0}-sd.jpg", result.BaseImageUrl);
                     e.PreferredImageUrl = resizeUrl;
-                    e.IsResizedImageSet = true;
                 }
+
+                e.ShouldIncludeImage = true;
             }
             catch { }
         }

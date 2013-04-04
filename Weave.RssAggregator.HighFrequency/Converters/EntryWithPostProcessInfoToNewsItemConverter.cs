@@ -13,7 +13,7 @@ namespace Weave.RssAggregator.HighFrequency
             {
                 Title = e.Title,
                 Link = e.Link,
-                ImageUrl = e.PreferredImageUrl,
+                ImageUrl = !e.ShouldIncludeImage ? null : e.PreferredImageUrl,
                 PublishDateTime = e.UtcPublishDateTimeString,
                 Description = null,
                 VideoUri = e.VideoUri,
@@ -22,7 +22,7 @@ namespace Weave.RssAggregator.HighFrequency
                 ZuneAppId = e.ZuneAppId,
                 Id = e.Id,
                 FeedId = e.FeedId,
-                Image = !e.IsResizedImageSet ? null : new Core.DTOs.Outgoing.Image
+                Image = !e.ShouldIncludeImage ? null : new Core.DTOs.Outgoing.Image
                 {
                     Width = e.ImageWidth,
                     Height = e.ImageHeight,

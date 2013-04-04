@@ -20,7 +20,7 @@ namespace Weave.RssAggregator.HighFrequency
 
         public byte[] NewsItemBlob { get; set; }
 
-        public bool IsResizedImageSet { get; set; }
+        public bool ShouldIncludeImage { get; set; }
         public int ImageWidth { get; set; }
         public int ImageHeight { get; set; }
         public string OriginalImageUrl { get; set; }
