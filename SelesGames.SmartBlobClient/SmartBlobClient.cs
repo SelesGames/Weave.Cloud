@@ -3,6 +3,7 @@ using System.IO;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Common.Azure.SmartBlobClient
 {
@@ -124,6 +125,8 @@ namespace Common.Azure.SmartBlobClient
         {
             var collection = new MediaTypeFormatterCollection();
             collection.Add(new SelesGames.WebApi.Protobuf.ProtobufFormatter());
+            var jsonFormatter = (JsonMediaTypeFormatter)collection.First();
+            jsonFormatter.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
             return collection;
         }
 

@@ -43,6 +43,7 @@ namespace Weave.Article.Service.WorkerRole
             catch (Exception e)
             {
                 Trace.WriteLine(string.Format("failed to start service: \r\n{0}\r\n{1}\r\n", e.Message, e.StackTrace));
+                throw;
             }
             return base.OnStart();
         }

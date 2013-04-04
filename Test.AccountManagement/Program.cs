@@ -24,8 +24,8 @@ namespace Test.AccountManagement
         {
             try
             {
-                //CreateNewUser().Wait();
-                TestRole2().Wait();
+                CreateNewUser().Wait();
+                //TestRole2().Wait();
                 //TestRole().Wait();
                 //TestUserAccounts2().Wait();
                 //TestSmartHttpClient().Wait();
