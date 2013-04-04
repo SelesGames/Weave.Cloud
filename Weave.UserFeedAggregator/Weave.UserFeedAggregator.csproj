@@ -68,6 +68,10 @@
       <Project>{bf0dc853-b353-4a92-b718-0a0ad067bfdf}</Project>
       <Name>SelesGames.HttpClient</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Weave.Article.Service.DTOs\Weave.Article.Service.DTOs.csproj">
+      <Project>{2b4d1af0-8c77-475d-8d14-db7b506f9450}</Project>
+      <Name>Weave.Article.Service.DTOs</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Weave.RssAggregator.Core\RssAggregator.DTOs.csproj">
       <Project>{2f1a280d-ee75-4dc1-a36c-f8e5488e3260}</Project>
       <Name>RssAggregator.DTOs</Name>

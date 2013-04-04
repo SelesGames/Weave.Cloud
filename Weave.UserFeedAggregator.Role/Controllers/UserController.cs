@@ -28,9 +28,9 @@ namespace Weave.UserFeedAggregator.Role.Controllers
         [ActionName("create")]
         public async Task<Outgoing.UserInfo> AddUserAndReturnNewNews([FromBody] Incoming.UserInfo incomingUser)
         {
-            var user = ConvertToDataStore(incomingUser);
+            var userBO = ConvertToBusinessObject(incomingUser);
+            var user = ConvertToDataStore(userBO);
             await userRepo.Save(user);
-            var userBO = ConvertToBusinessObject(user);
             await userBO.RefreshAllFeeds();
             user = ConvertToDataStore(userBO);
             await userRepo.Save(user);
@@ -44,7 +44,8 @@ namespace Weave.UserFeedAggregator.Role.Controllers
             foreach (var feed in user.Feeds)
                 feed.News = null;
 
-            var outgoing = ConvertToOutgoing(user);
+            var userBO = ConvertToBusinessObject(user);
+            var outgoing = ConvertToOutgoing(userBO);
             return outgoing;
         }
 
@@ -59,7 +60,8 @@ namespace Weave.UserFeedAggregator.Role.Controllers
             foreach (var feed in user.Feeds)
                 feed.News = null;
 
-            var outgoing = ConvertToOutgoing(user);
+            userBO = ConvertToBusinessObject(user);
+            var outgoing = ConvertToOutgoing(userBO);
             return outgoing;
         }
 
@@ -71,7 +73,7 @@ namespace Weave.UserFeedAggregator.Role.Controllers
             await userBO.RefreshAllFeeds();
             user = ConvertToDataStore(userBO);
             await userRepo.Save(user);
-            var outgoing = ConvertToOutgoing(user);
+            var outgoing = ConvertToOutgoing(userBO);
             return outgoing;
         }
 
@@ -90,7 +92,8 @@ namespace Weave.UserFeedAggregator.Role.Controllers
             await userBO.RefreshFeedsMatchingIds(feedIds);
             user = ConvertToDataStore(userBO);
             await userRepo.Save(user);
-            var outgoing = ConvertToOutgoing(user);
+            userBO = ConvertToBusinessObject(user);
+            var outgoing = ConvertToOutgoing(userBO);
             return outgoing;
         }
 
@@ -109,18 +112,6 @@ namespace Weave.UserFeedAggregator.Role.Controllers
             var userBO = ConvertToBusinessObject(user);
             var feedBO = ConvertToBusinessObject(feed);
             userBO.AddFeed(feedBO);
-            user = ConvertToDataStore(userBO);
-            await userRepo.Save(user);
-        }
-
-        [HttpPost]
-        [ActionName("remove_feed")]
-        public async Task RemoveFeed(Guid userId, [FromBody] Incoming.Feed feed)
-        {
-            var user = await userRepo.Get(userId);
-            var userBO = ConvertToBusinessObject(user);
-            var feedBO = ConvertToBusinessObject(feed);
-            userBO.RemoveFeed(feedBO);
             user = ConvertToDataStore(userBO);
             await userRepo.Save(user);
         }
@@ -159,7 +150,7 @@ namespace Weave.UserFeedAggregator.Role.Controllers
         {
             var user = await userRepo.Get(userId);
             var userBO = ConvertToBusinessObject(user);
-            userBO.MarkNewsItemRead(feedId, newsItemId);
+            await userBO.MarkNewsItemRead(feedId, newsItemId);
             user = ConvertToDataStore(userBO);
             await userRepo.Save(user);
         }
@@ -169,7 +160,7 @@ namespace Weave.UserFeedAggregator.Role.Controllers
         {
             var user = await userRepo.Get(userId);
             var userBO = ConvertToBusinessObject(user);
-            userBO.MarkNewsItemUnread(feedId, newsItemId);
+            await userBO.MarkNewsItemUnread(feedId, newsItemId);
             user = ConvertToDataStore(userBO);
             await userRepo.Save(user);
         }
@@ -181,16 +172,6 @@ namespace Weave.UserFeedAggregator.Role.Controllers
 
         #region Conversion Helpers
 
-        User.DataStore.UserInfo ConvertToDataStore(Incoming.UserInfo user)
-        {
-            return user.Convert<Incoming.UserInfo, User.DataStore.UserInfo>(null);
-        }
-
-        User.DataStore.UserInfo ConvertToDataStore(UserInfo user)
-        {
-            return user.Convert<UserInfo, User.DataStore.UserInfo>(Converters.Instance);
-        }
-
         UserInfo ConvertToBusinessObject(User.DataStore.UserInfo user)
         {
             return user.Convert<User.DataStore.UserInfo, UserInfo>(Converters.Instance);
@@ -201,19 +182,26 @@ namespace Weave.UserFeedAggregator.Role.Controllers
             return user.Convert<User.DataStore.Feed, Feed>(Converters.Instance);
         }
 
+        UserInfo ConvertToBusinessObject(Incoming.UserInfo user)
+        {
+            return user.Convert<Incoming.UserInfo, UserInfo>(Converters.Instance);
+        }
+
         Feed ConvertToBusinessObject(Incoming.Feed user)
         {
-            return user.Convert<Incoming.Feed, Feed>(null);
+            return user.Convert<Incoming.Feed, Feed>(Converters.Instance);
         }
+        
+        
+        User.DataStore.UserInfo ConvertToDataStore(UserInfo user)
+        {
+            return user.Convert<UserInfo, User.DataStore.UserInfo>(Converters.Instance);
+        }
+
 
         Outgoing.UserInfo ConvertToOutgoing(UserInfo user)
         {
-            return user.Convert<UserInfo, Outgoing.UserInfo>(null);
-        }
-
-        Outgoing.UserInfo ConvertToOutgoing(User.DataStore.UserInfo user)
-        {
-            return user.Convert<User.DataStore.UserInfo, Outgoing.UserInfo>(null);
+            return user.Convert<UserInfo, Outgoing.UserInfo>(Converters.Instance);
         }
 
         #endregion

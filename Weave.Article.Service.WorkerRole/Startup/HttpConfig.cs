@@ -14,7 +14,7 @@ namespace Weave.Article.Service.WorkerRole.Startup
         {
             Routes.MapHttpRoute(
                 name: "defaultRouting",
-                routeTemplate: "api/{controller}",
+                routeTemplate: "api/{controller}/{action}",
                 defaults: new { id = RouteParameter.Optional }
             );
 

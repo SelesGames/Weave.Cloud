@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SelesGames.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,8 +8,10 @@ namespace Weave.UserFeedAggregator.BusinessObjects
 {
     public class UserInfo
     {
+        List<Feed> feedsList = new List<Feed>();
+
         public Guid Id { get; set; }
-        public List<Feed> Feeds { get; set; }
+        public IReadOnlyList<Feed> Feeds { get { return feedsList; } }
 
         public Task RefreshAllFeeds()
         {
@@ -24,50 +27,44 @@ namespace Weave.UserFeedAggregator.BusinessObjects
             await RefreshFeeds(feeds);
         }
 
-        public void AddFeed(Feed feed)
+        public void AddFeed(Feed feed, bool trustSource = false)
         {
-            if (Feeds == null || !Feeds.Any() || feed == null)
-                return;
+            if (feed == null) return;
+            if (feedsList == null) feedsList = new List<Feed>();
 
-            feed.EnsureGuidIsSet();
+            // if we don't trust the Feed was created correctly, verify it's Id and that no existing Feed matches
+            if (!trustSource)
+            {
+                feed.EnsureGuidIsSet();
 
-            // if any existing feed has a matching Id, don't add it
-            if (Feeds.Any(o => o.Id.Equals(feed.Id)))
-                return;
+                // if any existing feed has a matching Id, don't add it
+                if (feedsList.Any(o => o.Id.Equals(feed.Id)))
+                    return;
+            }
 
-            Feeds.Add(feed);
-        }
-
-        public void RemoveFeed(Feed feed)
-        {
-            if (Feeds == null || !Feeds.Any() || feed == null)
-                return;
-
-            feed.EnsureGuidIsSet();
-
-            RemoveFeed(feed.Id);
+            feedsList.Add(feed);
         }
 
         public void RemoveFeed(Guid feedId)
         {
-            if (Feeds == null || !Feeds.Any())
+            if (feedsList == null || !feedsList.Any())
                 return;
 
-            var matching = Feeds.FirstOrDefault(o => o.Id.Equals(feedId));
+            var matching = feedsList.FirstOrDefault(o => o.Id.Equals(feedId));
             if (matching != null)
             {
-                Feeds.Remove(matching);
+                feedsList.Remove(matching);
             }
         }
 
         public void UpdateFeed(Feed feed)
         {
-            if (Feeds == null || !Feeds.Any() || feed == null)
+            if (feedsList == null || !feedsList.Any() || feed == null)
                 return;
 
             feed.EnsureGuidIsSet();
 
-            var matching = Feeds.FirstOrDefault(o => o.Id.Equals(feed.Id));
+            var matching = feedsList.FirstOrDefault(o => o.Id.Equals(feed.Id));
             if (matching != null)
             {
                 // the only 3 fields the user can change are category, feed name, and article viewing type
@@ -77,14 +74,25 @@ namespace Weave.UserFeedAggregator.BusinessObjects
             }
         }
 
-        public void MarkNewsItemRead(Guid feedId, Guid newsItemId)
+        public async Task MarkNewsItemRead(Guid feedId, Guid newsItemId)
         {
-            ToggleMarkNewsItemRead(feedId, newsItemId, true);
+            var newsItem = FindNewsItem(feedId, newsItemId);
+            if (newsItem == null)
+                return;
+
+            var saved = newsItem.Convert<NewsItem, Weave.RssAggregator.Core.DTOs.Outgoing.NewsItem>(Converters.Instance);
+            await ArticleServiceClient.Current.MarkRead(Id, saved);
+            newsItem.HasBeenViewed = true;
         }
 
-        public void MarkNewsItemUnread(Guid feedId, Guid newsItemId)
+        public async Task MarkNewsItemUnread(Guid feedId, Guid newsItemId)
         {
-            ToggleMarkNewsItemRead(feedId, newsItemId, false);
+            var newsItem = FindNewsItem(feedId, newsItemId);
+            if (newsItem == null)
+                return;
+
+            await ArticleServiceClient.Current.RemoveRead(Id, newsItemId);
+            newsItem.HasBeenViewed = false;
         }
 
 
@@ -92,7 +100,7 @@ namespace Weave.UserFeedAggregator.BusinessObjects
 
         #region helper methods
 
-        async Task RefreshFeeds(List<Feed> feeds)
+        async Task RefreshFeeds(IEnumerable<Feed> feeds)
         {
             if (feeds == null || !feeds.Any())
                 return;
@@ -105,17 +113,17 @@ namespace Weave.UserFeedAggregator.BusinessObjects
             await Task.WhenAll(feeds.Select(o => o.CurrentRefresh));
         }
 
-        void ToggleMarkNewsItemRead(Guid feedId, Guid newsItemId, bool isRead)
+        NewsItem FindNewsItem(Guid feedId, Guid newsItemId)
         {
-            if (Feeds == null || !Feeds.Any())
-                return;
+            if (feedsList == null || !feedsList.Any())
+                return null;
 
-            var newsItem = Feeds
+            var newsItem = feedsList
                 .Where(o => o.Id.Equals(feedId))
                 .SelectMany(o => o.News)
                 .FirstOrDefault(o => o.Id.Equals(newsItemId));
 
-            newsItem.HasBeenViewed = isRead;
+            return newsItem;
         }
 
         #endregion

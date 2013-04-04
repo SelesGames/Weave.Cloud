@@ -24,6 +24,7 @@ namespace Test.AccountManagement
         {
             try
             {
+                //CreateNewUser().Wait();
                 TestRole2().Wait();
                 //TestRole().Wait();
                 //TestUserAccounts2().Wait();
@@ -40,27 +41,32 @@ namespace Test.AccountManagement
                 Console.ReadLine();
         }
 
-        static async Task TestRole2()
+        static UserController CreateController()
         {
             var blobClient = new SmartBlobClient("weaveuser", "GBzJEaV/B5JQTmLFj/N7VJoYGZBQcEhasXha3RKbd4BRUVN5aaJ01KMo0MNNtNHnVhzJmqlDgqEyk4CPEvX56A==", "user", false);
             var userRepo = new UserRepository(blobClient);
             var controller = new UserController(userRepo);
+            return controller;
+        }
 
-            var user = await controller.RefreshAndReturnNews(Guid.Parse("19060d80-f525-4b62-b907-75e02819b28b"));
+        static async Task TestRole2()
+        {
+            var controller = CreateController();
+
+            var user = await controller.RefreshAndReturnNews(Guid.Parse("0f53d7de-0772-41e6-b7fa-ad673b75ba23"));
+            var article = user.Feeds.SelectMany(o => o.News).First();
+            await controller.MarkArticleRead(user.Id, article.FeedId, article.Id);
             DebugEx.WriteLine(user);
         }
 
-        static async Task TestRole()
+        static async Task CreateNewUser()
         {
-            var blobClient = new SmartBlobClient("weaveuser", "GBzJEaV/B5JQTmLFj/N7VJoYGZBQcEhasXha3RKbd4BRUVN5aaJ01KMo0MNNtNHnVhzJmqlDgqEyk4CPEvX56A==", "user", false);
-            var userRepo = new UserRepository(blobClient);
-            var controller = new UserController(userRepo);
+            var controller = CreateController();
 
-            var feeds = new MockFeeds();
             var user = new Weave.UserFeedAggregator.DTOs.ServerIncoming.UserInfo
             {
                 Id = Guid.NewGuid(),
-                Feeds = feeds,
+                Feeds = new MockFeeds(),
             };
 
             var ouser = await controller.AddUserAndReturnNewNews(user);
@@ -152,7 +158,6 @@ namespace Test.AccountManagement
         {
             Add(new Weave.UserFeedAggregator.DTOs.ServerIncoming.Feed 
             { 
-                Id = Guid.NewGuid(), 
                 FeedName = "Engadget", 
                 Category = "Technology",
                 ArticleViewingType = Weave.UserFeedAggregator.DTOs.ArticleViewingType.Mobilizer,
@@ -160,7 +165,6 @@ namespace Test.AccountManagement
             });
             Add(new Weave.UserFeedAggregator.DTOs.ServerIncoming.Feed
             {
-                Id = Guid.NewGuid(),
                 FeedName = "GigaOM",
                 Category = null,
                 ArticleViewingType = Weave.UserFeedAggregator.DTOs.ArticleViewingType.Mobilizer,
@@ -169,7 +173,6 @@ namespace Test.AccountManagement
 
             Add(new Weave.UserFeedAggregator.DTOs.ServerIncoming.Feed
             {
-                Id = Guid.NewGuid(),
                 FeedName = "Mashable",
                 Category = "Technology",
                 ArticleViewingType = Weave.UserFeedAggregator.DTOs.ArticleViewingType.Mobilizer,
@@ -178,7 +181,6 @@ namespace Test.AccountManagement
 
             Add(new Weave.UserFeedAggregator.DTOs.ServerIncoming.Feed
             {
-                Id = Guid.NewGuid(),
                 FeedName = "The Verge",
                 Category = "Technology",
                 ArticleViewingType = Weave.UserFeedAggregator.DTOs.ArticleViewingType.Mobilizer,

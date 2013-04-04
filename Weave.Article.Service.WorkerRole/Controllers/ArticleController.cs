@@ -28,7 +28,7 @@ namespace Weave.Article.Service.WorkerRole.Controllers
             return result;
         }
 
-        [HttpPost]
+        [HttpGet]
         [ActionName("remove_read")]
         public async Task RemoveRead(Guid userId, Guid newsItemId)
         {
