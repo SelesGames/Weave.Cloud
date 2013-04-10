@@ -72,7 +72,7 @@ namespace Weave.UserFeedAggregator.BusinessObjects
             {
                 // the only 3 fields the user can change are category, feed name, and article viewing type
                 matching.Category = feed.Category;
-                matching.FeedName = feed.FeedName;
+                matching.Name = feed.Name;
                 matching.ArticleViewingType = feed.ArticleViewingType;
             }
         }

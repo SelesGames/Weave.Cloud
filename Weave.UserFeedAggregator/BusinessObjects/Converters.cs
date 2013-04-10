@@ -100,8 +100,8 @@ namespace Weave.UserFeedAggregator.BusinessObjects
         {
             return new Feed
             {
-                FeedUri = o.FeedUri,
-                FeedName = o.FeedName,
+                Uri = o.Uri,
+                Name = o.Name,
                 Category = o.Category,
                 ArticleViewingType = (ArticleViewingType)o.ArticleViewingType,
             };
@@ -165,8 +165,8 @@ namespace Weave.UserFeedAggregator.BusinessObjects
             return new Feed
             {
                 Id = o.Id,
-                FeedUri = o.FeedUri,
-                FeedName = o.FeedName,
+                Uri = o.FeedUri,
+                Name = o.FeedName,
                 Category = o.Category,
                 Etag = o.Etag,
                 LastModified = o.LastModified,
@@ -179,7 +179,12 @@ namespace Weave.UserFeedAggregator.BusinessObjects
 
         public UserInfo Convert(User.DataStore.UserInfo o)
         {         
-            var user = new UserInfo { Id = o.Id };
+            var user = new UserInfo 
+            { 
+                Id = o.Id,
+                PreviousLoginTime = o.PreviousLoginTime,
+                CurrentLoginTime = o.CurrentLoginTime,
+            };
 
             if (o.Feeds != null)
             {
@@ -235,8 +240,8 @@ namespace Weave.UserFeedAggregator.BusinessObjects
             return new User.DataStore.Feed
             {
                 Id = o.Id,
-                FeedUri = o.FeedUri,
-                FeedName = o.FeedName,
+                FeedUri = o.Uri,
+                FeedName = o.Name,
                 Category = o.Category,
                 Etag = o.Etag,
                 LastModified = o.LastModified,
@@ -254,6 +259,8 @@ namespace Weave.UserFeedAggregator.BusinessObjects
                 Id = o.Id,
                 Feeds = o.Feeds == null ? null : o.Feeds.OfType<Feed>().Select(x => x.Convert<Feed, User.DataStore.Feed>(Instance)).ToList(),
                 FeedCount = o.Feeds == null ? 0 : o.Feeds.Count,
+                PreviousLoginTime = o.PreviousLoginTime,
+                CurrentLoginTime = o.CurrentLoginTime,
             };
         }
 
@@ -302,8 +309,8 @@ namespace Weave.UserFeedAggregator.BusinessObjects
             return new Outgoing.Feed
             {
                 Id = o.Id,
-                FeedUri = o.FeedUri,
-                FeedName = o.FeedName,
+                Uri = o.Uri,
+                Name = o.Name,
                 Category = o.Category,
                 ArticleViewingType = (Weave.UserFeedAggregator.DTOs.ArticleViewingType)o.ArticleViewingType,
                 News = o.News == null ? null : o.News.OfType<NewsItem>().Select(x => x.Convert<NewsItem, Outgoing.NewsItem>(Instance)).ToList(),
@@ -318,6 +325,8 @@ namespace Weave.UserFeedAggregator.BusinessObjects
                 Id = o.Id,
                 FeedCount = o.Feeds == null ? 0 : o.Feeds.Count,
                 Feeds = o.Feeds == null ? null : o.Feeds.OfType<Feed>().Select(x => x.Convert<Feed, Outgoing.Feed>(Instance)).ToList(),
+                PreviousLoginTime = o.PreviousLoginTime,
+                CurrentLoginTime = o.CurrentLoginTime,
             };
         }
 

@@ -16,8 +16,8 @@ namespace Weave.UserFeedAggregator.BusinessObjects
         object syncObject = new object();
 
         public Guid Id { get; set; }
-        public string FeedName { get; set; }
-        public string FeedUri { get; set; }
+        public string Name { get; set; }
+        public string Uri { get; set; }
         public string Category { get; set; }
         public string Etag { get; set; }
         public string LastModified { get; set; }
@@ -34,7 +34,7 @@ namespace Weave.UserFeedAggregator.BusinessObjects
         public void EnsureGuidIsSet()
         {
             if (Guid.Empty.Equals(Id))
-                Id = CryptoHelper.ComputeHashUsedByMobilizer(FeedUri);
+                Id = CryptoHelper.ComputeHashUsedByMobilizer(Uri);
         }
 
         public void RefreshNews(NewsServer client)
@@ -59,7 +59,7 @@ namespace Weave.UserFeedAggregator.BusinessObjects
             {
                 Id = Id.ToString(),
                 Etag = Etag,
-                Url = FeedUri,
+                Url = Uri,
                 LastModified = LastModified,
                 MostRecentNewsItemPubDate = MostRecentNewsItemPubDate,
             };
