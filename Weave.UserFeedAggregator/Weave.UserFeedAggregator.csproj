@@ -39,6 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArticleServiceClient.cs" />
+    <Compile Include="AzureCredentials.cs" />
     <Compile Include="BusinessObjects\ArticleViewingType.cs" />
     <Compile Include="BusinessObjects\Feed.cs" />
     <Compile Include="BusinessObjects\Image.cs" />
@@ -47,7 +48,6 @@
     <Compile Include="BusinessObjects\Converters.cs" />
     <Compile Include="NewsServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repositories\NewsRepository.cs" />
     <Compile Include="Repositories\UserRepository.cs" />
     <Compile Include="ServiceClient.cs" />
   </ItemGroup>
@@ -67,6 +67,10 @@
     <ProjectReference Include="..\SelesGames.HttpClient\SelesGames.HttpClient.csproj">
       <Project>{bf0dc853-b353-4a92-b718-0a0ad067bfdf}</Project>
       <Name>SelesGames.HttpClient</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SelesGames.SmartBlobClient\Common.Azure.SmartBlobClient.csproj">
+      <Project>{d115cf60-990a-4138-8496-538a6ce74541}</Project>
+      <Name>Common.Azure.SmartBlobClient</Name>
     </ProjectReference>
     <ProjectReference Include="..\Weave.Article.Service.DTOs\Weave.Article.Service.DTOs.csproj">
       <Project>{2b4d1af0-8c77-475d-8d14-db7b506f9450}</Project>

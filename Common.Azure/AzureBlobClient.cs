@@ -1,75 +1,38 @@
-﻿using System;
-using System.IO;
+﻿using Microsoft.WindowsAzure;
+using Microsoft.WindowsAzure.StorageClient;
 using System.Threading.Tasks;
 
 namespace Common.Azure
 {
-    public abstract class AzureBlobClient<T> : IAzureBlobClient<T>
+    public class AzureBlobClient
     {
-        AzureBlobStreamClient blobClient;
+        CloudStorageAccount account;
 
+        public string BlobEndpoint { get; private set; }
 
-
-
-        #region Public Properties delegate to the underlying AzureBlobStreamClient
-
-        public TimeSpan ReadTimeout
+        public AzureBlobClient(string storageAccountName, string key, bool useHttps)
         {
-            get { return blobClient.ReadTimeout; }
-            set { blobClient.ReadTimeout = value; }
-        }
-        public TimeSpan WriteTimeout
-        {
-            get { return blobClient.WriteTimeout; }
-            set { blobClient.WriteTimeout = value; }
-        }
-        public string ContentType
-        {
-            get { return blobClient.ContentType; }
-            set { blobClient.ContentType = value; }
-        }
-        public bool UseGzipOnUpload
-        {
-            get { return blobClient.UseGzipOnUpload; }
-            set { blobClient.UseGzipOnUpload = value; }
+            var blobCred = new StorageCredentialsAccountAndKey(storageAccountName, key);
+            account = new CloudStorageAccount(blobCred, useHttps);
+            BlobEndpoint = account.BlobEndpoint.ToString();
         }
 
-        #endregion
-
-
-
-
-        public AzureBlobClient(string storageAccountName, string key, string container, bool useHttps)
+        protected CloudBlobContainer GetContainerHandle(string containerName)
         {
-            blobClient = new AzureBlobStreamClient(storageAccountName, key, container, useHttps);
+            var client = account.CreateCloudBlobClient();
+            return client.GetContainerReference(containerName);
         }
 
-        public async Task<T> Get(string blobId)
+        public Task<bool> CreateContainer(string containerName, BlobRequestOptions options = null)
         {
-            using (var content = await blobClient.Get(blobId))
-            {
-                var result = ReadObject(content.Content);
-                return result;
-            }
+            var container = GetContainerHandle(containerName);
+            return container.CreateIfNotExistAsync(options);
         }
 
-        public async Task Save(string blobId, T obj)
+        public Task DeleteContainer(string containerName, BlobRequestOptions options = null)
         {
-            using (var ms = new MemoryStream())
-            {
-                await WriteObject(ms, obj);
-                ms.Position = 0;
-                await blobClient.Save(blobId, ms);
-            }
+            var container = GetContainerHandle(containerName);
+            return container.DeleteAsync(options);
         }
-
-        public Task Delete(string blobId)
-        {
-            return blobClient.Delete(blobId);
-        }
-
-        // Serialization override functions
-        protected abstract T ReadObject(Stream stream);
-        protected abstract Task WriteObject(Stream stream, T obj);
     }
 }

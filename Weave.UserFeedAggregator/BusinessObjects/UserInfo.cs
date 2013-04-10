@@ -12,6 +12,9 @@ namespace Weave.UserFeedAggregator.BusinessObjects
 
         public Guid Id { get; set; }
         public IReadOnlyList<Feed> Feeds { get { return feedsList; } }
+        public DateTime PreviousLoginTime { get; set; }
+        public DateTime CurrentLoginTime { get; set; }
+
 
         public Task RefreshAllFeeds()
         {

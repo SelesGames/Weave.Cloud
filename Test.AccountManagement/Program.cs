@@ -15,6 +15,7 @@ using Weave.RssAggregator.Core.DTOs.Outgoing;
 using Weave.UserFeedAggregator.Role;
 using Weave.UserFeedAggregator.Repositories;
 using Weave.UserFeedAggregator.Role.Controllers;
+using Weave.UserFeedAggregator;
 
 namespace Test.AccountManagement
 {
@@ -24,8 +25,8 @@ namespace Test.AccountManagement
         {
             try
             {
-                CreateNewUser().Wait();
-                //TestRole2().Wait();
+                //CreateNewUser().Wait();
+                TestRole2().Wait();
                 //TestRole().Wait();
                 //TestUserAccounts2().Wait();
                 //TestSmartHttpClient().Wait();
@@ -43,7 +44,16 @@ namespace Test.AccountManagement
 
         static UserController CreateController()
         {
-            var blobClient = new SmartBlobClient("weaveuser", "GBzJEaV/B5JQTmLFj/N7VJoYGZBQcEhasXha3RKbd4BRUVN5aaJ01KMo0MNNtNHnVhzJmqlDgqEyk4CPEvX56A==", "user", false);
+           // var azureCred = new AzureCredentials("weaveuser", "GBzJEaV/B5JQTmLFj/N7VJoYGZBQcEhasXha3RKbd4BRUVN5aaJ01KMo0MNNtNHnVhzJmqlDgqEyk4CPEvX56A==", false);
+            //var userRepo = new UserRepository(azureCred);
+            var blobClient = new SmartBlobClient(
+    storageAccountName: "weaveuser",
+    key: "GBzJEaV/B5JQTmLFj/N7VJoYGZBQcEhasXha3RKbd4BRUVN5aaJ01KMo0MNNtNHnVhzJmqlDgqEyk4CPEvX56A==",
+    container: "user",
+    useHttps: false)
+            {
+                ContentType = "application/json"
+            };
             var userRepo = new UserRepository(blobClient);
             var controller = new UserController(userRepo);
             return controller;
@@ -53,7 +63,7 @@ namespace Test.AccountManagement
         {
             var controller = CreateController();
 
-            var user = await controller.RefreshAndReturnNews(Guid.Parse("0f53d7de-0772-41e6-b7fa-ad673b75ba23"));
+            var user = await controller.RefreshAndReturnNews(Guid.Parse("ece6a3d1-b5e9-43b7-8cde-317d8dd3efb3"));
             var article = user.Feeds.SelectMany(o => o.News).First();
             await controller.MarkArticleRead(user.Id, article.FeedId, article.Id);
             DebugEx.WriteLine(user);
@@ -158,33 +168,33 @@ namespace Test.AccountManagement
         {
             Add(new Weave.UserFeedAggregator.DTOs.ServerIncoming.Feed 
             { 
-                FeedName = "Engadget", 
+                Name = "Engadget", 
                 Category = "Technology",
                 ArticleViewingType = Weave.UserFeedAggregator.DTOs.ArticleViewingType.Mobilizer,
-                FeedUri = "http://www.engadget.com/rss.xml",
+                Uri = "http://www.engadget.com/rss.xml",
             });
             Add(new Weave.UserFeedAggregator.DTOs.ServerIncoming.Feed
             {
-                FeedName = "GigaOM",
+                Name = "GigaOM",
                 Category = null,
                 ArticleViewingType = Weave.UserFeedAggregator.DTOs.ArticleViewingType.Mobilizer,
-                FeedUri = "http://feeds.feedburner.com/ommalik",
+                Uri = "http://feeds.feedburner.com/ommalik",
             });
 
             Add(new Weave.UserFeedAggregator.DTOs.ServerIncoming.Feed
             {
-                FeedName = "Mashable",
+                Name = "Mashable",
                 Category = "Technology",
                 ArticleViewingType = Weave.UserFeedAggregator.DTOs.ArticleViewingType.Mobilizer,
-                FeedUri = "http://feeds.mashable.com/Mashable",
+                Uri = "http://feeds.mashable.com/Mashable",
             });
 
             Add(new Weave.UserFeedAggregator.DTOs.ServerIncoming.Feed
             {
-                FeedName = "The Verge",
+                Name = "The Verge",
                 Category = "Technology",
                 ArticleViewingType = Weave.UserFeedAggregator.DTOs.ArticleViewingType.Mobilizer,
-                FeedUri = "http://www.theverge.com/rss/index.xml",
+                Uri = "http://www.theverge.com/rss/index.xml",
             });
         }
     }

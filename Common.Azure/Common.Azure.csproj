@@ -43,6 +43,7 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AzureBlobClient.cs" />
     <Compile Include="AzureBlobStreamClient.cs" />
     <Compile Include="BlobContent.cs" />
     <Compile Include="CloudExtensions.cs" />

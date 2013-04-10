@@ -11,10 +11,19 @@ namespace Weave.UserFeedAggregator.Role.Startup
             base.AddComponents();
 
             var blobClient = new SmartBlobClient(
-                storageAccountName: "weaveuser", 
-                key: "GBzJEaV/B5JQTmLFj/N7VJoYGZBQcEhasXha3RKbd4BRUVN5aaJ01KMo0MNNtNHnVhzJmqlDgqEyk4CPEvX56A==", 
-                container: "user", 
-                useHttps: false);
+                storageAccountName: "weaveuser",
+                key: "GBzJEaV/B5JQTmLFj/N7VJoYGZBQcEhasXha3RKbd4BRUVN5aaJ01KMo0MNNtNHnVhzJmqlDgqEyk4CPEvX56A==",
+                container: "user",
+                useHttps: false)
+                {
+                    ContentType = "application/protobuf", 
+                    //UseGzipOnUpload = true,
+                };
+
+            //var azureCred = new AzureCredentials(
+            //    "weaveuser",
+            //    "GBzJEaV/B5JQTmLFj/N7VJoYGZBQcEhasXha3RKbd4BRUVN5aaJ01KMo0MNNtNHnVhzJmqlDgqEyk4CPEvX56A==",
+            //    false);
 
             var userRepo = new UserRepository(blobClient);
             Bind<UserRepository>().ToConstant(userRepo).InSingletonScope();

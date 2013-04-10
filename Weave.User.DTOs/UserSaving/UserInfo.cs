@@ -10,5 +10,8 @@ namespace Weave.User.DataStore
         [DataMember(Order= 1)]  public Guid Id { get; set; }
         [DataMember(Order= 2)]  public int FeedCount { get; set; }
         [DataMember(Order= 3)]  public List<Feed> Feeds { get; set; }
+
+        [DataMember(Order= 4)]  public DateTime PreviousLoginTime { get; set; }
+        [DataMember(Order= 5)]  public DateTime CurrentLoginTime { get; set; }
     }
 }

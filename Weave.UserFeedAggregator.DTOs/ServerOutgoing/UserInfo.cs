@@ -13,5 +13,8 @@ namespace Weave.UserFeedAggregator.DTOs.ServerOutgoing
 
         [DataMember(Order= 4)]  public TimeSpan DataStoreReadTime { get; set; }
         [DataMember(Order= 5)]  public TimeSpan DataStoreWriteTime { get; set; }
+
+        [DataMember(Order= 6)]  public DateTime PreviousLoginTime { get; set; }
+        [DataMember(Order= 7)]  public DateTime CurrentLoginTime { get; set; }
     }
 }

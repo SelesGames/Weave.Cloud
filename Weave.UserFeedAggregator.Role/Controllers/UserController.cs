@@ -30,6 +30,7 @@ namespace Weave.UserFeedAggregator.Role.Controllers
         {
             var userBO = ConvertToBusinessObject(incomingUser);
             var user = ConvertToDataStore(userBO);
+            //await userRepo.Add(user);
             await userRepo.Save(user);
             await userBO.RefreshAllFeeds();
             user = ConvertToDataStore(userBO);
@@ -38,6 +39,7 @@ namespace Weave.UserFeedAggregator.Role.Controllers
             return outgoing;
         }
 
+        [HttpGet]
         public async Task<Outgoing.UserInfo> GetUserInfoWithNoNews(Guid userId)
         {
             var user = await userRepo.Get(userId);
@@ -49,6 +51,7 @@ namespace Weave.UserFeedAggregator.Role.Controllers
             return outgoing;
         }
 
+        [HttpGet]
         public async Task<Outgoing.UserInfo> GetUserInfoWithRefreshedNewsCount(Guid userId)
         {
             var user = await userRepo.Get(userId);
@@ -65,15 +68,30 @@ namespace Weave.UserFeedAggregator.Role.Controllers
             return outgoing;
         }
 
+        [HttpGet]
         [ActionName("refresh_all")]
         public async Task<Outgoing.UserInfo> RefreshAndReturnNews(Guid userId)
         {
+            TimeSpan readTime, writeTime;
+
+            var sw = System.Diagnostics.Stopwatch.StartNew();
             var user = await userRepo.Get(userId);
+            sw.Stop();
+            readTime = sw.Elapsed;
+
             var userBO = ConvertToBusinessObject(user);
             await userBO.RefreshAllFeeds();
             user = ConvertToDataStore(userBO);
+
+            sw = System.Diagnostics.Stopwatch.StartNew();
             await userRepo.Save(user);
+            sw.Stop();
+            writeTime = sw.Elapsed;
+
             var outgoing = ConvertToOutgoing(userBO);
+
+            outgoing.DataStoreReadTime = readTime;
+            outgoing.DataStoreWriteTime = writeTime;
             return outgoing;
         }
 
@@ -87,13 +105,27 @@ namespace Weave.UserFeedAggregator.Role.Controllers
         [ActionName("refresh")]
         public async Task<Outgoing.UserInfo> RefreshAndReturnNews(Guid userId, [FromBody] List<Guid> feedIds)
         {
+            TimeSpan readTime, writeTime;
+
+            var sw = System.Diagnostics.Stopwatch.StartNew();
             var user = await userRepo.Get(userId);
+            sw.Stop();
+            readTime = sw.Elapsed;
+
             var userBO = ConvertToBusinessObject(user);
             await userBO.RefreshFeedsMatchingIds(feedIds);
             user = ConvertToDataStore(userBO);
+
+            sw = System.Diagnostics.Stopwatch.StartNew();
             await userRepo.Save(user);
+            sw.Stop();
+            writeTime = sw.Elapsed;
+
             userBO = ConvertToBusinessObject(user);
             var outgoing = ConvertToOutgoing(userBO);
+
+            outgoing.DataStoreReadTime = readTime;
+            outgoing.DataStoreWriteTime = writeTime;
             return outgoing;
         }
 
@@ -116,6 +148,7 @@ namespace Weave.UserFeedAggregator.Role.Controllers
             await userRepo.Save(user);
         }
 
+        [HttpGet]
         [ActionName("remove_feed")]
         public async Task RemoveFeed(Guid userId, Guid feedId)
         {
@@ -145,6 +178,7 @@ namespace Weave.UserFeedAggregator.Role.Controllers
 
         #region Article management
 
+        [HttpGet]
         [ActionName("mark_read")]
         public async Task MarkArticleRead(Guid userId, Guid feedId, Guid newsItemId)
         {
@@ -155,6 +189,7 @@ namespace Weave.UserFeedAggregator.Role.Controllers
             await userRepo.Save(user);
         }
 
+        [HttpGet]
         [ActionName("mark_unread")]
         public async Task MarkArticleUnread(Guid userId, Guid feedId, Guid newsItemId)
         {

@@ -8,8 +8,8 @@ namespace Weave.UserFeedAggregator.DTOs.ServerOutgoing
     public class Feed
     {
         [DataMember(Order=1)]   public Guid Id { get; set; }
-        [DataMember(Order=2)]   public string FeedName { get; set; }
-        [DataMember(Order=3)]   public string FeedUri { get; set; }
+        [DataMember(Order=2)]   public string Name { get; set; }
+        [DataMember(Order=3)]   public string Uri { get; set; }
         [DataMember(Order=4)]   public string Category { get; set; }
         [DataMember(Order=5)]   public ArticleViewingType ArticleViewingType { get; set; }
         [DataMember(Order=6)]   public int NewArticleCount { get; set; }
