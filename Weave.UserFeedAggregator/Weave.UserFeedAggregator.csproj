@@ -42,6 +42,8 @@
     <Compile Include="AzureCredentials.cs" />
     <Compile Include="BusinessObjects\ArticleViewingType.cs" />
     <Compile Include="BusinessObjects\Feed.cs" />
+    <Compile Include="BusinessObjects\Extensions\FeedExtensions.cs" />
+    <Compile Include="BusinessObjects\FeedsSubset.cs" />
     <Compile Include="BusinessObjects\Image.cs" />
     <Compile Include="BusinessObjects\NewsItem.cs" />
     <Compile Include="BusinessObjects\UserInfo.cs" />

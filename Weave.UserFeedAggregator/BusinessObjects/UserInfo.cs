@@ -15,20 +15,52 @@ namespace Weave.UserFeedAggregator.BusinessObjects
         public DateTime PreviousLoginTime { get; set; }
         public DateTime CurrentLoginTime { get; set; }
 
-
         public Task RefreshAllFeeds()
         {
-            return RefreshFeeds(Feeds);
+            return new FeedsSubset(feedsList).Refresh();
         }
 
-        public async Task RefreshFeedsMatchingIds(IEnumerable<Guid> feedIds)
+
+
+
+        #region Create a feed subset from either a category name or a list of feedIds
+        
+        public FeedsSubset CreateSubsetFromCategory(string category)
+        {
+            IEnumerable<Feed> feeds = null;
+
+            if (string.IsNullOrEmpty(category))
+                throw new Exception("No category specified");
+
+            else if ("all news".Equals(category, StringComparison.OrdinalIgnoreCase))
+                feeds = feedsList;
+
+            else
+            {
+                feeds = feedsList.OfCategory(category);
+            }
+
+            if (feeds == null)
+                throw new Exception(string.Format("No feeds match category '{0}", category));
+
+            return new FeedsSubset(feeds);
+        }
+
+        public FeedsSubset CreateSubsetFromFeedIds(IEnumerable<Guid> feedIds)
         {
             if (feedIds == null || !feedIds.Any())
-                return;
+                throw new Exception("No feedIds specified");
 
             var feeds = Feeds.Join(feedIds, o => o.Id, x => x, (o, x) => o).ToList();
-            await RefreshFeeds(feeds);
+            return new FeedsSubset(feeds);
         }
+
+        #endregion
+
+
+
+
+        #region Add/Remove/Update a feed
 
         public void AddFeed(Feed feed, bool trustSource = false)
         {
@@ -77,6 +109,13 @@ namespace Weave.UserFeedAggregator.BusinessObjects
             }
         }
 
+        #endregion
+
+
+
+
+        #region Mark NewsItem read/unread
+
         public async Task MarkNewsItemRead(Guid feedId, Guid newsItemId)
         {
             var newsItem = FindNewsItem(feedId, newsItemId);
@@ -98,23 +137,25 @@ namespace Weave.UserFeedAggregator.BusinessObjects
             newsItem.HasBeenViewed = false;
         }
 
+        #endregion
+
 
 
 
         #region helper methods
 
-        async Task RefreshFeeds(IEnumerable<Feed> feeds)
-        {
-            if (feeds == null || !feeds.Any())
-                return;
+        //async Task RefreshFeeds(IEnumerable<Feed> feeds)
+        //{
+        //    if (feeds == null || !feeds.Any())
+        //        return;
 
-            var client = new NewsServer();
-            foreach (var feed in feeds)
-                feed.RefreshNews(client);
+        //    var client = new NewsServer();
+        //    foreach (var feed in feeds)
+        //        feed.RefreshNews(client);
 
-            client.SendRequests();
-            await Task.WhenAll(feeds.Select(o => o.CurrentRefresh));
-        }
+        //    client.SendRequests();
+        //    await Task.WhenAll(feeds.Select(o => o.CurrentRefresh));
+        //}
 
         NewsItem FindNewsItem(Guid feedId, Guid newsItemId)
         {

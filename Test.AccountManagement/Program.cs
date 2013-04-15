@@ -79,7 +79,7 @@ namespace Test.AccountManagement
                 Feeds = new MockFeeds(),
             };
 
-            var ouser = await controller.AddUserAndReturnNewNews(user);
+            var ouser = await controller.AddUserAndReturnUserInfo(user);
             DebugEx.WriteLine(ouser);
         }
 
