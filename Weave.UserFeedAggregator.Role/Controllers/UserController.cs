@@ -227,7 +227,7 @@ namespace Weave.UserFeedAggregator.Role.Controllers
 
         [HttpPost]
         [ActionName("add_feed")]
-        public async Task AddFeed(Guid userId, [FromBody] Incoming.Feed feed)
+        public async Task AddFeed(Guid userId, [FromBody] Incoming.NewFeed feed)
         {
             var user = await userRepo.Get(userId);
             var userBO = ConvertToBusinessObject(user);
@@ -250,7 +250,7 @@ namespace Weave.UserFeedAggregator.Role.Controllers
 
         [HttpPost]
         [ActionName("update_feed")]
-        public async Task UpdateFeed(Guid userId, [FromBody] Incoming.Feed feed)
+        public async Task UpdateFeed(Guid userId, [FromBody] Incoming.UpdatedFeed feed)
         {
             var user = await userRepo.Get(userId);
             var userBO = ConvertToBusinessObject(user);
@@ -311,9 +311,14 @@ namespace Weave.UserFeedAggregator.Role.Controllers
             return user.Convert<Incoming.UserInfo, UserInfo>(Converters.Instance);
         }
 
-        Feed ConvertToBusinessObject(Incoming.Feed user)
+        Feed ConvertToBusinessObject(Incoming.NewFeed user)
         {
-            return user.Convert<Incoming.Feed, Feed>(Converters.Instance);
+            return user.Convert<Incoming.NewFeed, Feed>(Converters.Instance);
+        }
+
+        Feed ConvertToBusinessObject(Incoming.UpdatedFeed user)
+        {
+            return user.Convert<Incoming.UpdatedFeed, Feed>(Converters.Instance);
         }
         
         

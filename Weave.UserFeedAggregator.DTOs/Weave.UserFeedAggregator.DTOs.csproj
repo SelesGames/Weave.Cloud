@@ -38,7 +38,8 @@
   <ItemGroup>
     <Compile Include="ArticleViewingType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServerIncoming\Feed.cs" />
+    <Compile Include="ServerIncoming\NewFeed.cs" />
+    <Compile Include="ServerIncoming\UpdatedFeed.cs" />
     <Compile Include="ServerOutgoing\Feed.cs" />
     <Compile Include="ServerOutgoing\Image.cs" />
     <Compile Include="ServerOutgoing\NewsItem.cs" />

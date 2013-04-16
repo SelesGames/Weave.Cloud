@@ -97,8 +97,6 @@ namespace Weave.UserFeedAggregator.BusinessObjects
             if (feedsList == null || !feedsList.Any() || feed == null)
                 return;
 
-            feed.EnsureGuidIsSet();
-
             var matching = feedsList.FirstOrDefault(o => o.Id.Equals(feed.Id));
             if (matching != null)
             {

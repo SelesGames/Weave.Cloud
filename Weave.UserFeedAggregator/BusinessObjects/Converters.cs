@@ -23,7 +23,8 @@ namespace Weave.UserFeedAggregator.BusinessObjects
         IConverter<Feed, Outgoing.Feed>,
         IConverter<NewsItem, Outgoing.NewsItem>,
         IConverter<Image, Outgoing.Image>,
-        IConverter<Incoming.Feed, Feed>,
+        IConverter<Incoming.NewFeed, Feed>,
+        IConverter<Incoming.UpdatedFeed, Feed>,
         IConverter<Incoming.UserInfo, UserInfo>
     {
         public static readonly Converters Instance = new Converters();
@@ -96,11 +97,22 @@ namespace Weave.UserFeedAggregator.BusinessObjects
 
         #region from Server Incoming to Business Objects
 
-        public Feed Convert(Incoming.Feed o)
+        public Feed Convert(Incoming.NewFeed o)
         {
             return new Feed
             {
                 Uri = o.Uri,
+                Name = o.Name,
+                Category = o.Category,
+                ArticleViewingType = (ArticleViewingType)o.ArticleViewingType,
+            };
+        }
+
+        public Feed Convert(Incoming.UpdatedFeed o)
+        {
+            return new Feed
+            {
+                Id = o.Id,
                 Name = o.Name,
                 Category = o.Category,
                 ArticleViewingType = (ArticleViewingType)o.ArticleViewingType,
@@ -113,7 +125,7 @@ namespace Weave.UserFeedAggregator.BusinessObjects
 
             if (o.Feeds != null)
             {
-                foreach (var feed in o.Feeds.OfType<Incoming.Feed>().Select(x => x.Convert<Incoming.Feed, Feed>(Instance)))
+                foreach (var feed in o.Feeds.OfType<Incoming.NewFeed>().Select(x => x.Convert<Incoming.NewFeed, Feed>(Instance)))
                     user.AddFeed(feed, trustSource: false);
             }
 

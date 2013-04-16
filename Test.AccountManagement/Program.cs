@@ -162,18 +162,18 @@ namespace Test.AccountManagement
         //}
     }
 
-    class MockFeeds : List<Weave.UserFeedAggregator.DTOs.ServerIncoming.Feed>
+    class MockFeeds : List<Weave.UserFeedAggregator.DTOs.ServerIncoming.NewFeed>
     {
         public MockFeeds()
         {
-            Add(new Weave.UserFeedAggregator.DTOs.ServerIncoming.Feed 
+            Add(new Weave.UserFeedAggregator.DTOs.ServerIncoming.NewFeed 
             { 
                 Name = "Engadget", 
                 Category = "Technology",
                 ArticleViewingType = Weave.UserFeedAggregator.DTOs.ArticleViewingType.Mobilizer,
                 Uri = "http://www.engadget.com/rss.xml",
             });
-            Add(new Weave.UserFeedAggregator.DTOs.ServerIncoming.Feed
+            Add(new Weave.UserFeedAggregator.DTOs.ServerIncoming.NewFeed
             {
                 Name = "GigaOM",
                 Category = null,
@@ -181,7 +181,7 @@ namespace Test.AccountManagement
                 Uri = "http://feeds.feedburner.com/ommalik",
             });
 
-            Add(new Weave.UserFeedAggregator.DTOs.ServerIncoming.Feed
+            Add(new Weave.UserFeedAggregator.DTOs.ServerIncoming.NewFeed
             {
                 Name = "Mashable",
                 Category = "Technology",
@@ -189,7 +189,7 @@ namespace Test.AccountManagement
                 Uri = "http://feeds.mashable.com/Mashable",
             });
 
-            Add(new Weave.UserFeedAggregator.DTOs.ServerIncoming.Feed
+            Add(new Weave.UserFeedAggregator.DTOs.ServerIncoming.NewFeed
             {
                 Name = "The Verge",
                 Category = "Technology",
