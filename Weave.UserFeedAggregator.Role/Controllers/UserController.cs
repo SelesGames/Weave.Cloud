@@ -4,13 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Weave.UserFeedAggregator.BusinessObjects;
+using Weave.UserFeedAggregator.Contracts;
 using Weave.UserFeedAggregator.Repositories;
 using Incoming = Weave.UserFeedAggregator.DTOs.ServerIncoming;
 using Outgoing = Weave.UserFeedAggregator.DTOs.ServerOutgoing;
 
 namespace Weave.UserFeedAggregator.Role.Controllers
 {
-    public class UserController : ApiController
+    public class UserController : ApiController, IWeaveUserService
     {
         UserRepository userRepo;
 
@@ -53,6 +54,9 @@ namespace Weave.UserFeedAggregator.Role.Controllers
             var user = await userRepo.Get(userId);
             var userBO = ConvertToBusinessObject(user);
 
+            userBO.PreviousLoginTime = userBO.CurrentLoginTime;
+            userBO.CurrentLoginTime = DateTime.UtcNow;
+
             if (refresh)
             {
                 await userBO.RefreshAllFeeds();
@@ -61,6 +65,7 @@ namespace Weave.UserFeedAggregator.Role.Controllers
             }
 
             var outgoing = ConvertToOutgoing(userBO);
+            outgoing.LatestNews = userBO.GetLatestArticles().Select(ConvertToOutgoing).ToList();
             return outgoing;
         }
 
@@ -217,6 +222,105 @@ namespace Weave.UserFeedAggregator.Role.Controllers
         //}
 
 
+
+        #endregion
+
+
+
+
+        #region Get "featured" news - suitable for live tile, returns image only feeds
+
+        [HttpGet]
+        [ActionName("featured")]
+        public async Task<Outgoing.LiveTileNewsList> GetFeaturedNews(Guid userId, string category, int? take, bool refresh = false)
+        {
+            TimeSpan readTime, writeTime = TimeSpan.Zero;
+            var takeCount = take.Value;
+
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+            var user = await userRepo.Get(userId);
+            sw.Stop();
+            readTime = sw.Elapsed;
+
+            var userBO = ConvertToBusinessObject(user);
+            var subset = userBO.CreateSubsetFromCategory(category);
+
+            if (refresh)
+            {
+                await subset.Refresh();
+                user = ConvertToDataStore(userBO);
+
+                sw = System.Diagnostics.Stopwatch.StartNew();
+                await userRepo.Save(user);
+                sw.Stop();
+                writeTime = sw.Elapsed;
+            }
+
+            var orderedNews = subset.AllOrderedNews().ToList();
+            var newNewsCount = orderedNews.Count(o => userBO.IsNew(o));
+            var featuredNews = orderedNews.Where(o => o.HasImage).Take(takeCount).Select(ConvertToOutgoing).ToList();
+            var featuredNewsCount = featuredNews.Count;
+
+            var outgoing = new Outgoing.LiveTileNewsList
+            {
+                Id = userId,
+                FeedCount = subset.Count(),
+                NewNewsCount = newNewsCount,
+                FeaturedNewsCount = featuredNewsCount,
+                Feeds = subset.Select(ConvertToOutgoing).ToList(),
+                News = featuredNews,
+                DataStoreReadTime = readTime,
+                DataStoreWriteTime = writeTime,
+            };
+
+            return outgoing;
+        }
+
+        [HttpGet]
+        [ActionName("featured")]
+        public async Task<Outgoing.LiveTileNewsList> GetFeaturedNews(Guid userId, Guid feedId, int? take, bool refresh = false)
+        {
+            TimeSpan readTime, writeTime = TimeSpan.Zero;
+            var takeCount = take.Value;
+
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+            var user = await userRepo.Get(userId);
+            sw.Stop();
+            readTime = sw.Elapsed;
+
+            var userBO = ConvertToBusinessObject(user);
+            var subset = userBO.CreateSubsetFromFeedIds(new[] { feedId });
+
+            if (refresh)
+            {
+                await subset.Refresh();
+                user = ConvertToDataStore(userBO);
+
+                sw = System.Diagnostics.Stopwatch.StartNew();
+                await userRepo.Save(user);
+                sw.Stop();
+                writeTime = sw.Elapsed;
+            }
+
+            var orderedNews = subset.AllOrderedNews().ToList();
+            var newNewsCount = orderedNews.Count(o => userBO.IsNew(o));
+            var featuredNews = orderedNews.Where(o => o.HasImage).Take(takeCount).Select(ConvertToOutgoing).ToList();
+            var featuredNewsCount = featuredNews.Count;
+
+            var outgoing = new Outgoing.LiveTileNewsList
+            {
+                Id = userId,
+                FeedCount = subset.Count(),
+                NewNewsCount = newNewsCount,
+                FeaturedNewsCount = featuredNewsCount,
+                Feeds = subset.Select(ConvertToOutgoing).ToList(),
+                News = featuredNews,
+                DataStoreReadTime = readTime,
+                DataStoreWriteTime = writeTime,
+            };
+
+            return outgoing;
+        }
 
         #endregion
 

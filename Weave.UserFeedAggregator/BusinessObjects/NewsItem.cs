@@ -23,8 +23,6 @@ namespace Weave.UserFeedAggregator.BusinessObjects
         public DateTime OriginalDownloadDateTime { get; set; }
         public Image Image { get; set; }
 
-        public DateTime UtcPublishDateTime { get; private set; }
-
         public string UtcPublishDateTimeString
         {
             get { return utcPublishDateTimeString; }
@@ -35,6 +33,34 @@ namespace Weave.UserFeedAggregator.BusinessObjects
             }
         }
 
+
+
+
+        #region Derived Properties (readonly)
+
+        public DateTime UtcPublishDateTime { get; private set; }
+
+        public bool HasImage
+        {
+            get
+            {
+                return !string.IsNullOrEmpty(ImageUrl) &&
+                    Uri.IsWellFormedUriString(ImageUrl, UriKind.Absolute);
+            }
+        }
+
+        public double SortRating
+        {
+            get { return CalculateSortRating(UtcPublishDateTime); }
+        }
+
+        #endregion
+
+
+
+
+        #region Helper methods
+
         void UpdateDateTime()
         {
             var attempt = utcPublishDateTimeString.TryGetUtcDate();
@@ -43,5 +69,16 @@ namespace Weave.UserFeedAggregator.BusinessObjects
             else
                 FailedToParseUtcPublishDateTime = true;
         }
+
+        static double CalculateSortRating(DateTime dateTime)
+        {
+            double elapsedHours = (DateTime.UtcNow - dateTime).TotalHours;
+            if (elapsedHours <= 0)
+                elapsedHours = 0.0001;
+            double value = 1d / elapsedHours;
+            return value;
+        }
+
+        #endregion
     }
 }

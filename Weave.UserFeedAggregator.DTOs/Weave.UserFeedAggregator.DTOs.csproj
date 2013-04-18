@@ -42,6 +42,7 @@
     <Compile Include="ServerIncoming\UpdatedFeed.cs" />
     <Compile Include="ServerOutgoing\Feed.cs" />
     <Compile Include="ServerOutgoing\Image.cs" />
+    <Compile Include="ServerOutgoing\LiveTileNewsList.cs" />
     <Compile Include="ServerOutgoing\NewsItem.cs" />
     <Compile Include="ServerIncoming\UserInfo.cs" />
     <Compile Include="ServerOutgoing\UserInfo.cs" />

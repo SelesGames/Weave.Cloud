@@ -61,6 +61,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Weave\Windows Phone 8\Weave.UserFeedAggregator.Contracts\Weave.UserFeedAggregator.Contracts.csproj">
+      <Project>{02f3363f-7b0f-4c5f-9123-b388f2870c35}</Project>
+      <Name>Weave.UserFeedAggregator.Contracts</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common.Azure\Common.Azure.csproj">
       <Project>{6211D4F0-8390-4DFA-A1D2-BA4AA7C28348}</Project>
       <Name>Common.Azure</Name>

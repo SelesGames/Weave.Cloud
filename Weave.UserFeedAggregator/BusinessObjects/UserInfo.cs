@@ -20,6 +20,16 @@ namespace Weave.UserFeedAggregator.BusinessObjects
             return new FeedsSubset(feedsList).Refresh();
         }
 
+        public bool IsNew(NewsItem newsItem)
+        {
+            return !newsItem.HasBeenViewed && newsItem.OriginalDownloadDateTime > PreviousLoginTime;
+        }
+
+        public IEnumerable<NewsItem> GetLatestArticles()
+        {
+            return GetTopNewsItems();
+        }
+
 
 
 
@@ -142,19 +152,6 @@ namespace Weave.UserFeedAggregator.BusinessObjects
 
         #region helper methods
 
-        //async Task RefreshFeeds(IEnumerable<Feed> feeds)
-        //{
-        //    if (feeds == null || !feeds.Any())
-        //        return;
-
-        //    var client = new NewsServer();
-        //    foreach (var feed in feeds)
-        //        feed.RefreshNews(client);
-
-        //    client.SendRequests();
-        //    await Task.WhenAll(feeds.Select(o => o.CurrentRefresh));
-        //}
-
         NewsItem FindNewsItem(Guid feedId, Guid newsItemId)
         {
             if (feedsList == null || !feedsList.Any())
@@ -166,6 +163,57 @@ namespace Weave.UserFeedAggregator.BusinessObjects
                 .FirstOrDefault(o => o.Id.Equals(newsItemId));
 
             return newsItem;
+        }
+
+        #endregion
+
+
+
+
+        #region helper methods for creating the latest/featured news
+
+        const int pageSize = 8;
+
+        IEnumerable<NewsItem> GetTopNewsItems()
+        {
+            IEnumerable<NewsItem> pool = Feeds
+                .AllOrderedNews()
+                .Where(news => !news.HasBeenViewed)
+                //.Distinct(NewsItemComparer.Instance)
+                .Take(20)
+                .ToList();
+
+            pool = CreatePool(pool);
+            var topNewsItems = pool.Take(pageSize).ToList();
+            return topNewsItems;
+        }
+
+        static IEnumerable<NewsItem> CreatePool(IEnumerable<NewsItem> allNewsItems)
+        {
+            return allNewsItems
+                .Select(i => new
+                {
+                    NewsItem = i,
+                    AdjustedSortRating = GetAdjustedForImagePresenceSortRating(i),
+                })
+                .Select(i =>
+                new
+                {
+                    NewsItem = i.NewsItem,
+                    FinalAdjustedSortRating = GetAdjustedForRepetitiveFeedSortRating(i.AdjustedSortRating)
+                })
+                .OrderByDescending(i => i.FinalAdjustedSortRating)
+                .Select(i => i.NewsItem);
+        }
+
+        static double GetAdjustedForImagePresenceSortRating(NewsItem i)
+        {
+            return i.HasImage ? 100d * i.SortRating : i.SortRating;
+        }
+
+        static double GetAdjustedForRepetitiveFeedSortRating(double i)
+        {
+            return i;
         }
 
         #endregion
