@@ -40,6 +40,7 @@
     <Compile Include="DebugEx.cs" />
     <Compile Include="DelegateProvider.cs" />
     <Compile Include="Extensions\ConvertExtension.cs" />
+    <Compile Include="Extensions\IDictionaryExtensions.cs" />
     <Compile Include="Extensions\IEnumerableExtensions.cs" />
     <Compile Include="Extensions\LinqToXmlExtensions.cs" />
     <Compile Include="Extensions\StreamExtensionMethods.cs" />

@@ -6,10 +6,10 @@ namespace Weave.UserFeedAggregator.BusinessObjects
 {
     public static class FeedExtensions
     {
-        public static IEnumerable<string> UniqueCategoryNames(this IEnumerable<Feed> feeds)
-        {
-            return feeds.Select(o => o.Category).Distinct().OfType<string>();
-        }
+        //public static IEnumerable<string> UniqueCategoryNames(this IEnumerable<Feed> feeds)
+        //{
+        //    return feeds.Select(o => o.Category).Distinct().OfType<string>();
+        //}
 
         public static IEnumerable<Feed> OfCategory(this IEnumerable<Feed> feeds, string categoryName)
         {

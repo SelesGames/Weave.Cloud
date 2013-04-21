@@ -145,6 +145,19 @@ namespace Weave.UserFeedAggregator.BusinessObjects
             newsItem.HasBeenViewed = false;
         }
 
+        public void MarkNewsItemsSoftRead(IEnumerable<Guid> newsItemIds)
+        {
+            if (newsItemIds == null || feedsList == null)
+                return;
+
+            var lookup = feedsList.AllNews().ToDictionary(o => o.Id);
+
+            var newsItems = newsItemIds.Select(o => lookup.GetValueOrDefault(o)).OfType<NewsItem>();
+
+            foreach (var newsItem in newsItems)
+                newsItem.HasBeenViewed = true;
+        }
+
         #endregion
 
 

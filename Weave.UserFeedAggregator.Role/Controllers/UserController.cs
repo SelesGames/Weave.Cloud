@@ -1,5 +1,6 @@
 ﻿using SelesGames.Common;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -389,6 +390,17 @@ namespace Weave.UserFeedAggregator.Role.Controllers
             var user = await userRepo.Get(userId);
             var userBO = ConvertToBusinessObject(user);
             await userBO.MarkNewsItemUnread(feedId, newsItemId);
+            user = ConvertToDataStore(userBO);
+            await userRepo.Save(user);
+        }
+
+        [HttpGet]
+        [ActionName("soft_read")]
+        public async Task MarkArticlesSoftRead(Guid userId, [FromBody] List<Guid> newsItemIds)
+        {
+            var user = await userRepo.Get(userId);
+            var userBO = ConvertToBusinessObject(user);
+            userBO.MarkNewsItemsSoftRead(newsItemIds);
             user = ConvertToDataStore(userBO);
             await userRepo.Save(user);
         }
