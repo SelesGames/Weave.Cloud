@@ -64,8 +64,8 @@ namespace Test.AccountManagement
             var controller = CreateController();
 
             var user = await controller.RefreshAndReturnNews(Guid.Parse("ece6a3d1-b5e9-43b7-8cde-317d8dd3efb3"));
-            var article = user.Feeds.SelectMany(o => o.News).First();
-            await controller.MarkArticleRead(user.Id, article.FeedId, article.Id);
+            //var article = user.Feeds.SelectMany(o => o.News).First();
+            //await controller.MarkArticleRead(user.Id, article.FeedId, article.Id);
             DebugEx.WriteLine(user);
         }
 

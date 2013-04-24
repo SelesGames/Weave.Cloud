@@ -365,6 +365,50 @@ namespace Weave.UserFeedAggregator.Role.Controllers
             await userRepo.Save(user);
         }
 
+        [HttpPost]
+        [ActionName("batch_change")]
+        public async Task BatchChange(Guid userId, [FromBody] Incoming.BatchFeedChange changeSet)
+        {
+            if (changeSet == null)
+                return;
+
+            var user = await userRepo.Get(userId);
+            var userBO = ConvertToBusinessObject(user);
+
+            var added = changeSet.Added;
+            var removed = changeSet.Removed;
+            var updated = changeSet.Updated;
+
+            if (!EnumerableEx.IsNullOrEmpty(added))
+            {
+                foreach (var feed in added)
+                {
+                    var feedBO = ConvertToBusinessObject(feed);
+                    userBO.AddFeed(feedBO);
+                }
+            }
+
+            if (!EnumerableEx.IsNullOrEmpty(removed))
+            {
+                foreach (var feedId in removed)
+                {
+                    userBO.RemoveFeed(feedId);
+                }
+            }
+
+            if (!EnumerableEx.IsNullOrEmpty(updated))
+            {
+                foreach (var feed in updated)
+                {
+                    var feedBO = ConvertToBusinessObject(feed);
+                    userBO.UpdateFeed(feedBO);
+                }
+            }
+
+            user = ConvertToDataStore(userBO);
+            await userRepo.Save(user);
+        }
+
         #endregion
 
 

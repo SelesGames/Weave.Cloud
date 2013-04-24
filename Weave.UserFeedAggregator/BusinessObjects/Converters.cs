@@ -21,6 +21,7 @@ namespace Weave.UserFeedAggregator.BusinessObjects
         IConverter<UserInfo, User.DataStore.UserInfo>,
         IConverter<UserInfo, Outgoing.UserInfo>,
         IConverter<Feed, Outgoing.Feed>,
+        IConverter<Feed, Outgoing.FeedInfo>,
         IConverter<NewsItem, Outgoing.NewsItem>,
         IConverter<Image, Outgoing.Image>,
         IConverter<Incoming.NewFeed, Feed>,
@@ -330,13 +331,26 @@ namespace Weave.UserFeedAggregator.BusinessObjects
             };
         }
 
+        Outgoing.FeedInfo IConverter<Feed, Outgoing.FeedInfo>.Convert(Feed o)
+        {
+            return new Outgoing.FeedInfo
+            {
+                Id = o.Id,
+                Uri = o.Uri,
+                Name = o.Name,
+                Category = o.Category,
+                ArticleViewingType = (Weave.UserFeedAggregator.DTOs.ArticleViewingType)o.ArticleViewingType,
+                TotalArticleCount = o.News == null ? 0 : o.News.Count,
+            };
+        }
+
         Outgoing.UserInfo IConverter<UserInfo, Outgoing.UserInfo>.Convert(UserInfo o)
         {
             return new Outgoing.UserInfo
             {
                 Id = o.Id,
                 FeedCount = o.Feeds == null ? 0 : o.Feeds.Count,
-                Feeds = o.Feeds == null ? null : o.Feeds.OfType<Feed>().Select(x => x.Convert<Feed, Outgoing.Feed>(Instance)).ToList(),
+                Feeds = o.Feeds == null ? null : o.Feeds.OfType<Feed>().Select(x => x.Convert<Feed, Outgoing.FeedInfo>(Instance)).ToList(),
                 PreviousLoginTime = o.PreviousLoginTime,
                 CurrentLoginTime = o.CurrentLoginTime,
             };

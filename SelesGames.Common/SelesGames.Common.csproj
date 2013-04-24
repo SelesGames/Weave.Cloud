@@ -39,6 +39,7 @@
   <ItemGroup>
     <Compile Include="DebugEx.cs" />
     <Compile Include="DelegateProvider.cs" />
+    <Compile Include="EnumerableEx.cs" />
     <Compile Include="Extensions\ConvertExtension.cs" />
     <Compile Include="Extensions\IDictionaryExtensions.cs" />
     <Compile Include="Extensions\IEnumerableExtensions.cs" />
