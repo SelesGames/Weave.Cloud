@@ -1,5 +1,4 @@
 ﻿using Common.Azure.Compression;
-using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.StorageClient;
 using System;
 using System.IO;
@@ -7,22 +6,23 @@ using System.Threading.Tasks;
 
 namespace Common.Azure
 {
-    public class AzureBlobStreamClient
+    public class AzureBlobStreamClient : AzureBlobClient
     {
-        CloudStorageAccount account;
+        //CloudStorageAccount account;
         string container;
 
         public TimeSpan ReadTimeout { get; set; }
         public TimeSpan WriteTimeout { get; set; }
         public string ContentType { get; set; }
-        public string BlobEndpoint { get; private set; }
+        //public string BlobEndpoint { get; private set; }
         public bool UseGzipOnUpload { get; set; }
 
         public AzureBlobStreamClient(string storageAccountName, string key, string container, bool useHttps)
+            : base(storageAccountName, key, useHttps)
         {
-            var blobCred = new StorageCredentialsAccountAndKey(storageAccountName, key);
-            account = new CloudStorageAccount(blobCred, useHttps);
-            BlobEndpoint = account.BlobEndpoint.ToString();
+            //var blobCred = new StorageCredentialsAccountAndKey(storageAccountName, key);
+            //account = new CloudStorageAccount(blobCred, useHttps);
+            //BlobEndpoint = account.BlobEndpoint.ToString();
             this.container = container;
 
             ReadTimeout = TimeSpan.FromSeconds(30);
@@ -95,8 +95,9 @@ namespace Common.Azure
 
         CloudBlob GetBlobHandle(string fileName)
         {
-            var client = account.CreateCloudBlobClient();
-            var container = client.GetContainerReference(this.container);
+            //var client = account.CreateCloudBlobClient();
+            //var container = client.GetContainerReference(this.container);
+            var container = base.GetContainerHandle(this.container);
             return container.GetBlobReference(fileName);
         }
 
