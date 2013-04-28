@@ -5,7 +5,7 @@ AS
 
 BEGIN
 
-DELETE FROM [dbo].[ReadNewsItem] WHERE [UserId]=@p1 AND [NewsItemId]=@p2
+DELETE TOP(1) FROM [dbo].[ReadNewsItem] WHERE [UserId]=@p1 AND [NewsItemId]=@p2
 
 END
 GO

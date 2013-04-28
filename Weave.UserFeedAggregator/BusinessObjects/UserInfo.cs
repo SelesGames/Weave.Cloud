@@ -158,6 +158,17 @@ namespace Weave.UserFeedAggregator.BusinessObjects
                 newsItem.HasBeenViewed = true;
         }
 
+        public async Task FavoriteArticle(Guid feedId, Guid newsItemId)
+        {
+            var newsItem = FindNewsItem(feedId, newsItemId);
+            if (newsItem == null)
+                return;
+
+            var favorited = newsItem.Convert<NewsItem, Weave.Article.Service.DTOs.FavoriteNewsItem>(Converters.Instance);
+            await ArticleServiceClient.Current.AddFavorite(Id, favorited);
+            newsItem.HasBeenViewed = true;
+        }
+
         #endregion
 
 

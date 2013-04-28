@@ -1,8 +1,8 @@
 ﻿CREATE PROCEDURE [dbo].[AddNewsItemFavorite]
 	@p1 UNIQUEIDENTIFIER,       --NewsItemId
 	@p2 UNIQUEIDENTIFIER,       --UserId
-	@p3 UNIQUEIDENTIFIER,       --FeedId
-	@p4 DATETIME,               --PublishDateTime
+	@p3 DATETIME,               --PublishDateTime
+	@p4 VARCHAR(MAX),			--SourceName
 	@p5 VARCHAR(MAX),           --Title
 	@p6 VARCHAR(MAX),           --Link
 	@p7 VARBINARY(MAX)          --NewsItemBlob
@@ -16,14 +16,14 @@ BEGIN
 	INSERT INTO [dbo].[FavoriteNewsItem] (
 		[NewsItemId],
 		[UserId],
-		[FeedId],
 		[PublishDateTime],
 		[SavedOn],
+		[SourceName],
 		[Title],
 		[Link],
 		[NewsItemBlob])
  
-	VALUES (@p1,@p2,@p3,@p4,GETUTCDATE(),@p5,@p6,@p7)
+	VALUES (@p1,@p2,@p3,GETUTCDATE(),@p4,@p5,@p6,@p7)
 
 	SELECT CAST(1 AS bit) AS Result
 END

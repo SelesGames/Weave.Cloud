@@ -67,5 +67,7 @@
     <Build Include="Tables\FavoriteNewsItem.sql" />
     <Build Include="Tables\ReadNewsItem.sql" />
     <Build Include="StoredProcedures\RemoveNewsItemRead.sql" />
+    <Build Include="StoredProcedures\GetNewsItemRead.sql" />
+    <Build Include="StoredProcedures\RemoveNewsItemFavorite.sql" />
   </ItemGroup>
 </Project>
