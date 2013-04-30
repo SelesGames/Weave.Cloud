@@ -3,6 +3,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Weave.Article.Service.DTOs;
+using Weave.Article.Service.DTOs.ServerIncoming;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
 
 namespace Weave.UserFeedAggregator
@@ -33,7 +34,7 @@ namespace Weave.UserFeedAggregator
             return client.GetAsync(url, CancellationToken.None);
         }
 
-        public Task AddFavorite(Guid userId, FavoriteNewsItem newsItem)
+        public Task AddFavorite(Guid userId, SavedNewsItem newsItem)
         {
             if (userId == Guid.Empty) throw new ArgumentException("Not a valid userId");
             if (newsItem == null) throw new ArgumentNullException("Missing NewsItem object in message body");

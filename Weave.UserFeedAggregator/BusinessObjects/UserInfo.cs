@@ -164,7 +164,7 @@ namespace Weave.UserFeedAggregator.BusinessObjects
             if (newsItem == null)
                 return;
 
-            var favorited = newsItem.Convert<NewsItem, Weave.Article.Service.DTOs.FavoriteNewsItem>(Converters.Instance);
+            var favorited = newsItem.Convert<NewsItem, Weave.Article.Service.DTOs.ServerIncoming.SavedNewsItem>(Converters.Instance);
             await ArticleServiceClient.Current.AddFavorite(Id, favorited);
             newsItem.HasBeenViewed = true;
         }

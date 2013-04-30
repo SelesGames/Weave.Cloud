@@ -24,6 +24,7 @@ namespace Weave.UserFeedAggregator.BusinessObjects
         IConverter<Feed, Outgoing.FeedInfo>,
         IConverter<NewsItem, Outgoing.NewsItem>,
         IConverter<Image, Outgoing.Image>,
+        IConverter<NewsItem, Weave.Article.Service.DTOs.ServerIncoming.SavedNewsItem>,
         IConverter<Incoming.NewFeed, Feed>,
         IConverter<Incoming.UpdatedFeed, Feed>,
         IConverter<Incoming.UserInfo, UserInfo>
@@ -357,5 +358,22 @@ namespace Weave.UserFeedAggregator.BusinessObjects
         }
 
         #endregion
+
+        Article.Service.DTOs.ServerIncoming.SavedNewsItem IConverter<NewsItem, Article.Service.DTOs.ServerIncoming.SavedNewsItem>.Convert(NewsItem o)
+        {
+            return new Article.Service.DTOs.ServerIncoming.SavedNewsItem
+            {
+                Title = o.Title,
+                Link = o.Link,
+                ImageUrl = o.ImageUrl, 
+                UtcPublishDateTime = o.UtcPublishDateTimeString,
+                YoutubeId = o.YoutubeId,
+                VideoUri = o.VideoUri,
+                PodcastUri = o.PodcastUri,
+                ZuneAppId = o.ZuneAppId,
+
+                //Image = o.Image == null ? null : o.Image.Convert<Image, Outgoing.Image>(Instance),
+            };
+        }
     }
 }
