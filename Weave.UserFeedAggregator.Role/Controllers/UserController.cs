@@ -451,7 +451,7 @@ namespace Weave.UserFeedAggregator.Role.Controllers
 
         [HttpGet]
         [ActionName("favorite")]
-        public async Task MarkArticlesSoftRead(Guid userId, Guid feedId, Guid newsItemId)
+        public async Task FavoriteArticle(Guid userId, Guid feedId, Guid newsItemId)
         {
             var user = await userRepo.Get(userId);
             var userBO = ConvertToBusinessObject(user);
@@ -459,8 +459,6 @@ namespace Weave.UserFeedAggregator.Role.Controllers
             user = ConvertToDataStore(userBO);
             await userRepo.Save(user);
         }
-
-
 
         #endregion
 
