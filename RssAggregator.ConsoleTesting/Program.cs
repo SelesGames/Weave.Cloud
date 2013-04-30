@@ -33,7 +33,8 @@ namespace RssAggregator.ConsoleTesting
         {
             try
             {
-                TestChangeProccer().Wait();
+                TestBasicFreedRequester().Wait();
+                //TestChangeProccer().Wait();
                 //TestSub().Wait();
                 //FixUnsetBlobs().Wait();
                 //TestReceiveServiceBusMessageQueue();
@@ -50,6 +51,17 @@ namespace RssAggregator.ConsoleTesting
 
             while (true)
                 Console.ReadLine();
+        }
+
+        static async Task TestBasicFreedRequester()
+        {
+            var feedRequester = new FeedRequester
+            {
+                FeedUri = "http://feeds.boingboing.net/boingboing/iBag",
+            };
+
+            await feedRequester.UpdateFeed();
+            DebugEx.WriteLine(feedRequester);
         }
 
         static async Task TestChangeProccer()
@@ -125,12 +137,13 @@ namespace RssAggregator.ConsoleTesting
                             Link = o.Link,
                             OriginalPublishDateTimeString = o.OriginalPublishDateTimeString,
                             UtcPublishDateTime = o.PublishDateTime,
-                            ImageUrl = o.ImageUrl,
                             VideoUri = o.VideoUri,
                             YoutubeId = o.YoutubeId,
                             PodcastUri = o.PodcastUri,
                             ZuneAppId = o.ZuneAppId,
                         };
+
+                        entry.AddImage(o.ImageUrl);
 
                         if (o.NewsItemBlob == null)
                         {
@@ -164,7 +177,7 @@ namespace RssAggregator.ConsoleTesting
             {
                 Title = e.Title,
                 Link = e.Link,
-                ImageUrl = e.ImageUrl,
+                ImageUrl = e.GetImageUrl(),
                 PublishDateTime = e.UtcPublishDateTimeString,
                 Description = null,//entry.Description,
                 VideoUri = e.VideoUri,

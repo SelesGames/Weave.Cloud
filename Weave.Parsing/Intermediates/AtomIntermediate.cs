@@ -83,50 +83,39 @@ namespace Weave.Parsing.Intermediates
 
 
             // attempt to parse the description html for various media links
-            e.ExtractYoutubeVideoAndPodcastUrlsFromDescription();
+            e.ExtractImagesAndYoutubeVideoAndPodcastUrlsFromDescription();
 
 
             // if either image or podcast or video is not set, check for media content
-            if (string.IsNullOrEmpty(e.ImageUrl) || string.IsNullOrEmpty(e.PodcastUri) || string.IsNullOrEmpty(e.VideoUri))
+            var mediaContent = xml.GetMediaContentUrl();
+            if (mediaContent.IsWellFormed())
             {
-                var mediaContent = xml.GetMediaContentUrl();
+                if (mediaContent.IsImageUrl())
+                    e.AddImage(mediaContent);
 
-                if (mediaContent.IsWellFormed())
-                {
-                    if (string.IsNullOrEmpty(e.ImageUrl) && mediaContent.IsImageUrl())
-                        e.ImageUrl = mediaContent;
+                else if (string.IsNullOrEmpty(e.PodcastUri) && mediaContent.IsAudioFileUrl())
+                    e.PodcastUri = mediaContent;
 
-                    else if (string.IsNullOrEmpty(e.PodcastUri) && mediaContent.IsAudioFileUrl())
-                        e.PodcastUri = mediaContent;
-
-                    else if (string.IsNullOrEmpty(e.VideoUri) && mediaContent.IsVideoFileUrl())
-                        e.VideoUri = mediaContent;
-                }
+                else if (string.IsNullOrEmpty(e.VideoUri) && mediaContent.IsVideoFileUrl())
+                    e.VideoUri = mediaContent;
             }
 
 
             // if either image or podcast or video is not set, check the enclosure element
-            if (string.IsNullOrEmpty(e.ImageUrl) || string.IsNullOrEmpty(e.PodcastUri) || string.IsNullOrEmpty(e.VideoUri))
+            var enclosure = xml.GetEnclosureUrl();
+            if (enclosure.IsWellFormed())
             {
-                var enclosure = xml.GetEnclosureUrl();
+                if (enclosure.IsImageUrl())
+                    e.AddImage(enclosure);
 
-                if (enclosure.IsWellFormed())
-                {
-                    if (string.IsNullOrEmpty(e.ImageUrl) && enclosure.IsImageUrl())
-                        e.ImageUrl = enclosure;
+                else if (string.IsNullOrEmpty(e.PodcastUri) && enclosure.IsAudioFileUrl())
+                    e.PodcastUri = enclosure;
 
-                    else if (string.IsNullOrEmpty(e.PodcastUri) && enclosure.IsAudioFileUrl())
-                        e.PodcastUri = enclosure;
-
-                    else if (string.IsNullOrEmpty(e.VideoUri) && enclosure.IsVideoFileUrl())
-                        e.VideoUri = enclosure;
-                }
+                else if (string.IsNullOrEmpty(e.VideoUri) && enclosure.IsVideoFileUrl())
+                    e.VideoUri = enclosure;
             }
 
-
-            if (string.IsNullOrEmpty(e.ImageUrl))
-                e.ImageUrl = description.ParseImageUrlFromHtml();
-
+            e.AddImage(description.ParseImageUrlFromHtml());
 
             e.OriginalPublishDateTimeString = PublicationDateString;
             e.UtcPublishDateTime = PublicationDate;

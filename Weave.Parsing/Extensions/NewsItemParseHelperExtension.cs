@@ -6,7 +6,7 @@ namespace Weave.Parsing
 {
     internal static class NewsItemParseHelperExtension
     {
-        public static void ExtractYoutubeVideoAndPodcastUrlsFromDescription(this Entry e)
+        public static void ExtractImagesAndYoutubeVideoAndPodcastUrlsFromDescription(this Entry e)
         {
             if (e == null)
                 throw new ArgumentNullException("newsItem in ParseDescriptionAndExtractYoutubeVideoAndPodcast");
@@ -25,8 +25,9 @@ namespace Weave.Parsing
                 .ToList();
 
 
-            var potentialImage = matches.Where(o => o.IsImageUrl()).FirstOrDefault();
-            e.ImageUrl = potentialImage;
+            var potentialImages = matches.Where(o => o.IsImageUrl());
+            foreach (var image in potentialImages)
+                e.AddImage(image);
 
 
             var potentialYoutube = matches

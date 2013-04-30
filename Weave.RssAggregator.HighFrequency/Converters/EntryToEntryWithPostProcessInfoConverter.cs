@@ -17,7 +17,7 @@ namespace Weave.RssAggregator.HighFrequency
                 Title = e.Title,
                 OriginalPublishDateTimeString = e.OriginalPublishDateTimeString,
                 Link = e.Link,
-                OriginalImageUrl = e.ImageUrl,
+                OriginalImageUrl = e.GetImageUrl(),
                 Description = e.Description,
                 YoutubeId = e.YoutubeId,
                 VideoUri = e.VideoUri,

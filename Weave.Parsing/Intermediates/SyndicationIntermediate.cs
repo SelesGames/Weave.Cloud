@@ -38,10 +38,9 @@ namespace Weave.Parsing.Intermediates
                 Description = content,
                 OriginalPublishDateTimeString = PublicationDateString,
                 UtcPublishDateTime = PublicationDate,
-                ImageUrl = null,
             };
 
-            e.ExtractYoutubeVideoAndPodcastUrlsFromDescription();
+            e.ExtractImagesAndYoutubeVideoAndPodcastUrlsFromDescription();
 
             return e;
         }

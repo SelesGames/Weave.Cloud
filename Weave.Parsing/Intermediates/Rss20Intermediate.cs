@@ -70,7 +70,7 @@ namespace Weave.Parsing.Intermediates
 
         public Entry CreateEntry()
         {
-            var ni = new Entry();
+            var e = new Entry();
 
             var title = xml.Element("title");
             var link = xml.Element("link");
@@ -78,8 +78,8 @@ namespace Weave.Parsing.Intermediates
             if (title == null || link == null)
                 throw new Exception("title or link missing - Rss20Intermediate.CreateEntry()");
 
-            ni.Title = HttpUtility.HtmlDecode(title.Value.Trim());
-            ni.Link = link.Value;
+            e.Title = HttpUtility.HtmlDecode(title.Value.Trim());
+            e.Link = link.Value;
 
 
             XElement descriptionNode;
@@ -91,59 +91,50 @@ namespace Weave.Parsing.Intermediates
 
             var description = descriptionNode.ValueOrDefault();
 
-            ni.Description = description;
+            e.Description = description;
 
 
             // attempt to parse the description html for various media links
-            ni.ExtractYoutubeVideoAndPodcastUrlsFromDescription();
+            e.ExtractImagesAndYoutubeVideoAndPodcastUrlsFromDescription();
 
 
             // if either image or podcast or video is not set, check for media content
-            if (string.IsNullOrEmpty(ni.ImageUrl) || string.IsNullOrEmpty(ni.PodcastUri) || string.IsNullOrEmpty(ni.VideoUri))
+            var mediaContent = xml.GetMediaContentUrl();
+            if (mediaContent.IsWellFormed())
             {
-                var mediaContent = xml.GetMediaContentUrl();
+                if (mediaContent.IsImageUrl())
+                    e.AddImage(mediaContent);
 
-                if (mediaContent.IsWellFormed())
-                {
-                    if (string.IsNullOrEmpty(ni.ImageUrl) && mediaContent.IsImageUrl())
-                        ni.ImageUrl = mediaContent;
+                else if (string.IsNullOrEmpty(e.PodcastUri) && mediaContent.IsAudioFileUrl())
+                    e.PodcastUri = mediaContent;
 
-                    else if (string.IsNullOrEmpty(ni.PodcastUri) && mediaContent.IsAudioFileUrl())
-                        ni.PodcastUri = mediaContent;
-
-                    else if (string.IsNullOrEmpty(ni.VideoUri) && mediaContent.IsVideoFileUrl())
-                        ni.VideoUri = mediaContent;
-                }
+                else if (string.IsNullOrEmpty(e.VideoUri) && mediaContent.IsVideoFileUrl())
+                    e.VideoUri = mediaContent;
             }
 
 
             // if either image or podcast or video is not set, check the enclosure element
-            if (string.IsNullOrEmpty(ni.ImageUrl) || string.IsNullOrEmpty(ni.PodcastUri) || string.IsNullOrEmpty(ni.VideoUri))
+            var enclosure = xml.GetEnclosureUrl();
+            if (enclosure.IsWellFormed())
             {
-                var enclosure = xml.GetEnclosureUrl();
+                if (enclosure.IsImageUrl())
+                    e.AddImage(enclosure);
 
-                if (enclosure.IsWellFormed())
-                {
-                    if (string.IsNullOrEmpty(ni.ImageUrl) && enclosure.IsImageUrl())
-                        ni.ImageUrl = enclosure;
+                else if (string.IsNullOrEmpty(e.PodcastUri) && enclosure.IsAudioFileUrl())
+                    e.PodcastUri = enclosure;
 
-                    else if (string.IsNullOrEmpty(ni.PodcastUri) && enclosure.IsAudioFileUrl())
-                        ni.PodcastUri = enclosure;
-
-                    else if (string.IsNullOrEmpty(ni.VideoUri) && enclosure.IsVideoFileUrl())
-                        ni.VideoUri = enclosure;
-                }
+                else if (string.IsNullOrEmpty(e.VideoUri) && enclosure.IsVideoFileUrl())
+                    e.VideoUri = enclosure;
             }
 
-            if (string.IsNullOrEmpty(ni.ImageUrl))
-                ni.ImageUrl = description.ParseImageUrlFromHtml();
+            e.AddImage(description.ParseImageUrlFromHtml());
 
-            ni.OriginalPublishDateTimeString = PublicationDateString;
-            ni.UtcPublishDateTime = PublicationDate;
-            ni.OriginalRssXml = xml.ToString();
+            e.OriginalPublishDateTimeString = PublicationDateString;
+            e.UtcPublishDateTime = PublicationDate;
+            e.OriginalRssXml = xml.ToString();
 
 
-            return ni;
+            return e;
         }
     }
 }

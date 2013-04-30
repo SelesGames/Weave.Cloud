@@ -14,7 +14,7 @@ namespace RssAggregator.Client.Converters
             {
                 Title = e.Title,
                 Link = e.Link,
-                ImageUrl = e.ImageUrl,
+                ImageUrl = e.GetImageUrl(),
                 PublishDateTime = e.UtcPublishDateTimeString,
                 Description = null,//entry.Description,
                 VideoUri = e.VideoUri,
