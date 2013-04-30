@@ -78,7 +78,7 @@ namespace Weave.UserFeedAggregator.Role.Controllers
 
         [HttpGet]
         [ActionName("news")]
-        public async Task<Outgoing.UserNews> GetNews(Guid userId, string category, bool refresh = false, int skip = 0, int take = 10)
+        public async Task<Outgoing.NewsList> GetNews(Guid userId, string category, bool refresh = false, int skip = 0, int take = 10)
         {
             TimeSpan readTime, writeTime = TimeSpan.Zero;
 
@@ -101,7 +101,7 @@ namespace Weave.UserFeedAggregator.Role.Controllers
                 writeTime = sw.Elapsed;
             }
 
-            var outgoing = new Outgoing.UserNews
+            var outgoing = new Outgoing.NewsList
             {
                 Id = userId,
                 FeedCount = subset.Count(),
@@ -120,7 +120,7 @@ namespace Weave.UserFeedAggregator.Role.Controllers
 
         [HttpGet]
         [ActionName("news")]
-        public async Task<Outgoing.UserNews> GetNews(Guid userId, Guid feedId, bool refresh = false, int skip = 0, int take = 10)
+        public async Task<Outgoing.NewsList> GetNews(Guid userId, Guid feedId, bool refresh = false, int skip = 0, int take = 10)
         {
             TimeSpan readTime, writeTime = TimeSpan.Zero;
 
@@ -143,7 +143,7 @@ namespace Weave.UserFeedAggregator.Role.Controllers
                 writeTime = sw.Elapsed;
             }
 
-            var outgoing = new Outgoing.UserNews
+            var outgoing = new Outgoing.NewsList
             {
                 Id = userId,
                 FeedCount = subset.Count(),
