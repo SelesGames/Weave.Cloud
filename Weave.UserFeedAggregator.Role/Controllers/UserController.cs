@@ -32,7 +32,6 @@ namespace Weave.UserFeedAggregator.Role.Controllers
         {
             var userBO = ConvertToBusinessObject(incomingUser);
             var user = ConvertToDataStore(userBO);
-            //await userRepo.Add(user);
             await userRepo.Save(user);
             await userBO.RefreshAllFeeds();
             user = ConvertToDataStore(userBO);
@@ -450,7 +449,7 @@ namespace Weave.UserFeedAggregator.Role.Controllers
         }
 
         [HttpGet]
-        [ActionName("favorite")]
+        [ActionName("add_favorite")]
         public async Task FavoriteArticle(Guid userId, Guid feedId, Guid newsItemId)
         {
             var user = await userRepo.Get(userId);
