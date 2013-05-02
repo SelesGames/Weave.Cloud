@@ -88,6 +88,7 @@ namespace Weave.UserFeedAggregator.BusinessObjects
             }
 
             feedsList.Add(feed);
+            feed.User = this;
         }
 
         public void RemoveFeed(Guid feedId)

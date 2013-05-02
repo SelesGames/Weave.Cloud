@@ -16,6 +16,7 @@ namespace Weave.UserFeedAggregator.BusinessObjects
         List<NewsItem> news;
         object syncObject = new object();
 
+        public UserInfo User { get; set; }
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Uri { get; set; }
