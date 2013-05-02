@@ -13,6 +13,7 @@ namespace Weave.UserFeedAggregator.BusinessObjects
     public class Feed
     {
         bool isUpdating = false;
+        List<NewsItem> news;
         object syncObject = new object();
 
         public Guid Id { get; set; }
@@ -24,11 +25,20 @@ namespace Weave.UserFeedAggregator.BusinessObjects
         public string MostRecentNewsItemPubDate { get; set; }
         public DateTime LastRefreshedOn { get; set; }
         public ArticleViewingType ArticleViewingType { get; set; }
-        public List<NewsItem> News { get; set; }
+        public List<NewsItem> News
+        {
+            get { return news; }
+            set
+            {
+                news = value;
+                UpdateTeaserImage();
+            }
+        }
 
 
         public Task CurrentRefresh { get; private set; }
         public bool IsModified { get; private set; }
+        public string TeaserImageUrl { get; private set; }
 
 
         public void EnsureGuidIsSet()
@@ -93,6 +103,7 @@ namespace Weave.UserFeedAggregator.BusinessObjects
                 Etag = update.Etag;
                 LastModified = update.LastModified;
                 MostRecentNewsItemPubDate = update.MostRecentNewsItemPubDate;
+                UpdateTeaserImage();
                 //SaveToUpdateHistory();
             }
 
@@ -102,7 +113,7 @@ namespace Weave.UserFeedAggregator.BusinessObjects
 
         void DeleteNewsOlderThan(string date)
         {
-            if (News == null || !News.Any())
+            if (EnumerableEx.IsNullOrEmpty(News))
                 return;
 
             var tryGetOldestDate = date.TryGetUtcDate();
@@ -134,7 +145,7 @@ namespace Weave.UserFeedAggregator.BusinessObjects
 
         bool DoesAnyExistingNewsItemMatch(Weave.RssAggregator.Core.DTOs.Outgoing.NewsItem newNewsItem)
         {
-            if (News == null || News.Count == 0)
+            if (EnumerableEx.IsNullOrEmpty(News))
                 return false;
 
             return News.Any(newsItem => newsItem.Id.Equals(newNewsItem.Id));
@@ -156,6 +167,18 @@ namespace Weave.UserFeedAggregator.BusinessObjects
 
                 News.InsertRange(0, newsToAdd);
             }
+        }
+
+        void UpdateTeaserImage()
+        {
+            if (EnumerableEx.IsNullOrEmpty(News))
+                return;
+
+            TeaserImageUrl = News
+                .OrderByDescending(o => o.UtcPublishDateTime)
+                .Where(o => o.HasImage)
+                .Select(o => o.GetBestImageUrl())
+                .FirstOrDefault();
         }
 
         #endregion

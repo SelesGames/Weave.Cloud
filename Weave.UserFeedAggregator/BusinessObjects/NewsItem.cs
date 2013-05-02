@@ -33,6 +33,15 @@ namespace Weave.UserFeedAggregator.BusinessObjects
             }
         }
 
+        public string GetBestImageUrl()
+        {
+            if (Image != null)
+            {
+                return Image.CreateImageUrl();
+            }
+            return ImageUrl;
+        }
+
 
 
 

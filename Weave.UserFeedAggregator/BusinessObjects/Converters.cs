@@ -326,8 +326,8 @@ namespace Weave.UserFeedAggregator.BusinessObjects
                 Name = o.Name,
                 Category = o.Category,
                 ArticleViewingType = (Weave.UserFeedAggregator.DTOs.ArticleViewingType)o.ArticleViewingType,
-                //News = o.News == null ? null : o.News.OfType<NewsItem>().Select(x => x.Convert<NewsItem, Outgoing.NewsItem>(Instance)).ToList(),
                 TotalArticleCount = o.News == null ? 0 : o.News.Count,
+                TeaserImageUrl = o.TeaserImageUrl,
             };
         }
 
@@ -344,6 +344,9 @@ namespace Weave.UserFeedAggregator.BusinessObjects
         }
 
         #endregion
+
+
+
 
         Article.Service.DTOs.ServerIncoming.SavedNewsItem IConverter<NewsItem, Article.Service.DTOs.ServerIncoming.SavedNewsItem>.Convert(NewsItem o)
         {
