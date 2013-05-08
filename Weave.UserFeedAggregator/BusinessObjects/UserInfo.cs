@@ -159,7 +159,7 @@ namespace Weave.UserFeedAggregator.BusinessObjects
                 newsItem.HasBeenViewed = true;
         }
 
-        public async Task FavoriteArticle(Guid feedId, Guid newsItemId)
+        public async Task AddFavorite(Guid feedId, Guid newsItemId)
         {
             var newsItem = FindNewsItem(feedId, newsItemId);
             if (newsItem == null)
@@ -167,7 +167,17 @@ namespace Weave.UserFeedAggregator.BusinessObjects
 
             var favorited = newsItem.Convert<NewsItem, Weave.Article.Service.DTOs.ServerIncoming.SavedNewsItem>(Converters.Instance);
             await ArticleServiceClient.Current.AddFavorite(Id, favorited);
-            newsItem.HasBeenViewed = true;
+            newsItem.IsFavorite = true;
+        }
+
+        public async Task RemoveFavorite(Guid feedId, Guid newsItemId)
+        {
+            var newsItem = FindNewsItem(feedId, newsItemId);
+            if (newsItem == null)
+                return;
+
+            await ArticleServiceClient.Current.RemoveFavorite(Id, newsItemId);
+            newsItem.IsFavorite = false;
         }
 
         #endregion

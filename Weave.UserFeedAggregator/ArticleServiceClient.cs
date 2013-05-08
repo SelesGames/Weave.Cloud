@@ -42,6 +42,15 @@ namespace Weave.UserFeedAggregator
             return client.PostAsync(url, newsItem, CancellationToken.None);
         }
 
+        public Task RemoveFavorite(Guid userId, Guid newsItemId)
+        {
+            if (userId == Guid.Empty) throw new ArgumentException("Not a valid userId");
+            if (newsItemId == Guid.Empty) throw new ArgumentException("Not a valid newsItemId");
+
+            var url = string.Format("{0}/remove_favorite?userId={1}&newsItemId={2}", SERVICE_URL, userId, newsItemId);
+            return client.GetAsync(url, CancellationToken.None);
+        }
+
 
 
 
