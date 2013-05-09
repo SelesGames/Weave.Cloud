@@ -139,7 +139,6 @@ namespace Weave.UserFeedAggregator.Role.Controllers
         {
             var orderedNews = subset.AllOrderedNews().ToList();
             var totalNewsCount = orderedNews.Count;
-            var newNewsCount = subset.Sum(o => o.NewNewsCount);
 
             IEnumerable<NewsItem> outgoingNews = orderedNews;
 
@@ -162,13 +161,13 @@ namespace Weave.UserFeedAggregator.Role.Controllers
                 UserId = userId,
                 FeedCount = subset.Count(),
                 TotalNewsCount = totalNewsCount,
-                NewNewsCount = newNewsCount,
                 Take = take,
                 Skip = skip,
                 Feeds = subset.Select(ConvertToOutgoing).ToList(),
                 News = outgoingNews.Select(ConvertToOutgoing).ToList(),
             };
             outgoing.NewsCount = outgoing.News.Count;
+            outgoing.NewNewsCount = outgoing.Feeds.Sum(o => o.NewArticleCount);
 
             return outgoing;
         }

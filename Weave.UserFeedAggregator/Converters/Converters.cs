@@ -177,6 +177,7 @@ namespace Weave.UserFeedAggregator.Converters
                 Category = o.Category,
                 ArticleViewingType = (Weave.UserFeedAggregator.DTOs.ArticleViewingType)o.ArticleViewingType,
                 TotalArticleCount = o.News == null ? 0 : o.News.Count,
+                NewArticleCount = o.News == null ? 0 : o.News.Count(x => x.IsNew()),
                 TeaserImageUrl = o.TeaserImageUrl,
             };
         }

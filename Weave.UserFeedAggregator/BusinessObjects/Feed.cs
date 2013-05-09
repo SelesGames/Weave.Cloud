@@ -32,7 +32,6 @@ namespace Weave.UserFeedAggregator.BusinessObjects
             set
             {
                 news = value;
-                UpdateNewNewsCount();
                 UpdateTeaserImage();
             }
         }
@@ -40,7 +39,6 @@ namespace Weave.UserFeedAggregator.BusinessObjects
 
         public Task CurrentRefresh { get; private set; }
         public bool IsModified { get; private set; }
-        public int NewNewsCount { get; private set; }
         public string TeaserImageUrl { get; private set; }
 
 
@@ -173,14 +171,6 @@ namespace Weave.UserFeedAggregator.BusinessObjects
 
                 News.InsertRange(0, newsToAdd);
             }
-        }
-
-        void UpdateNewNewsCount()
-        {
-            if (EnumerableEx.IsNullOrEmpty(News))
-                return;
-
-            NewNewsCount = News.Count(o => o.IsNew());
         }
 
         void UpdateTeaserImage()
