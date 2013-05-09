@@ -32,6 +32,7 @@ namespace Weave.UserFeedAggregator.BusinessObjects
             set
             {
                 news = value;
+                UpdateNewNewsCount();
                 UpdateTeaserImage();
             }
         }
@@ -39,6 +40,7 @@ namespace Weave.UserFeedAggregator.BusinessObjects
 
         public Task CurrentRefresh { get; private set; }
         public bool IsModified { get; private set; }
+        public int NewNewsCount { get; private set; }
         public string TeaserImageUrl { get; private set; }
 
 
@@ -137,7 +139,7 @@ namespace Weave.UserFeedAggregator.BusinessObjects
 
             var newNewsInCorrectFormat = newNews
                 .Where(o => !DoesAnyExistingNewsItemMatch(o))
-                .Select(o => o.Convert<Weave.RssAggregator.Core.DTOs.Outgoing.NewsItem, NewsItem>(Converters.Instance))
+                .Select(o => o.Convert<Weave.RssAggregator.Core.DTOs.Outgoing.NewsItem, NewsItem>(Converters.Converters.Instance))
                 .Where(o => !o.FailedToParseUtcPublishDateTime)
                 .ToList();
 
@@ -159,7 +161,10 @@ namespace Weave.UserFeedAggregator.BusinessObjects
 
             var originalDownloadDateTime = DateTime.UtcNow;
             foreach (var newsItem in newsToAdd)
+            {
                 newsItem.OriginalDownloadDateTime = originalDownloadDateTime;
+                newsItem.Feed = this;
+            }
 
             lock (syncObject)
             {
@@ -168,6 +173,14 @@ namespace Weave.UserFeedAggregator.BusinessObjects
 
                 News.InsertRange(0, newsToAdd);
             }
+        }
+
+        void UpdateNewNewsCount()
+        {
+            if (EnumerableEx.IsNullOrEmpty(News))
+                return;
+
+            NewNewsCount = News.Count(o => o.IsNew());
         }
 
         void UpdateTeaserImage()

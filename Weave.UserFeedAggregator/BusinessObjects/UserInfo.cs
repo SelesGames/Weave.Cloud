@@ -20,11 +20,6 @@ namespace Weave.UserFeedAggregator.BusinessObjects
             return new FeedsSubset(feedsList).Refresh();
         }
 
-        public bool IsNew(NewsItem newsItem)
-        {
-            return !newsItem.HasBeenViewed && newsItem.OriginalDownloadDateTime > PreviousLoginTime;
-        }
-
         public IEnumerable<NewsItem> GetLatestArticles()
         {
             return GetTopNewsItems();
@@ -131,7 +126,7 @@ namespace Weave.UserFeedAggregator.BusinessObjects
             if (newsItem == null)
                 return;
 
-            var saved = newsItem.Convert<NewsItem, Weave.RssAggregator.Core.DTOs.Outgoing.NewsItem>(Converters.Instance);
+            var saved = newsItem.Convert<NewsItem, Weave.RssAggregator.Core.DTOs.Outgoing.NewsItem>(Converters.Converters.Instance);
             await ArticleServiceClient.Current.MarkRead(Id, saved);
             newsItem.HasBeenViewed = true;
         }
@@ -165,7 +160,7 @@ namespace Weave.UserFeedAggregator.BusinessObjects
             if (newsItem == null)
                 return;
 
-            var favorited = newsItem.Convert<NewsItem, Weave.Article.Service.DTOs.ServerIncoming.SavedNewsItem>(Converters.Instance);
+            var favorited = newsItem.Convert<NewsItem, Weave.Article.Service.DTOs.ServerIncoming.SavedNewsItem>(Converters.Converters.Instance);
             await ArticleServiceClient.Current.AddFavorite(Id, favorited);
             newsItem.IsFavorite = true;
         }

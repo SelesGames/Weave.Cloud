@@ -1,4 +1,5 @@
-﻿using SelesGames.Common;
+﻿using Common.Caching;
+using SelesGames.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,6 @@ using System.Web.Http;
 using Weave.UserFeedAggregator.BusinessObjects;
 using Weave.UserFeedAggregator.Contracts;
 using Weave.UserFeedAggregator.DTOs;
-using Weave.UserFeedAggregator.Repositories;
 using Incoming = Weave.UserFeedAggregator.DTOs.ServerIncoming;
 using Outgoing = Weave.UserFeedAggregator.DTOs.ServerOutgoing;
 
@@ -15,11 +15,13 @@ namespace Weave.UserFeedAggregator.Role.Controllers
 {
     public class UserController : ApiController, IWeaveUserService
     {
-        UserRepository userRepo;
+        IBasicCache<Guid, Task<UserInfo>> userCache;
+        IUserWriter writer;
 
-        public UserController(UserRepository userRepo)
+        public UserController(IBasicCache<Guid, Task<UserInfo>> userCache, IUserWriter writer)
         {
-            this.userRepo = userRepo;
+            this.userCache = userCache;
+            this.writer = writer;
         }
 
 
@@ -32,11 +34,9 @@ namespace Weave.UserFeedAggregator.Role.Controllers
         public async Task<Outgoing.UserInfo> AddUserAndReturnUserInfo([FromBody] Incoming.UserInfo incomingUser)
         {
             var userBO = ConvertToBusinessObject(incomingUser);
-            var user = ConvertToDataStore(userBO);
-            await userRepo.Save(user);
+            await writer.ImmediateWrite(userBO);
             await userBO.RefreshAllFeeds();
-            user = ConvertToDataStore(userBO);
-            await userRepo.Save(user);
+            writer.DelayedWrite(userBO);
             var outgoing = ConvertToOutgoing(userBO);
             return outgoing;
         }
@@ -52,8 +52,7 @@ namespace Weave.UserFeedAggregator.Role.Controllers
         [ActionName("info")]
         public async Task<Outgoing.UserInfo> GetUserInfo(Guid userId, bool refresh = false)
         {
-            var user = await userRepo.Get(userId);
-            var userBO = ConvertToBusinessObject(user);
+            var userBO = await userCache.Get(userId);
 
             userBO.PreviousLoginTime = userBO.CurrentLoginTime;
             userBO.CurrentLoginTime = DateTime.UtcNow;
@@ -61,8 +60,7 @@ namespace Weave.UserFeedAggregator.Role.Controllers
             if (refresh)
             {
                 await userBO.RefreshAllFeeds();
-                user = ConvertToDataStore(userBO);
-                await userRepo.Save(user);
+                writer.DelayedWrite(userBO);
             }
 
             var outgoing = ConvertToOutgoing(userBO);
@@ -80,131 +78,79 @@ namespace Weave.UserFeedAggregator.Role.Controllers
         [HttpGet]
         [ActionName("news")]
         public async Task<Outgoing.NewsList> GetNews(
-            Guid userId, 
-            string category, 
-            bool refresh = false, 
-            int skip = 0, 
-            int take = 10, 
-            NewsItemType type = NewsItemType.Any, 
-            bool requireImage = false)
+            Guid userId, string category, bool refresh = false, int skip = 0, int take = 10, NewsItemType type = NewsItemType.Any, bool requireImage = false)
         {
             TimeSpan readTime, writeTime = TimeSpan.Zero;
 
             var sw = System.Diagnostics.Stopwatch.StartNew();
-            var user = await userRepo.Get(userId);
+            var userBO = await userCache.Get(userId);
             sw.Stop();
             readTime = sw.Elapsed;
 
-            var userBO = ConvertToBusinessObject(user);
             var subset = userBO.CreateSubsetFromCategory(category);
 
             if (refresh)
             {
                 await subset.Refresh();
-                user = ConvertToDataStore(userBO);
 
                 sw = System.Diagnostics.Stopwatch.StartNew();
-                await userRepo.Save(user);
+                await writer.ImmediateWrite(userBO);
                 sw.Stop();
                 writeTime = sw.Elapsed;
             }
 
-            var orderedNews = subset.AllOrderedNews().ToList();
-            var totalNewsCount = orderedNews.Count;
-
-            IEnumerable<NewsItem> outgoingNews = orderedNews;
-            int newNewsCount = 0;
-
-            if (type == NewsItemType.New)
-            {
-                outgoingNews = outgoingNews.Where(o => userBO.IsNew(o)).ToList();
-                newNewsCount = ((List<NewsItem>)outgoingNews).Count;
-            }
-            else
-            {
-                newNewsCount = orderedNews.Count(o => userBO.IsNew(o));
-
-                if (type == NewsItemType.Viewed)
-                    outgoingNews = outgoingNews.Where(o => o.HasBeenViewed);
-                else if (type == NewsItemType.Unviewed)
-                    outgoingNews = outgoingNews.Where(o => !o.HasBeenViewed);
-            }
-
-            if (requireImage)
-                outgoingNews = outgoingNews.Where(o => o.HasImage);
-
-            outgoingNews = outgoingNews.Skip(skip).Take(take);
-
-            var outgoing = new Outgoing.NewsList
-            {
-                UserId = userId,
-                FeedCount = subset.Count(), 
-                TotalNewsCount = totalNewsCount, 
-                NewNewsCount = newNewsCount,
-                Take = take,
-                Skip = skip,
-                Feeds = subset.Select(ConvertToOutgoing).ToList(),
-                News = outgoingNews.Select(ConvertToOutgoing).ToList(),
-                DataStoreReadTime = readTime,
-                DataStoreWriteTime = writeTime,
-            };
-            outgoing.NewsCount = outgoing.News.Count;
-
-            return outgoing;
+            var list = CreateNewsListFromSubset(userId, skip, take, type, requireImage, subset);
+            list.DataStoreReadTime = readTime;
+            list.DataStoreWriteTime = writeTime;
+            return list;
         }
 
         [HttpGet]
         [ActionName("news")]
         public async Task<Outgoing.NewsList> GetNews(
-            Guid userId, 
-            Guid feedId, 
-            bool refresh = false, 
-            int skip = 0, 
-            int take = 10,
-            NewsItemType type = NewsItemType.Any,
-            bool requireImage = false)
+            Guid userId, Guid feedId, bool refresh = false, int skip = 0, int take = 10, NewsItemType type = NewsItemType.Any, bool requireImage = false)
         {
             TimeSpan readTime, writeTime = TimeSpan.Zero;
 
             var sw = System.Diagnostics.Stopwatch.StartNew();
-            var user = await userRepo.Get(userId);
+            var userBO = await userCache.Get(userId);
             sw.Stop();
             readTime = sw.Elapsed;
 
-            var userBO = ConvertToBusinessObject(user);
             var subset = userBO.CreateSubsetFromFeedIds(new[] { feedId });
 
             if (refresh)
             {
                 await subset.Refresh();
-                user = ConvertToDataStore(userBO);
 
                 sw = System.Diagnostics.Stopwatch.StartNew();
-                await userRepo.Save(user);
+                await writer.ImmediateWrite(userBO);
                 sw.Stop();
                 writeTime = sw.Elapsed;
             }
 
+            var list = CreateNewsListFromSubset(userId, skip, take, type, requireImage, subset);
+            list.DataStoreReadTime = readTime;
+            list.DataStoreWriteTime = writeTime;
+            return list;
+        }
+
+        Outgoing.NewsList CreateNewsListFromSubset(Guid userId, int skip, int take, NewsItemType type, bool requireImage, FeedsSubset subset)
+        {
             var orderedNews = subset.AllOrderedNews().ToList();
             var totalNewsCount = orderedNews.Count;
+            var newNewsCount = subset.Sum(o => o.NewNewsCount);
 
             IEnumerable<NewsItem> outgoingNews = orderedNews;
-            int newNewsCount = 0;
 
             if (type == NewsItemType.New)
-            {
-                outgoingNews = outgoingNews.Where(o => userBO.IsNew(o)).ToList();
-                newNewsCount = ((List<NewsItem>)outgoingNews).Count;
-            }
-            else
-            {
-                newNewsCount = orderedNews.Count(o => userBO.IsNew(o));
+                outgoingNews = outgoingNews.Where(o => o.IsNew()).ToList();
 
-                if (type == NewsItemType.Viewed)
-                    outgoingNews = outgoingNews.Where(o => o.HasBeenViewed);
-                else if (type == NewsItemType.Unviewed)
-                    outgoingNews = outgoingNews.Where(o => !o.HasBeenViewed);
-            }
+            else if (type == NewsItemType.Viewed)
+                outgoingNews = outgoingNews.Where(o => o.HasBeenViewed);
+
+            else if (type == NewsItemType.Unviewed)
+                outgoingNews = outgoingNews.Where(o => !o.HasBeenViewed);
 
             if (requireImage)
                 outgoingNews = outgoingNews.Where(o => o.HasImage);
@@ -221,175 +167,11 @@ namespace Weave.UserFeedAggregator.Role.Controllers
                 Skip = skip,
                 Feeds = subset.Select(ConvertToOutgoing).ToList(),
                 News = outgoingNews.Select(ConvertToOutgoing).ToList(),
-                DataStoreReadTime = readTime,
-                DataStoreWriteTime = writeTime,
             };
             outgoing.NewsCount = outgoing.News.Count;
 
             return outgoing;
         }
-
-        [HttpGet]
-        [ActionName("refresh_all")]
-        public async Task<Outgoing.UserInfo> RefreshAndReturnNews(Guid userId)
-        {
-            TimeSpan readTime, writeTime;
-
-            var sw = System.Diagnostics.Stopwatch.StartNew();
-            var user = await userRepo.Get(userId);
-            sw.Stop();
-            readTime = sw.Elapsed;
-
-            var userBO = ConvertToBusinessObject(user);
-            await userBO.RefreshAllFeeds();
-            user = ConvertToDataStore(userBO);
-
-            sw = System.Diagnostics.Stopwatch.StartNew();
-            await userRepo.Save(user);
-            sw.Stop();
-            writeTime = sw.Elapsed;
-
-            var outgoing = ConvertToOutgoing(userBO);
-
-            outgoing.DataStoreReadTime = readTime;
-            outgoing.DataStoreWriteTime = writeTime;
-            return outgoing;
-        }
-
-        /// <summary>
-        /// Refresh only some of the feeds for a given user, then return the full UserInfo graph.
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="feedIds">The ids of the feeds to refresh</param>
-        /// <returns>UserInfo graph</returns>
-        //[HttpPost]
-        //[ActionName("refresh")]
-        //public async Task<Outgoing.UserInfo> RefreshAndReturnNews(Guid userId, [FromBody] List<Guid> feedIds)
-        //{
-        //    TimeSpan readTime, writeTime;
-
-        //    var sw = System.Diagnostics.Stopwatch.StartNew();
-        //    var user = await userRepo.Get(userId);
-        //    sw.Stop();
-        //    readTime = sw.Elapsed;
-
-        //    var userBO = ConvertToBusinessObject(user);
-        //    await userBO.RefreshFeedsMatchingIds(feedIds);
-        //    user = ConvertToDataStore(userBO);
-
-        //    sw = System.Diagnostics.Stopwatch.StartNew();
-        //    await userRepo.Save(user);
-        //    sw.Stop();
-        //    writeTime = sw.Elapsed;
-
-        //    userBO = ConvertToBusinessObject(user);
-        //    var outgoing = ConvertToOutgoing(userBO);
-
-        //    outgoing.DataStoreReadTime = readTime;
-        //    outgoing.DataStoreWriteTime = writeTime;
-        //    return outgoing;
-        //}
-
-
-
-        #endregion
-
-
-
-
-        #region Get "featured" news - suitable for live tile, returns image only feeds
-
-        //[HttpGet]
-        //[ActionName("featured")]
-        //public async Task<Outgoing.LiveTileNewsList> GetFeaturedNews(Guid userId, string category, int? take, bool refresh = false)
-        //{
-        //    TimeSpan readTime, writeTime = TimeSpan.Zero;
-        //    var takeCount = take.Value;
-
-        //    var sw = System.Diagnostics.Stopwatch.StartNew();
-        //    var user = await userRepo.Get(userId);
-        //    sw.Stop();
-        //    readTime = sw.Elapsed;
-
-        //    var userBO = ConvertToBusinessObject(user);
-        //    var subset = userBO.CreateSubsetFromCategory(category);
-
-        //    if (refresh)
-        //    {
-        //        await subset.Refresh();
-        //        user = ConvertToDataStore(userBO);
-
-        //        sw = System.Diagnostics.Stopwatch.StartNew();
-        //        await userRepo.Save(user);
-        //        sw.Stop();
-        //        writeTime = sw.Elapsed;
-        //    }
-
-        //    var orderedNews = subset.AllOrderedNews().ToList();
-        //    var newNewsCount = orderedNews.Count(o => userBO.IsNew(o));
-        //    var featuredNews = orderedNews.Where(o => o.HasImage).Take(takeCount).Select(ConvertToOutgoing).ToList();
-        //    var featuredNewsCount = featuredNews.Count;
-
-        //    var outgoing = new Outgoing.LiveTileNewsList
-        //    {
-        //        UserId = userId,
-        //        FeedCount = subset.Count(),
-        //        NewNewsCount = newNewsCount,
-        //        NewsCount = featuredNewsCount,
-        //        Feeds = subset.Select(ConvertToOutgoing).ToList(),
-        //        News = featuredNews,
-        //        DataStoreReadTime = readTime,
-        //        DataStoreWriteTime = writeTime,
-        //    };
-
-        //    return outgoing;
-        //}
-
-        //[HttpGet]
-        //[ActionName("featured")]
-        //public async Task<Outgoing.LiveTileNewsList> GetFeaturedNews(Guid userId, Guid feedId, int? take, bool refresh = false)
-        //{
-        //    TimeSpan readTime, writeTime = TimeSpan.Zero;
-        //    var takeCount = take.Value;
-
-        //    var sw = System.Diagnostics.Stopwatch.StartNew();
-        //    var user = await userRepo.Get(userId);
-        //    sw.Stop();
-        //    readTime = sw.Elapsed;
-
-        //    var userBO = ConvertToBusinessObject(user);
-        //    var subset = userBO.CreateSubsetFromFeedIds(new[] { feedId });
-
-        //    if (refresh)
-        //    {
-        //        await subset.Refresh();
-        //        user = ConvertToDataStore(userBO);
-
-        //        sw = System.Diagnostics.Stopwatch.StartNew();
-        //        await userRepo.Save(user);
-        //        sw.Stop();
-        //        writeTime = sw.Elapsed;
-        //    }
-
-        //    var orderedNews = subset.AllOrderedNews().ToList();
-        //    var newNewsCount = orderedNews.Count(o => userBO.IsNew(o));
-        //    var featuredNews = orderedNews.Where(o => o.HasImage).Take(takeCount).Select(ConvertToOutgoing).ToList();
-        //    var featuredNewsCount = featuredNews.Count;
-
-        //    var outgoing = new Outgoing.LiveTileNewsList
-        //    {
-        //        UserId = userId,
-        //        FeedCount = subset.Count(),
-        //        NewNewsCount = newNewsCount,
-        //        NewsCount = featuredNewsCount,
-        //        Feeds = subset.Select(ConvertToOutgoing).ToList(),
-        //        News = featuredNews,
-        //        DataStoreReadTime = readTime,
-        //        DataStoreWriteTime = writeTime,
-        //    };
-
-        //    return outgoing;
-        //}
 
         #endregion
 
@@ -398,39 +180,47 @@ namespace Weave.UserFeedAggregator.Role.Controllers
 
         #region Feed management
 
+        [HttpGet]
+        [ActionName("feeds")]
+        public async Task<Outgoing.FeedsInfoList> GetFeeds(Guid userId)
+        {
+            var userBO = await userCache.Get(userId);
+            var output = new Outgoing.FeedsInfoList
+            {
+                UserId = userBO.Id,
+                FeedCount = userBO.Feeds.Count,
+                Feeds = userBO.Feeds.Select(ConvertToOutgoing).ToList(),
+            };
+            return output;
+        }
+
         [HttpPost]
         [ActionName("add_feed")]
         public async Task AddFeed(Guid userId, [FromBody] Incoming.NewFeed feed)
         {
-            var user = await userRepo.Get(userId);
-            var userBO = ConvertToBusinessObject(user);
+            var userBO = await userCache.Get(userId);
             var feedBO = ConvertToBusinessObject(feed);
             userBO.AddFeed(feedBO);
-            user = ConvertToDataStore(userBO);
-            await userRepo.Save(user);
+            writer.DelayedWrite(userBO);
         }
 
         [HttpGet]
         [ActionName("remove_feed")]
         public async Task RemoveFeed(Guid userId, Guid feedId)
         {
-            var user = await userRepo.Get(userId);
-            var userBO = ConvertToBusinessObject(user);
+            var userBO = await userCache.Get(userId);
             userBO.RemoveFeed(feedId);
-            user = ConvertToDataStore(userBO);
-            await userRepo.Save(user);
+            writer.DelayedWrite(userBO);
         }
 
         [HttpPost]
         [ActionName("update_feed")]
         public async Task UpdateFeed(Guid userId, [FromBody] Incoming.UpdatedFeed feed)
         {
-            var user = await userRepo.Get(userId);
-            var userBO = ConvertToBusinessObject(user);
+            var userBO = await userCache.Get(userId);
             var feedBO = ConvertToBusinessObject(feed);
             userBO.UpdateFeed(feedBO);
-            user = ConvertToDataStore(userBO);
-            await userRepo.Save(user);
+            writer.DelayedWrite(userBO);
         }
 
         [HttpPost]
@@ -440,8 +230,7 @@ namespace Weave.UserFeedAggregator.Role.Controllers
             if (changeSet == null)
                 return;
 
-            var user = await userRepo.Get(userId);
-            var userBO = ConvertToBusinessObject(user);
+            var userBO = await userCache.Get(userId);
 
             var added = changeSet.Added;
             var removed = changeSet.Removed;
@@ -473,8 +262,7 @@ namespace Weave.UserFeedAggregator.Role.Controllers
                 }
             }
 
-            user = ConvertToDataStore(userBO);
-            await userRepo.Save(user);
+            writer.DelayedWrite(userBO);
         }
 
         #endregion
@@ -488,55 +276,45 @@ namespace Weave.UserFeedAggregator.Role.Controllers
         [ActionName("mark_read")]
         public async Task MarkArticleRead(Guid userId, Guid feedId, Guid newsItemId)
         {
-            var user = await userRepo.Get(userId);
-            var userBO = ConvertToBusinessObject(user);
+            var userBO = await userCache.Get(userId);
             await userBO.MarkNewsItemRead(feedId, newsItemId);
-            user = ConvertToDataStore(userBO);
-            await userRepo.Save(user);
+            writer.DelayedWrite(userBO);
         }
 
         [HttpGet]
         [ActionName("mark_unread")]
         public async Task MarkArticleUnread(Guid userId, Guid feedId, Guid newsItemId)
         {
-            var user = await userRepo.Get(userId);
-            var userBO = ConvertToBusinessObject(user);
+            var userBO = await userCache.Get(userId);
             await userBO.MarkNewsItemUnread(feedId, newsItemId);
-            user = ConvertToDataStore(userBO);
-            await userRepo.Save(user);
+            writer.DelayedWrite(userBO);
         }
 
         [HttpGet]
         [ActionName("soft_read")]
         public async Task MarkArticlesSoftRead(Guid userId, [FromBody] List<Guid> newsItemIds)
         {
-            var user = await userRepo.Get(userId);
-            var userBO = ConvertToBusinessObject(user);
+            var userBO = await userCache.Get(userId);
             userBO.MarkNewsItemsSoftRead(newsItemIds);
-            user = ConvertToDataStore(userBO);
-            await userRepo.Save(user);
+            writer.DelayedWrite(userBO);
         }
 
         [HttpGet]
         [ActionName("add_favorite")]
         public async Task AddFavorite(Guid userId, Guid feedId, Guid newsItemId)
         {
-            var user = await userRepo.Get(userId);
-            var userBO = ConvertToBusinessObject(user);
+            var userBO = await userCache.Get(userId);
             await userBO.AddFavorite(feedId, newsItemId);
-            user = ConvertToDataStore(userBO);
-            await userRepo.Save(user);
+            writer.DelayedWrite(userBO);
         }
 
         [HttpGet]
         [ActionName("remove_favorite")]
         public async Task RemoveFavorite(Guid userId, Guid feedId, Guid newsItemId)
         {
-            var user = await userRepo.Get(userId);
-            var userBO = ConvertToBusinessObject(user);
+            var userBO = await userCache.Get(userId);
             await userBO.RemoveFavorite(feedId, newsItemId);
-            user = ConvertToDataStore(userBO);
-            await userRepo.Save(user);
+            writer.DelayedWrite(userBO);
         }
 
         #endregion
@@ -546,52 +324,35 @@ namespace Weave.UserFeedAggregator.Role.Controllers
 
         #region Conversion Helpers
 
-        UserInfo ConvertToBusinessObject(User.DataStore.UserInfo user)
-        {
-            return user.Convert<User.DataStore.UserInfo, UserInfo>(Converters.Instance);
-        }
-
-        Feed ConvertToBusinessObject(User.DataStore.Feed user)
-        {
-            return user.Convert<User.DataStore.Feed, Feed>(Converters.Instance);
-        }
-
         UserInfo ConvertToBusinessObject(Incoming.UserInfo user)
         {
-            return user.Convert<Incoming.UserInfo, UserInfo>(Converters.Instance);
+            return user.Convert<Incoming.UserInfo, UserInfo>(Converters.Converters.Instance);
         }
 
         Feed ConvertToBusinessObject(Incoming.NewFeed user)
         {
-            return user.Convert<Incoming.NewFeed, Feed>(Converters.Instance);
+            return user.Convert<Incoming.NewFeed, Feed>(Converters.Converters.Instance);
         }
 
         Feed ConvertToBusinessObject(Incoming.UpdatedFeed user)
         {
-            return user.Convert<Incoming.UpdatedFeed, Feed>(Converters.Instance);
+            return user.Convert<Incoming.UpdatedFeed, Feed>(Converters.Converters.Instance);
         }
         
-        
-        User.DataStore.UserInfo ConvertToDataStore(UserInfo user)
-        {
-            return user.Convert<UserInfo, User.DataStore.UserInfo>(Converters.Instance);
-        }
-
-
-
+    
         Outgoing.NewsItem ConvertToOutgoing(NewsItem user)
         {
-            return user.Convert<NewsItem, Outgoing.NewsItem>(Converters.Instance);
+            return user.Convert<NewsItem, Outgoing.NewsItem>(Converters.Converters.Instance);
         }
 
         Outgoing.Feed ConvertToOutgoing(Feed user)
         {
-            return user.Convert<Feed, Outgoing.Feed>(Converters.Instance);
+            return user.Convert<Feed, Outgoing.Feed>(Converters.Converters.Instance);
         }
 
         Outgoing.UserInfo ConvertToOutgoing(UserInfo user)
         {
-            return user.Convert<UserInfo, Outgoing.UserInfo>(Converters.Instance);
+            return user.Convert<UserInfo, Outgoing.UserInfo>(Converters.Converters.Instance);
         }
 
         #endregion

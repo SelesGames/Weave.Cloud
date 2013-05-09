@@ -73,6 +73,10 @@
       <Project>{6211D4F0-8390-4DFA-A1D2-BA4AA7C28348}</Project>
       <Name>Common.Azure</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Common.Caching\Common.Caching.csproj">
+      <Project>{c83ab657-c7a6-4cf8-b4f5-d4e01bf2e562}</Project>
+      <Name>Common.Caching</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common.Data.Linq\Common.Data.Linq.csproj">
       <Project>{f741017d-fd83-4f35-98a4-57af366c1b53}</Project>
       <Name>Common.Data.Linq</Name>

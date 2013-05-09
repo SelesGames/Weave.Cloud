@@ -1,5 +1,10 @@
 ﻿using Common.Azure.SmartBlobClient;
+using Common.Caching;
 using Ninject;
+using System;
+using System.Threading.Tasks;
+using Weave.UserFeedAggregator.BusinessObjects;
+using Weave.UserFeedAggregator.Cache;
 using Weave.UserFeedAggregator.Repositories;
 
 namespace Weave.UserFeedAggregator.Role.Startup
@@ -20,13 +25,11 @@ namespace Weave.UserFeedAggregator.Role.Startup
                     //UseGzipOnUpload = true,
                 };
 
-            //var azureCred = new AzureCredentials(
-            //    "weaveuser",
-            //    "GBzJEaV/B5JQTmLFj/N7VJoYGZBQcEhasXha3RKbd4BRUVN5aaJ01KMo0MNNtNHnVhzJmqlDgqEyk4CPEvX56A==",
-            //    false);
-
             var userRepo = new UserRepository(blobClient);
             Bind<UserRepository>().ToConstant(userRepo).InSingletonScope();
+            Bind<IUserWriter>().To<TempUserWriter>().InSingletonScope();
+            Bind<IExtendedCache<Guid, Task<UserInfo>>>().To<LocalUserCache>().InSingletonScope();
+            Bind<IBasicCache<Guid, Task<UserInfo>>>().To<TempUserCache>().InSingletonScope();
         }
     }
 }

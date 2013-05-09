@@ -30,7 +30,8 @@ namespace WeaveFeedTester
         {
             //var client = new ExpandedLibrary("https://weave.blob.core.windows.net/settings/masterfeeds.xml");
             var client = new FeedLibraryClient(@"C:\Users\Arashj\Desktop\Code\SELES GAMES\Weave.Cloud\masterfeeds.xml");
-            var feeds = await client.GetFeedsAsync();
+            await client.LoadFeedsAsync();
+            var feeds = client.Feeds;
 
             var groupedFeeds = feeds.GroupBy(o => o.Category).ToList();
 
@@ -53,8 +54,8 @@ namespace WeaveFeedTester
                     Link = o.Link, 
                     Description = o.Description, 
                     Title = o.Title,
-                    PublishDateTime = o.PublishDateTimeString,
-                    ImageUrl = o.ImageUrl,
+                    PublishDateTime = o.UtcPublishDateTimeString,
+                    ImageUrl = o.GetImageUrl(),
                 }));
         }
 

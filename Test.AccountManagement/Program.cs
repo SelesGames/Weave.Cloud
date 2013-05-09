@@ -55,7 +55,7 @@ namespace Test.AccountManagement
                 ContentType = "application/json"
             };
             var userRepo = new UserRepository(blobClient);
-            var controller = new UserController(userRepo);
+            var controller = new UserController(null, null);
             return controller;
         }
 
@@ -63,10 +63,10 @@ namespace Test.AccountManagement
         {
             var controller = CreateController();
 
-            var user = await controller.RefreshAndReturnNews(Guid.Parse("ece6a3d1-b5e9-43b7-8cde-317d8dd3efb3"));
+            //var user = null;// await controller.RefreshAndReturnNews(Guid.Parse("ece6a3d1-b5e9-43b7-8cde-317d8dd3efb3"));
             //var article = user.Feeds.SelectMany(o => o.News).First();
             //await controller.MarkArticleRead(user.Id, article.FeedId, article.Id);
-            DebugEx.WriteLine(user);
+            //DebugEx.WriteLine(user);
         }
 
         static async Task CreateNewUser()

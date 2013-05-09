@@ -10,7 +10,7 @@ namespace Weave.UserFeedAggregator.BusinessObjects
         public bool FailedToParseUtcPublishDateTime { get; private set; }
 
         public Guid Id { get; set; }
-        public Guid FeedId { get; set; }
+        public Feed Feed { get; set; }
         public string Title { get; set; }
         public string Link { get; set; }
         public string ImageUrl { get; set; }
@@ -40,6 +40,11 @@ namespace Weave.UserFeedAggregator.BusinessObjects
                 return Image.CreateImageUrl();
             }
             return ImageUrl;
+        }
+
+        public bool IsNew()
+        {
+            return !HasBeenViewed && OriginalDownloadDateTime > Feed.User.PreviousLoginTime;
         }
 
 

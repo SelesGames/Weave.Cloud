@@ -73,6 +73,10 @@
       <Project>{6211d4f0-8390-4dfa-a1d2-ba4aa7c28348}</Project>
       <Name>Common.Azure</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Common.Caching\Common.Caching.csproj">
+      <Project>{c83ab657-c7a6-4cf8-b4f5-d4e01bf2e562}</Project>
+      <Name>Common.Caching</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common.Net.Http.Compression\Common.Net.Http.Compression.csproj">
       <Project>{c3e23ea5-8542-464a-9598-d4d126e1eb97}</Project>
       <Name>Common.Net.Http.Compression</Name>
