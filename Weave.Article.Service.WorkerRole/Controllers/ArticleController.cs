@@ -1,4 +1,5 @@
-﻿using SelesGames.WebApi;
+﻿using SelesGames.Common.Hashing;
+using SelesGames.WebApi;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -26,7 +27,7 @@ namespace Weave.Article.Service.WorkerRole.Controllers
             if (newsItem == null) throw ResponseHelper.CreateResponseException(HttpStatusCode.BadRequest, "Missing NewsItem object in message body");
 
             var o = Convert(newsItem);
-            o.Id = Guid.NewGuid();
+            o.Id = CryptoHelper.ComputeHashUsedByMobilizer(o.Link);
             o.AddedOn = DateTime.UtcNow;
 
             var result = await client.MarkNewsItemRead(userId, o);
@@ -60,7 +61,7 @@ namespace Weave.Article.Service.WorkerRole.Controllers
             if (newsItem == null) throw ResponseHelper.CreateResponseException(HttpStatusCode.BadRequest, "Missing NewsItem object in message body");
 
             var o = Convert(newsItem);
-            o.Id = Guid.NewGuid();
+            o.Id = CryptoHelper.ComputeHashUsedByMobilizer(o.Link);
             o.AddedOn = DateTime.UtcNow;
 
             var result = await client.AddNewsItemFavorite(userId, o);

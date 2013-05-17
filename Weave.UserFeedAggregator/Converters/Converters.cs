@@ -139,7 +139,8 @@ namespace Weave.UserFeedAggregator.Converters
                 VideoUri = o.VideoUri,
                 PodcastUri = o.PodcastUri,
                 ZuneAppId = o.ZuneAppId,
-
+                SourceName = o.Feed.Name,
+                Tags = o.Feed.Category == null ? null : new[] { o.Feed.Category }.ToList(),
                 //Image = o.Image == null ? null : o.Image.Convert<Image, Outgoing.Image>(Instance),
             };
         }

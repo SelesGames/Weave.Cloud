@@ -75,6 +75,10 @@
       <Project>{be97f564-16f5-4d09-9218-cc65e89df2ac}</Project>
       <Name>Ninject.WebApi</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SelesGames.Common\SelesGames.Common.csproj">
+      <Project>{5b792c4b-80d8-420d-9fa7-e567faf1f7b1}</Project>
+      <Name>SelesGames.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SelesGames.WebApi.Protobuf\SelesGames.WebApi.Protobuf.csproj">
       <Project>{c829e120-9b78-4640-bf91-fefcf060e2b8}</Project>
       <Name>SelesGames.WebApi.Protobuf</Name>
