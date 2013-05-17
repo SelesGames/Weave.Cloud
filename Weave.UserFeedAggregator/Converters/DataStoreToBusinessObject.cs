@@ -44,6 +44,8 @@ namespace Weave.UserFeedAggregator.Converters
                 LastModified = o.LastModified,
                 MostRecentNewsItemPubDate = o.MostRecentNewsItemPubDate,
                 LastRefreshedOn = o.LastRefreshedOn,
+                PreviousEntrance = o.PreviousEntrance,
+                MostRecentEntrance = o.MostRecentEntrance,
                 ArticleViewingType = (ArticleViewingType)o.ArticleViewingType,
                 //News = o.News == null ? null : o.News.OfType<Store.NewsItem>().Select(Convert).ToList(),
             };

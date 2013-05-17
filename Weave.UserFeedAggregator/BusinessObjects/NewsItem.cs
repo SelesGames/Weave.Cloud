@@ -44,7 +44,8 @@ namespace Weave.UserFeedAggregator.BusinessObjects
 
         public bool IsNew()
         {
-            return !HasBeenViewed && OriginalDownloadDateTime > Feed.User.PreviousLoginTime;
+            //return !HasBeenViewed && OriginalDownloadDateTime > Feed.PreviousEntrance;
+            return OriginalDownloadDateTime > Feed.PreviousEntrance;
         }
 
 

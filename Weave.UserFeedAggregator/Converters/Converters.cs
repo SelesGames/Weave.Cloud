@@ -12,10 +12,6 @@ namespace Weave.UserFeedAggregator.Converters
         IConverter<Weave.RssAggregator.Core.DTOs.Outgoing.Image, Image>,
         IConverter<NewsItem, Weave.RssAggregator.Core.DTOs.Outgoing.NewsItem>,
         IConverter<Image, RssAggregator.Core.DTOs.Outgoing.Image>,
-        IConverter<UserInfo, Outgoing.UserInfo>,
-        IConverter<Feed, Outgoing.Feed>,
-        IConverter<NewsItem, Outgoing.NewsItem>,
-        IConverter<Image, Outgoing.Image>,
         IConverter<NewsItem, Weave.Article.Service.DTOs.ServerIncoming.SavedNewsItem>,
         IConverter<Incoming.NewFeed, Feed>,
         IConverter<Incoming.UpdatedFeed, Feed>,
@@ -124,74 +120,6 @@ namespace Weave.UserFeedAggregator.Converters
             }
 
             return user;
-        }
-
-        #endregion
-
-
-
-
-
-        #region from Business Objects to Server Outgoing
-
-        Outgoing.Image IConverter<Image, Outgoing.Image>.Convert(Image o)
-        {
-            return new Outgoing.Image
-            {
-                Width = o.Width,
-                Height = o.Height,
-                OriginalUrl = o.OriginalUrl,
-                BaseImageUrl = o.BaseImageUrl,
-                SupportedFormats = o.SupportedFormats,
-            };
-        }
-        
-        Outgoing.NewsItem IConverter<NewsItem, Outgoing.NewsItem>.Convert(NewsItem o)
-        {
-            return new Outgoing.NewsItem
-            {
-                Id = o.Id,
-                FeedId = o.Feed.Id,
-                Title = o.Title,
-                Link = o.Link,
-                ImageUrl = o.ImageUrl,
-                UtcPublishDateTime = o.UtcPublishDateTimeString,
-                YoutubeId = o.YoutubeId,
-                VideoUri = o.VideoUri,
-                PodcastUri = o.PodcastUri,
-                ZuneAppId = o.ZuneAppId,
-                HasBeenViewed = o.HasBeenViewed,
-                IsFavorite = o.IsFavorite,
-                OriginalDownloadDateTime = o.OriginalDownloadDateTime,
-                Image = o.Image == null ? null : o.Image.Convert<Image, Outgoing.Image>(Instance),
-            };
-        }
-
-        Outgoing.Feed IConverter<Feed, Outgoing.Feed>.Convert(Feed o)
-        {
-            return new Outgoing.Feed
-            {
-                Id = o.Id,
-                Uri = o.Uri,
-                Name = o.Name,
-                Category = o.Category,
-                ArticleViewingType = (Weave.UserFeedAggregator.DTOs.ArticleViewingType)o.ArticleViewingType,
-                TotalArticleCount = o.News == null ? 0 : o.News.Count,
-                NewArticleCount = o.News == null ? 0 : o.News.Count(x => x.IsNew()),
-                TeaserImageUrl = o.TeaserImageUrl,
-            };
-        }
-
-        Outgoing.UserInfo IConverter<UserInfo, Outgoing.UserInfo>.Convert(UserInfo o)
-        {
-            return new Outgoing.UserInfo
-            {
-                Id = o.Id,
-                FeedCount = o.Feeds == null ? 0 : o.Feeds.Count,
-                Feeds = o.Feeds == null ? null : o.Feeds.OfType<Feed>().Select(x => x.Convert<Feed, Outgoing.Feed>(Instance)).ToList(),
-                PreviousLoginTime = o.PreviousLoginTime,
-                CurrentLoginTime = o.CurrentLoginTime,
-            };
         }
 
         #endregion

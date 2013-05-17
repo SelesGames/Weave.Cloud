@@ -21,7 +21,7 @@ namespace Weave.UserFeedAggregator.Role.Startup
                 container: "user",
                 useHttps: false)
                 {
-                    ContentType = "application/protobuf", 
+                    ContentType = "application/json", 
                     //UseGzipOnUpload = true,
                 };
 

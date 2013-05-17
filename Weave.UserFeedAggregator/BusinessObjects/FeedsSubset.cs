@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -27,7 +28,18 @@ namespace Weave.UserFeedAggregator.BusinessObjects
             await Task.WhenAll(feeds.Select(o => o.CurrentRefresh));
         }
 
+        public void MarkEntry()
+        {
+            if (feeds == null || !feeds.Any())
+                return;
 
+            var now = DateTime.UtcNow;
+            foreach (var feed in feeds)
+            {
+                feed.PreviousEntrance = feed.MostRecentEntrance;
+                feed.MostRecentEntrance = now;
+            }
+        }
 
 
         #region IEnumerable interface implementation

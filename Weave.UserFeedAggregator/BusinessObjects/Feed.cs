@@ -25,6 +25,8 @@ namespace Weave.UserFeedAggregator.BusinessObjects
         public string LastModified { get; set; }
         public string MostRecentNewsItemPubDate { get; set; }
         public DateTime LastRefreshedOn { get; set; }
+        public DateTime MostRecentEntrance { get; set; }
+        public DateTime PreviousEntrance { get; set; }
         public ArticleViewingType ArticleViewingType { get; set; }
         public List<NewsItem> News
         {

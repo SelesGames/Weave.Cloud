@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Weave.UserFeedAggregator.BusinessObjects;
 using Weave.UserFeedAggregator.Contracts;
+using Weave.UserFeedAggregator.Converters;
 using Weave.UserFeedAggregator.DTOs;
 using Incoming = Weave.UserFeedAggregator.DTOs.ServerIncoming;
 using Outgoing = Weave.UserFeedAggregator.DTOs.ServerOutgoing;
@@ -78,7 +79,7 @@ namespace Weave.UserFeedAggregator.Role.Controllers
         [HttpGet]
         [ActionName("news")]
         public async Task<Outgoing.NewsList> GetNews(
-            Guid userId, string category, bool refresh = false, int skip = 0, int take = 10, NewsItemType type = NewsItemType.Any, bool requireImage = false)
+            Guid userId, string category, bool refresh = false, bool markEntry = false, int skip = 0, int take = 10, NewsItemType type = NewsItemType.Any, bool requireImage = false)
         {
             TimeSpan readTime, writeTime = TimeSpan.Zero;
 
@@ -88,6 +89,9 @@ namespace Weave.UserFeedAggregator.Role.Controllers
             readTime = sw.Elapsed;
 
             var subset = userBO.CreateSubsetFromCategory(category);
+
+            if (markEntry)
+                subset.MarkEntry();
 
             if (refresh)
             {
@@ -108,7 +112,7 @@ namespace Weave.UserFeedAggregator.Role.Controllers
         [HttpGet]
         [ActionName("news")]
         public async Task<Outgoing.NewsList> GetNews(
-            Guid userId, Guid feedId, bool refresh = false, int skip = 0, int take = 10, NewsItemType type = NewsItemType.Any, bool requireImage = false)
+            Guid userId, Guid feedId, bool refresh = false, bool markEntry = false, int skip = 0, int take = 10, NewsItemType type = NewsItemType.Any, bool requireImage = false)
         {
             TimeSpan readTime, writeTime = TimeSpan.Zero;
 
@@ -118,6 +122,9 @@ namespace Weave.UserFeedAggregator.Role.Controllers
             readTime = sw.Elapsed;
 
             var subset = userBO.CreateSubsetFromFeedIds(new[] { feedId });
+
+            if (markEntry)
+                subset.MarkEntry();
 
             if (refresh)
             {
@@ -341,17 +348,17 @@ namespace Weave.UserFeedAggregator.Role.Controllers
     
         Outgoing.NewsItem ConvertToOutgoing(NewsItem user)
         {
-            return user.Convert<NewsItem, Outgoing.NewsItem>(Converters.Converters.Instance);
+            return user.Convert<NewsItem, Outgoing.NewsItem>(BusinessObjectToServerOutgoing.Instance);
         }
 
         Outgoing.Feed ConvertToOutgoing(Feed user)
         {
-            return user.Convert<Feed, Outgoing.Feed>(Converters.Converters.Instance);
+            return user.Convert<Feed, Outgoing.Feed>(BusinessObjectToServerOutgoing.Instance);
         }
 
         Outgoing.UserInfo ConvertToOutgoing(UserInfo user)
         {
-            return user.Convert<UserInfo, Outgoing.UserInfo>(Converters.Converters.Instance);
+            return user.Convert<UserInfo, Outgoing.UserInfo>(BusinessObjectToServerOutgoing.Instance);
         }
 
         #endregion

@@ -48,6 +48,7 @@
     <Compile Include="BusinessObjects\NewsItem.cs" />
     <Compile Include="BusinessObjects\UserInfo.cs" />
     <Compile Include="Converters\BusinessObjectToDataStore.cs" />
+    <Compile Include="Converters\BusinessObjectToServerOutgoing.cs" />
     <Compile Include="Converters\Converters.cs" />
     <Compile Include="Contracts\IUserWriter.cs" />
     <Compile Include="Converters\DataStoreToBusinessObject.cs" />
