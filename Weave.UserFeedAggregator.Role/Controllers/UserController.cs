@@ -1,8 +1,10 @@
 ﻿using Common.Caching;
 using SelesGames.Common;
+using SelesGames.WebApi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Weave.UserFeedAggregator.BusinessObjects;
@@ -167,14 +169,20 @@ namespace Weave.UserFeedAggregator.Role.Controllers
             {
                 UserId = userId,
                 FeedCount = subset.Count(),
-                TotalNewsCount = totalNewsCount,
-                Take = take,
-                Skip = skip,
+                TotalArticleCount = totalNewsCount,
                 Feeds = subset.Select(ConvertToOutgoing).ToList(),
                 News = outgoingNews.Select(ConvertToOutgoing).ToList(),
             };
-            outgoing.NewsCount = outgoing.News.Count;
-            outgoing.NewNewsCount = outgoing.Feeds.Sum(o => o.NewArticleCount);
+            var page = new Outgoing.PageInfo
+            {
+                Skip = skip,
+                Take = take,
+                IncludedArticleCount = outgoing.News == null ? 0 : outgoing.News.Count,
+            };
+            outgoing.Page = page;
+
+            outgoing.NewArticleCount = outgoing.Feeds == null ? 0 : outgoing.Feeds.Sum(o => o.NewArticleCount);
+            outgoing.UnreadArticleCount = outgoing.Feeds == null ? 0 : outgoing.Feeds.Sum(o => o.UnreadArticleCount);
 
             return outgoing;
         }
@@ -191,23 +199,25 @@ namespace Weave.UserFeedAggregator.Role.Controllers
         public async Task<Outgoing.FeedsInfoList> GetFeeds(Guid userId)
         {
             var userBO = await userCache.Get(userId);
-            var output = new Outgoing.FeedsInfoList
-            {
-                UserId = userBO.Id,
-                FeedCount = userBO.Feeds.Count,
-                Feeds = userBO.Feeds.Select(ConvertToOutgoing).ToList(),
-            };
+            var output = CreateOutgoingFeedsInfoList(userBO);
             return output;
         }
 
         [HttpPost]
         [ActionName("add_feed")]
-        public async Task AddFeed(Guid userId, [FromBody] Incoming.NewFeed feed)
+        public async Task<Outgoing.Feed> AddFeed(Guid userId, [FromBody] Incoming.NewFeed feed)
         {
             var userBO = await userCache.Get(userId);
             var feedBO = ConvertToBusinessObject(feed);
-            userBO.AddFeed(feedBO);
-            writer.DelayedWrite(userBO);
+            if (userBO.AddFeed(feedBO))
+            {
+                writer.DelayedWrite(userBO);
+                return ConvertToOutgoing(feedBO);
+            }
+            else
+            {
+                throw ResponseHelper.CreateResponseException(HttpStatusCode.BadRequest, "Feed not added");
+            }
         }
 
         [HttpGet]
@@ -332,17 +342,17 @@ namespace Weave.UserFeedAggregator.Role.Controllers
 
         UserInfo ConvertToBusinessObject(Incoming.UserInfo user)
         {
-            return user.Convert<Incoming.UserInfo, UserInfo>(Converters.Converters.Instance);
+            return user.Convert<Incoming.UserInfo, UserInfo>(ServerIncomingToBusinessObject.Instance);
         }
 
         Feed ConvertToBusinessObject(Incoming.NewFeed user)
         {
-            return user.Convert<Incoming.NewFeed, Feed>(Converters.Converters.Instance);
+            return user.Convert<Incoming.NewFeed, Feed>(ServerIncomingToBusinessObject.Instance);
         }
 
         Feed ConvertToBusinessObject(Incoming.UpdatedFeed user)
         {
-            return user.Convert<Incoming.UpdatedFeed, Feed>(Converters.Converters.Instance);
+            return user.Convert<Incoming.UpdatedFeed, Feed>(ServerIncomingToBusinessObject.Instance);
         }
         
     
@@ -359,6 +369,17 @@ namespace Weave.UserFeedAggregator.Role.Controllers
         Outgoing.UserInfo ConvertToOutgoing(UserInfo user)
         {
             return user.Convert<UserInfo, Outgoing.UserInfo>(BusinessObjectToServerOutgoing.Instance);
+        }
+
+
+        Outgoing.FeedsInfoList CreateOutgoingFeedsInfoList(UserInfo user)
+        {
+            return new Outgoing.FeedsInfoList
+            {
+                UserId = user.Id,
+                FeedCount = user.Feeds == null ? 0 : user.Feeds.Count,
+                Feeds = user.Feeds == null ? null : user.Feeds.Select(ConvertToOutgoing).ToList(),
+            };
         }
 
         #endregion

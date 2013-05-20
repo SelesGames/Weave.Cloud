@@ -56,7 +56,10 @@ namespace Weave.UserFeedAggregator.BusinessObjects
             if (feedIds == null || !feedIds.Any())
                 throw new Exception("No feedIds specified");
 
-            var feeds = Feeds.Join(feedIds, o => o.Id, x => x, (o, x) => o).ToList();
+            var feeds = from f in Feeds
+                        join id in feedIds on f.Id equals id
+                        select f;// Feeds.Join(feedIds, o => o.Id, x => x, (o, x) => o).ToList();
+
             return new FeedsSubset(feeds);
         }
 
@@ -67,9 +70,18 @@ namespace Weave.UserFeedAggregator.BusinessObjects
 
         #region Add/Remove/Update a feed
 
-        public void AddFeed(Feed feed, bool trustSource = false)
+        /// <summary>
+        /// Adds a feed to the user's collection of feeds
+        /// </summary>
+        /// <param name="feed">The feed to be added</param>
+        /// <param name="trustSource">Will skip checking to see if feed is already present and that Id is set - use for deserialization only</param>
+        /// <returns>True if the feed was added, false if the feed was already present or invalid</returns>
+        public bool AddFeed(Feed feed, bool trustSource = false)
         {
-            if (feed == null) return;
+            if (feed == null) return false;
+            if (string.IsNullOrWhiteSpace(feed.Name) || string.IsNullOrWhiteSpace(feed.Uri))
+                return false;
+
             if (feedsList == null) feedsList = new List<Feed>();
 
             // if we don't trust the Feed was created correctly, verify it's Id and that no existing Feed matches
@@ -79,11 +91,12 @@ namespace Weave.UserFeedAggregator.BusinessObjects
 
                 // if any existing feed has a matching Id, don't add it
                 if (feedsList.Any(o => o.Id.Equals(feed.Id)))
-                    return;
+                    return false;
             }
 
             feedsList.Add(feed);
             feed.User = this;
+            return true;
         }
 
         public void RemoveFeed(Guid feedId)
@@ -101,6 +114,8 @@ namespace Weave.UserFeedAggregator.BusinessObjects
         public void UpdateFeed(Feed feed)
         {
             if (feedsList == null || !feedsList.Any() || feed == null)
+                return;
+            if (string.IsNullOrWhiteSpace(feed.Name))
                 return;
 
             var matching = feedsList.FirstOrDefault(o => o.Id.Equals(feed.Id));
@@ -126,7 +141,7 @@ namespace Weave.UserFeedAggregator.BusinessObjects
             if (newsItem == null)
                 return;
 
-            var saved = newsItem.Convert<NewsItem, Weave.RssAggregator.Core.DTOs.Outgoing.NewsItem>(Converters.Converters.Instance);
+            var saved = newsItem.Convert<NewsItem, Weave.Article.Service.DTOs.ServerIncoming.SavedNewsItem>(Converters.Converters.Instance);
             await ArticleServiceClient.Current.MarkRead(Id, saved);
             newsItem.HasBeenViewed = true;
         }

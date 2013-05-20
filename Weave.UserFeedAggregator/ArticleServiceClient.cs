@@ -15,7 +15,7 @@ namespace Weave.UserFeedAggregator
         readonly SmartHttpClient client = CreateHttpClient();
 
 
-        public Task MarkRead(Guid userId, NewsItem newsItem)
+        public Task MarkRead(Guid userId, SavedNewsItem newsItem)
         {
             if (userId == Guid.Empty) throw new ArgumentException("Not a valid userId");
             if (newsItem == null) throw new ArgumentNullException("newsItem can't be null");

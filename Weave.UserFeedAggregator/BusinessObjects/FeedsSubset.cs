@@ -8,11 +8,11 @@ namespace Weave.UserFeedAggregator.BusinessObjects
 {
     public class FeedsSubset : IEnumerable<Feed>
     {
-        List<Feed> feeds = new List<Feed>();
+        List<Feed> feeds;
 
         public FeedsSubset(IEnumerable<Feed> feeds)
         {
-            this.feeds.AddRange(feeds);
+            this.feeds = new List<Feed>(feeds);
         }
 
         public async Task Refresh()

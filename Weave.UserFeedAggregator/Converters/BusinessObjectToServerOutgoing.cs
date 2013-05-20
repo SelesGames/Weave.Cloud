@@ -59,7 +59,7 @@ namespace Weave.UserFeedAggregator.Converters
                 ArticleViewingType = (Weave.UserFeedAggregator.DTOs.ArticleViewingType)o.ArticleViewingType,
                 TotalArticleCount = o.News == null ? 0 : o.News.Count,
                 NewArticleCount = o.News == null ? 0 : o.News.Count(x => x.IsNew()),
-                UnreadCount = o.News == null ? 0 : o.News.Count(x => !x.HasBeenViewed),
+                UnreadArticleCount = o.News == null ? 0 : o.News.Count(x => !x.HasBeenViewed),
                 TeaserImageUrl = o.TeaserImageUrl,
                 LastRefreshedOn = o.LastRefreshedOn,
                 MostRecentEntrance = o.MostRecentEntrance,
