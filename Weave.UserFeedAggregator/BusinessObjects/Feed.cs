@@ -18,8 +18,8 @@ namespace Weave.UserFeedAggregator.BusinessObjects
 
         public UserInfo User { get; set; }
         public Guid Id { get; set; }
-        public string Name { get; set; }
         public string Uri { get; set; }
+        public string Name { get; set; }
         public string Category { get; set; }
         public string Etag { get; set; }
         public string LastModified { get; set; }
