@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Web.WebPages.OAuth;
-using Weave.AccountManagement.WebRole.Models;
-
+﻿
 namespace Weave.AccountManagement.WebRole
 {
     public static class AuthConfig

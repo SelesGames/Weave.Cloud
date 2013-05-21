@@ -3,8 +3,8 @@ using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Threading;
 using System.Web.Mvc;
-using WebMatrix.WebData;
 using Weave.AccountManagement.WebRole.Models;
+using WebMatrix.WebData;
 
 namespace Weave.AccountManagement.WebRole.Filters
 {

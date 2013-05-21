@@ -1,9 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
-using Newtonsoft.Json;
 
 namespace Weave.AccountManagement.WebRole.Models
 {

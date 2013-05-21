@@ -3,7 +3,6 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Weave.Article.Service.DTOs.ServerIncoming;
-using Weave.RssAggregator.Core.DTOs.Outgoing;
 
 namespace Weave.UserFeedAggregator
 {
