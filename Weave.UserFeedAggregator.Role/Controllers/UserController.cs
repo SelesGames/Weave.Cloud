@@ -203,9 +203,7 @@ namespace Weave.UserFeedAggregator.Role.Controllers
                 await userBO.RefreshAllFeeds();
                 writer.DelayedWrite(userBO);
             }
-            var output = CreateOutgoingFeedsInfoList(userBO.Feeds);
-            output.UserId = userId;
-            return output;
+            return CreateOutgoingFeedsInfoList(userBO, userBO.Feeds);
         }
 
         [HttpGet]
@@ -219,9 +217,7 @@ namespace Weave.UserFeedAggregator.Role.Controllers
                 await subset.Refresh();
                 writer.DelayedWrite(userBO);
             }
-            var output = CreateOutgoingFeedsInfoList(subset);
-            output.UserId = userId;
-            return output;
+            return CreateOutgoingFeedsInfoList(userBO, subset);
         }
 
         [HttpGet]
@@ -235,9 +231,7 @@ namespace Weave.UserFeedAggregator.Role.Controllers
                 await subset.Refresh();
                 writer.DelayedWrite(userBO);
             }
-            var output = CreateOutgoingFeedsInfoList(subset);
-            output.UserId = userId;
-            return output;
+            return CreateOutgoingFeedsInfoList(userBO, subset);
         }
 
         [HttpPost]
@@ -409,11 +403,12 @@ namespace Weave.UserFeedAggregator.Role.Controllers
         }
 
 
-        Outgoing.FeedsInfoList CreateOutgoingFeedsInfoList(IEnumerable<Feed> feeds)
+        Outgoing.FeedsInfoList CreateOutgoingFeedsInfoList(UserInfo user, IEnumerable<Feed> feeds)
         {
             var outgoing = new Outgoing.FeedsInfoList
             {
-                FeedCount = feeds == null ? 0 : feeds.Count(),
+                UserId = user.Id,
+                TotalFeedCount = user.Feeds == null ? 0 : user.Feeds.Count,
                 Feeds = feeds == null ? null : feeds.Select(ConvertToOutgoing).ToList(),
             };
 
