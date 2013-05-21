@@ -147,7 +147,6 @@ namespace Weave.UserFeedAggregator.Role.Controllers
         Outgoing.NewsList CreateNewsListFromSubset(Guid userId, int skip, int take, NewsItemType type, bool requireImage, FeedsSubset subset)
         {
             var orderedNews = subset.AllOrderedNews().ToList();
-            var totalNewsCount = orderedNews.Count;
 
             IEnumerable<NewsItem> outgoingNews = orderedNews;
 
@@ -169,7 +168,6 @@ namespace Weave.UserFeedAggregator.Role.Controllers
             {
                 UserId = userId,
                 FeedCount = subset.Count(),
-                TotalArticleCount = totalNewsCount,
                 Feeds = subset.Select(ConvertToOutgoing).ToList(),
                 News = outgoingNews.Select(ConvertToOutgoing).ToList(),
             };
@@ -183,6 +181,7 @@ namespace Weave.UserFeedAggregator.Role.Controllers
 
             outgoing.NewArticleCount = outgoing.Feeds == null ? 0 : outgoing.Feeds.Sum(o => o.NewArticleCount);
             outgoing.UnreadArticleCount = outgoing.Feeds == null ? 0 : outgoing.Feeds.Sum(o => o.UnreadArticleCount);
+            outgoing.TotalArticleCount = outgoing.Feeds == null ? 0 : outgoing.Feeds.Sum(o => o.TotalArticleCount);
 
             return outgoing;
         }
@@ -196,10 +195,48 @@ namespace Weave.UserFeedAggregator.Role.Controllers
 
         [HttpGet]
         [ActionName("feeds")]
-        public async Task<Outgoing.FeedsInfoList> GetFeeds(Guid userId)
+        public async Task<Outgoing.FeedsInfoList> GetFeeds(Guid userId, bool refresh = false)
         {
             var userBO = await userCache.Get(userId);
-            var output = CreateOutgoingFeedsInfoList(userBO);
+            if (refresh)
+            {
+                await userBO.RefreshAllFeeds();
+                writer.DelayedWrite(userBO);
+            }
+            var output = CreateOutgoingFeedsInfoList(userBO.Feeds);
+            output.UserId = userId;
+            return output;
+        }
+
+        [HttpGet]
+        [ActionName("feeds")]
+        public async Task<Outgoing.FeedsInfoList> GetFeeds(Guid userId, string category, bool refresh = false)
+        {
+            var userBO = await userCache.Get(userId);
+            var subset = userBO.CreateSubsetFromCategory(category);
+            if (refresh)
+            {
+                await subset.Refresh();
+                writer.DelayedWrite(userBO);
+            }
+            var output = CreateOutgoingFeedsInfoList(subset);
+            output.UserId = userId;
+            return output;
+        }
+
+        [HttpGet]
+        [ActionName("feeds")]
+        public async Task<Outgoing.FeedsInfoList> GetFeeds(Guid userId, Guid feedId, bool refresh = false)
+        {
+            var userBO = await userCache.Get(userId);
+            var subset = userBO.CreateSubsetFromFeedIds(new[] { feedId });
+            if (refresh)
+            {
+                await subset.Refresh();
+                writer.DelayedWrite(userBO);
+            }
+            var output = CreateOutgoingFeedsInfoList(subset);
+            output.UserId = userId;
             return output;
         }
 
@@ -372,14 +409,19 @@ namespace Weave.UserFeedAggregator.Role.Controllers
         }
 
 
-        Outgoing.FeedsInfoList CreateOutgoingFeedsInfoList(UserInfo user)
+        Outgoing.FeedsInfoList CreateOutgoingFeedsInfoList(IEnumerable<Feed> feeds)
         {
-            return new Outgoing.FeedsInfoList
+            var outgoing = new Outgoing.FeedsInfoList
             {
-                UserId = user.Id,
-                FeedCount = user.Feeds == null ? 0 : user.Feeds.Count,
-                Feeds = user.Feeds == null ? null : user.Feeds.Select(ConvertToOutgoing).ToList(),
+                FeedCount = feeds == null ? 0 : feeds.Count(),
+                Feeds = feeds == null ? null : feeds.Select(ConvertToOutgoing).ToList(),
             };
+
+            outgoing.NewArticleCount = outgoing.Feeds == null ? 0 : outgoing.Feeds.Sum(o => o.NewArticleCount);
+            outgoing.UnreadArticleCount = outgoing.Feeds == null ? 0 : outgoing.Feeds.Sum(o => o.UnreadArticleCount);
+            outgoing.TotalArticleCount = outgoing.Feeds == null ? 0 : outgoing.Feeds.Sum(o => o.TotalArticleCount);
+
+            return outgoing;
         }
 
         #endregion

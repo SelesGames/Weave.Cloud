@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Weave.UserFeedAggregator.BusinessObjects
@@ -45,20 +46,26 @@ namespace Weave.UserFeedAggregator.BusinessObjects
                 feeds = feedsList.OfCategory(category);
             }
 
-            if (feeds == null)
-                throw new Exception(string.Format("No feeds match category '{0}", category));
+            if (EnumerableEx.IsNullOrEmpty(feeds))
+                throw new Exception(string.Format("No feeds match category: {0}", category));
 
             return new FeedsSubset(feeds);
         }
 
         public FeedsSubset CreateSubsetFromFeedIds(IEnumerable<Guid> feedIds)
         {
-            if (feedIds == null || !feedIds.Any())
+            if (EnumerableEx.IsNullOrEmpty(feedIds))
                 throw new Exception("No feedIds specified");
 
-            var feeds = from f in Feeds
+            var feeds = from f in feedsList
                         join id in feedIds on f.Id equals id
-                        select f;// Feeds.Join(feedIds, o => o.Id, x => x, (o, x) => o).ToList();
+                        select f;
+
+            if (EnumerableEx.IsNullOrEmpty(feeds))
+                throw new Exception(
+                    string.Format("No feeds match feedIds: {0}", 
+                    feedIds.Aggregate(new StringBuilder(), (sb, id) => sb.Append(id + ", ")).ToString()
+                    ));
 
             return new FeedsSubset(feeds);
         }
@@ -101,7 +108,7 @@ namespace Weave.UserFeedAggregator.BusinessObjects
 
         public void RemoveFeed(Guid feedId)
         {
-            if (feedsList == null || !feedsList.Any())
+            if (EnumerableEx.IsNullOrEmpty(feedsList))
                 return;
 
             var matching = feedsList.FirstOrDefault(o => o.Id.Equals(feedId));
@@ -113,7 +120,7 @@ namespace Weave.UserFeedAggregator.BusinessObjects
 
         public void UpdateFeed(Feed feed)
         {
-            if (feedsList == null || !feedsList.Any() || feed == null)
+            if (EnumerableEx.IsNullOrEmpty(feedsList) || feed == null)
                 return;
             if (string.IsNullOrWhiteSpace(feed.Name))
                 return;
@@ -199,7 +206,7 @@ namespace Weave.UserFeedAggregator.BusinessObjects
 
         NewsItem FindNewsItem(Guid feedId, Guid newsItemId)
         {
-            if (feedsList == null || !feedsList.Any())
+            if (EnumerableEx.IsNullOrEmpty(feedsList))
                 return null;
 
             var newsItem = feedsList
