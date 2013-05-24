@@ -195,7 +195,7 @@ namespace Weave.UserFeedAggregator.Role.Controllers
 
         [HttpGet]
         [ActionName("feeds")]
-        public async Task<Outgoing.FeedsInfoList> GetFeeds(Guid userId, bool refresh = false)
+        public async Task<Outgoing.FeedsInfoList> GetFeeds(Guid userId, bool refresh = false, bool nested = false)
         {
             var userBO = await userCache.Get(userId);
             if (refresh)
@@ -203,12 +203,12 @@ namespace Weave.UserFeedAggregator.Role.Controllers
                 await userBO.RefreshAllFeeds();
                 writer.DelayedWrite(userBO);
             }
-            return CreateOutgoingFeedsInfoList(userBO, userBO.Feeds);
+            return CreateOutgoingFeedsInfoList(userBO, userBO.Feeds, nested);
         }
 
         [HttpGet]
         [ActionName("feeds")]
-        public async Task<Outgoing.FeedsInfoList> GetFeeds(Guid userId, string category, bool refresh = false)
+        public async Task<Outgoing.FeedsInfoList> GetFeeds(Guid userId, string category, bool refresh = false, bool nested = false)
         {
             var userBO = await userCache.Get(userId);
             var subset = userBO.CreateSubsetFromCategory(category);
@@ -217,12 +217,12 @@ namespace Weave.UserFeedAggregator.Role.Controllers
                 await subset.Refresh();
                 writer.DelayedWrite(userBO);
             }
-            return CreateOutgoingFeedsInfoList(userBO, subset);
+            return CreateOutgoingFeedsInfoList(userBO, subset, nested);
         }
 
         [HttpGet]
         [ActionName("feeds")]
-        public async Task<Outgoing.FeedsInfoList> GetFeeds(Guid userId, Guid feedId, bool refresh = false)
+        public async Task<Outgoing.FeedsInfoList> GetFeeds(Guid userId, Guid feedId, bool refresh = false, bool nested = false)
         {
             var userBO = await userCache.Get(userId);
             var subset = userBO.CreateSubsetFromFeedIds(new[] { feedId });
@@ -231,7 +231,7 @@ namespace Weave.UserFeedAggregator.Role.Controllers
                 await subset.Refresh();
                 writer.DelayedWrite(userBO);
             }
-            return CreateOutgoingFeedsInfoList(userBO, subset);
+            return CreateOutgoingFeedsInfoList(userBO, subset, nested);
         }
 
         [HttpPost]
@@ -403,20 +403,57 @@ namespace Weave.UserFeedAggregator.Role.Controllers
         }
 
 
-        Outgoing.FeedsInfoList CreateOutgoingFeedsInfoList(UserInfo user, IEnumerable<Feed> feeds)
+        Outgoing.FeedsInfoList CreateOutgoingFeedsInfoList(UserInfo user, IEnumerable<Feed> feeds, bool returnNested)
         {
-            var outgoing = new Outgoing.FeedsInfoList
+            Outgoing.FeedsInfoList outgoing = new Outgoing.FeedsInfoList
             {
                 UserId = user.Id,
                 TotalFeedCount = user.Feeds == null ? 0 : user.Feeds.Count,
-                Feeds = feeds == null ? null : feeds.Select(ConvertToOutgoing).ToList(),
             };
 
-            outgoing.NewArticleCount = outgoing.Feeds == null ? 0 : outgoing.Feeds.Sum(o => o.NewArticleCount);
-            outgoing.UnreadArticleCount = outgoing.Feeds == null ? 0 : outgoing.Feeds.Sum(o => o.UnreadArticleCount);
-            outgoing.TotalArticleCount = outgoing.Feeds == null ? 0 : outgoing.Feeds.Sum(o => o.TotalArticleCount);
+            if (EnumerableEx.IsNullOrEmpty(feeds))
+            {
+                outgoing.NewArticleCount = 0;
+                outgoing.UnreadArticleCount = 0;
+                outgoing.TotalArticleCount = 0;
+                return outgoing;
+            }
+
+            var outgoingFeeds = feeds.Select(ConvertToOutgoing).ToList();
+            outgoing.NewArticleCount = outgoingFeeds.Sum(o => o.NewArticleCount);
+            outgoing.UnreadArticleCount = outgoingFeeds.Sum(o => o.UnreadArticleCount);
+            outgoing.TotalArticleCount = outgoingFeeds.Sum(o => o.TotalArticleCount);
+
+            if (returnNested)
+            {
+                var grouped = outgoingFeeds.GroupBy(o => o.Category);
+                var categories = grouped.Where(o => !string.IsNullOrWhiteSpace(o.Key))
+                    .Select(o => CreateCategory(o.Key, o == null ? null : o.ToList()))
+                    .OrderBy(o => o.Category)
+                    .ToList();
+
+                outgoing.Categories = categories;
+                outgoing.Feeds = grouped.Where(o => string.IsNullOrWhiteSpace(o.Key)).SelectMany(o => o).ToList();
+            }
+            else
+            {
+                outgoing.Feeds = outgoingFeeds;
+            }
 
             return outgoing;
+        }
+
+        Outgoing.CategoryInfo CreateCategory(string categoryName, List<Outgoing.Feed> feeds)
+        {
+            return new Outgoing.CategoryInfo
+            {
+                Category = categoryName,
+                TotalFeedCount = feeds == null ? 0 : feeds.Count,
+                Feeds = feeds,
+                NewArticleCount = feeds == null ? 0 : feeds.Sum(o => o.NewArticleCount),
+                UnreadArticleCount = feeds == null ? 0 : feeds.Sum(o => o.UnreadArticleCount),
+                TotalArticleCount = feeds == null ? 0 : feeds.Sum(o => o.TotalArticleCount),
+            };
         }
 
         #endregion
