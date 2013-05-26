@@ -63,6 +63,14 @@
     <Compile Include="WorkerRole.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Weave.Portable\Weave.Article.Service.Contracts\Weave.Article.Service.Contracts.csproj">
+      <Project>{d727f239-ee96-4b05-8f17-65871b52b260}</Project>
+      <Name>Weave.Article.Service.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Weave.Portable\Weave.Article.Service.DTOs\Weave.Article.Service.DTOs.csproj">
+      <Project>{2b4d1af0-8c77-475d-8d14-db7b506f9450}</Project>
+      <Name>Weave.Article.Service.DTOs</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common.Data\Common.Data.csproj">
       <Project>{cad7cc28-36e9-4b39-ba90-df99815904eb}</Project>
       <Name>Common.Data</Name>
@@ -86,10 +94,6 @@
     <ProjectReference Include="..\SelesGames.WebApi\SelesGames.WebApi.csproj">
       <Project>{bb3ea281-94b3-435f-a1ef-c395a7d1f25a}</Project>
       <Name>SelesGames.WebApi</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Weave.Article.Service.DTOs\Weave.Article.Service.DTOs.csproj">
-      <Project>{2b4d1af0-8c77-475d-8d14-db7b506f9450}</Project>
-      <Name>Weave.Article.Service.DTOs</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

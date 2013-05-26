@@ -5,12 +5,13 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
+using Weave.Article.Service.Contracts;
 using Incoming = Weave.Article.Service.DTOs.ServerIncoming;
 using Outgoing = Weave.Article.Service.DTOs.ServerOutgoing;
 
 namespace Weave.Article.Service.WorkerRole.Controllers
 {
-    public class ArticleController : ApiController
+    public class ArticleController : ApiController, IWeaveArticleService
     {
         SqlClient client;
 
