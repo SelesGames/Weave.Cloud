@@ -1,4 +1,5 @@
-﻿using SelesGames.Rest;
+﻿using SelesGames.HttpClient;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Weave.Readability
@@ -19,8 +20,8 @@ namespace Weave.Readability
 #if DEBUG
             System.Diagnostics.Debug.WriteLine(string.Format("calling {0}", url), "READABILITY");
 #endif
-            return new JsonRestClient { UseGzip = true }
-                .GetAsync<ReadabilityResult>(fullUrl, System.Threading.CancellationToken.None);
+            return new SmartHttpClient(ContentEncoderSettings.Json, CompressionSettings.OnContent | CompressionSettings.OnRequest)
+                .GetAsync<ReadabilityResult>(fullUrl, CancellationToken.None);
         }
     }
 }
