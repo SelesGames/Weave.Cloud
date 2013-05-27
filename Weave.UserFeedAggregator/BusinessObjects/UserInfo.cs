@@ -4,12 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Weave.Article.Service.Contracts;
 
 namespace Weave.UserFeedAggregator.BusinessObjects
 {
     public class UserInfo
     {
         List<Feed> feedsList = new List<Feed>();
+        IWeaveArticleService articleServiceClient = new Article.Service.Client.ServiceClient();
 
         public Guid Id { get; set; }
         public IReadOnlyList<Feed> Feeds { get { return feedsList; } }
@@ -149,7 +151,7 @@ namespace Weave.UserFeedAggregator.BusinessObjects
                 return;
 
             var saved = newsItem.Convert<NewsItem, Weave.Article.Service.DTOs.ServerIncoming.SavedNewsItem>(Converters.Converters.Instance);
-            await ArticleServiceClient.Current.MarkRead(Id, saved);
+            await articleServiceClient.MarkRead(Id, saved);
             newsItem.HasBeenViewed = true;
         }
 
@@ -159,7 +161,7 @@ namespace Weave.UserFeedAggregator.BusinessObjects
             if (newsItem == null)
                 return;
 
-            await ArticleServiceClient.Current.RemoveRead(Id, newsItemId);
+            await articleServiceClient.RemoveRead(Id, newsItemId);
             newsItem.HasBeenViewed = false;
         }
 
@@ -183,7 +185,7 @@ namespace Weave.UserFeedAggregator.BusinessObjects
                 return;
 
             var favorited = newsItem.Convert<NewsItem, Weave.Article.Service.DTOs.ServerIncoming.SavedNewsItem>(Converters.Converters.Instance);
-            await ArticleServiceClient.Current.AddFavorite(Id, favorited);
+            await articleServiceClient.AddFavorite(Id, favorited);
             newsItem.IsFavorite = true;
         }
 
@@ -193,7 +195,7 @@ namespace Weave.UserFeedAggregator.BusinessObjects
             if (newsItem == null)
                 return;
 
-            await ArticleServiceClient.Current.RemoveFavorite(Id, newsItemId);
+            await articleServiceClient.RemoveFavorite(Id, newsItemId);
             newsItem.IsFavorite = false;
         }
 
