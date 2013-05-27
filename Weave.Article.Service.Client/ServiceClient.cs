@@ -20,6 +20,9 @@ namespace Weave.Article.Service.Client
 
         public async Task<bool> MarkRead(Guid userId, Incoming.SavedNewsItem newsItem)
         {
+            if (userId == Guid.Empty) throw new ArgumentException("Not a valid userId");
+            if (newsItem == null) throw new ArgumentNullException("newsItem can't be null");
+
             string append = "mark_read";
             var url = new UriBuilder(SERVICE_URL + append)
                 .ToString();
@@ -31,6 +34,9 @@ namespace Weave.Article.Service.Client
 
         public async Task RemoveRead(Guid userId, Guid newsItemId)
         {
+            if (userId == Guid.Empty) throw new ArgumentException("Not a valid userId");
+            if (newsItemId == Guid.Empty) throw new ArgumentException("Not a valid newsItemId");
+
             string append = "remove_read";
             var url = new UriBuilder(SERVICE_URL + append)
                 .AddParameter("userId", userId)
@@ -44,6 +50,8 @@ namespace Weave.Article.Service.Client
 
         public async Task<List<Outgoing.SavedNewsItem>> GetRead(Guid userId, int take, int skip = 0)
         {
+            if (userId == Guid.Empty) throw new ArgumentException("Not a valid userId");
+
             string append = "get_read";
             var url = new UriBuilder(SERVICE_URL + append)
                 .AddParameter("userId", userId)
@@ -65,6 +73,9 @@ namespace Weave.Article.Service.Client
 
         public async Task<bool> AddFavorite(Guid userId, Incoming.SavedNewsItem newsItem)
         {
+            if (userId == Guid.Empty) throw new ArgumentException("Not a valid userId");
+            if (newsItem == null) throw new ArgumentNullException("newsItem can't be null");
+
             string append = "add_favorite";
             var url = new UriBuilder(SERVICE_URL + append)
                 .AddParameter("userId", userId)
@@ -77,6 +88,9 @@ namespace Weave.Article.Service.Client
 
         public async Task RemoveFavorite(Guid userId, Guid newsItemId)
         {
+            if (userId == Guid.Empty) throw new ArgumentException("Not a valid userId");
+            if (newsItemId == Guid.Empty) throw new ArgumentException("Not a valid newsItemId");
+
             string append = "remove_favorite";
             var url = new UriBuilder(SERVICE_URL + append)
                 .AddParameter("userId", userId)
@@ -90,6 +104,8 @@ namespace Weave.Article.Service.Client
 
         public async Task<List<Outgoing.SavedNewsItem>> GetFavorites(Guid userId, int take, int skip = 0)
         {
+            if (userId == Guid.Empty) throw new ArgumentException("Not a valid userId");
+
             string append = "get_favorites";
             var url = new UriBuilder(SERVICE_URL + append)
                 .AddParameter("userId", userId)
@@ -110,7 +126,7 @@ namespace Weave.Article.Service.Client
 
         SmartHttpClient CreateClient()
         {
-            //return new SelesGames.Rest.Protobuf.ProtobufRestClient { UseGzip = true };
+            //return new SmartHttpClient(ContentEncoderSettings.Json, CompressionSettings.None);
             return new SmartHttpClient(ContentEncoderSettings.Protobuf, CompressionSettings.None);
         }
     }
