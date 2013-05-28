@@ -101,6 +101,10 @@
       <Project>{bb3ea281-94b3-435f-a1ef-c395a7d1f25a}</Project>
       <Name>SelesGames.WebApi</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Weave.User.BusinessObjects\Weave.User.BusinessObjects.csproj">
+      <Project>{db5274e6-15f6-4ec8-920a-842ea93a2601}</Project>
+      <Name>Weave.User.BusinessObjects</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Weave.User.DTOs\Weave.User.DataStore.csproj">
       <Project>{458cbdea-f41c-4209-9dec-b2f285c217ab}</Project>
       <Name>Weave.User.DataStore</Name>

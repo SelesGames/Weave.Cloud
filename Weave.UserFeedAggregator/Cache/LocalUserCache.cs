@@ -1,7 +1,7 @@
 ﻿using Common.Caching;
 using System;
 using System.Threading.Tasks;
-using Weave.UserFeedAggregator.BusinessObjects;
+using Weave.User.BusinessObjects;
 
 namespace Weave.UserFeedAggregator.Cache
 {

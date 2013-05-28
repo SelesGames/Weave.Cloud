@@ -1,6 +1,6 @@
 ﻿using SelesGames.Common;
 using System.Linq;
-using Weave.UserFeedAggregator.BusinessObjects;
+using Weave.User.BusinessObjects;
 using Outgoing = Weave.UserFeedAggregator.DTOs.ServerOutgoing;
 
 

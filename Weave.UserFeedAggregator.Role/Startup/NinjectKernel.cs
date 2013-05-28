@@ -3,7 +3,7 @@ using Common.Caching;
 using Ninject;
 using System;
 using System.Threading.Tasks;
-using Weave.UserFeedAggregator.BusinessObjects;
+using Weave.User.BusinessObjects;
 using Weave.UserFeedAggregator.Cache;
 using Weave.UserFeedAggregator.Repositories;
 

@@ -1,7 +1,7 @@
 ﻿using SelesGames.Common;
 using System.Collections.Generic;
 using System.Linq;
-using Weave.UserFeedAggregator.BusinessObjects;
+using Weave.User.BusinessObjects;
 using Store = Weave.User.DataStore;
 
 namespace Weave.UserFeedAggregator.Converters

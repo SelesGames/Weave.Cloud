@@ -105,6 +105,10 @@
       <Project>{2f1a280d-ee75-4dc1-a36c-f8e5488e3260}</Project>
       <Name>RssAggregator.DTOs</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Weave.User.BusinessObjects\Weave.User.BusinessObjects.csproj">
+      <Project>{db5274e6-15f6-4ec8-920a-842ea93a2601}</Project>
+      <Name>Weave.User.BusinessObjects</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Weave.User.DTOs\Weave.User.DataStore.csproj">
       <Project>{458cbdea-f41c-4209-9dec-b2f285c217ab}</Project>
       <Name>Weave.User.DataStore</Name>

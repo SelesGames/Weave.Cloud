@@ -1,6 +1,6 @@
 ﻿using SelesGames.Common;
 using System.Threading.Tasks;
-using Weave.UserFeedAggregator.BusinessObjects;
+using Weave.User.BusinessObjects;
 using Weave.UserFeedAggregator.Converters;
 using Weave.UserFeedAggregator.Repositories;
 using Store = Weave.User.DataStore;

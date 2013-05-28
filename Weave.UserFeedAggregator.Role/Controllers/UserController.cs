@@ -7,7 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
-using Weave.UserFeedAggregator.BusinessObjects;
+using Weave.User.BusinessObjects;
 using Weave.UserFeedAggregator.Contracts;
 using Weave.UserFeedAggregator.Converters;
 using Weave.UserFeedAggregator.DTOs;
@@ -50,6 +50,26 @@ namespace Weave.UserFeedAggregator.Role.Controllers
 
 
         #region Get Basic User Info (suitable for panorama home screen)
+
+        //[HttpGet]
+        //[ActionName("info")]
+        //public async Task<Outgoing.UserInfo> GetUserInfo(string userName, string password, bool refresh = false)
+        //{
+        //    var userBO = await userCache.Get(userId);
+
+        //    userBO.PreviousLoginTime = userBO.CurrentLoginTime;
+        //    userBO.CurrentLoginTime = DateTime.UtcNow;
+
+        //    if (refresh)
+        //    {
+        //        await userBO.RefreshAllFeeds();
+        //        writer.DelayedWrite(userBO);
+        //    }
+
+        //    var outgoing = ConvertToOutgoing(userBO);
+        //    outgoing.LatestNews = userBO.GetLatestArticles().Select(ConvertToOutgoing).ToList();
+        //    return outgoing;
+        //}
 
         [HttpGet]
         [ActionName("info")]

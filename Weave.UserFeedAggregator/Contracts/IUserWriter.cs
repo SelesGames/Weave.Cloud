@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Weave.UserFeedAggregator.BusinessObjects;
+using Weave.User.BusinessObjects;
 
 namespace Weave.UserFeedAggregator
 {
