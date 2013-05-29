@@ -43,12 +43,12 @@
     <PublishProfile Include="Profiles\Weave Account Service.azurePubxml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Weave.AccountManagement.WebRole\Weave.AccountManagement.Service.WebRole.csproj">
-      <Name>Weave.AccountManagement.Service.WebRole</Name>
-      <Project>{b848fabd-9fa5-4d8b-aff7-1d972fecce9d}</Project>
+    <ProjectReference Include="..\Weave.AccountManagement.Service.Role\Weave.AccountManagement.Service.Role.csproj">
+      <Name>Weave.AccountManagement.Service.Role</Name>
+      <Project>{0e61606a-2450-49a2-a612-5261b79993aa}</Project>
       <Private>True</Private>
-      <RoleType>Web</RoleType>
-      <RoleName>Weave.AccountManagement.Service.WebRole</RoleName>
+      <RoleType>Worker</RoleType>
+      <RoleName>Weave.AccountManagement.Service.Role</RoleName>
       <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
     </ProjectReference>
   </ItemGroup>

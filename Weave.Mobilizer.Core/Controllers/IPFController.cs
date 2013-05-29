@@ -19,5 +19,10 @@ namespace Weave.Mobilizer.Core.Controllers
         {
             return cache.Get(HttpUtility.UrlEncode(url));
         }
+
+        public Task Post(string url, [FromBody] object article)
+        {
+            return null;
+        }
     }
 }
