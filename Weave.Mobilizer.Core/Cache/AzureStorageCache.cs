@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common.Caching;
+using System;
 using System.Diagnostics;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -29,7 +30,7 @@ namespace Weave.Mobilizer.Core.Cache
                 var existing = await azureClient.Get(key);
                 return existing;
             }
-            catch (Exception ex)
+            catch// (Exception ex)
             {
                 // do something with exception;
             }

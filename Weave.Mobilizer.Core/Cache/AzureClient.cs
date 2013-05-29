@@ -1,10 +1,9 @@
-﻿using Microsoft.WindowsAzure;
+﻿using Common.Azure.SmartBlobClient;
+using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.StorageClient;
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
 using Weave.Readability;
 
@@ -13,62 +12,83 @@ namespace Weave.Mobilizer.Core.Service
     public class AzureClient
     {
         CloudStorageAccount csa;
+        string account, key;
 
-        public AzureClient(StorageCredentialsAccountAndKey accountAndKey)
+        public AzureClient(string account, string key)//StorageCredentialsAccountAndKey accountAndKey)
         {
-            csa = new CloudStorageAccount(accountAndKey, false);
+            this.account = account;
+            this.key = key;
+            this.csa = new CloudStorageAccount(new StorageCredentialsAccountAndKey(account, key), false);//accountAndKey, false);
         }
 
         public async Task Save(string url, ReadabilityResult result)
         {
-            var blobClient = csa.CreateCloudBlobClient();
-            var blobContainer = blobClient.GetContainerReference("articles");
-            //var permissions = blobContainer.GetPermissions();
-            //permissions.PublicAccess = BlobContainerPublicAccessType.Blob;
-            //blobContainer.CreateIfNotExist();
-
-            var fileName = UrlToFileName(url);
-
-            var blob = blobContainer.GetBlobReference(fileName);
-            blob.Properties.ContentType = "application/json; charset=utf-8";
-            //blob.Properties.ContentEncoding = "gzip";
-
-            BlobRequestOptions options = new BlobRequestOptions();
-            options.AccessCondition = AccessCondition.None;
-            options.Timeout = TimeSpan.FromMinutes(3);
-
-            using (var ms = new MemoryStream())
+            var client = new SmartBlobClient(account, key, "articles", false)
             {
-                var serial = new DataContractJsonSerializer(typeof(ReadabilityResult));
-                serial.WriteObject(ms, result);
-                ms.Position = 0;
-                await blob.UploadFromStreamAsync(ms, options);
-            }
+                ContentType = "application/json; charset=utf-8",
+                UseGzipOnUpload = true,
+                WriteTimeout = TimeSpan.FromMinutes(3),
+            };
+
+            await client.Save(url, result);
+
+
+
+            //var blobClient = csa.CreateCloudBlobClient();
+            //var blobContainer = blobClient.GetContainerReference("articles");
+            ////var permissions = blobContainer.GetPermissions();
+            ////permissions.PublicAccess = BlobContainerPublicAccessType.Blob;
+            ////blobContainer.CreateIfNotExist();
+
+            //var fileName = UrlToFileName(url);
+
+            //var blob = blobContainer.GetBlobReference(fileName);
+            //blob.Properties.ContentType = "application/json; charset=utf-8";
+            ////blob.Properties.ContentEncoding = "gzip";
+
+            //BlobRequestOptions options = new BlobRequestOptions();
+            //options.AccessCondition = AccessCondition.None;
+            //options.Timeout = TimeSpan.FromMinutes(3);
+
+            //using (var ms = new MemoryStream())
+            //{
+            //    var serial = new DataContractJsonSerializer(typeof(ReadabilityResult));
+            //    serial.WriteObject(ms, result);
+            //    ms.Position = 0;
+            //    await blob.UploadFromStreamAsync(ms, options);
+            //}
             Debug.WriteLine(string.Format("{0} uploaded to azure", url), "AZURE");
         }
 
-        public async Task<ReadabilityResult> Get(string url)
+        public Task<ReadabilityResult> Get(string url)
         {
-            var blobClient = csa.CreateCloudBlobClient();
-            var blobContainer = blobClient.GetContainerReference("articles");
-
-            var fileName = UrlToFileName(url);
-
-            var blob = blobContainer.GetBlobReference(fileName);
-
-            BlobRequestOptions options = new BlobRequestOptions();
-            options.AccessCondition = AccessCondition.None;
-            options.Timeout = TimeSpan.FromSeconds(8);
-
-            using (var ms = new MemoryStream())
+            var client = new SmartBlobClient(account, key, "articles", false)
             {
-                await blob.DownloadToStreamAsync(ms, options);
-                ms.Position = 0;
-                var serial = new DataContractJsonSerializer(typeof(ReadabilityResult));
-                var result = (ReadabilityResult)serial.ReadObject(ms);
-                //Debug.WriteLine(string.Format("{0} retrieved from azure", url), "AZURE");
-                return result;
-            }
+                ReadTimeout = TimeSpan.FromMinutes(8),
+            };
+
+            return client.Get<ReadabilityResult>(url);
+
+            //var blobClient = csa.CreateCloudBlobClient();
+            //var blobContainer = blobClient.GetContainerReference("articles");
+
+            //var fileName = UrlToFileName(url);
+
+            //var blob = blobContainer.GetBlobReference(fileName);
+
+            //BlobRequestOptions options = new BlobRequestOptions();
+            //options.AccessCondition = AccessCondition.None;
+            //options.Timeout = TimeSpan.FromSeconds(8);
+
+            //using (var ms = new MemoryStream())
+            //{
+            //    await blob.DownloadToStreamAsync(ms, options);
+            //    ms.Position = 0;
+            //    var serial = new DataContractJsonSerializer(typeof(ReadabilityResult));
+            //    var result = (ReadabilityResult)serial.ReadObject(ms);
+            //    //Debug.WriteLine(string.Format("{0} retrieved from azure", url), "AZURE");
+            //    return result;
+            //}
         }
 
         public async Task DeleteOlderThan(TimeSpan ttl)
@@ -109,14 +129,14 @@ namespace Weave.Mobilizer.Core.Service
             return Task.Factory.FromAsync(blob.BeginDelete, blob.EndDelete, null);
         }
 
-        public static Task DownloadToStreamAsync(this CloudBlob blob, Stream stream, BlobRequestOptions options)
-        {
-            return Task.Factory.FromAsync<Stream, BlobRequestOptions>(blob.BeginDownloadToStream, blob.EndDownloadToStream, stream, options, null);
-        }
+        //public static Task DownloadToStreamAsync(this CloudBlob blob, Stream stream, BlobRequestOptions options)
+        //{
+        //    return Task.Factory.FromAsync<Stream, BlobRequestOptions>(blob.BeginDownloadToStream, blob.EndDownloadToStream, stream, options, null);
+        //}
 
-        public static Task UploadFromStreamAsync(this CloudBlob blob, Stream stream, BlobRequestOptions options)
-        {
-            return Task.Factory.FromAsync<Stream, BlobRequestOptions>(blob.BeginUploadFromStream, blob.EndUploadFromStream, stream, options, null);
-        }
+        //public static Task UploadFromStreamAsync(this CloudBlob blob, Stream stream, BlobRequestOptions options)
+        //{
+        //    return Task.Factory.FromAsync<Stream, BlobRequestOptions>(blob.BeginUploadFromStream, blob.EndUploadFromStream, stream, options, null);
+        //}
     }
 }

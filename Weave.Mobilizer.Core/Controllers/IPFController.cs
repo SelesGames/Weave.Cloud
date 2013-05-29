@@ -2,6 +2,7 @@
 using System.Web;
 using System.Web.Http;
 using Weave.Mobilizer.Core.Cache;
+using Weave.Mobilizer.Core.Service;
 using Weave.Readability;
 
 namespace Weave.Mobilizer.Core.Controllers
@@ -10,7 +11,7 @@ namespace Weave.Mobilizer.Core.Controllers
     {
         ReadabilityCache cache;
 
-        public IPFController(ReadabilityCache cache)
+        public IPFController(ReadabilityCache cache, AzureClient writeClient)
         {
             this.cache = cache;
         }
