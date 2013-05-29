@@ -63,7 +63,6 @@
     <Build Include="StoredProcedures\AddNewsItemFavorite.sql" />
     <Build Include="StoredProcedures\GetNewsItemFavorites.sql" />
     <Build Include="StoredProcedures\MarkNewsItemRead.sql" />
-    <Build Include="Tables\AuthInfo.sql" />
     <Build Include="Tables\FavoriteNewsItem.sql" />
     <Build Include="Tables\ReadNewsItem.sql" />
     <Build Include="StoredProcedures\RemoveNewsItemRead.sql" />

@@ -2,13 +2,13 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Weave.AccountManagement.Sql.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="weaveConnectionString" Type="(Connection string)" Scope="Application">
+    <Setting Name="weaveaccount_dbConnectionString" Type="(Connection string)" Scope="Application">
       <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
 &lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
-  &lt;ConnectionString&gt;Data Source=ykgd4qav8g.database.windows.net,1433;Initial Catalog=weave;User ID=aemami99&lt;/ConnectionString&gt;
+  &lt;ConnectionString&gt;Data Source=eb0l5hjvzm.database.windows.net,1433;Initial Catalog=weaveaccount_db;User ID=aemami99&lt;/ConnectionString&gt;
   &lt;ProviderName&gt;System.Data.SqlClient&lt;/ProviderName&gt;
 &lt;/SerializableConnectionString&gt;</DesignTimeValue>
-      <Value Profile="(Default)">Data Source=ykgd4qav8g.database.windows.net,1433;Initial Catalog=weave;User ID=aemami99</Value>
+      <Value Profile="(Default)">Data Source=eb0l5hjvzm.database.windows.net,1433;Initial Catalog=weaveaccount_db;User ID=aemami99</Value>
     </Setting>
   </Settings>
 </SettingsFile>
