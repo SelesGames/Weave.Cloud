@@ -1,21 +1,13 @@
 ﻿using Common.Azure.SmartBlobClient;
-using Ninject;
-using ProtoBuf;
 using SelesGames.HttpClient;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
 using System.Threading.Tasks;
 //using Weave.AccountManagement.DTOs;
-using Weave.User.DataStore;
-using Weave.AccountManagement.WebRole.Startup;
 using Weave.RssAggregator.Core.DTOs.Incoming;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
-using Weave.UserFeedAggregator.Role;
 using Weave.UserFeedAggregator.Repositories;
 using Weave.UserFeedAggregator.Role.Controllers;
-using Weave.UserFeedAggregator;
 
 namespace Test.AccountManagement
 {

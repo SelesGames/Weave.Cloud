@@ -22,7 +22,6 @@ using Weave.RssAggregator.Core.DTOs.Outgoing;
 using Weave.RssAggregator.HighFrequency;
 using Weave.RssAggregator.LibraryClient;
 using Weave.RssAggregator.WorkerRole.Startup;
-using Sql = RssAggregator.Data.Sql;
 
 
 namespace RssAggregator.ConsoleTesting
@@ -108,68 +107,68 @@ namespace RssAggregator.ConsoleTesting
             //}).ToTask();
         }
 
-        static async Task FixUnsetBlobs()
-        {
-            var kernel = new NinjectKernel();
-            var provider = kernel.Get<IProvider<ITransactionalDatabaseClient>>();
+        //static async Task FixUnsetBlobs()
+        //{
+        //    var kernel = new NinjectKernel();
+        //    var provider = kernel.Get<IProvider<ITransactionalDatabaseClient>>();
 
-            int takeCount = 5;
-            int skipCount = 0;
+        //    int takeCount = 5;
+        //    int skipCount = 0;
 
-            while (true)
-            {
-                using (var client = provider.Get())
-                {
-                    //var news = await client.GetAllByCriteria<Sql.NewsItem>(o => o.NewsItemBlob == null || o.UtcPublishDateTimeString == null);
-                    var news = await client.Get<Sql.NewsItem>().ConfigureAwait(false);
-                    news = news.Where(o => o.NewsItemBlob == null || o.UtcPublishDateTimeString == null).Skip(skipCount).Take(takeCount);
+        //    while (true)
+        //    {
+        //        using (var client = provider.Get())
+        //        {
+        //            //var news = await client.GetAllByCriteria<Sql.NewsItem>(o => o.NewsItemBlob == null || o.UtcPublishDateTimeString == null);
+        //            var news = await client.Get<Sql.NewsItem>().ConfigureAwait(false);
+        //            news = news.Where(o => o.NewsItemBlob == null || o.UtcPublishDateTimeString == null).Skip(skipCount).Take(takeCount);
 
-                    if (!news.Any())
-                        return;
+        //            if (!news.Any())
+        //                return;
 
-                    foreach (var o in news)
-                    {
-                        var entry = new Entry
-                        {
-                            Id = o.Id,
-                            FeedId = o.FeedId,
-                            Title = o.Title,
-                            Link = o.Link,
-                            OriginalPublishDateTimeString = o.OriginalPublishDateTimeString,
-                            UtcPublishDateTime = o.PublishDateTime,
-                            VideoUri = o.VideoUri,
-                            YoutubeId = o.YoutubeId,
-                            PodcastUri = o.PodcastUri,
-                            ZuneAppId = o.ZuneAppId,
-                        };
+        //            foreach (var o in news)
+        //            {
+        //                var entry = new Entry
+        //                {
+        //                    Id = o.Id,
+        //                    FeedId = o.FeedId,
+        //                    Title = o.Title,
+        //                    Link = o.Link,
+        //                    OriginalPublishDateTimeString = o.OriginalPublishDateTimeString,
+        //                    UtcPublishDateTime = o.PublishDateTime,
+        //                    VideoUri = o.VideoUri,
+        //                    YoutubeId = o.YoutubeId,
+        //                    PodcastUri = o.PodcastUri,
+        //                    ZuneAppId = o.ZuneAppId,
+        //                };
 
-                        entry.AddImage(o.ImageUrl);
+        //                entry.AddImage(o.ImageUrl);
 
-                        if (o.NewsItemBlob == null)
-                        {
-                            var newsItem = Convert(entry);
+        //                if (o.NewsItemBlob == null)
+        //                {
+        //                    var newsItem = Convert(entry);
 
-                            using (var ms = new MemoryStream())
-                            {
-                                Serializer.Serialize(ms, newsItem);
-                                ms.Position = 0;
-                                var byteArray = ms.ToArray();
-                                o.NewsItemBlob = byteArray;
-                            }
-                        }
+        //                    using (var ms = new MemoryStream())
+        //                    {
+        //                        Serializer.Serialize(ms, newsItem);
+        //                        ms.Position = 0;
+        //                        var byteArray = ms.ToArray();
+        //                        o.NewsItemBlob = byteArray;
+        //                    }
+        //                }
 
-                        if (o.UtcPublishDateTimeString == null)
-                        {
-                            o.UtcPublishDateTimeString = entry.UtcPublishDateTimeString;
-                        }
+        //                if (o.UtcPublishDateTimeString == null)
+        //                {
+        //                    o.UtcPublishDateTimeString = entry.UtcPublishDateTimeString;
+        //                }
 
-                        await client.SubmitChanges();
-                    }
-                }
+        //                await client.SubmitChanges();
+        //            }
+        //        }
 
-                //skipCount += takeCount;
-            }
-        }
+        //        //skipCount += takeCount;
+        //    }
+        //}
 
         static NewsItem Convert(Entry e)
         {

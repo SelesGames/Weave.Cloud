@@ -78,10 +78,6 @@
       <Project>{86060d7e-3115-4f54-8008-384b3d7c598e}</Project>
       <Name>Common.TimeFormatting</Name>
     </ProjectReference>
-    <ProjectReference Include="..\RssAggregator.Data.Sql\RssAggregator.Data.Sql.csproj">
-      <Project>{2b934baa-21a6-472e-8d1f-89e7c17dfe5b}</Project>
-      <Name>RssAggregator.Data.Sql</Name>
-    </ProjectReference>
     <ProjectReference Include="..\RssAggregator.LibraryClient\RssAggregator.LibraryClient.csproj">
       <Project>{2db284eb-5b81-425a-957e-77eeb704ebdc}</Project>
       <Name>RssAggregator.LibraryClient</Name>

@@ -86,10 +86,6 @@
       <Project>{CAD7CC28-36E9-4B39-BA90-DF99815904EB}</Project>
       <Name>Common.Data</Name>
     </ProjectReference>
-    <ProjectReference Include="..\RssAggregator.Data.Sql\RssAggregator.Data.Sql.csproj">
-      <Project>{2b934baa-21a6-472e-8d1f-89e7c17dfe5b}</Project>
-      <Name>RssAggregator.Data.Sql</Name>
-    </ProjectReference>
     <ProjectReference Include="..\RssAggregator.LibraryClient\RssAggregator.LibraryClient.csproj">
       <Project>{2db284eb-5b81-425a-957e-77eeb704ebdc}</Project>
       <Name>RssAggregator.LibraryClient</Name>
