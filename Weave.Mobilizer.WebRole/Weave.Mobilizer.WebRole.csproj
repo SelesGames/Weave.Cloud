@@ -254,6 +254,10 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common.Caching\Common.Caching.csproj">
+      <Project>{c83ab657-c7a6-4cf8-b4f5-d4e01bf2e562}</Project>
+      <Name>Common.Caching</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Ninject.WebApi\Ninject.WebApi.csproj">
       <Project>{be97f564-16f5-4d09-9218-cc65e89df2ac}</Project>
       <Name>Ninject.WebApi</Name>
@@ -265,6 +269,10 @@
     <ProjectReference Include="..\Weave.Mobilizer.NinjectKernel\Weave.Mobilizer.NinjectKernel.csproj">
       <Project>{b70b3a96-75ef-49ca-8372-3e81015fc378}</Project>
       <Name>Weave.Mobilizer.NinjectKernel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Weave.Readability\Weave.Readability.csproj">
+      <Project>{46ad4f10-5b0a-4333-a4cc-4cbafcfe3ed2}</Project>
+      <Name>Weave.Readability</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
