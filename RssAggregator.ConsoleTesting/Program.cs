@@ -1,10 +1,7 @@
 ﻿using Common.Azure.ServiceBus;
-using Common.Data;
 using Microsoft.ServiceBus.Messaging;
 using Newtonsoft.Json;
 using Ninject;
-using ProtoBuf;
-using SelesGames.Common;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
