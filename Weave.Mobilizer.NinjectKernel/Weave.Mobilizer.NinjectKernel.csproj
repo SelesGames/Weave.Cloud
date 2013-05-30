@@ -34,7 +34,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.WindowsAzure.StorageClient, Version=1.7.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Ninject">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\Ninject.dll</HintPath>
@@ -48,6 +47,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common.Caching\Common.Caching.csproj">
+      <Project>{c83ab657-c7a6-4cf8-b4f5-d4e01bf2e562}</Project>
+      <Name>Common.Caching</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Weave.Mobilizer.Core\Weave.Mobilizer.Core.csproj">
       <Project>{AC94F729-4CC5-4ADC-B531-EFCBD9131FCF}</Project>
       <Name>Weave.Mobilizer.Core</Name>

@@ -1,5 +1,6 @@
-﻿using Microsoft.WindowsAzure;
+﻿using Common.Caching;
 using Ninject;
+using System.Threading.Tasks;
 using Weave.Mobilizer.Core.Cache;
 using Weave.Mobilizer.Core.Service;
 using Weave.Readability;
@@ -16,11 +17,11 @@ namespace Weave.Mobilizer.NinjectKernel
             var azureClient = new AzureClient("weave", "uudFrra70qkI64bifaI2Rrm37CZ1HkzaBQrLMyw6U/hmzNDZehXeo9DdUv7BCpuZY4N2q/CNpNwYxW2fa218xA==");
 
             var azureCache = new AzureStorageCache(azureClient);
-            var localCache = new LocalMemoryCache();
+            var localCache = new LocalMemoryCache<string, Task<ReadabilityResult>>();
             var nLevelCache = new ReadabilityCache(rc, localCache, azureCache);
 
-            Bind<AzureStorageCache>().ToConstant(azureCache).InSingletonScope();
-            Bind<LocalMemoryCache>().ToConstant(localCache).InSingletonScope();
+            //Bind<AzureStorageCache>().ToConstant(azureCache).InSingletonScope();
+            //Bind<LocalMemoryCache>().ToConstant(localCache).InSingletonScope();
             Bind<ReadabilityCache>().ToConstant(nLevelCache).InSingletonScope();
         }
     }
