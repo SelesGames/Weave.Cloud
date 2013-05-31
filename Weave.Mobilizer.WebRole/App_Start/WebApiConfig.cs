@@ -1,10 +1,11 @@
-﻿using Microsoft.WindowsAzure.ServiceRuntime;
+﻿using Common.Net.Http.Compression;
+using Microsoft.WindowsAzure.ServiceRuntime;
 using Ninject;
 using Ninject.WebApi;
 using System;
 using System.Web.Http;
 using Weave.Mobilizer.Cache;
-using Weave.Mobilizer.Core.Web;
+using Weave.Mobilizer.Core.Controllers;
 
 namespace Weave.Mobilizer.WebRole
 {
@@ -22,6 +23,16 @@ namespace Weave.Mobilizer.WebRole
                 defaults: new { id = RouteParameter.Optional }
             );
 
+            config.Routes.MapHttpRoute(
+                name: "InstapaperFormatterRouting",
+                routeTemplate: "{controller}",
+                defaults: new
+                {
+                    routTemplate = "ipf",
+                    controller = typeof(IPFController),
+                }
+            );
+
             if (!ReadConfigValues())
                 throw new Exception("Unable to read the config values from Azure! (WebApiConfig.Register function)");
 
@@ -31,9 +42,8 @@ namespace Weave.Mobilizer.WebRole
             var cloudCache = kernel.Get<AzureStorageCache>();
             cloudCache.SetCacheTTLAndCleanupIntervalInHours(cloudCacheTTL, cloudCacheCleanupInterval);
 
-            var resolver = new NinjectResolver(kernel);
-
-            config.Configure(resolver);     
+            config.DependencyResolver = new NinjectResolver(kernel);
+            config.MessageHandlers.Add(new EncodingDelegateHandler { ForceCompression = true });
         }
 
         static bool ReadConfigValues()
