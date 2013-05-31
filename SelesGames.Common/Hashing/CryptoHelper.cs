@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace SelesGames.Common.Hashing
 {
@@ -18,13 +20,11 @@ namespace SelesGames.Common.Hashing
         // approach using MD5 and GUIDs
         public static Guid ComputeHashUsedByMobilizer(string val)
         {
-            var md5 = System.Security.Cryptography.MD5.Create();
-            byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(val);
+            var md5 = MD5.Create();
+            byte[] inputBytes = Encoding.ASCII.GetBytes(val);
             byte[] hash = md5.ComputeHash(inputBytes);
             var guid = new Guid(hash);
             return guid;
-            //string hashString = guid.ToString("N");
-            //return hashString;
         }
     }
 }
