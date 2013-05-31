@@ -148,6 +148,8 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Weave.Sql.Account", "Weave.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.AccountManagement.Service.Role", "Weave.AccountManagement.Service.Role\Weave.AccountManagement.Service.Role.csproj", "{0E61606A-2450-49A2-A612-5261B79993AA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.Mobilizer.Cache", "Weave.Mobilizer.Cache\Weave.Mobilizer.Cache.csproj", "{1A5136F0-480B-461C-B350-9AD42C0ECA97}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -879,6 +881,18 @@ Global
 		{0E61606A-2450-49A2-A612-5261B79993AA}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{0E61606A-2450-49A2-A612-5261B79993AA}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{0E61606A-2450-49A2-A612-5261B79993AA}.Release|x86.ActiveCfg = Release|Any CPU
+		{1A5136F0-480B-461C-B350-9AD42C0ECA97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A5136F0-480B-461C-B350-9AD42C0ECA97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A5136F0-480B-461C-B350-9AD42C0ECA97}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{1A5136F0-480B-461C-B350-9AD42C0ECA97}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{1A5136F0-480B-461C-B350-9AD42C0ECA97}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{1A5136F0-480B-461C-B350-9AD42C0ECA97}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1A5136F0-480B-461C-B350-9AD42C0ECA97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A5136F0-480B-461C-B350-9AD42C0ECA97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A5136F0-480B-461C-B350-9AD42C0ECA97}.Release|ARM.ActiveCfg = Release|Any CPU
+		{1A5136F0-480B-461C-B350-9AD42C0ECA97}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{1A5136F0-480B-461C-B350-9AD42C0ECA97}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{1A5136F0-480B-461C-B350-9AD42C0ECA97}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -950,5 +964,6 @@ Global
 		{AC94F729-4CC5-4ADC-B531-EFCBD9131FCF} = {2E1B1CEA-00ED-4945-8050-1C1A80E91AC3}
 		{B70B3A96-75EF-49CA-8372-3E81015FC378} = {2E1B1CEA-00ED-4945-8050-1C1A80E91AC3}
 		{46AD4F10-5B0A-4333-A4CC-4CBAFCFE3ED2} = {2E1B1CEA-00ED-4945-8050-1C1A80E91AC3}
+		{1A5136F0-480B-461C-B350-9AD42C0ECA97} = {2E1B1CEA-00ED-4945-8050-1C1A80E91AC3}
 	EndGlobalSection
 EndGlobal
