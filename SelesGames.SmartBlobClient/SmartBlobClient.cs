@@ -58,7 +58,13 @@ namespace Common.Azure.SmartBlobClient
             using (var content = await blobClient.Get(blobId))
             {
                 var contentType = content.Properties.ContentType;
-                var mediaHeader = new MediaTypeHeaderValue(contentType);
+
+                MediaTypeHeaderValue mediaHeader;
+                if (!MediaTypeHeaderValue.TryParse(contentType, out mediaHeader))
+                {
+                    throw new Exception(string.Format("Invalid ContentType returned by the call to Get<T> in SmartBlobClient: {0}", contentType));
+                }
+
                 var deserializer = FindReadFormatter<T>(mediaHeader);
 
                 var result = await deserializer.ReadFromStreamAsync(typeof(T), content.Content, null, null);
@@ -70,7 +76,12 @@ namespace Common.Azure.SmartBlobClient
         {
             using (var ms = new MemoryStream())
             {
-                var mediaHeader = new MediaTypeHeaderValue(ContentType);
+                MediaTypeHeaderValue mediaHeader;
+                if (!MediaTypeHeaderValue.TryParse(ContentType, out mediaHeader))
+                {
+                    throw new Exception(string.Format("Invalid ContentType returned by the call to Save<T> in SmartBlobClient: {0}", ContentType));
+                } 
+                
                 var serializer = FindWriteFormatter<T>(mediaHeader);
 
                 await serializer.WriteToStreamAsync(typeof(T), obj, ms, null, null);
