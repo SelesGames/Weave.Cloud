@@ -59,6 +59,10 @@
     <Compile Include="ReadabilityCache.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Weave.Portable\Weave.Mobilizer.DTOs\Weave.Mobilizer.DTOs.csproj">
+      <Project>{0a9019e4-e76f-4fac-a5c7-70f32cf5e2c1}</Project>
+      <Name>Weave.Mobilizer.DTOs</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common.Azure\Common.Azure.csproj">
       <Project>{6211d4f0-8390-4dfa-a1d2-ba4aa7c28348}</Project>
       <Name>Common.Azure</Name>

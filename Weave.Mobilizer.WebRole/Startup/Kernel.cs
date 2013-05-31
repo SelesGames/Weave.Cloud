@@ -2,7 +2,7 @@
 using Weave.Mobilizer.Cache;
 using Weave.Readability;
 
-namespace Weave.Mobilizer.NinjectKernel
+namespace Weave.Mobilizer.WebRole.Startup
 {
     public class Kernel : StandardKernel
     {

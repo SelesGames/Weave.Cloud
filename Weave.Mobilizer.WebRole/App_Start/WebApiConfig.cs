@@ -25,7 +25,7 @@ namespace Weave.Mobilizer.WebRole
             if (!ReadConfigValues())
                 throw new Exception("Unable to read the config values from Azure! (WebApiConfig.Register function)");
 
-            var kernel = new Weave.Mobilizer.NinjectKernel.Kernel();
+            var kernel = new Startup.Kernel();
             var localCache = kernel.Get<LocalMemoryCache>();
             localCache.SetCacheTTLInMinutes(localCacheTTL);
             var cloudCache = kernel.Get<AzureStorageCache>();

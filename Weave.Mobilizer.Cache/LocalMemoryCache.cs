@@ -1,6 +1,6 @@
 ﻿using Common.Caching;
 using System.Threading.Tasks;
-using Weave.Readability;
+using Weave.Mobilizer.DTOs;
 
 namespace Weave.Mobilizer.Cache
 {

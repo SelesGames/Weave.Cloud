@@ -41,10 +41,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ReadabilityClient.cs" />
-    <Compile Include="ReadabilityResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Weave.Portable\Weave.Mobilizer.DTOs\Weave.Mobilizer.DTOs.csproj">
+      <Project>{0a9019e4-e76f-4fac-a5c7-70f32cf5e2c1}</Project>
+      <Name>Weave.Mobilizer.DTOs</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SelesGames.HttpClient\SelesGames.HttpClient.csproj">
       <Project>{bf0dc853-b353-4a92-b718-0a0ad067bfdf}</Project>
       <Name>SelesGames.HttpClient</Name>

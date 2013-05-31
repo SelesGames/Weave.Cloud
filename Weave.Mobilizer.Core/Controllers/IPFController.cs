@@ -3,12 +3,13 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using Weave.Mobilizer.Cache;
+using Weave.Mobilizer.Contracts;
 using Weave.Mobilizer.Core.Web;
-using Weave.Readability;
+using Weave.Mobilizer.DTOs;
 
 namespace Weave.Mobilizer.Core.Controllers
 {
-    public class IPFController : ApiController
+    public class IPFController : ApiController, IMobilizerService
     {
         static readonly int MAX_AZURE_BLOB_NAME = 1024;
         static readonly int GUID_NO_HYPHENS_LENGTH = 32;
