@@ -51,6 +51,10 @@
       <Project>{c83ab657-c7a6-4cf8-b4f5-d4e01bf2e562}</Project>
       <Name>Common.Caching</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Weave.Mobilizer.Cache\Weave.Mobilizer.Cache.csproj">
+      <Project>{1a5136f0-480b-461c-b350-9ad42c0eca97}</Project>
+      <Name>Weave.Mobilizer.Cache</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Weave.Mobilizer.Core\Weave.Mobilizer.Core.csproj">
       <Project>{AC94F729-4CC5-4ADC-B531-EFCBD9131FCF}</Project>
       <Name>Weave.Mobilizer.Core</Name>

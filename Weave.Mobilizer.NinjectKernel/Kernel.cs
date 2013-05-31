@@ -1,6 +1,5 @@
 ﻿using Ninject;
-using Weave.Mobilizer.Core.Cache;
-using Weave.Mobilizer.Core.Service;
+using Weave.Mobilizer.Cache;
 using Weave.Readability;
 
 namespace Weave.Mobilizer.NinjectKernel
