@@ -262,6 +262,10 @@
       <Project>{be97f564-16f5-4d09-9218-cc65e89df2ac}</Project>
       <Name>Ninject.WebApi</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Weave.Mobilizer.Cache\Weave.Mobilizer.Cache.csproj">
+      <Project>{1a5136f0-480b-461c-b350-9ad42c0eca97}</Project>
+      <Name>Weave.Mobilizer.Cache</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Weave.Mobilizer.Core\Weave.Mobilizer.Core.csproj">
       <Project>{ac94f729-4cc5-4adc-b531-efcbd9131fcf}</Project>
       <Name>Weave.Mobilizer.Core</Name>

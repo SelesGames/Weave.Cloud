@@ -3,7 +3,7 @@ using Ninject;
 using Ninject.WebApi;
 using System;
 using System.Web.Http;
-using Weave.Mobilizer.Core.Cache;
+using Weave.Mobilizer.Cache;
 using Weave.Mobilizer.Core.Web;
 
 namespace Weave.Mobilizer.WebRole
