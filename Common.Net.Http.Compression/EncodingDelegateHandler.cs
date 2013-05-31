@@ -16,21 +16,24 @@ namespace Common.Net.Http.Compression
             {
                 HttpResponseMessage response = responseToCompleteTask.Result;
 
-                var acceptEncoding = response.RequestMessage.Headers.AcceptEncoding;
-
                 if (response.IsSuccessStatusCode && response.Content != null)
                 {
                     if (ForceCompression)
                     {
                         response.Content = new CompressedContent(response.Content, "gzip");
                     }
-                    else if (acceptEncoding != null && acceptEncoding.Any())
+                    else if (response.RequestMessage != null && response.RequestMessage.Headers != null)
                     {
-                        string encodingType = acceptEncoding.First().Value;
+                        var acceptEncoding = response.RequestMessage.Headers.AcceptEncoding;
 
-                        if (!encodingType.Equals("identity", StringComparison.OrdinalIgnoreCase))
+                        if (acceptEncoding != null && acceptEncoding.Any())
                         {
-                            response.Content = new CompressedContent(response.Content, encodingType);
+                            string encodingType = acceptEncoding.First().Value;
+
+                            if (!encodingType.Equals("identity", StringComparison.OrdinalIgnoreCase))
+                            {
+                                response.Content = new CompressedContent(response.Content, encodingType);
+                            }
                         }
                     }
                 }

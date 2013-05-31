@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using Weave.Mobilizer.Cache;
+using Weave.Mobilizer.Core.Web;
 using Weave.Readability;
 
 namespace Weave.Mobilizer.Core.Controllers
@@ -26,6 +27,7 @@ namespace Weave.Mobilizer.Core.Controllers
             return cache.Get(UrlToFileName(url));
         }
 
+        [TokenAuthorizationAttribute]
         public Task Post(string url, [FromBody] ReadabilityResult article)
         {
             return writeClient.Save(UrlToFileName(url), article);
