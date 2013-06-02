@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
@@ -19,6 +20,7 @@ using Weave.RssAggregator.Core.DTOs.Outgoing;
 using Weave.RssAggregator.HighFrequency;
 using Weave.RssAggregator.LibraryClient;
 using Weave.RssAggregator.WorkerRole.Startup;
+using SelesGames.Common;
 
 
 namespace RssAggregator.ConsoleTesting
@@ -29,7 +31,8 @@ namespace RssAggregator.ConsoleTesting
         {
             try
             {
-                TestBasicFreedRequester().Wait();
+                TestRedirect().Wait();
+                //TestBasicFreedRequester().Wait();
                 //TestChangeProccer().Wait();
                 //TestSub().Wait();
                 //FixUnsetBlobs().Wait();
@@ -47,6 +50,38 @@ namespace RssAggregator.ConsoleTesting
 
             while (true)
                 Console.ReadLine();
+        }
+
+        static async Task TestRedirect()
+        {
+            var url = "http://feeds.gawker.com/~r/gizmodo/vip/~3/TWQrJP2unx8/how-to-make-a-see-through-margarita-510717690";
+            var finalUrl = await GetFinalRedirectLocation(url);
+            DebugEx.WriteLine(finalUrl);
+        }
+
+        static async Task<string> GetFinalRedirectLocation(string url)
+        {
+            var request = HttpWebRequest.CreateHttp(url);
+            request.AllowAutoRedirect = false;
+            request.Method = "HEAD";
+
+            var response = (HttpWebResponse)await request.GetResponseAsync();
+            if (response.StatusCode == HttpStatusCode.MovedPermanently)
+            {
+                var movedTo = response.Headers[HttpResponseHeader.Location];
+                return await GetFinalRedirectLocation(movedTo);
+            }
+            else if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var stream = response.GetResponseStream();
+                var memStream = stream.ToMemoryStream();
+                DebugEx.WriteLine(memStream.Length);
+                return url;
+            }
+            else
+            {
+                throw new WebException("Unexpected response", null, WebExceptionStatus.UnknownError, response);
+            }
         }
 
         static async Task TestBasicFreedRequester()
