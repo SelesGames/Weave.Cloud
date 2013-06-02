@@ -148,6 +148,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.Mobilizer.Contracts",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.Mobilizer.DTOs", "..\Weave.Portable\Weave.Mobilizer.DTOs\Weave.Mobilizer.DTOs.csproj", "{0A9019E4-E76F-4FAC-A5C7-70F32CF5E2C1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.Mobilizer.Client", "Weave.Mobilizer.Client\Weave.Mobilizer.Client.csproj", "{787FF65B-D0B3-4135-8495-EC5D4FF0A068}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -879,6 +881,18 @@ Global
 		{0A9019E4-E76F-4FAC-A5C7-70F32CF5E2C1}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{0A9019E4-E76F-4FAC-A5C7-70F32CF5E2C1}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{0A9019E4-E76F-4FAC-A5C7-70F32CF5E2C1}.Release|x86.ActiveCfg = Release|Any CPU
+		{787FF65B-D0B3-4135-8495-EC5D4FF0A068}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{787FF65B-D0B3-4135-8495-EC5D4FF0A068}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{787FF65B-D0B3-4135-8495-EC5D4FF0A068}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{787FF65B-D0B3-4135-8495-EC5D4FF0A068}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{787FF65B-D0B3-4135-8495-EC5D4FF0A068}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{787FF65B-D0B3-4135-8495-EC5D4FF0A068}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{787FF65B-D0B3-4135-8495-EC5D4FF0A068}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{787FF65B-D0B3-4135-8495-EC5D4FF0A068}.Release|Any CPU.Build.0 = Release|Any CPU
+		{787FF65B-D0B3-4135-8495-EC5D4FF0A068}.Release|ARM.ActiveCfg = Release|Any CPU
+		{787FF65B-D0B3-4135-8495-EC5D4FF0A068}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{787FF65B-D0B3-4135-8495-EC5D4FF0A068}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{787FF65B-D0B3-4135-8495-EC5D4FF0A068}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -950,5 +964,6 @@ Global
 		{1A5136F0-480B-461C-B350-9AD42C0ECA97} = {2E1B1CEA-00ED-4945-8050-1C1A80E91AC3}
 		{FC776CA4-35B3-4024-8667-CB265805A519} = {2E1B1CEA-00ED-4945-8050-1C1A80E91AC3}
 		{0A9019E4-E76F-4FAC-A5C7-70F32CF5E2C1} = {2E1B1CEA-00ED-4945-8050-1C1A80E91AC3}
+		{787FF65B-D0B3-4135-8495-EC5D4FF0A068} = {2E1B1CEA-00ED-4945-8050-1C1A80E91AC3}
 	EndGlobalSection
 EndGlobal
