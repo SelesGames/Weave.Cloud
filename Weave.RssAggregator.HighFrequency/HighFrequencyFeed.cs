@@ -16,6 +16,8 @@ namespace Weave.RssAggregator.HighFrequency
     {
         Subject<HighFrequencyFeedUpdateDto> feedUpdate = new Subject<HighFrequencyFeedUpdateDto>();
         List<Guid> lastNewsIds;
+        IReadOnlyList<string> instructions;
+
 
         public Guid FeedId { get; private set; }
         public string Name { get; private set; }
@@ -36,7 +38,7 @@ namespace Weave.RssAggregator.HighFrequency
         }
 
 
-        public HighFrequencyFeed(string name, string feedUri)
+        public HighFrequencyFeed(string name, string feedUri, string instructions)
         {
             if (string.IsNullOrWhiteSpace(name))        throw new ArgumentException("name in HighFrequencyFeed ctor");
             if (string.IsNullOrWhiteSpace(feedUri))     throw new ArgumentException("name in HighFrequencyFeed ctor");
@@ -47,6 +49,15 @@ namespace Weave.RssAggregator.HighFrequency
             LastFeedState = FeedState.Uninitialized;
             FeedUpdate = feedUpdate.AsObservable();
             RefreshTimeout = TimeSpan.FromMinutes(1);
+
+            if (!string.IsNullOrWhiteSpace(instructions))
+            {
+                this.instructions = instructions
+                    .Split(',')
+                    .Where(o => !string.IsNullOrWhiteSpace(o))
+                    .Select(o => o.Trim())
+                    .ToList();
+            }
         }
 
         public async Task Refresh()
@@ -84,6 +95,7 @@ namespace Weave.RssAggregator.HighFrequency
                                 Name = Name,
                                 FeedUri = FeedUri,
                                 RefreshTime = refreshTime,
+                                Instructions = instructions,
                                 Entries = news.Select(o => o.Convert(EntryToEntryWithPostProcessInfoConverter.Instance)).ToList(),
                             };
                             feedUpdate.OnNext(update);

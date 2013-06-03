@@ -58,7 +58,7 @@ namespace Weave.RssAggregator.HighFrequency
 
             var highFrequencyFeeds = libraryFeeds
                 .Distinct()
-                .Select(o => new HighFrequencyFeed(o.FeedName, o.FeedUri))
+                .Select(o => new HighFrequencyFeed(o.FeedName, o.FeedUri, o.Instructions))
                 .ToList();
 
             foreach (var feed in highFrequencyFeeds)

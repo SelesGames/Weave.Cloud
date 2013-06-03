@@ -75,7 +75,7 @@ namespace Weave.AccountManagement.Sql
             }
         }
 
-        public async Task Add(AuthInfo user)
+        public async Task Add(IdentityInfo user)
         {
             var sqlUser = Convert(user);
 
@@ -86,7 +86,7 @@ namespace Weave.AccountManagement.Sql
             }
         }
 
-        public async Task Update(AuthInfo user)
+        public async Task Update(IdentityInfo user)
         {
             var sqlUser = Convert(user);
 
@@ -97,7 +97,7 @@ namespace Weave.AccountManagement.Sql
             }
         }
 
-        Linq.AuthInfo Convert(AuthInfo user)
+        Linq.AuthInfo Convert(IdentityInfo user)
         {
             return new Linq.AuthInfo
             {
@@ -106,6 +106,18 @@ namespace Weave.AccountManagement.Sql
                 TwitterAuthString = user.TwitterAuthToken,
                 MicrosoftAuthString = user.MicrosoftAuthToken,
                 GoogleAuthString = user.GoogleAuthToken,
+            };
+        }
+
+        IdentityInfo Convert(Linq.AuthInfo user)
+        {
+            return new IdentityInfo
+            {
+                UserId = user.UserId,
+                FacebookAuthToken = user.FacebookAuthString,
+                TwitterAuthToken = user.TwitterAuthString,
+                MicrosoftAuthToken = user.MicrosoftAuthString,
+                GoogleAuthToken = user.GoogleAuthString,
             };
         }
     }

@@ -78,6 +78,7 @@ namespace Weave.RssAggregator.LibraryClient
                         FeedName = feed.Attribute("Name").ValueOrDefault(),
                         FeedUri = feed.ValueOrDefault(),
                         ArticleViewingType = ParseArticleViewingType(feed),
+                        Instructions = feed.Attribute("in").ValueOrDefault(),
                     })
                 .ToList();
         }

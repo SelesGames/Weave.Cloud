@@ -32,6 +32,34 @@ namespace Weave.UserFeedAggregator.Role.Controllers
 
         #region User creation
 
+        [HttpGet]
+        [ActionName("create")]
+        public async Task<Outgoing.UserInfo> CreateUser(Guid userId)
+        {
+            var existingUser = userCache.Get(userId);
+            var userBO = new UserInfo
+            {
+                Id = userId,
+            };
+            await writer.ImmediateWrite(userBO);
+            var outgoing = ConvertToOutgoing(userBO);
+            return outgoing;
+        }
+
+        [HttpGet]
+        [ActionName("create")]
+        public async Task<Outgoing.UserInfo> CreateUser(string userName, string password, Guid? userId = null)
+        {
+            var existingUser = userCache.Get(userId.Value);
+            var userBO = new UserInfo
+            {
+                Id = userId.Value,
+            };
+            await writer.ImmediateWrite(userBO);
+            var outgoing = ConvertToOutgoing(userBO);
+            return outgoing;
+        }
+
         [HttpPost]
         [ActionName("create")]
         public async Task<Outgoing.UserInfo> AddUserAndReturnUserInfo([FromBody] Incoming.UserInfo incomingUser)
@@ -50,26 +78,6 @@ namespace Weave.UserFeedAggregator.Role.Controllers
 
 
         #region Get Basic User Info (suitable for panorama home screen)
-
-        //[HttpGet]
-        //[ActionName("info")]
-        //public async Task<Outgoing.UserInfo> GetUserInfo(string userName, string password, bool refresh = false)
-        //{
-        //    var userBO = await userCache.Get(userId);
-
-        //    userBO.PreviousLoginTime = userBO.CurrentLoginTime;
-        //    userBO.CurrentLoginTime = DateTime.UtcNow;
-
-        //    if (refresh)
-        //    {
-        //        await userBO.RefreshAllFeeds();
-        //        writer.DelayedWrite(userBO);
-        //    }
-
-        //    var outgoing = ConvertToOutgoing(userBO);
-        //    outgoing.LatestNews = userBO.GetLatestArticles().Select(ConvertToOutgoing).ToList();
-        //    return outgoing;
-        //}
 
         [HttpGet]
         [ActionName("info")]

@@ -9,6 +9,7 @@ namespace Weave.RssAggregator.HighFrequency
         public string Name { get; set; }
         public string FeedUri { get; set; }
         public DateTime RefreshTime { get; set; }
-        public List<EntryWithPostProcessInfo> Entries { get; set; }
+        public IReadOnlyList<string> Instructions { get; set; }
+        public IReadOnlyList<EntryWithPostProcessInfo> Entries { get; set; }
     }
 }

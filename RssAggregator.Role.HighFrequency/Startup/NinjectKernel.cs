@@ -54,6 +54,7 @@ namespace RssAggregator.Role.HighFrequency
                     DelegateProvider.Create(() => this.Get<ImageScalerUpdater>()),
                     DelegateProvider.Create(() => this.Get<EntryToBinaryUpdater>()),
                     DelegateProvider.Create(() => this.Get<SqlUpdater>()),
+                    DelegateProvider.Create(() => this.Get<MobilizerOverride>()),
                     DelegateProvider.Create(() => this.Get<ServiceBusUpdater>()),
                 }))
                 .InSingletonScope();
