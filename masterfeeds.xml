@@ -3,7 +3,7 @@
 
   <!-- POPULAR FEEDS -->
 
-  <Category Type="Test">
+  <!--Category Type="Test">
     <Feed Name="b">http://feeds.feedburner.com/uproxx/withleather</Feed>
     <Feed Name="e">http://actionflickchick.com/superaction/?feed=rss2</Feed>
     <Feed Name="f">http://geekygirlslovescifi.blogspot.com//feeds/posts/default</Feed>
@@ -12,21 +12,17 @@
     <Feed Name="k">http://winsource.com/feed/</Feed>
     <Feed Name="o">http://feeds2.feedburner.com/feliciaday</Feed>
     <Feed Name="p">http://fatuglyorslutty.com/feed/rss/</Feed>
-  </Category> 
+  </Category--> 
   
 
   <Category Type="Pop &amp; Geek Culture">
-    <Feed Name="Blastr">http://blastr.com/atom.xml</Feed>
-    <Feed Name="Gamma Squad">http://feeds.feedburner.com/uproxx/gammasquad</Feed>
-    <Feed Name="Uproxx">http://feeds.feedburner.com/uproxx/features</Feed>
-
+    <!--Feed Name="Blastr">http://blastr.com/atom.xml</Feed  CRAP FEED-->
+    <Feed Name="Gamma Squad" in="mu">http://feeds.feedburner.com/uproxx/gammasquad</Feed>
+    <Feed Name="Uproxx" in="mu">http://feeds.feedburner.com/uproxx/features</Feed>
+    <Feed Name="GeekMom" in="mu">http://geekmom.com/feed</Feed>
+    <Feed Name="The Mary Sue" in="mu">http://www.themarysue.com/feed/</Feed>
   </Category>
   
-  <Category Type="Girl Geek">
-    <Feed Name="Frag Dolls">http://www.fragdolls.com/index.php/home/RSS/</Feed>
-    <Feed Name="Geek Mom" ViewType="ie">http://www.wired.com/geekmom/feed/</Feed>
-    <Feed Name="The Mary Sue">http://www.themarysue.com/feed/</Feed>
-  </Category>
   
   <Category Type="Animals">
     <Feed Name="Cute Overload" ViewType="ie">http://cuteoverload.com/feed</Feed>
@@ -127,7 +123,7 @@
 
 
   <Category Type="Gaming">
-    <Feed Name="1UP">http://www.1up.com/rss</Feed>
+    <!--Feed Name="1UP">http://www.1up.com/rss</Feed>  SITE DEAD AS OF APRIL -->
     <Feed Name="Ars Technica">http://feeds.arstechnica.com/arstechnica/gaming</Feed>
     <Feed Name="Destructoid">http://feeds.feedburner.com/Destructoid</Feed>
     <Feed Name="EDGE">http://www.edge-online.com/feed</Feed>
@@ -139,10 +135,11 @@
     <Feed Name="GiantBomb" ViewType="ie">http://feeds.feedburner.com/GiantbombAll</Feed>
     <Feed Name="IGN.com">http://feeds.ign.com/ign/games-articles</Feed>
     <Feed Name="Joystiq.com">http://www.joystiq.com/rss.xml</Feed>
-    <Feed Name="Kotaku">http://feeds.gawker.com/kotaku/vip</Feed>
+    <Feed Name="Kotaku" in="mu">http://feeds.gawker.com/kotaku/vip</Feed>
     <Feed Name="PC Gamer">http://www.pcgamer.com/feed/rss2</Feed>
     <Feed Name="Penny Arcade" ViewType="ie">http://penny-arcade.com/feed</Feed>
     <Feed Name="Penny Arcade Report" ViewType="ie">http://feeds.penny-arcade.com/pa-report</Feed>
+    <Feed Name="Polygon">http://www.polygon.com/rss/index.xml</Feed>
     <Feed Name="Rock, Paper, Shotgun">http://feeds.feedburner.com/RockPaperShotgun</Feed>
     <Feed Name="Wired | GameLife" ViewType="ie">http://www.wired.com/gamelife/feed</Feed>
     <Feed Name="WoW Insider">http://wow.joystiq.com/rss.xml</Feed>
