@@ -11,10 +11,9 @@ namespace Weave.RssAggregator.HighFrequency
         public SqlUpdater(SqlClient dbClient)
         {
             this.dbClient = dbClient;
-            IsHandledFully = false;
         }
 
-        public bool IsHandledFully { get; private set; }
+        public bool IsHandledFully { get { return false; } }
 
         public async Task ProcessAsync(HighFrequencyFeedUpdateDto update)
         {

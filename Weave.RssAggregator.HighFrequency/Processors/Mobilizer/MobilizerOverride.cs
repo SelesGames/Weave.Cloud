@@ -6,7 +6,7 @@ namespace Weave.RssAggregator.HighFrequency
 {
     public class MobilizerOverride : ISequentialAsyncProcessor<HighFrequencyFeedUpdateDto>
     {
-        readonly static string token = "";
+        readonly static string token = "hxyuiplkx78!ksdfl";
         readonly MobilizerServiceClient client;
 
         public MobilizerOverride()
@@ -28,7 +28,7 @@ namespace Weave.RssAggregator.HighFrequency
         {
             try
             {
-                await client.Post(e.Link, 
+                await client.Post(e.Link,
                     new Weave.Mobilizer.DTOs.ReadabilityResult
                     {
                         title = e.Title,

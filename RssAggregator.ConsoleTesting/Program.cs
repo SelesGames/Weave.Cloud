@@ -21,6 +21,7 @@ using Weave.RssAggregator.HighFrequency;
 using Weave.RssAggregator.LibraryClient;
 using Weave.RssAggregator.WorkerRole.Startup;
 using SelesGames.Common;
+using Weave.Mobilizer.Client;
 
 
 namespace RssAggregator.ConsoleTesting
@@ -31,7 +32,8 @@ namespace RssAggregator.ConsoleTesting
         {
             try
             {
-                TestRedirect().Wait();
+                TestMobilizerUpload().Wait();
+                //TestRedirect().Wait();
                 //TestBasicFreedRequester().Wait();
                 //TestChangeProccer().Wait();
                 //TestSub().Wait();
@@ -50,6 +52,26 @@ namespace RssAggregator.ConsoleTesting
 
             while (true)
                 Console.ReadLine();
+        }
+
+        static async Task TestMobilizerUpload()
+        {
+            var client = new MobilizerServiceClient("hxyuiplkx78!ksdfl");
+            await client.Post("http://www.espn.com", new Weave.Mobilizer.DTOs.ReadabilityResult
+                {
+                    author = "test",
+                    content = "hello world",
+                    title = "asdf",
+                    word_count = "not available",
+                });
+
+                        //                title = e.Title,
+                        //url = e.Link,
+                        //date_published = e.UtcPublishDateTimeString,
+                        //domain = feed.FeedUri,
+                        //content = e.Description,
+                        //author = null,
+                        //word_count = "not available",
         }
 
         static async Task TestRedirect()

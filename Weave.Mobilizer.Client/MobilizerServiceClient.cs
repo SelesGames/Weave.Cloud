@@ -29,7 +29,7 @@ namespace Weave.Mobilizer.Client
                 .ToString();
 
             var client = CreateClient();
-            var result = await client.GetAsync<ReadabilityResult>(url, CancellationToken.None);
+            var result = await client.GetAsync<ReadabilityResult>(fullUrl, CancellationToken.None);
             return result;
         }
 
@@ -44,12 +44,12 @@ namespace Weave.Mobilizer.Client
                 .ToString();
 
             var client = CreateClient();
-            return client.PostAsync(url, article, CancellationToken.None);
+            return client.PostAsync(fullUrl, article, CancellationToken.None);
         }
 
         SmartHttpClient CreateClient()
         {
-            return new SmartHttpClient(ContentEncoderSettings.Json, CompressionSettings.OnRequest);
+            return new SmartHttpClient(ContentEncoderSettings.Json, CompressionSettings.OnRequest | CompressionSettings.OnContent);
             //return new SmartHttpClient(ContentEncoderSettings.Protobuf, CompressionSettings.None);
         }
     }
