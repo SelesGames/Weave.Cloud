@@ -24,10 +24,10 @@ namespace Common.Net.Http.Compression
         {
             HttpResponseMessage response = o.Result;
 
-            var contentEncoding = response.Content.Headers.ContentEncoding;
-
             if (response.IsSuccessStatusCode)
             {
+                var contentEncoding = response.Content.Headers.ContentEncoding;
+
                 if (contentEncoding != null && contentEncoding.Any())
                 {
                     string encodingType = contentEncoding.First();

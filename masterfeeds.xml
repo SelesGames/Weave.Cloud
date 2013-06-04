@@ -266,8 +266,8 @@
     <Feed Name="Engadget">http://www.engadget.com/rss.xml</Feed>
     <Feed Name="Geek.com">http://www.geek.com/feed/</Feed>
     <Feed Name="GigaOM">http://feeds.feedburner.com/ommalik</Feed>
-    <Feed Name="Gizmodo">http://feeds.gawker.com/gizmodo/vip</Feed>
-    <Feed Name="Lifehacker">http://feeds.gawker.com/lifehacker/vip</Feed>
+    <Feed Name="Gizmodo" in="mu">http://feeds.gawker.com/gizmodo/vip</Feed>
+    <Feed Name="Lifehacker" in="mu">http://feeds.gawker.com/lifehacker/vip</Feed>
     <Feed Name="Mashable">http://feeds.mashable.com/Mashable</Feed>
     <Feed Name="PandoDaily">http://pandodaily.com/feed</Feed>
     <Feed Name="Pocketnow">http://feeds.feedburner.com/pocketnow</Feed>
@@ -398,6 +398,7 @@
 
   <Category Type="Cars">
     <Feed Name="Car and Driver">http://feeds.feedburner.com/caranddriver/blog</Feed>
+    <Feed Name="Jalopnik">http://feeds.gawker.com/jalopnik/vip</Feed>
   </Category>
 
   <Category Type="Dating">
