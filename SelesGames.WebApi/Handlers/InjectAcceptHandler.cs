@@ -5,7 +5,7 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Common.WebApi
+namespace Common.WebApi.Handlers
 {
     public class InjectAcceptHandler : DelegatingHandler
     {

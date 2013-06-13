@@ -1,5 +1,5 @@
 ﻿using Common.Net.Http.Compression;
-using Common.WebApi;
+using Common.WebApi.Handlers;
 using SelesGames.WebApi.Protobuf;
 using System.Linq;
 using System.Net.Http.Formatting;
@@ -30,6 +30,7 @@ namespace Weave.RssAggregator.WorkerRole.Startup
             Formatters.Add(new ProtobufFormatter());
 
             MessageHandlers.Add(new InjectAcceptHandler("application/protobuf"));
+            MessageHandlers.Add(new InjectAcceptEncodingHandler("gzip"));
         }
     }
 }

@@ -45,7 +45,8 @@
     <Compile Include="CrossDomain\InjectContentTypeHandler.cs" />
     <Compile Include="ExceptionHandlingAttribute.cs" />
     <Compile Include="Extensions\HttpResponseMessageExtensions.cs" />
-    <Compile Include="InjectAcceptHandler.cs" />
+    <Compile Include="Handlers\InjectAcceptEncodingHandler.cs" />
+    <Compile Include="Handlers\InjectAcceptHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResponseHelper.cs" />
   </ItemGroup>
