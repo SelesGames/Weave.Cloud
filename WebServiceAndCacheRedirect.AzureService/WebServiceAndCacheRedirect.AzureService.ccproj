@@ -36,6 +36,28 @@
     <ServiceConfiguration Include="ServiceConfiguration.Local.cscfg" />
     <ServiceConfiguration Include="ServiceConfiguration.Cloud.cscfg" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WebServiceAndCacheRedirect.WorkerRole\WebServiceAndCacheRedirect.WorkerRole.csproj">
+      <Name>WebServiceAndCacheRedirect.WorkerRole</Name>
+      <Project>{3d0c140b-67e4-43a8-bf33-5d0d9cf99e22}</Project>
+      <Private>True</Private>
+      <RoleType>Worker</RoleType>
+      <RoleName>WebServiceAndCacheRedirect.WorkerRole</RoleName>
+      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Profiles" />
+    <Folder Include="WebServiceAndCacheRedirect.WorkerRoleContent\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="WebServiceAndCacheRedirect.WorkerRoleContent\diagnostics.wadcfg">
+      <SubType>Content</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PublishProfile Include="Profiles\Weave service redirect.azurePubxml" />
+  </ItemGroup>
   <!-- Import the target files for this project template -->
   <PropertyGroup>
     <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>

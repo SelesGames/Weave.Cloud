@@ -1,6 +1,6 @@
 ﻿using System.Web.Http;
 
-namespace Weave.RssAggregator.WorkerRole.Controllers
+namespace WebServiceAndCacheRedirect.WorkerRole.Controllers
 {
     public class PingController : ApiController
     {
