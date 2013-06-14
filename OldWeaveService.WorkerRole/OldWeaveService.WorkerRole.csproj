@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{350CEA62-4DC8-49B9-8299-02EE1A242AB9}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>OldWeaveService.WorkerRole</RootNamespace>
+    <AssemblyName>OldWeaveService.WorkerRole</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <RoleType>Worker</RoleType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.WindowsAzure.ServiceRuntime, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\lib\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject">
+      <HintPath>..\lib\Ninject.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Web.Http.SelfHost, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Startup\HttpConfig.cs" />
+    <Compile Include="Startup\StartupTask.cs" />
+    <Compile Include="WorkerRole.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common.Azure.ServiceBus.Reactive\Common.Azure.ServiceBus.Reactive.csproj">
+      <Project>{682a3907-afdd-4f98-ba04-3886cdbb520c}</Project>
+      <Name>Common.Azure.ServiceBus.Reactive</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common.Net.Http.Compression\Common.Net.Http.Compression.csproj">
+      <Project>{c3e23ea5-8542-464a-9598-d4d126e1eb97}</Project>
+      <Name>Common.Net.Http.Compression</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Ninject.WebApi\Ninject.WebApi.csproj">
+      <Project>{be97f564-16f5-4d09-9218-cc65e89df2ac}</Project>
+      <Name>Ninject.WebApi</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RssAggregator.LowFrequency\RssAggregator.LowFrequency.csproj">
+      <Project>{bdf7d1ee-a9f2-4971-9ebf-b711d6c4b857}</Project>
+      <Name>RssAggregator.LowFrequency</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SelesGames.WebApi.Protobuf\SelesGames.WebApi.Protobuf.csproj">
+      <Project>{c829e120-9b78-4640-bf91-fefcf060e2b8}</Project>
+      <Name>SelesGames.WebApi.Protobuf</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SelesGames.WebApi\SelesGames.WebApi.csproj">
+      <Project>{bb3ea281-94b3-435f-a1ef-c395a7d1f25a}</Project>
+      <Name>SelesGames.WebApi</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Weave.RssAggregator.WorkerRole\RssAggregator.WorkerRole.csproj">
+      <Project>{31e6c664-4807-43b7-8c91-59cb94717ccf}</Project>
+      <Name>RssAggregator.WorkerRole</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

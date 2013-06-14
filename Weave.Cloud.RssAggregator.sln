@@ -154,7 +154,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebServiceAndCacheRedirect"
 EndProject
 Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "WebServiceAndCacheRedirect.AzureService", "WebServiceAndCacheRedirect.AzureService\WebServiceAndCacheRedirect.AzureService.ccproj", "{F3846DF8-785C-48AF-92C1-CBC3430F601E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebServiceAndCacheRedirect.WorkerRole", "WebServiceAndCacheRedirect.WorkerRole\WebServiceAndCacheRedirect.WorkerRole.csproj", "{3D0C140B-67E4-43A8-BF33-5D0D9CF99E22}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OldWeaveService.WorkerRole", "OldWeaveService.WorkerRole\OldWeaveService.WorkerRole.csproj", "{350CEA62-4DC8-49B9-8299-02EE1A242AB9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -911,18 +911,18 @@ Global
 		{F3846DF8-785C-48AF-92C1-CBC3430F601E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{F3846DF8-785C-48AF-92C1-CBC3430F601E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{F3846DF8-785C-48AF-92C1-CBC3430F601E}.Release|x86.ActiveCfg = Release|Any CPU
-		{3D0C140B-67E4-43A8-BF33-5D0D9CF99E22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3D0C140B-67E4-43A8-BF33-5D0D9CF99E22}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3D0C140B-67E4-43A8-BF33-5D0D9CF99E22}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{3D0C140B-67E4-43A8-BF33-5D0D9CF99E22}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{3D0C140B-67E4-43A8-BF33-5D0D9CF99E22}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{3D0C140B-67E4-43A8-BF33-5D0D9CF99E22}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{3D0C140B-67E4-43A8-BF33-5D0D9CF99E22}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3D0C140B-67E4-43A8-BF33-5D0D9CF99E22}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3D0C140B-67E4-43A8-BF33-5D0D9CF99E22}.Release|ARM.ActiveCfg = Release|Any CPU
-		{3D0C140B-67E4-43A8-BF33-5D0D9CF99E22}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{3D0C140B-67E4-43A8-BF33-5D0D9CF99E22}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{3D0C140B-67E4-43A8-BF33-5D0D9CF99E22}.Release|x86.ActiveCfg = Release|Any CPU
+		{350CEA62-4DC8-49B9-8299-02EE1A242AB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{350CEA62-4DC8-49B9-8299-02EE1A242AB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{350CEA62-4DC8-49B9-8299-02EE1A242AB9}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{350CEA62-4DC8-49B9-8299-02EE1A242AB9}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{350CEA62-4DC8-49B9-8299-02EE1A242AB9}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{350CEA62-4DC8-49B9-8299-02EE1A242AB9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{350CEA62-4DC8-49B9-8299-02EE1A242AB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{350CEA62-4DC8-49B9-8299-02EE1A242AB9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{350CEA62-4DC8-49B9-8299-02EE1A242AB9}.Release|ARM.ActiveCfg = Release|Any CPU
+		{350CEA62-4DC8-49B9-8299-02EE1A242AB9}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{350CEA62-4DC8-49B9-8299-02EE1A242AB9}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{350CEA62-4DC8-49B9-8299-02EE1A242AB9}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -997,6 +997,6 @@ Global
 		{0A9019E4-E76F-4FAC-A5C7-70F32CF5E2C1} = {2E1B1CEA-00ED-4945-8050-1C1A80E91AC3}
 		{787FF65B-D0B3-4135-8495-EC5D4FF0A068} = {2E1B1CEA-00ED-4945-8050-1C1A80E91AC3}
 		{F3846DF8-785C-48AF-92C1-CBC3430F601E} = {1BBD7D91-9C27-4163-A19D-692BB8E0C55D}
-		{3D0C140B-67E4-43A8-BF33-5D0D9CF99E22} = {1BBD7D91-9C27-4163-A19D-692BB8E0C55D}
+		{350CEA62-4DC8-49B9-8299-02EE1A242AB9} = {1BBD7D91-9C27-4163-A19D-692BB8E0C55D}
 	EndGlobalSection
 EndGlobal
