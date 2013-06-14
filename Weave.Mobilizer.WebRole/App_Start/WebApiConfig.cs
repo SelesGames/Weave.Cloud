@@ -1,4 +1,5 @@
 ﻿using Common.Net.Http.Compression;
+using Common.WebApi.Handlers;
 using Microsoft.WindowsAzure.ServiceRuntime;
 using Ninject;
 using Ninject.WebApi;
@@ -6,7 +7,6 @@ using System;
 using System.Web.Http;
 using Weave.Mobilizer.Cache;
 using Weave.Mobilizer.Core.Controllers;
-using Common.WebApi.Handlers;
 
 namespace Weave.Mobilizer.WebRole
 {
