@@ -1,8 +1,5 @@
 ﻿using Common.Caching;
 using System;
-using System.Diagnostics;
-using System.Reactive.Disposables;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Weave.Mobilizer.DTOs;
 
@@ -11,16 +8,16 @@ namespace Weave.Mobilizer.Cache
     public class AzureStorageCache : IExtendedCache<string, Task<ReadabilityResult>>
     {
         AzureClient azureClient;
-        SerialDisposable timerDisposeHandle = new SerialDisposable();
-        bool isRunningDeleteOperation = false;
+        //SerialDisposable timerDisposeHandle = new SerialDisposable();
+        //bool isRunningDeleteOperation = false;
 
         public AzureStorageCache(AzureClient azureClient)
         {
             this.azureClient = azureClient;
         }
 
-        public TimeSpan CacheTTL { get; private set; }
-        public TimeSpan CacheCleanupInterval { get; private set; }
+        //public TimeSpan CacheTTL { get; private set; }
+        //public TimeSpan CacheCleanupInterval { get; private set; }
 
         public async Task<ReadabilityResult> GetOrAdd(string key, Func<string, Task<ReadabilityResult>> valueFactory)
         {
@@ -43,36 +40,36 @@ namespace Weave.Mobilizer.Cache
 
         #region helper functions for clearing the cache
 
-        public void SetCacheTTLAndCleanupIntervalInHours(double cacheTTL, double cleanupInterval)
-        {
-            CacheTTL = TimeSpan.FromHours(cacheTTL);
-            CacheCleanupInterval = TimeSpan.FromHours(cleanupInterval);
-            SubscribeToPulse();
-        }
+        //public void SetCacheTTLAndCleanupIntervalInHours(double cacheTTL, double cleanupInterval)
+        //{
+            //CacheTTL = TimeSpan.FromHours(cacheTTL);
+            //CacheCleanupInterval = TimeSpan.FromHours(cleanupInterval);
+            //SubscribeToPulse();
+        //}
 
-        void SubscribeToPulse()
-        {
-            timerDisposeHandle.Disposable = Observable.Interval(CacheCleanupInterval).Subscribe(notUsed => Pulse());
-        }
+        //void SubscribeToPulse()
+        //{
+        //    timerDisposeHandle.Disposable = Observable.Interval(CacheCleanupInterval).Subscribe(notUsed => Pulse());
+        //}
 
-        async void Pulse()
-        {
-            if (isRunningDeleteOperation)
-                return;
+        //async void Pulse()
+        //{
+        //    if (isRunningDeleteOperation)
+        //        return;
 
-            isRunningDeleteOperation = true;
+        //    isRunningDeleteOperation = true;
 
-            try
-            {
-                await azureClient.DeleteOlderThan(CacheTTL);
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e);
-            }
+        //    try
+        //    {
+        //        await azureClient.DeleteOlderThan(CacheTTL);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Debug.WriteLine(e);
+        //    }
 
-            isRunningDeleteOperation = false;
-        }
+        //    isRunningDeleteOperation = false;
+        //}
 
         #endregion
     }

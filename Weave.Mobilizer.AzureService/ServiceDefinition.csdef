@@ -18,9 +18,9 @@
       </Site>
     </Sites>
     <ConfigurationSettings>
-      <Setting name="CloudCacheTTLInHours" />
       <Setting name="LocalCacheTTLInMinutes" />
-      <Setting name="CloudCacheCleanupInterval" />
+      <!--Setting name="CloudCacheTTLInHours" />
+      <Setting name="CloudCacheCleanupInterval" /-->
     </ConfigurationSettings>
   </WebRole>
   

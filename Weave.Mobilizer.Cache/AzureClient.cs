@@ -1,9 +1,7 @@
 ﻿using Common.Azure.SmartBlobClient;
 using Microsoft.WindowsAzure;
-using Microsoft.WindowsAzure.StorageClient;
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using Weave.Mobilizer.DTOs;
 
@@ -47,31 +45,31 @@ namespace Weave.Mobilizer.Cache
             return client.Get<ReadabilityResult>(url);
         }
 
-        public async Task DeleteOlderThan(TimeSpan ttl)
-        {
-            var now = DateTime.UtcNow;
+        //public async Task DeleteOlderThan(TimeSpan ttl)
+        //{
+        //    var now = DateTime.UtcNow;
 
-            var blobClient = csa.CreateCloudBlobClient();
-            var blobContainer = blobClient.GetContainerReference("articles");
+        //    var blobClient = csa.CreateCloudBlobClient();
+        //    var blobContainer = blobClient.GetContainerReference("articles");
 
-            var blobs = blobContainer.ListBlobs().OfType<CloudBlockBlob>();
-            foreach (var blob in blobs)
-            {
-                var lastAccess = blob.Attributes.Properties.LastModifiedUtc;
-                var elapsed = now - lastAccess;
-                if (elapsed > ttl)
-                {
-                    await blob.DeleteAsync();
-                }
-            }
-        }
+        //    var blobs = blobContainer.ListBlobs().OfType<CloudBlockBlob>();
+        //    foreach (var blob in blobs)
+        //    {
+        //        var lastAccess = blob.Attributes.Properties.LastModifiedUtc;
+        //        var elapsed = now - lastAccess;
+        //        if (elapsed > ttl)
+        //        {
+        //            await blob.DeleteAsync();
+        //        }
+        //    }
+        //}
     }
 
-    public static class CloudExtensions
-    {
-        public static Task DeleteAsync(this CloudBlob blob)
-        {   
-            return Task.Factory.FromAsync(blob.BeginDelete, blob.EndDelete, null);
-        }
-    }
+    //public static class CloudExtensions
+    //{
+    //    public static Task DeleteAsync(this CloudBlob blob)
+    //    {   
+    //        return Task.Factory.FromAsync(blob.BeginDelete, blob.EndDelete, null);
+    //    }
+    //}
 }

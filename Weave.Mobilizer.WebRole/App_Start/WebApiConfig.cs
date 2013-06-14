@@ -12,8 +12,8 @@ namespace Weave.Mobilizer.WebRole
 {
     public static class WebApiConfig
     {
-        static double cloudCacheTTL;
-        static double cloudCacheCleanupInterval;
+        //static double cloudCacheTTL;
+        //static double cloudCacheCleanupInterval;
         static int localCacheTTL;
 
         public static void Register(HttpConfiguration config)
@@ -40,8 +40,8 @@ namespace Weave.Mobilizer.WebRole
             var kernel = new Startup.Kernel();
             var localCache = kernel.Get<LocalMemoryCache>();
             localCache.SetCacheTTLInMinutes(localCacheTTL);
-            var cloudCache = kernel.Get<AzureStorageCache>();
-            cloudCache.SetCacheTTLAndCleanupIntervalInHours(cloudCacheTTL, cloudCacheCleanupInterval);
+            //var cloudCache = kernel.Get<AzureStorageCache>();
+            //cloudCache.SetCacheTTLAndCleanupIntervalInHours(cloudCacheTTL, cloudCacheCleanupInterval);
 
             config.DependencyResolver = new NinjectResolver(kernel);
             config.MessageHandlers.Add(new InjectAcceptEncodingHandler("gzip"));
@@ -50,17 +50,17 @@ namespace Weave.Mobilizer.WebRole
 
         static bool ReadConfigValues()
         {
-            var cloudCacheTTLString = RoleEnvironment.GetConfigurationSettingValue("CloudCacheTTLInHours");
-            if (!double.TryParse(cloudCacheTTLString, out cloudCacheTTL))
-            {
-                return false;
-            }
+            //var cloudCacheTTLString = RoleEnvironment.GetConfigurationSettingValue("CloudCacheTTLInHours");
+            //if (!double.TryParse(cloudCacheTTLString, out cloudCacheTTL))
+            //{
+            //    return false;
+            //}
 
-            var cloudCacheCleanupIntervalString = RoleEnvironment.GetConfigurationSettingValue("CloudCacheCleanupInterval");
-            if (!double.TryParse(cloudCacheCleanupIntervalString, out cloudCacheCleanupInterval))
-            {
-                return false;
-            }
+            //var cloudCacheCleanupIntervalString = RoleEnvironment.GetConfigurationSettingValue("CloudCacheCleanupInterval");
+            //if (!double.TryParse(cloudCacheCleanupIntervalString, out cloudCacheCleanupInterval))
+            //{
+            //    return false;
+            //}
 
             var localCacheTTLString = RoleEnvironment.GetConfigurationSettingValue("LocalCacheTTLInMinutes");
             if (!int.TryParse(localCacheTTLString, out localCacheTTL))
