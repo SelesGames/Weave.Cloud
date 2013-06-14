@@ -13,6 +13,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Weave.Mobilizer.Client;
 using Weave.Parsing;
 using Weave.RssAggregator.Client;
 using Weave.RssAggregator.Core.DTOs.Incoming;
@@ -20,8 +21,6 @@ using Weave.RssAggregator.Core.DTOs.Outgoing;
 using Weave.RssAggregator.HighFrequency;
 using Weave.RssAggregator.LibraryClient;
 using Weave.RssAggregator.WorkerRole.Startup;
-using SelesGames.Common;
-using Weave.Mobilizer.Client;
 
 
 namespace RssAggregator.ConsoleTesting

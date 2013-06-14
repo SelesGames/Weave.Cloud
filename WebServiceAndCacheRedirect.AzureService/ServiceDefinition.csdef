@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ServiceDefinition name="WebServiceAndCacheRedirect.AzureService" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2013-03.2.0">
-  <WorkerRole name="WebServiceAndCacheRedirect.WorkerRole" vmsize="ExtraSmall">
+  <WorkerRole name="OldWeaveService.WorkerRole" vmsize="ExtraSmall">
     <Runtime executionContext="elevated" />
     <Imports>
       <Import moduleName="Diagnostics" />
@@ -8,5 +8,9 @@
     <Endpoints>
       <InputEndpoint name="Endpoint1" protocol="http" port="8086" />
     </Endpoints>
+    <ConfigurationSettings>
+      <Setting name="LowFrequencyHttpWebRequestTimeout" />
+      <Setting name="FeedLibraryUrl" />
+    </ConfigurationSettings>
   </WorkerRole>
 </ServiceDefinition>

@@ -37,26 +37,26 @@
     <ServiceConfiguration Include="ServiceConfiguration.Cloud.cscfg" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WebServiceAndCacheRedirect.WorkerRole\WebServiceAndCacheRedirect.WorkerRole.csproj">
-      <Name>WebServiceAndCacheRedirect.WorkerRole</Name>
-      <Project>{3d0c140b-67e4-43a8-bf33-5d0d9cf99e22}</Project>
-      <Private>True</Private>
-      <RoleType>Worker</RoleType>
-      <RoleName>WebServiceAndCacheRedirect.WorkerRole</RoleName>
-      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
+    <Folder Include="OldWeaveService.WorkerRoleContent\" />
     <Folder Include="Profiles" />
-    <Folder Include="WebServiceAndCacheRedirect.WorkerRoleContent\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="WebServiceAndCacheRedirect.WorkerRoleContent\diagnostics.wadcfg">
+    <Content Include="OldWeaveService.WorkerRoleContent\diagnostics.wadcfg">
       <SubType>Content</SubType>
     </Content>
   </ItemGroup>
   <ItemGroup>
     <PublishProfile Include="Profiles\Weave service redirect.azurePubxml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OldWeaveService.WorkerRole\OldWeaveService.WorkerRole.csproj">
+      <Name>OldWeaveService.WorkerRole</Name>
+      <Project>{350cea62-4dc8-49b9-8299-02ee1a242ab9}</Project>
+      <Private>True</Private>
+      <RoleType>Worker</RoleType>
+      <RoleName>OldWeaveService.WorkerRole</RoleName>
+      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
+    </ProjectReference>
   </ItemGroup>
   <!-- Import the target files for this project template -->
   <PropertyGroup>
