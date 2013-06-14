@@ -6,6 +6,7 @@ using System;
 using System.Web.Http;
 using Weave.Mobilizer.Cache;
 using Weave.Mobilizer.Core.Controllers;
+using Common.WebApi.Handlers;
 
 namespace Weave.Mobilizer.WebRole
 {
@@ -43,7 +44,8 @@ namespace Weave.Mobilizer.WebRole
             cloudCache.SetCacheTTLAndCleanupIntervalInHours(cloudCacheTTL, cloudCacheCleanupInterval);
 
             config.DependencyResolver = new NinjectResolver(kernel);
-            config.MessageHandlers.Add(new EncodingDelegateHandler { ForceCompression = true });
+            config.MessageHandlers.Add(new InjectAcceptEncodingHandler("gzip"));
+            config.MessageHandlers.Add(new EncodingDelegateHandler());// { ForceCompression = true });
         }
 
         static bool ReadConfigValues()
