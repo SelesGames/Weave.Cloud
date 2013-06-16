@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -28,18 +27,29 @@ namespace Weave.RssAggregator.HighFrequency
             catch { }
         }
 
-        Task<string> GetFinalRedirectLocation(string url, int recursionLimit = 5)
+        async Task<string> GetFinalRedirectLocation(string url)
         {
-            return GetFinalRedirectLocation(url, 0, recursionLimit);
-        }
+            int cycleLimit = 5;
+            int cycleCount = 0;
 
-        async Task<string> GetFinalRedirectLocation(string url, int recurseDepth, int recursionLimit)
-        {
-            if (recurseDepth >= recursionLimit)
+            string previousRedirect = url;
+            var currentRedirect = await GetRedirectOrOriginalUri(url);
+
+            while (currentRedirect != previousRedirect)
             {
-                throw new Exception("Potential HTTP Redirect cycle detected");
+                // if a cycle is detected, return the original url
+                if (cycleCount++ > cycleLimit)
+                    return url;
+
+                previousRedirect = currentRedirect;
+                currentRedirect = await GetRedirectOrOriginalUri(currentRedirect);
             }
 
+            return currentRedirect;
+        }
+
+        async Task<string> GetRedirectOrOriginalUri(string url)
+        {
             var request = HttpWebRequest.CreateHttp(url);
             request.AllowAutoRedirect = false;
             request.Method = "HEAD";
@@ -61,16 +71,11 @@ namespace Weave.RssAggregator.HighFrequency
                 || (int)statusCode == 308)                          // Permanent Redirect 308, part of experimental RFC proposal
             {
                 var movedTo = response.Headers[HttpResponseHeader.Location];
-                return await GetFinalRedirectLocation(movedTo, recurseDepth + 1, recursionLimit);
+                if (!string.IsNullOrWhiteSpace(movedTo))
+                    return movedTo;
             }
-            else if (response.StatusCode == HttpStatusCode.OK)
-            {
-                return url;
-            }
-            else
-            {
-                throw new WebException("Unexpected response", null, WebExceptionStatus.UnknownError, response);
-            }
+
+            return url;
         }
     }
 }
