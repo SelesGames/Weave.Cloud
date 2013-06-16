@@ -1,5 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Weave.RssAggregator.HighFrequency
@@ -8,9 +11,28 @@ namespace Weave.RssAggregator.HighFrequency
     {
         public bool IsHandledFully { get { return false; } }
 
-        public Task ProcessAsync(HighFrequencyFeedUpdateDto o)
+        public async Task ProcessAsync(HighFrequencyFeedUpdateDto o)
         {
-            return Task.WhenAll(o.Entries.Select(ProcessEntry));
+            //return Task.WhenAll(o.Entries.Select(ProcessEntry));
+            if (o == null || EnumerableEx.IsNullOrEmpty(o.Entries))
+                return;
+
+            try
+            {
+                await Task.WhenAll(o.Entries.Select(ProcessEntry));
+            }
+            catch { }
+
+            //var enumerator = o.Entries.GetEnumerator();
+
+            //bool hasNext = enumerator.MoveNext();
+            //while (hasNext)
+            //{
+            //    await ProcessEntry(enumerator.Current);
+            //    hasNext = enumerator.MoveNext();
+            //}
+            ////foreach (var entry in o.Entries)
+            ////    await ProcessEntry(entry);
         }
 
         async Task ProcessEntry(EntryWithPostProcessInfo e)
@@ -23,8 +45,12 @@ namespace Weave.RssAggregator.HighFrequency
                 {
                     e.Link = finalLinkLocation;
                 }
+                DebugEx.WriteLine("Fixed redirect for {0}", e.Link);
             }
-            catch { }
+            catch(Exception ex)
+            {
+                DebugEx.WriteLine(ex);
+            }
         }
 
         async Task<string> GetFinalRedirectLocation(string url)
@@ -50,11 +76,13 @@ namespace Weave.RssAggregator.HighFrequency
 
         async Task<string> GetRedirectOrOriginalUri(string url)
         {
-            var request = HttpWebRequest.CreateHttp(url);
-            request.AllowAutoRedirect = false;
-            request.Method = "HEAD";
+            var client = new HttpClient(new HttpClientHandler { AllowAutoRedirect = false });
+            var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Head, url));
+            //var request = HttpWebRequest.CreateHttp(url);
+            //request.AllowAutoRedirect = false;
+            //request.Method = "HEAD";
 
-            var response = (HttpWebResponse)await request.GetResponseAsync();
+            //var response = (HttpWebResponse)await request.GetResponseAsync();
             var statusCode = response.StatusCode;
 
             if (
@@ -70,12 +98,21 @@ namespace Weave.RssAggregator.HighFrequency
                 || statusCode == HttpStatusCode.RedirectKeepVerb    // 307
                 || (int)statusCode == 308)                          // Permanent Redirect 308, part of experimental RFC proposal
             {
-                var movedTo = response.Headers[HttpResponseHeader.Location];
+                //var movedTo = response.Headers[HttpResponseHeader.Location];
+                var movedTo = GetLocationOrNull(response);
                 if (!string.IsNullOrWhiteSpace(movedTo))
                     return movedTo;
             }
 
             return url;
+        }
+
+        string GetLocationOrNull(HttpResponseMessage response)
+        {
+            if (response == null || EnumerableEx.IsNullOrEmpty(response.Headers) || response.Headers.Location == null)
+                return null;
+
+            return response.Headers.Location.OriginalString;
         }
     }
 }

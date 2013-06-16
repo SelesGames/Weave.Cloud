@@ -58,6 +58,7 @@ namespace Weave.RssAggregator.HighFrequency
 
             var highFrequencyFeeds = libraryFeeds
                 .Distinct()
+                //.Where(o => o.FeedUri == "http://feeds.feedburner.com/Destructoid")
                 .Select(o => new HighFrequencyFeed(o.FeedName, o.FeedUri, o.Instructions))
                 .ToList();
 
