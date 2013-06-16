@@ -11,6 +11,8 @@ namespace Common.WebApi.Handlers
     {
         readonly StringWithQualityHeaderValue acceptEncoding;
 
+        public bool ClearRequestedAcceptEncoding { get; set; }
+
         public InjectAcceptEncodingHandler(string acceptEncoding)
         {
             if (!StringWithQualityHeaderValue.TryParse(acceptEncoding, out this.acceptEncoding))
@@ -21,8 +23,14 @@ namespace Common.WebApi.Handlers
         {
             var acceptEncodingHeader = request.Headers.AcceptEncoding;
 
-            if (acceptEncodingHeader != null && !acceptEncodingHeader.Any())
+            if (acceptEncodingHeader != null)
+            {
+                if (ClearRequestedAcceptEncoding)
+                    acceptEncodingHeader.Clear();
+
+                //if (!acceptEncodingHeader.Any())
                 acceptEncodingHeader.Add(acceptEncoding);
+            }
 
             return base.SendAsync(request, cancellationToken);
         }

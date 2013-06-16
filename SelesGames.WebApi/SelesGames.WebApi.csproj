@@ -42,7 +42,7 @@
   <ItemGroup>
     <Compile Include="CrossDomain\AcceptAndContentTypeViaQueryParameterHandler.cs" />
     <Compile Include="CrossDomain\CORSActionFilterAttribute.cs" />
-    <Compile Include="CrossDomain\InjectContentTypeHandler.cs" />
+    <Compile Include="Handlers\InjectContentTypeHandler.cs" />
     <Compile Include="ExceptionHandlingAttribute.cs" />
     <Compile Include="Extensions\HttpResponseMessageExtensions.cs" />
     <Compile Include="Handlers\InjectAcceptEncodingHandler.cs" />

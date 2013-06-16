@@ -38,6 +38,9 @@ namespace SelesGames.WebApi.Protobuf
 
         public override Task<object> ReadFromStreamAsync(Type type, Stream readStream, HttpContent content, IFormatterLogger formatterLogger)
         {
+            if (type == null) throw new ArgumentNullException("type");
+            if (readStream == null) throw new ArgumentNullException("readStream");
+
             // Create task reading the content
             return Task.Factory.StartNew(() =>
             {
@@ -47,6 +50,9 @@ namespace SelesGames.WebApi.Protobuf
 
         public override Task WriteToStreamAsync(Type type, object value, Stream writeStream, HttpContent content, TransportContext transportContext)
         {
+            if (type == null) throw new ArgumentNullException("type");
+            if (writeStream == null) throw new ArgumentNullException("writeStream");
+
             MethodInfo serialize;
 
             if (cachedGenericMethods.ContainsKey(type))

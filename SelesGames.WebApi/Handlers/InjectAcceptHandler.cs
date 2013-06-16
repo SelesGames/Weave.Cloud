@@ -11,6 +11,8 @@ namespace Common.WebApi.Handlers
     {
         readonly MediaTypeWithQualityHeaderValue accept;
 
+        public bool ClearRequestedAccept { get; set; }
+
         public InjectAcceptHandler(string accept)
         {
             if (!MediaTypeWithQualityHeaderValue.TryParse(accept, out this.accept))
@@ -21,8 +23,14 @@ namespace Common.WebApi.Handlers
         {
             var acceptHeader = request.Headers.Accept;
 
-            if (acceptHeader != null && !acceptHeader.Any())
+            if (acceptHeader != null)
+            {
+                if (ClearRequestedAccept)
+                    acceptHeader.Clear();
+
+                //if (!acceptHeader.Any())
                 acceptHeader.Add(accept);
+            }
 
             return base.SendAsync(request, cancellationToken);              
         }

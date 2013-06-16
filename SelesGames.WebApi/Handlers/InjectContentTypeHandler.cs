@@ -2,7 +2,7 @@
 using System.Net.Http;
 using System.Net.Http.Headers;
 
-namespace Common.WebApi
+namespace Common.WebApi.Handlers
 {
     public class InjectContentTypeHandler : DelegatingHandler
     {

@@ -29,8 +29,9 @@ namespace OldWeaveService.WorkerRole.Startup
             MessageHandlers.Add(new EncodingDelegateHandler());
             Formatters.Add(new ProtobufFormatter());
 
-            MessageHandlers.Add(new InjectAcceptHandler("application/protobuf"));
-            MessageHandlers.Add(new InjectAcceptEncodingHandler("gzip"));
+            MessageHandlers.Add(new InjectAcceptHandler("application/protobuf") { ClearRequestedAccept = true });
+            MessageHandlers.Add(new InjectAcceptEncodingHandler("gzip") { ClearRequestedAcceptEncoding = true });
+            MessageHandlers.Add(new OverrideFsdHandler());
         }
     }
 }

@@ -48,8 +48,10 @@
     <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Web.Http.SelfHost, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="OverrideFsdHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup\HttpConfig.cs" />
     <Compile Include="Startup\StartupTask.cs" />
@@ -71,6 +73,10 @@
     <ProjectReference Include="..\RssAggregator.LowFrequency\RssAggregator.LowFrequency.csproj">
       <Project>{bdf7d1ee-a9f2-4971-9ebf-b711d6c4b857}</Project>
       <Name>RssAggregator.LowFrequency</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SelesGames.HttpClient\SelesGames.HttpClient.csproj">
+      <Project>{bf0dc853-b353-4a92-b718-0a0ad067bfdf}</Project>
+      <Name>SelesGames.HttpClient</Name>
     </ProjectReference>
     <ProjectReference Include="..\SelesGames.WebApi.Protobuf\SelesGames.WebApi.Protobuf.csproj">
       <Project>{c829e120-9b78-4640-bf91-fefcf060e2b8}</Project>
