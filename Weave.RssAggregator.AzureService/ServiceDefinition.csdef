@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ServiceDefinition name="Weave.RssAggregator.AzureService" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2013-03.2.0">
-  <WorkerRole name="RssAggregator.WorkerRole" vmsize="ExtraSmall">
+  <WorkerRole name="RssAggregator.WorkerRole" vmsize="Small">
     <Runtime executionContext="elevated" />
     <Endpoints>
       <InputEndpoint name="Endpoint1" protocol="http" port="80" />
