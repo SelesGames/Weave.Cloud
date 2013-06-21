@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Threading;
 
-namespace Weave.AccountManagement.Service.Role
+namespace Weave.Identity.Service.Role
 {
     public class WorkerRole : RoleEntryPoint
     {

@@ -9,7 +9,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Weave.AccountManagement.Sql.Linq
+namespace Weave.Identity.Sql
 {
     using System;
     using System.ComponentModel;
@@ -30,7 +30,7 @@ namespace Weave.AccountManagement.Sql.Linq
     #endregion
         
         public DataClassesDataContext() : 
-                base(global::Weave.AccountManagement.Sql.Properties.Settings.Default.weaveaccount_dbConnectionString, mappingSource)
+                base(global::Weave.Identity.Sql.Properties.Settings.Default.weaveaccount_dbConnectionString, mappingSource)
         {
             OnCreated();
         }
@@ -59,7 +59,7 @@ namespace Weave.AccountManagement.Sql.Linq
             OnCreated();
         }
         
-        public System.Data.Linq.Table<AuthInfo> AuthInfos
+        internal System.Data.Linq.Table<AuthInfo> AuthInfos
         {
             get
             {
@@ -69,7 +69,7 @@ namespace Weave.AccountManagement.Sql.Linq
     }
     
     [global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.AuthInfo")]
-    public partial class AuthInfo : INotifyPropertyChanging, INotifyPropertyChanged
+    internal partial class AuthInfo : INotifyPropertyChanging, INotifyPropertyChanged
     {
         
         private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);

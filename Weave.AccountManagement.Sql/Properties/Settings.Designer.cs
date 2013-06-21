@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Weave.AccountManagement.Sql.Properties {
+namespace Weave.Identity.Sql.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

@@ -76,17 +76,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Imaging", "Imaging", "{F3AE
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Azure", "Common.Azure\Common.Azure.csproj", "{6211D4F0-8390-4DFA-A1D2-BA4AA7C28348}"
 EndProject
-Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "Weave.AccountManagement.Service", "Weave.AccountManagement.Service\Weave.AccountManagement.Service.ccproj", "{F2973574-2CDD-486D-BDCC-B87C8AEF0100}"
+Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "Weave.Identity.Service", "Weave.AccountManagement.Service\Weave.Identity.Service.ccproj", "{F2973574-2CDD-486D-BDCC-B87C8AEF0100}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Account", "Account", "{5A5D04A7-7E63-45E2-BB7A-C52E2ED308BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.AccountManagement", "Weave.AccountManagement\Weave.AccountManagement.csproj", "{F2EBC608-083A-485A-969D-012DE7A576B2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.Identity", "Weave.AccountManagement\Weave.Identity.csproj", "{F2EBC608-083A-485A-969D-012DE7A576B2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.JsonDotNet", "Common.JsonDotNet\Common.JsonDotNet.csproj", "{2CCBE75F-E805-4B8C-A017-6F26C328B4EC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.AccountManagement", "Test.AccountManagement\Test.AccountManagement.csproj", "{1DCED3EF-C22B-4E84-8684-D434482C0360}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.AccountManagement.Sql", "Weave.AccountManagement.Sql\Weave.AccountManagement.Sql.csproj", "{84FBFAC6-0B41-4089-9B82-3938BEE57206}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.Identity.Sql", "Weave.AccountManagement.Sql\Weave.Identity.Sql.csproj", "{84FBFAC6-0B41-4089-9B82-3938BEE57206}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Article", "Article", "{C329A711-085D-4048-AD0A-6B5A16EC5A81}"
 EndProject
@@ -140,7 +140,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.User.BusinessObjects"
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Weave.Sql.Account", "Weave.Sql.Account\Weave.Sql.Account.sqlproj", "{13F898F9-0B73-4884-A02C-1FF42762F2F4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.AccountManagement.Service.Role", "Weave.AccountManagement.Service.Role\Weave.AccountManagement.Service.Role.csproj", "{0E61606A-2450-49A2-A612-5261B79993AA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.Identity.Service.Role", "Weave.AccountManagement.Service.Role\Weave.Identity.Service.Role.csproj", "{0E61606A-2450-49A2-A612-5261B79993AA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.Mobilizer.Cache", "Weave.Mobilizer.Cache\Weave.Mobilizer.Cache.csproj", "{1A5136F0-480B-461C-B350-9AD42C0ECA97}"
 EndProject
@@ -155,6 +155,10 @@ EndProject
 Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "WebServiceAndCacheRedirect.AzureService", "WebServiceAndCacheRedirect.AzureService\WebServiceAndCacheRedirect.AzureService.ccproj", "{F3846DF8-785C-48AF-92C1-CBC3430F601E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OldWeaveService.WorkerRole", "OldWeaveService.WorkerRole\OldWeaveService.WorkerRole.csproj", "{350CEA62-4DC8-49B9-8299-02EE1A242AB9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.Identity.Contracts", "..\Weave.Portable\Weave.Identity.Contracts\Weave.Identity.Contracts.csproj", "{CCE98720-6054-4EF8-BA8C-14821B35EC1D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.Identity.DTOs", "..\Weave.Portable\Weave.Identity.DTOs\Weave.Identity.DTOs.csproj", "{6FA5AC47-653A-4634-8BCA-CF68BA33F884}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -923,6 +927,30 @@ Global
 		{350CEA62-4DC8-49B9-8299-02EE1A242AB9}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{350CEA62-4DC8-49B9-8299-02EE1A242AB9}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{350CEA62-4DC8-49B9-8299-02EE1A242AB9}.Release|x86.ActiveCfg = Release|Any CPU
+		{CCE98720-6054-4EF8-BA8C-14821B35EC1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCE98720-6054-4EF8-BA8C-14821B35EC1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCE98720-6054-4EF8-BA8C-14821B35EC1D}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{CCE98720-6054-4EF8-BA8C-14821B35EC1D}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{CCE98720-6054-4EF8-BA8C-14821B35EC1D}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{CCE98720-6054-4EF8-BA8C-14821B35EC1D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CCE98720-6054-4EF8-BA8C-14821B35EC1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCE98720-6054-4EF8-BA8C-14821B35EC1D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCE98720-6054-4EF8-BA8C-14821B35EC1D}.Release|ARM.ActiveCfg = Release|Any CPU
+		{CCE98720-6054-4EF8-BA8C-14821B35EC1D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{CCE98720-6054-4EF8-BA8C-14821B35EC1D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{CCE98720-6054-4EF8-BA8C-14821B35EC1D}.Release|x86.ActiveCfg = Release|Any CPU
+		{6FA5AC47-653A-4634-8BCA-CF68BA33F884}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FA5AC47-653A-4634-8BCA-CF68BA33F884}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FA5AC47-653A-4634-8BCA-CF68BA33F884}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{6FA5AC47-653A-4634-8BCA-CF68BA33F884}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{6FA5AC47-653A-4634-8BCA-CF68BA33F884}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{6FA5AC47-653A-4634-8BCA-CF68BA33F884}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6FA5AC47-653A-4634-8BCA-CF68BA33F884}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FA5AC47-653A-4634-8BCA-CF68BA33F884}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FA5AC47-653A-4634-8BCA-CF68BA33F884}.Release|ARM.ActiveCfg = Release|Any CPU
+		{6FA5AC47-653A-4634-8BCA-CF68BA33F884}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{6FA5AC47-653A-4634-8BCA-CF68BA33F884}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{6FA5AC47-653A-4634-8BCA-CF68BA33F884}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -978,6 +1006,8 @@ Global
 		{F2EBC608-083A-485A-969D-012DE7A576B2} = {5A5D04A7-7E63-45E2-BB7A-C52E2ED308BF}
 		{84FBFAC6-0B41-4089-9B82-3938BEE57206} = {5A5D04A7-7E63-45E2-BB7A-C52E2ED308BF}
 		{0E61606A-2450-49A2-A612-5261B79993AA} = {5A5D04A7-7E63-45E2-BB7A-C52E2ED308BF}
+		{CCE98720-6054-4EF8-BA8C-14821B35EC1D} = {5A5D04A7-7E63-45E2-BB7A-C52E2ED308BF}
+		{6FA5AC47-653A-4634-8BCA-CF68BA33F884} = {5A5D04A7-7E63-45E2-BB7A-C52E2ED308BF}
 		{1B58A81E-CFA6-486F-ABF2-EECCA44D06B3} = {C329A711-085D-4048-AD0A-6B5A16EC5A81}
 		{F1B9B4E0-BD01-453C-B7C5-BF58AC032180} = {C329A711-085D-4048-AD0A-6B5A16EC5A81}
 		{D727F239-EE96-4B05-8F17-65871B52B260} = {C329A711-085D-4048-AD0A-6B5A16EC5A81}

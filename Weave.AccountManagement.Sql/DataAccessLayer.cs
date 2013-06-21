@@ -3,8 +3,9 @@ using SelesGames.Common;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Weave.Identity.DTOs;
 
-namespace Weave.AccountManagement.Sql
+namespace Weave.Identity.Sql
 {
     public class DataAccessLayer
     {
@@ -22,7 +23,7 @@ namespace Weave.AccountManagement.Sql
 
             using (var client = clientProvider.Get())
             {
-                var id = await client.Get<Linq.AuthInfo, Guid>(o => o
+                var id = await client.Get<AuthInfo, Guid>(o => o
                     .Where(x => facebookToken.Equals(x.FacebookAuthString))
                     .Select(x => x.UserId));
 
@@ -37,7 +38,7 @@ namespace Weave.AccountManagement.Sql
 
             using (var client = clientProvider.Get())
             {
-                var id = await client.Get<Linq.AuthInfo, Guid>(o => o
+                var id = await client.Get<AuthInfo, Guid>(o => o
                     .Where(x => twitterToken.Equals(x.TwitterAuthString))
                     .Select(x => x.UserId));
 
@@ -52,7 +53,7 @@ namespace Weave.AccountManagement.Sql
 
             using (var client = clientProvider.Get())
             {
-                var id = await client.Get<Linq.AuthInfo, Guid>(o => o
+                var id = await client.Get<AuthInfo, Guid>(o => o
                     .Where(x => microsoftToken.Equals(x.MicrosoftAuthString))
                     .Select(x => x.UserId));
 
@@ -67,7 +68,7 @@ namespace Weave.AccountManagement.Sql
 
             using (var client = clientProvider.Get())
             {
-                var id = await client.Get<Linq.AuthInfo, Guid>(o => o
+                var id = await client.Get<AuthInfo, Guid>(o => o
                     .Where(x => googleToken.Equals(x.GoogleAuthString))
                     .Select(x => x.UserId));
 
@@ -97,9 +98,9 @@ namespace Weave.AccountManagement.Sql
             }
         }
 
-        Linq.AuthInfo Convert(IdentityInfo user)
+        AuthInfo Convert(IdentityInfo user)
         {
-            return new Linq.AuthInfo
+            return new AuthInfo
             {
                 UserId = user.UserId,
                 FacebookAuthString = user.FacebookAuthToken,
@@ -109,7 +110,7 @@ namespace Weave.AccountManagement.Sql
             };
         }
 
-        IdentityInfo Convert(Linq.AuthInfo user)
+        IdentityInfo Convert(AuthInfo user)
         {
             return new IdentityInfo
             {
