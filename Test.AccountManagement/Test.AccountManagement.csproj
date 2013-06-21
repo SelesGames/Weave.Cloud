@@ -95,10 +95,6 @@
       <Project>{d115cf60-990a-4138-8496-538a6ce74541}</Project>
       <Name>Common.Azure.SmartBlobClient</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Weave.AccountManagement\Weave.Identity.csproj">
-      <Project>{f2ebc608-083a-485a-969d-012de7a576b2}</Project>
-      <Name>Weave.Identity</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Weave.RssAggregator.Core\RssAggregator.DTOs.csproj">
       <Project>{2f1a280d-ee75-4dc1-a36c-f8e5488e3260}</Project>
       <Name>RssAggregator.DTOs</Name>

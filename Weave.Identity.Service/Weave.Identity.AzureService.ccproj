@@ -11,7 +11,7 @@
     <RootNamespace>Weave.AccountManagement.Service</RootNamespace>
     <AssemblyName>Weave.AccountManagement.Service</AssemblyName>
     <StartDevelopmentStorage>True</StartDevelopmentStorage>
-    <Name>Weave.Identity.Service</Name>
+    <Name>Weave.Identity.AzureService</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -38,18 +38,25 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Profiles" />
+    <Folder Include="Weave.Identity.Service.RoleContent\" />
   </ItemGroup>
   <ItemGroup>
     <PublishProfile Include="Profiles\Weave Account Service.azurePubxml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Weave.AccountManagement.Service.Role\Weave.Identity.Service.Role.csproj">
+    <ProjectReference Include="..\Weave.Identity.Service.Role\Weave.Identity.Service.Role.csproj">
       <Name>Weave.Identity.Service.Role</Name>
       <Project>{0e61606a-2450-49a2-a612-5261b79993aa}</Project>
       <Private>True</Private>
       <RoleType>Worker</RoleType>
       <RoleName>Weave.Identity.Service.Role</RoleName>
+      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Weave.Identity.Service.RoleContent\diagnostics.wadcfg">
+      <SubType>Content</SubType>
+    </Content>
   </ItemGroup>
   <!-- Import the target files for this project template -->
   <PropertyGroup>
