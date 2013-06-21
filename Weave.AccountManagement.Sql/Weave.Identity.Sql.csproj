@@ -7,8 +7,8 @@
     <ProjectGuid>{84FBFAC6-0B41-4089-9B82-3938BEE57206}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Weave.AccountManagement.Sql</RootNamespace>
-    <AssemblyName>Weave.AccountManagement.Sql</AssemblyName>
+    <RootNamespace>Weave.Identity.Sql</RootNamespace>
+    <AssemblyName>Weave.Identity.Sql</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -49,9 +49,12 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="IdentityInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Weave.Portable\Weave.Identity.DTOs\Weave.Identity.DTOs.csproj">
+      <Project>{6fa5ac47-653a-4634-8bca-cf68ba33f884}</Project>
+      <Name>Weave.Identity.DTOs</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common.Data.Linq\Common.Data.Linq.csproj">
       <Project>{f741017d-fd83-4f35-98a4-57af366c1b53}</Project>
       <Name>Common.Data.Linq</Name>

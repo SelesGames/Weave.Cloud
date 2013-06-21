@@ -11,7 +11,7 @@
     <RootNamespace>Weave.AccountManagement.Service</RootNamespace>
     <AssemblyName>Weave.AccountManagement.Service</AssemblyName>
     <StartDevelopmentStorage>True</StartDevelopmentStorage>
-    <Name>Weave.AccountManagement.Service</Name>
+    <Name>Weave.Identity.Service</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -43,13 +43,12 @@
     <PublishProfile Include="Profiles\Weave Account Service.azurePubxml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Weave.AccountManagement.Service.Role\Weave.AccountManagement.Service.Role.csproj">
-      <Name>Weave.AccountManagement.Service.Role</Name>
+    <ProjectReference Include="..\Weave.AccountManagement.Service.Role\Weave.Identity.Service.Role.csproj">
+      <Name>Weave.Identity.Service.Role</Name>
       <Project>{0e61606a-2450-49a2-a612-5261b79993aa}</Project>
       <Private>True</Private>
       <RoleType>Worker</RoleType>
-      <RoleName>Weave.AccountManagement.Service.Role</RoleName>
-      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
+      <RoleName>Weave.Identity.Service.Role</RoleName>
     </ProjectReference>
   </ItemGroup>
   <!-- Import the target files for this project template -->
