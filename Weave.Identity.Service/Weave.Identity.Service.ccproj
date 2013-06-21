@@ -11,7 +11,7 @@
     <RootNamespace>Weave.AccountManagement.Service</RootNamespace>
     <AssemblyName>Weave.AccountManagement.Service</AssemblyName>
     <StartDevelopmentStorage>True</StartDevelopmentStorage>
-    <Name>Weave.Identity.AzureService</Name>
+    <Name>Weave.Identity.Service</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -39,24 +39,28 @@
   <ItemGroup>
     <Folder Include="Profiles" />
     <Folder Include="Weave.Identity.Service.RoleContent\" />
+    <Folder Include="Weave.Identity.Service.WorkerRoleContent\" />
   </ItemGroup>
   <ItemGroup>
     <PublishProfile Include="Profiles\Weave Account Service.azurePubxml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Weave.Identity.Service.Role\Weave.Identity.Service.Role.csproj">
-      <Name>Weave.Identity.Service.Role</Name>
-      <Project>{0e61606a-2450-49a2-a612-5261b79993aa}</Project>
-      <Private>True</Private>
-      <RoleType>Worker</RoleType>
-      <RoleName>Weave.Identity.Service.Role</RoleName>
-      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Weave.Identity.Service.RoleContent\diagnostics.wadcfg">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Weave.Identity.Service.WorkerRoleContent\diagnostics.wadcfg">
+      <SubType>Content</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Weave.Identity.Service.Role\Weave.Identity.Service.WorkerRole.csproj">
+      <Name>Weave.Identity.Service.WorkerRole</Name>
+      <Project>{0e61606a-2450-49a2-a612-5261b79993aa}</Project>
+      <Private>True</Private>
+      <RoleType>Worker</RoleType>
+      <RoleName>Weave.Identity.Service.WorkerRole</RoleName>
+      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
+    </ProjectReference>
   </ItemGroup>
   <!-- Import the target files for this project template -->
   <PropertyGroup>

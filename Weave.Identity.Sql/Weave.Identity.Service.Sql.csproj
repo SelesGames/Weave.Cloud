@@ -7,8 +7,8 @@
     <ProjectGuid>{84FBFAC6-0B41-4089-9B82-3938BEE57206}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Weave.Identity.Sql</RootNamespace>
-    <AssemblyName>Weave.Identity.Sql</AssemblyName>
+    <RootNamespace>Weave.Identity.Service.Sql</RootNamespace>
+    <AssemblyName>Weave.Identity.Service.Sql</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -37,7 +37,6 @@
     <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataAccessLayer.cs" />
     <Compile Include="DataClasses.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -51,9 +50,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Weave.Portable\Weave.Identity.DTOs\Weave.Identity.DTOs.csproj">
+    <ProjectReference Include="..\..\Weave.Portable\Weave.Identity.Service.DTOs\Weave.Identity.Service.DTOs.csproj">
       <Project>{6fa5ac47-653a-4634-8bca-cf68ba33f884}</Project>
-      <Name>Weave.Identity.DTOs</Name>
+      <Name>Weave.Identity.Service.DTOs</Name>
     </ProjectReference>
     <ProjectReference Include="..\Common.Data.Linq\Common.Data.Linq.csproj">
       <Project>{f741017d-fd83-4f35-98a4-57af366c1b53}</Project>
