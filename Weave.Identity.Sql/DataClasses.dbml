@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Database Name="weaveaccount_db" Class="DataClassesDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-  <Connection Mode="AppSettings" ConnectionString="Data Source=eb0l5hjvzm.database.windows.net,1433;Initial Catalog=weaveaccount_db;User ID=aemami99" SettingsObjectName="Weave.Identity.Sql.Properties.Settings" SettingsPropertyName="weaveaccount_dbConnectionString" Provider="System.Data.SqlClient" />
+  <Connection Mode="AppSettings" ConnectionString="Data Source=eb0l5hjvzm.database.windows.net,1433;Initial Catalog=weaveaccount_db;User ID=aemami99" SettingsObjectName="Weave.Identity.Service.Sql.Properties.Settings" SettingsPropertyName="weaveaccount_dbConnectionString" Provider="System.Data.SqlClient" />
   <Table Name="dbo.AuthInfo" Member="AuthInfos" AccessModifier="Internal">
     <Type Name="AuthInfo" AccessModifier="Internal">
       <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />

@@ -1,8 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ServiceDefinition name="Weave.AccountManagement.Service" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2013-03.2.0">
-  <WorkerRole name="Weave.Identity.Service.Role" vmsize="Small">
+  <WorkerRole name="Weave.Identity.Service.WorkerRole" vmsize="Small">
     <Imports>
       <Import moduleName="Diagnostics" />
     </Imports>
+    <Endpoints>
+      <InputEndpoint name="Endpoint1" protocol="http" port="80" />
+    </Endpoints>
   </WorkerRole>
 </ServiceDefinition>

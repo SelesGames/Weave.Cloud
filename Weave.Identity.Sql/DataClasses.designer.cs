@@ -9,11 +9,17 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Weave.Identity.Sql
+namespace Weave.Identity.Service.Sql
 {
-    using System;
-    using System.ComponentModel;
+    using System.Data.Linq;
     using System.Data.Linq.Mapping;
+    using System.Data;
+    using System.Collections.Generic;
+    using System.Reflection;
+    using System.Linq;
+    using System.Linq.Expressions;
+    using System.ComponentModel;
+    using System;
     
     
     [global::System.Data.Linq.Mapping.DatabaseAttribute(Name="weaveaccount_db")]
@@ -30,7 +36,7 @@ namespace Weave.Identity.Sql
     #endregion
         
         public DataClassesDataContext() : 
-                base(global::Weave.Identity.Sql.Properties.Settings.Default.weaveaccount_dbConnectionString, mappingSource)
+                base(global::Weave.Identity.Service.Sql.Properties.Settings.Default.weaveaccount_dbConnectionString, mappingSource)
         {
             OnCreated();
         }
@@ -69,7 +75,7 @@ namespace Weave.Identity.Sql
     }
     
     [global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.AuthInfo")]
-    internal partial class AuthInfo : INotifyPropertyChanging, INotifyPropertyChanged
+    public partial class AuthInfo : INotifyPropertyChanging, INotifyPropertyChanged
     {
         
         private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
