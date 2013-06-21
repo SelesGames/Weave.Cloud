@@ -38,16 +38,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Profiles" />
-    <Folder Include="Weave.Identity.Service.RoleContent\" />
     <Folder Include="Weave.Identity.Service.WorkerRoleContent\" />
   </ItemGroup>
   <ItemGroup>
     <PublishProfile Include="Profiles\Weave Account Service.azurePubxml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Weave.Identity.Service.RoleContent\diagnostics.wadcfg">
-      <SubType>Content</SubType>
-    </Content>
     <Content Include="Weave.Identity.Service.WorkerRoleContent\diagnostics.wadcfg">
       <SubType>Content</SubType>
     </Content>
