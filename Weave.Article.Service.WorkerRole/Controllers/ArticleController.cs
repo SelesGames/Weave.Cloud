@@ -47,7 +47,7 @@ namespace Weave.Article.Service.WorkerRole.Controllers
 
         [HttpGet]
         [ActionName("get_read")]
-        public Task<List<Outgoing.SavedNewsItem>> GetRead(Guid userId, int take, int skip = 0)
+        public Task<List<Outgoing.SavedNewsItem>> GetRead(Guid userId, int take = 10, int skip = 0)
         {
             if (userId == Guid.Empty) throw ResponseHelper.CreateResponseException(HttpStatusCode.BadRequest, "Not a valid userId");
 
@@ -81,7 +81,7 @@ namespace Weave.Article.Service.WorkerRole.Controllers
 
         [HttpGet]
         [ActionName("get_favorites")]
-        public Task<List<Outgoing.SavedNewsItem>> GetFavorites(Guid userId, int take, int skip = 0)
+        public Task<List<Outgoing.SavedNewsItem>> GetFavorites(Guid userId, int take = 10, int skip = 0)
         {
             if (userId == Guid.Empty) throw ResponseHelper.CreateResponseException(HttpStatusCode.BadRequest, "Not a valid userId");
 
