@@ -41,7 +41,7 @@
     <Folder Include="Weave.Identity.Service.WorkerRoleContent\" />
   </ItemGroup>
   <ItemGroup>
-    <PublishProfile Include="Profiles\Weave Account Service.azurePubxml" />
+    <PublishProfile Include="Profiles\Weave Identity Service.azurePubxml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Weave.Identity.Service.WorkerRoleContent\diagnostics.wadcfg">
