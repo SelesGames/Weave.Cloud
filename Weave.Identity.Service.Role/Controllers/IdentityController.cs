@@ -21,6 +21,7 @@ namespace Weave.Identity.Service.WorkerRole.Controllers
         }
 
         [HttpGet]
+        [NonAction]
         public async Task<IdentityInfo> GetUserFromFacebookToken(string facebookToken)
         {
             if (string.IsNullOrWhiteSpace(facebookToken))

@@ -3,14 +3,14 @@
   <PropertyGroup>
     <AzureCredentials>BizSpark 1111</AzureCredentials>
     <AzureDeleteDeploymentOnFailure>False</AzureDeleteDeploymentOnFailure>
-    <AzureDeploymentLabel>Weave Accounts Service</AzureDeploymentLabel>
+    <AzureDeploymentLabel>Weave Identity Service</AzureDeploymentLabel>
     <AzureDeploymentReplacementMethod>BlastUpgrade</AzureDeploymentReplacementMethod>
     <AzureSlot>Production</AzureSlot>
     <AzureEnableRemoteDesktop>True</AzureEnableRemoteDesktop>
     <AzureEnableWebDeploy>False</AzureEnableWebDeploy>
     <AzureFallbackToDeleteAndRecreateIfUpgradeFails>True</AzureFallbackToDeleteAndRecreateIfUpgradeFails>
-    <AzureHostedServiceLabel>weave-accounts</AzureHostedServiceLabel>
-    <AzureHostedServiceName>weave-accounts</AzureHostedServiceName>
+    <AzureHostedServiceLabel>weave-identity</AzureHostedServiceLabel>
+    <AzureHostedServiceName>weave-identity</AzureHostedServiceName>
     <AzureEnableIntelliTrace>False</AzureEnableIntelliTrace>
     <AzureEnableProfiling>False</AzureEnableProfiling>
     <AzureServiceConfiguration>Cloud</AzureServiceConfiguration>
