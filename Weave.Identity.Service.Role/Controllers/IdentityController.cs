@@ -1,6 +1,8 @@
 ﻿using Common.Data;
+using SelesGames.WebApi;
 using System;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Weave.Identity.Service.Contracts;
@@ -24,11 +26,14 @@ namespace Weave.Identity.Service.WorkerRole.Controllers
             if (string.IsNullOrWhiteSpace(facebookToken))
                 throw new ArgumentException("facebookToken in GetUserIdFromFacebookToken");
 
-            var id = await client.Get<AuthInfo, IdentityInfo>(o => o
+            var ids = await client.Get<AuthInfo, IdentityInfo>(o => o
                 .Where(x => facebookToken.Equals(x.FacebookAuthString))
                 .Select(Convert).AsQueryable());
 
-            return id.First();
+            if (ids.Any())
+                return ids.First();
+
+            throw ResponseHelper.CreateResponseException(HttpStatusCode.NotFound, "No user found matching that facebookToken");
         }
 
         [HttpGet]
@@ -37,11 +42,14 @@ namespace Weave.Identity.Service.WorkerRole.Controllers
             if (string.IsNullOrWhiteSpace(twitterToken))
                 throw new ArgumentException("twitterToken in GetUserIdFromTwitterToken");
 
-            var id = await client.Get<AuthInfo, IdentityInfo>(o => o
+            var ids = await client.Get<AuthInfo, IdentityInfo>(o => o
                 .Where(x => twitterToken.Equals(x.TwitterAuthString))
                 .Select(Convert).AsQueryable());
 
-            return id.First();
+            if (ids.Any())
+                return ids.First();
+
+            throw ResponseHelper.CreateResponseException(HttpStatusCode.NotFound, "No user found matching that twitterToken");
         }
 
         [HttpGet]
@@ -50,11 +58,14 @@ namespace Weave.Identity.Service.WorkerRole.Controllers
             if (string.IsNullOrWhiteSpace(microsoftToken))
                 throw new ArgumentException("microsoftToken in GetUserIdFromMicrosoftToken");
 
-            var id = await client.Get<AuthInfo, IdentityInfo>(o => o
+            var ids = await client.Get<AuthInfo, IdentityInfo>(o => o
                 .Where(x => microsoftToken.Equals(x.MicrosoftAuthString))
                 .Select(Convert).AsQueryable());
 
-            return id.First();
+            if (ids.Any())
+                return ids.First();
+
+            throw ResponseHelper.CreateResponseException(HttpStatusCode.NotFound, "No user found matching that microsoftToken");
         }
 
         [HttpGet]
@@ -63,11 +74,14 @@ namespace Weave.Identity.Service.WorkerRole.Controllers
             if (string.IsNullOrWhiteSpace(googleToken))
                 throw new ArgumentException("googleToken in GetUserIdFromGoogleToken");
 
-            var id = await client.Get<AuthInfo, IdentityInfo>(o => o
+            var ids = await client.Get<AuthInfo, IdentityInfo>(o => o
                 .Where(x => googleToken.Equals(x.GoogleAuthString))
                 .Select(Convert).AsQueryable());
 
-            return id.First();
+            if (ids.Any())
+                return ids.First();
+
+            throw ResponseHelper.CreateResponseException(HttpStatusCode.NotFound, "No user found matching that googleToken");
         }
 
         [HttpGet]
@@ -94,11 +108,20 @@ namespace Weave.Identity.Service.WorkerRole.Controllers
             await client.SubmitChanges();
         }
 
+
+
+
+        #region IDisposable
+
         protected override void Dispose(bool disposing)
         {
             if (client != null)
                 client.Dispose();
+
+            base.Dispose();
         }
+
+        #endregion
 
 
 
