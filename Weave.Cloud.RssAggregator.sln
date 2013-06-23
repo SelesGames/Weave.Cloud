@@ -76,7 +76,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Imaging", "Imaging", "{F3AE
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Azure", "Common.Azure\Common.Azure.csproj", "{6211D4F0-8390-4DFA-A1D2-BA4AA7C28348}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Account", "Account", "{5A5D04A7-7E63-45E2-BB7A-C52E2ED308BF}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Identity", "Identity", "{5A5D04A7-7E63-45E2-BB7A-C52E2ED308BF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.JsonDotNet", "Common.JsonDotNet\Common.JsonDotNet.csproj", "{2CCBE75F-E805-4B8C-A017-6F26C328B4EC}"
 EndProject

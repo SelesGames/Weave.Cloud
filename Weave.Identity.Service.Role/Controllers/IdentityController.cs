@@ -21,7 +21,38 @@ namespace Weave.Identity.Service.WorkerRole.Controllers
         }
 
         [HttpGet]
-        [NonAction]
+        public Task<IdentityInfo> Get(
+            string facebookToken = null, 
+            string twitterToken = null,
+            string microsoftToken = null,
+            string googleToken = null,
+            string username = null,
+            string password = null)
+        {
+            if (!string.IsNullOrWhiteSpace(facebookToken))
+                return GetUserFromFacebookToken(facebookToken);
+
+            if (!string.IsNullOrWhiteSpace(twitterToken))
+                return GetUserFromTwitterToken(twitterToken);
+
+            if (!string.IsNullOrWhiteSpace(microsoftToken))
+                return GetUserFromMicrosoftToken(microsoftToken);
+
+            if (!string.IsNullOrWhiteSpace(googleToken))
+                return GetUserFromGoogleToken(googleToken);
+
+            if (!string.IsNullOrWhiteSpace(username) && !string.IsNullOrWhiteSpace(password))
+                return GetUserFromUserNameAndPassword(username, password);
+
+            throw ResponseHelper.CreateResponseException(HttpStatusCode.BadRequest,
+                "You must specify one of the following: facebookToken, twitterToken, microsoftToken, googleToken, or username and password combo");
+        }
+
+
+
+
+        #region Specific Get implementations
+
         public async Task<IdentityInfo> GetUserFromFacebookToken(string facebookToken)
         {
             if (string.IsNullOrWhiteSpace(facebookToken))
@@ -37,7 +68,6 @@ namespace Weave.Identity.Service.WorkerRole.Controllers
             throw ResponseHelper.CreateResponseException(HttpStatusCode.NotFound, "No user found matching that facebookToken");
         }
 
-        [HttpGet]
         public async Task<IdentityInfo> GetUserFromTwitterToken(string twitterToken)
         {
             if (string.IsNullOrWhiteSpace(twitterToken))
@@ -53,7 +83,6 @@ namespace Weave.Identity.Service.WorkerRole.Controllers
             throw ResponseHelper.CreateResponseException(HttpStatusCode.NotFound, "No user found matching that twitterToken");
         }
 
-        [HttpGet]
         public async Task<IdentityInfo> GetUserFromMicrosoftToken(string microsoftToken)
         {
             if (string.IsNullOrWhiteSpace(microsoftToken))
@@ -69,7 +98,6 @@ namespace Weave.Identity.Service.WorkerRole.Controllers
             throw ResponseHelper.CreateResponseException(HttpStatusCode.NotFound, "No user found matching that microsoftToken");
         }
 
-        [HttpGet]
         public async Task<IdentityInfo> GetUserFromGoogleToken(string googleToken)
         {
             if (string.IsNullOrWhiteSpace(googleToken))
@@ -85,11 +113,41 @@ namespace Weave.Identity.Service.WorkerRole.Controllers
             throw ResponseHelper.CreateResponseException(HttpStatusCode.NotFound, "No user found matching that googleToken");
         }
 
-        [HttpGet]
-        public Task<IdentityInfo> GetUserFromUserNameAndPassword(string username, string password)
+        public async Task<IdentityInfo> GetUserFromUserNameAndPassword(string username, string password)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrWhiteSpace(username))
+                throw new ArgumentException("googleToken in GetUserFromUserNameAndPassword");
+            if (string.IsNullOrWhiteSpace(password))
+                throw new ArgumentException("password in GetUserFromUserNameAndPassword");
+
+            var ids = await client.Get<AuthInfo, IdentityInfo>(o => o
+                .Where(x => username.Equals(x.GoogleAuthString))
+                .Select(Convert).AsQueryable());
+
+            if (ids.Any())
+            {
+                var matchingId = ids.First();
+
+                // hash the password, which was what was saved in the database as opposed to the raw password
+                var passwordHash = Hash(password);
+                if (passwordHash.Equals(matchingId.PasswordHash))
+                    return matchingId;
+                else
+                    throw ResponseHelper.CreateResponseException(HttpStatusCode.Forbidden, "password does not match for the given username");
+            }
+
+            throw ResponseHelper.CreateResponseException(HttpStatusCode.NotFound, "No user found matching that username");
         }
+
+        string Hash(string password)
+        {
+            return password;
+        }
+
+        #endregion
+
+
+
 
         [HttpPost]
         public async Task Add(IdentityInfo user)
@@ -116,6 +174,9 @@ namespace Weave.Identity.Service.WorkerRole.Controllers
 
         protected override void Dispose(bool disposing)
         {
+            if (disposing)
+                return;
+
             if (client != null)
                 client.Dispose();
 

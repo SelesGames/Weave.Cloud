@@ -3,6 +3,7 @@ using Ninject;
 using Ninject.WebApi;
 using SelesGames.WebApi.SelfHost;
 using System.Diagnostics;
+using System.Web.Http;
 using System.Web.Http.Dependencies;
 using System.Web.Http.SelfHost;
 
@@ -28,6 +29,11 @@ namespace Weave.Identity.Service.WorkerRole.Startup
             Trace.WriteLine(string.Format("**** IP ADDRESS: {0}", ipString));
 
             var config = new StandardHttpSelfHostConfiguration(ipString) { DependencyResolver = resolver };
+            config.Routes.MapHttpRoute(
+                name: "newroute",
+                routeTemplate: "api/{controller}"//,
+                //defaults: new { id = RouteParameter.Optional }
+            );
             new HttpSelfHostServer(config).OpenAsync().Wait();
 
             Trace.WriteLine("^&*^&*^&*^*&^  SERVER IS UP AND RUNNING!!!");
