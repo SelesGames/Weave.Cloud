@@ -18,7 +18,15 @@ namespace Weave.Mobilizer.Cache
 
         public Task<ReadabilityResult> Get(string key)
         {
-            return cache.GetOrAdd(key, readabilityClient.GetAsync);
+            return cache.GetOrAdd(key, GetFromReadability);
+        }
+
+        async Task<ReadabilityResult> GetFromReadability(string url)
+        {
+            var result = await readabilityClient.GetAsync(url);
+
+            // insert some html agility pack processing here
+            return result;
         }
     }
 }
