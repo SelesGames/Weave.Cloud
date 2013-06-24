@@ -23,9 +23,19 @@ namespace Weave.Mobilizer.Core.Controllers
             this.writeClient = writeClient;
         }
 
-        public Task<ReadabilityResult> Get(string url)
+        public async Task<ReadabilityResult> Get(string url, bool stripLeadImage = false)
         {
-            return cache.Get(UrlToFileName(url));
+            var result = await cache.Get(UrlToFileName(url));
+
+            if (stripLeadImage)
+            {
+                //var sw = System.Diagnostics.Stopwatch.StartNew();
+                var parser = new Weave.Mobilizer.HtmlParser.Parser();
+                parser.RemoveImageFromContentMatchingLead(result);
+                //sw.Stop();
+                //System.Diagnostics.Debug.WriteLine(string.Format("elapsed time: {0} ms", sw.ElapsedMilliseconds));
+            }
+            return result;
         }
 
         [TokenAuthorizationAttribute]

@@ -25,7 +25,14 @@ namespace Weave.Mobilizer.Cache
         {
             var result = await readabilityClient.GetAsync(url);
 
-            // insert some html agility pack processing here
+
+
+            // parse out the lead_image_url from the article content - clients should figure out their own way to display the lead_image_url
+            //var sw = System.Diagnostics.Stopwatch.StartNew();
+            //var parser = new Weave.Mobilizer.HtmlParser.Parser();
+            //parser.RemoveImageFromContentMatchingLead(result);
+            //sw.Stop();
+            //System.Diagnostics.Debug.WriteLine(string.Format("elapsed time: {0} ms", sw.ElapsedMilliseconds));
             return result;
         }
     }

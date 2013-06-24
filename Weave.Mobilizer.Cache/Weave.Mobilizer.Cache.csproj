@@ -66,6 +66,10 @@
       <Project>{d115cf60-990a-4138-8496-538a6ce74541}</Project>
       <Name>Common.Azure.SmartBlobClient</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Weave.Mobilizer.HtmlParser\Weave.Mobilizer.HtmlParser.csproj">
+      <Project>{8993c056-b00f-4bad-a1fc-c944af40a993}</Project>
+      <Name>Weave.Mobilizer.HtmlParser</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

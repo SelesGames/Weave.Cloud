@@ -17,8 +17,9 @@ namespace Test.AccountManagement
         {
             try
             {
+                TestMobilizer().Wait();
                 //CreateNewUser().Wait();
-                TestRole2().Wait();
+                //TestRole2().Wait();
                 //TestRole().Wait();
                 //TestUserAccounts2().Wait();
                 //TestSmartHttpClient().Wait();
@@ -32,6 +33,13 @@ namespace Test.AccountManagement
 
             while (true)
                 Console.ReadLine();
+        }
+
+        static async Task TestMobilizer()
+        {
+            var parser = new Weave.Mobilizer.HtmlParser.Parser();
+            await parser.TryStuff();
+            DebugEx.WriteLine("finished parser testing");
         }
 
         static UserController CreateController()

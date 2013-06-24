@@ -287,6 +287,10 @@
       <Project>{1a5136f0-480b-461c-b350-9ad42c0eca97}</Project>
       <Name>Weave.Mobilizer.Cache</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Weave.Mobilizer.HtmlParser\Weave.Mobilizer.HtmlParser.csproj">
+      <Project>{8993c056-b00f-4bad-a1fc-c944af40a993}</Project>
+      <Name>Weave.Mobilizer.HtmlParser</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

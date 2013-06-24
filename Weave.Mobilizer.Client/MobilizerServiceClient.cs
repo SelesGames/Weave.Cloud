@@ -19,13 +19,14 @@ namespace Weave.Mobilizer.Client
             this.token = token;
         }
 
-        public async Task<ReadabilityResult> Get(string url)
+        public async Task<ReadabilityResult> Get(string url, bool stripLeadImage = false)
         {
             if (string.IsNullOrEmpty(url)) throw new ArgumentException("Not a valid url");
 
             string append = "ipf";
             var fullUrl = new UriBuilder(SERVICE_URL + append)
                 .AddParameter("url", url)
+                .AddParameter("stripLeadImage", stripLeadImage)
                 .ToString();
 
             var client = CreateClient();
