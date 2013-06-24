@@ -27,14 +27,14 @@ namespace Weave.Mobilizer.Core.Controllers
         {
             var result = await cache.Get(UrlToFileName(url));
 
-            if (stripLeadImage)
-            {
-                //var sw = System.Diagnostics.Stopwatch.StartNew();
-                var parser = new Weave.Mobilizer.HtmlParser.Parser();
-                parser.RemoveImageFromContentMatchingLead(result);
-                //sw.Stop();
-                //System.Diagnostics.Debug.WriteLine(string.Format("elapsed time: {0} ms", sw.ElapsedMilliseconds));
-            }
+            //if (stripLeadImage)
+            //{
+            //    //var sw = System.Diagnostics.Stopwatch.StartNew();
+            //    var parser = new Weave.Mobilizer.HtmlParser.Parser();
+            //    parser.ProcessContent(result);
+            //    //sw.Stop();
+            //    //System.Diagnostics.Debug.WriteLine(string.Format("elapsed time: {0} ms", sw.ElapsedMilliseconds));
+            //}
             return result;
         }
 
