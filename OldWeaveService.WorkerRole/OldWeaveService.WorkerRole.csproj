@@ -58,6 +58,10 @@
     <Compile Include="WorkerRole.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common.Azure.ServiceBus\Common.Azure.ServiceBus.csproj">
+      <Project>{84165f70-4beb-46e2-a122-01ada235950f}</Project>
+      <Name>Common.Azure.ServiceBus</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common.Net.Http.Compression\Common.Net.Http.Compression.csproj">
       <Project>{c3e23ea5-8542-464a-9598-d4d126e1eb97}</Project>
       <Name>Common.Net.Http.Compression</Name>

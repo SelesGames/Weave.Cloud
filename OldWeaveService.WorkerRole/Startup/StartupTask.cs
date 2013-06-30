@@ -1,4 +1,4 @@
-﻿using Common.Azure.ServiceBus.Reactive;
+﻿using Common.Azure.ServiceBus;
 using Microsoft.WindowsAzure.ServiceRuntime;
 using Ninject;
 using Ninject.WebApi;
