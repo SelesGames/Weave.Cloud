@@ -47,7 +47,6 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SubscriptionConnector.cs" />
   </ItemGroup>
