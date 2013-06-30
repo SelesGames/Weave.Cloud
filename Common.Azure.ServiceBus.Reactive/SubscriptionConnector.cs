@@ -1,6 +1,5 @@
 ﻿using Microsoft.ServiceBus.Messaging;
 using System;
-using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
 
@@ -20,18 +19,7 @@ namespace Common.Azure.ServiceBus.Reactive
             this.receiveMode = receiveMode;
         }
 
-        public async Task<IObservable<BrokeredMessage>> CreateObservable()
-        {
-            var client = await CreateClient();
-
-            var sub = new Subject<BrokeredMessage>();
-
-            client.AsObservable().Subscribe(sub.OnNext, sub.OnError, sub.OnCompleted);
-
-            return sub.AsObservable();
-        }
-
-        Task<SubscriptionClient> CreateClient()
+        public Task<SubscriptionClient> CreateClient()
         {
             return factory.CreateSubscriptionClient(topicPath, subscriptionName, receiveMode);
         }

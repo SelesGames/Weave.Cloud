@@ -41,6 +41,7 @@
     <Compile Include="ClientFactory.cs" />
     <Compile Include="ServiceBusCredentials.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SubscriptionConnector.cs" />
     <Compile Include="TopicConnector.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
