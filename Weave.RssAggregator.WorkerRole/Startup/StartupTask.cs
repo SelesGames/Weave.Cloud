@@ -5,7 +5,6 @@ using Ninject;
 using Ninject.WebApi;
 using SelesGames.WebApi.SelfHost;
 using System.Diagnostics;
-using System.Web.Http;
 using System.Web.Http.Dependencies;
 using System.Web.Http.SelfHost;
 using Weave.RssAggregator.LowFrequency;
