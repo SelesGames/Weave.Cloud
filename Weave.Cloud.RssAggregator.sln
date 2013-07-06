@@ -86,11 +86,11 @@ Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "Weave.Article.Service", "We
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.Article.Service.WorkerRole", "Weave.Article.Service.WorkerRole\Weave.Article.Service.WorkerRole.csproj", "{F1B9B4E0-BD01-453C-B7C5-BF58AC032180}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UserFeedAggregator", "UserFeedAggregator", "{B3E30122-CA46-48C2-9A99-FFCE69AE7166}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "User", "User", "{B3E30122-CA46-48C2-9A99-FFCE69AE7166}"
 EndProject
-Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "Weave.UserFeedAggregator.Service", "Weave.UserFeedAggregator.Service\Weave.UserFeedAggregator.Service.ccproj", "{61B4683A-8296-48CD-AAC0-AC5288D7EA86}"
+Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "Weave.User.Service", "Weave.UserFeedAggregator.Service\Weave.User.Service.ccproj", "{61B4683A-8296-48CD-AAC0-AC5288D7EA86}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.UserFeedAggregator.Role", "Weave.UserFeedAggregator.Role\Weave.UserFeedAggregator.Role.csproj", "{A8E71851-2046-4176-B9CE-6D6CC659E567}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.User.Service.WorkerRole", "Weave.UserFeedAggregator.Role\Weave.User.Service.WorkerRole.csproj", "{A8E71851-2046-4176-B9CE-6D6CC659E567}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.Parsing", "Weave.Parsing\Weave.Parsing.csproj", "{A9731E9C-72FC-4171-BA99-9A6F97CD379F}"
 EndProject
@@ -108,13 +108,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Net.Http.Compression
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Azure.SmartBlobClient", "SelesGames.SmartBlobClient\Common.Azure.SmartBlobClient.csproj", "{D115CF60-990A-4138-8496-538A6CE74541}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.UserFeedAggregator", "Weave.UserFeedAggregator\Weave.UserFeedAggregator.csproj", "{335A5059-6C45-4CA7-B799-18B9CDB6C61B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.User.Service.Common", "Weave.UserFeedAggregator\Weave.User.Service.Common.csproj", "{335A5059-6C45-4CA7-B799-18B9CDB6C61B}"
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Weave.Sql.User", "Weave.Sql.UserFeed\Weave.Sql.User.sqlproj", "{C5FB0696-4C85-43BE-85C9-6A97C034AA2F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.UserFeedAggregator.Contracts", "..\Weave.Portable\Weave.UserFeedAggregator.Contracts\Weave.UserFeedAggregator.Contracts.csproj", "{02F3363F-7B0F-4C5F-9123-B388F2870C35}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.User.Service.Contracts", "..\Weave.Portable\Weave.UserFeedAggregator.Contracts\Weave.User.Service.Contracts.csproj", "{02F3363F-7B0F-4C5F-9123-B388F2870C35}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.UserFeedAggregator.DTOs", "..\Weave.Portable\Weave.UserFeedAggregator.DTOs\Weave.UserFeedAggregator.DTOs.csproj", "{75F2F4B1-BEB2-4AC6-A935-5A795C5A79A0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.User.Service.DTOs", "..\Weave.Portable\Weave.UserFeedAggregator.DTOs\Weave.User.Service.DTOs.csproj", "{75F2F4B1-BEB2-4AC6-A935-5A795C5A79A0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Caching", "Common.Caching\Common.Caching.csproj", "{C83AB657-C7A6-4CF8-B4F5-D4E01BF2E562}"
 EndProject

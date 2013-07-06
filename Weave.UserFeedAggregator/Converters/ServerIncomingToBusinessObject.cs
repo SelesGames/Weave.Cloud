@@ -1,7 +1,7 @@
 ﻿using SelesGames.Common;
 using System.Linq;
 using Weave.User.BusinessObjects;
-using Incoming = Weave.UserFeedAggregator.DTOs.ServerIncoming;
+using Incoming = Weave.User.Service.DTOs.ServerIncoming;
 
 namespace Weave.UserFeedAggregator.Converters
 {

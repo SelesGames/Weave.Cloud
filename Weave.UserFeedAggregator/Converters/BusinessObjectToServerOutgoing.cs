@@ -1,7 +1,7 @@
 ﻿using SelesGames.Common;
 using System.Linq;
 using Weave.User.BusinessObjects;
-using Outgoing = Weave.UserFeedAggregator.DTOs.ServerOutgoing;
+using Outgoing = Weave.User.Service.DTOs.ServerOutgoing;
 
 
 namespace Weave.UserFeedAggregator.Converters
@@ -56,7 +56,7 @@ namespace Weave.UserFeedAggregator.Converters
                 Uri = o.Uri,
                 Name = o.Name,
                 Category = o.Category,
-                ArticleViewingType = (Weave.UserFeedAggregator.DTOs.ArticleViewingType)o.ArticleViewingType,
+                ArticleViewingType = (Weave.User.Service.DTOs.ArticleViewingType)o.ArticleViewingType,
                 TotalArticleCount = o.News == null ? 0 : o.News.Count,
                 NewArticleCount = o.News == null ? 0 : o.News.Count(x => x.IsNew()),
                 UnreadArticleCount = o.News == null ? 0 : o.News.Count(x => !x.HasBeenViewed),

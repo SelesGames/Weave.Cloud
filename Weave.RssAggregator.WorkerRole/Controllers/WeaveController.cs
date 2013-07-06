@@ -20,14 +20,15 @@ namespace Weave.RssAggregator.WorkerRole.Controllers
             this.cache = cache;
         }
 
-        public Task<FeedResult> Get(string feedUri)
+        [HttpGet]
+        public Task<FeedResult> Get([FromUri] string feedUri)
         {
             var feedRequest = new FeedRequest { Url = feedUri };
             return GetResultFromRequest(feedRequest);
         }
 
         [HttpPost]
-        public async Task<List<FeedResult>> Get([FromBody] List<FeedRequest> requests, bool fsd = true)
+        public async Task<List<FeedResult>> Get([FromBody] List<FeedRequest> requests, [FromUri] bool fsd = true)
         {
             if (requests == null || !requests.Any())
                 throw ResponseHelper.CreateResponseException(
@@ -39,7 +40,12 @@ namespace Weave.RssAggregator.WorkerRole.Controllers
             return results;
         }
 
-        public async Task<FeedResult> GetResultFromRequest(FeedRequest feedRequest, bool fsd = true)
+
+
+
+        #region Helper method containing the logic for the get operation
+
+        async Task<FeedResult> GetResultFromRequest(FeedRequest feedRequest, bool fsd = true)
         {
             FeedResult result = null;
 
@@ -60,5 +66,7 @@ namespace Weave.RssAggregator.WorkerRole.Controllers
             }
             return result;
         }
+
+        #endregion
     }
 }

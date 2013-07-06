@@ -1,8 +1,7 @@
-﻿using Common.Azure.ServiceBus;
-using Microsoft.ServiceBus.Messaging;
+﻿using Microsoft.ServiceBus.Messaging;
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
 
 namespace Weave.RssAggregator.LowFrequency
@@ -58,23 +57,25 @@ namespace Weave.RssAggregator.LowFrequency
             }
         }
 
-        public void Subscribe(IObservable<BrokeredMessage> observable)
-        {
-            observable
-                .Retry()
-                .Where(m => m.Properties.ContainsKey("FeedId") && m.Properties["FeedId"].Equals(feed.FeedId))
-                //.Where(m => m.Properties.ContainsKey("RefreshTime") && ((DateTime)m.Properties["RefreshTime"]) > LastRefresh)
-                .Subscribe(OnBrokeredMessageUpdateReceived);
-        }
-
-        async void OnBrokeredMessageUpdateReceived(BrokeredMessage message)
+        public async Task OnBrokeredMessageUpdateReceived(BrokeredMessage message)
         {
             try
             {
-                if (message.Properties.ContainsKey("RefreshTime") && ((DateTime)message.Properties["RefreshTime"]) > LastRefresh)
-                    await LoadLatestNews();
+                var properties = message.Properties;
+                var id = message.MessageId;
 
-                await message.CompleteAsync();
+                if (EnumerableEx.IsNullOrEmpty(properties))
+                    return;
+
+                if (properties.ContainsKey("FeedId") && properties["FeedId"].Equals(feed.FeedId))
+                {
+                    if (properties.ContainsKey("RefreshTime") && ((DateTime)properties["RefreshTime"]) > LastRefresh)
+                        await LoadLatestNews();
+
+                    DebugEx.WriteLine("completing message id: {0}", id);
+                    await message.CompleteAsync();
+                    DebugEx.WriteLine("COMPLETED message id: {0}", id);
+                }
             }
 #if DEBUG
             catch (Exception e)

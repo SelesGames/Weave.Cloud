@@ -1,6 +1,7 @@
 ﻿using Microsoft.WindowsAzure.ServiceRuntime;
 using Ninject;
 using Ninject.WebApi;
+using SelesGames.WebApi.SelfHost;
 using System.Diagnostics;
 using System.Web.Http.Dependencies;
 using System.Web.Http.SelfHost;
@@ -26,7 +27,7 @@ namespace Weave.UserFeedAggregator.Role.Startup
             var ipString = string.Format("http://{0}", ip.ToString());
             Trace.WriteLine(string.Format("**** IP ADDRESS: {0}", ipString));
 
-            var config = new HttpConfig(ipString) { DependencyResolver = resolver };
+            var config = new StandardHttpSelfHostConfiguration(ipString) { DependencyResolver = resolver };
             new HttpSelfHostServer(config).OpenAsync().Wait();
 
             Trace.WriteLine("^&*^&*^&*^*&^  SERVER IS UP AND RUNNING!!!");

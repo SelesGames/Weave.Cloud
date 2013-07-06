@@ -47,7 +47,6 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Web.Http.SelfHost, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.CSharp" />
@@ -55,19 +54,18 @@
   <ItemGroup>
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Startup\HttpConfig.cs" />
     <Compile Include="Startup\NinjectKernel.cs" />
     <Compile Include="Startup\StartupTask.cs" />
     <Compile Include="WorkerRole.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Weave.Portable\Weave.UserFeedAggregator.Contracts\Weave.UserFeedAggregator.Contracts.csproj">
+    <ProjectReference Include="..\..\Weave.Portable\Weave.UserFeedAggregator.Contracts\Weave.User.Service.Contracts.csproj">
       <Project>{02f3363f-7b0f-4c5f-9123-b388f2870c35}</Project>
-      <Name>Weave.UserFeedAggregator.Contracts</Name>
+      <Name>Weave.User.Service.Contracts</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Weave.Portable\Weave.UserFeedAggregator.DTOs\Weave.UserFeedAggregator.DTOs.csproj">
+    <ProjectReference Include="..\..\Weave.Portable\Weave.UserFeedAggregator.DTOs\Weave.User.Service.DTOs.csproj">
       <Project>{75f2f4b1-beb2-4ac6-a935-5a795c5a79a0}</Project>
-      <Name>Weave.UserFeedAggregator.DTOs</Name>
+      <Name>Weave.User.Service.DTOs</Name>
     </ProjectReference>
     <ProjectReference Include="..\Common.Azure\Common.Azure.csproj">
       <Project>{6211d4f0-8390-4dfa-a1d2-ba4aa7c28348}</Project>
@@ -76,10 +74,6 @@
     <ProjectReference Include="..\Common.Caching\Common.Caching.csproj">
       <Project>{c83ab657-c7a6-4cf8-b4f5-d4e01bf2e562}</Project>
       <Name>Common.Caching</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Common.Net.Http.Compression\Common.Net.Http.Compression.csproj">
-      <Project>{c3e23ea5-8542-464a-9598-d4d126e1eb97}</Project>
-      <Name>Common.Net.Http.Compression</Name>
     </ProjectReference>
     <ProjectReference Include="..\Ninject.WebApi\Ninject.WebApi.csproj">
       <Project>{be97f564-16f5-4d09-9218-cc65e89df2ac}</Project>
@@ -93,9 +87,9 @@
       <Project>{d115cf60-990a-4138-8496-538a6ce74541}</Project>
       <Name>Common.Azure.SmartBlobClient</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SelesGames.WebApi.Protobuf\SelesGames.WebApi.Protobuf.csproj">
-      <Project>{c829e120-9b78-4640-bf91-fefcf060e2b8}</Project>
-      <Name>SelesGames.WebApi.Protobuf</Name>
+    <ProjectReference Include="..\SelesGames.WebApi.SelfHost\SelesGames.WebApi.SelfHost.csproj">
+      <Project>{42044387-f2a2-4a39-93bc-93e06ffae618}</Project>
+      <Name>SelesGames.WebApi.SelfHost</Name>
     </ProjectReference>
     <ProjectReference Include="..\SelesGames.WebApi\SelesGames.WebApi.csproj">
       <Project>{bb3ea281-94b3-435f-a1ef-c395a7d1f25a}</Project>
@@ -109,9 +103,9 @@
       <Project>{458cbdea-f41c-4209-9dec-b2f285c217ab}</Project>
       <Name>Weave.User.DataStore</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Weave.UserFeedAggregator\Weave.UserFeedAggregator.csproj">
+    <ProjectReference Include="..\Weave.UserFeedAggregator\Weave.User.Service.Common.csproj">
       <Project>{335a5059-6c45-4ca7-b799-18b9cdb6c61b}</Project>
-      <Name>Weave.UserFeedAggregator</Name>
+      <Name>Weave.User.Service.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

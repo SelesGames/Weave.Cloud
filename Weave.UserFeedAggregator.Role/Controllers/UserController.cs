@@ -8,11 +8,11 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Weave.User.BusinessObjects;
-using Weave.UserFeedAggregator.Contracts;
+using Weave.User.Service.Contracts;
 using Weave.UserFeedAggregator.Converters;
-using Weave.UserFeedAggregator.DTOs;
-using Incoming = Weave.UserFeedAggregator.DTOs.ServerIncoming;
-using Outgoing = Weave.UserFeedAggregator.DTOs.ServerOutgoing;
+using Weave.User.Service.DTOs;
+using Incoming = Weave.User.Service.DTOs.ServerIncoming;
+using Outgoing = Weave.User.Service.DTOs.ServerOutgoing;
 
 namespace Weave.UserFeedAggregator.Role.Controllers
 {

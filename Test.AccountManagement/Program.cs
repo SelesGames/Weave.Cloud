@@ -73,7 +73,7 @@ namespace Test.AccountManagement
         {
             var controller = CreateController();
 
-            var user = new Weave.UserFeedAggregator.DTOs.ServerIncoming.UserInfo
+            var user = new Weave.User.Service.DTOs.ServerIncoming.UserInfo
             {
                 Id = Guid.NewGuid(),
                 Feeds = new MockFeeds(),
@@ -93,7 +93,7 @@ namespace Test.AccountManagement
 
             //var id = Guid.NewGuid();
 
-            //var user = new Weave.UserFeedAggregator.DTOs.ServerIncoming.UserInfo
+            //var user = new Weave.User.Service.DTOs.ServerIncoming.UserInfo
             //{
             //    Id = id,
             //    Feeds = feeds.Take(2).ToList(),
@@ -162,38 +162,38 @@ namespace Test.AccountManagement
         //}
     }
 
-    class MockFeeds : List<Weave.UserFeedAggregator.DTOs.ServerIncoming.NewFeed>
+    class MockFeeds : List<Weave.User.Service.DTOs.ServerIncoming.NewFeed>
     {
         public MockFeeds()
         {
-            Add(new Weave.UserFeedAggregator.DTOs.ServerIncoming.NewFeed 
+            Add(new Weave.User.Service.DTOs.ServerIncoming.NewFeed 
             { 
                 Name = "Engadget", 
                 Category = "Technology",
-                ArticleViewingType = Weave.UserFeedAggregator.DTOs.ArticleViewingType.Mobilizer,
+                ArticleViewingType = Weave.User.Service.DTOs.ArticleViewingType.Mobilizer,
                 Uri = "http://www.engadget.com/rss.xml",
             });
-            Add(new Weave.UserFeedAggregator.DTOs.ServerIncoming.NewFeed
+            Add(new Weave.User.Service.DTOs.ServerIncoming.NewFeed
             {
                 Name = "GigaOM",
                 Category = null,
-                ArticleViewingType = Weave.UserFeedAggregator.DTOs.ArticleViewingType.Mobilizer,
+                ArticleViewingType = Weave.User.Service.DTOs.ArticleViewingType.Mobilizer,
                 Uri = "http://feeds.feedburner.com/ommalik",
             });
 
-            Add(new Weave.UserFeedAggregator.DTOs.ServerIncoming.NewFeed
+            Add(new Weave.User.Service.DTOs.ServerIncoming.NewFeed
             {
                 Name = "Mashable",
                 Category = "Technology",
-                ArticleViewingType = Weave.UserFeedAggregator.DTOs.ArticleViewingType.Mobilizer,
+                ArticleViewingType = Weave.User.Service.DTOs.ArticleViewingType.Mobilizer,
                 Uri = "http://feeds.mashable.com/Mashable",
             });
 
-            Add(new Weave.UserFeedAggregator.DTOs.ServerIncoming.NewFeed
+            Add(new Weave.User.Service.DTOs.ServerIncoming.NewFeed
             {
                 Name = "The Verge",
                 Category = "Technology",
-                ArticleViewingType = Weave.UserFeedAggregator.DTOs.ArticleViewingType.Mobilizer,
+                ArticleViewingType = Weave.User.Service.DTOs.ArticleViewingType.Mobilizer,
                 Uri = "http://www.theverge.com/rss/index.xml",
             });
         }

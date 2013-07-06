@@ -1,8 +1,11 @@
 ﻿using Common.Azure.ServiceBus;
+using Common.WebApi.Handlers;
 using Microsoft.WindowsAzure.ServiceRuntime;
 using Ninject;
 using Ninject.WebApi;
+using SelesGames.WebApi.SelfHost;
 using System.Diagnostics;
+using System.Web.Http;
 using System.Web.Http.Dependencies;
 using System.Web.Http.SelfHost;
 using Weave.RssAggregator.LowFrequency;
@@ -52,7 +55,9 @@ namespace Weave.RssAggregator.WorkerRole.Startup
             var ipString = string.Format("http://{0}", ip.ToString());
             Trace.WriteLine(string.Format("**** IP ADDRESS: {0}", ipString));
 
-            var config = new HttpConfig(ipString) { DependencyResolver = resolver };
+            var config = new StandardHttpSelfHostConfiguration(ipString) { DependencyResolver = resolver };
+            config.MessageHandlers.Add(new InjectAcceptHandler("application/protobuf"));
+            config.MessageHandlers.Add(new InjectAcceptEncodingHandler("gzip"));
             new HttpSelfHostServer(config).OpenAsync().Wait();
 
             Trace.WriteLine("^&*^&*^&*^*&^  SERVER IS UP AND RUNNING!!!");

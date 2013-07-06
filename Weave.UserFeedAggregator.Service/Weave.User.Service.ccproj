@@ -11,7 +11,7 @@
     <RootNamespace>Weave.UserFeedAggregator.Service</RootNamespace>
     <AssemblyName>Weave.UserFeedAggregator.Service</AssemblyName>
     <StartDevelopmentStorage>True</StartDevelopmentStorage>
-    <Name>Weave.UserFeedAggregator.Service</Name>
+    <Name>Weave.User.Service</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -37,26 +37,25 @@
     <ServiceConfiguration Include="ServiceConfiguration.Cloud.cscfg" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Weave.UserFeedAggregator.Role\Weave.UserFeedAggregator.Role.csproj">
-      <Name>Weave.UserFeedAggregator.Role</Name>
-      <Project>{a8e71851-2046-4176-b9ce-6d6cc659e567}</Project>
-      <Private>True</Private>
-      <RoleType>Worker</RoleType>
-      <RoleName>Weave.UserFeedAggregator.Role</RoleName>
-      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Profiles" />
-    <Folder Include="Weave.UserFeedAggregator.RoleContent\" />
+    <Folder Include="Weave.User.Service.WorkerRoleContent" />
   </ItemGroup>
   <ItemGroup>
     <PublishProfile Include="Profiles\Weave User Feed Aggregator.azurePubxml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Weave.UserFeedAggregator.RoleContent\diagnostics.wadcfg">
+    <Content Include="Weave.User.Service.WorkerRoleContent\diagnostics.wadcfg">
       <SubType>Content</SubType>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Weave.UserFeedAggregator.Role\Weave.User.Service.WorkerRole.csproj">
+      <Name>Weave.User.Service.WorkerRole</Name>
+      <Project>{a8e71851-2046-4176-b9ce-6d6cc659e567}</Project>
+      <Private>True</Private>
+      <RoleType>Worker</RoleType>
+      <RoleName>Weave.User.Service.WorkerRole</RoleName>
+    </ProjectReference>
   </ItemGroup>
   <!-- Import the target files for this project template -->
   <PropertyGroup>

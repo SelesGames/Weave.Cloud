@@ -49,9 +49,9 @@
     <Compile Include="TempUserWriter.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Weave.Portable\Weave.UserFeedAggregator.DTOs\Weave.UserFeedAggregator.DTOs.csproj">
+    <ProjectReference Include="..\..\Weave.Portable\Weave.UserFeedAggregator.DTOs\Weave.User.Service.DTOs.csproj">
       <Project>{75f2f4b1-beb2-4ac6-a935-5a795c5a79a0}</Project>
-      <Name>Weave.UserFeedAggregator.DTOs</Name>
+      <Name>Weave.User.Service.DTOs</Name>
     </ProjectReference>
     <ProjectReference Include="..\Common.Azure\Common.Azure.csproj">
       <Project>{6211d4f0-8390-4dfa-a1d2-ba4aa7c28348}</Project>

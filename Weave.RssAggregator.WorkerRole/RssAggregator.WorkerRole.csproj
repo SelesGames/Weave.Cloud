@@ -33,17 +33,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.ServiceBus, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.WindowsAzure.Configuration, Version=1.8.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.WindowsAzure.ConfigurationManager.1.8.0.0\lib\net35-full\Microsoft.WindowsAzure.Configuration.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.WindowsAzure.Diagnostics, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Microsoft.WindowsAzure.ServiceRuntime, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.WindowsAzure.Storage, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\WindowsAzure.Storage.2.0.5.1\lib\net40\Microsoft.WindowsAzure.Storage.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\lib\Newtonsoft.Json.dll</HintPath>
@@ -54,17 +45,13 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Data.Services.Client" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Web.Http.SelfHost, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\PingController.cs" />
     <Compile Include="Startup\AppSettings.cs" />
-    <Compile Include="Startup\HttpConfig.cs" />
     <Compile Include="Controllers\WeaveController.cs" />
     <Compile Include="Startup\NinjectKernel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -84,10 +71,6 @@
       <Project>{cad7cc28-36e9-4b39-ba90-df99815904eb}</Project>
       <Name>Common.Data</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Common.Net.Http.Compression\Common.Net.Http.Compression.csproj">
-      <Project>{c3e23ea5-8542-464a-9598-d4d126e1eb97}</Project>
-      <Name>Common.Net.Http.Compression</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Ninject.WebApi\Ninject.WebApi.csproj">
       <Project>{be97f564-16f5-4d09-9218-cc65e89df2ac}</Project>
       <Name>Ninject.WebApi</Name>
@@ -104,9 +87,9 @@
       <Project>{5b792c4b-80d8-420d-9fa7-e567faf1f7b1}</Project>
       <Name>SelesGames.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SelesGames.WebApi.Protobuf\SelesGames.WebApi.Protobuf.csproj">
-      <Project>{c829e120-9b78-4640-bf91-fefcf060e2b8}</Project>
-      <Name>SelesGames.WebApi.Protobuf</Name>
+    <ProjectReference Include="..\SelesGames.WebApi.SelfHost\SelesGames.WebApi.SelfHost.csproj">
+      <Project>{42044387-f2a2-4a39-93bc-93e06ffae618}</Project>
+      <Name>SelesGames.WebApi.SelfHost</Name>
     </ProjectReference>
     <ProjectReference Include="..\SelesGames.WebApi\SelesGames.WebApi.csproj">
       <Project>{bb3ea281-94b3-435f-a1ef-c395a7d1f25a}</Project>
@@ -116,9 +99,6 @@
       <Project>{2f1a280d-ee75-4dc1-a36c-f8e5488e3260}</Project>
       <Name>RssAggregator.DTOs</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

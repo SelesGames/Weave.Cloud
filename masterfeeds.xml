@@ -98,6 +98,8 @@
     <Feed Name="Dealcatcher" ViewType="ie">http://rss.dealcatcher.com/rss.xml</Feed>
     <Feed Name="dealspl.us" ViewType="ie">http://feeds.feedburner.com/dealsplus</Feed>
     <Feed Name="Amazon Gold Box" ViewType="ie">http://rssfeeds.s3.amazonaws.com/goldbox</Feed>
+    <Feed Name="Daily DVD Deals" ViewType="ie">http://feeds.feedburner.com/DailyDvdDeals</Feed>
+    <Feed Name="Daily Game Deals" ViewType="ie">http://feeds.feedburner.com/DailyGameDeals</Feed>
   </Category>
 
 

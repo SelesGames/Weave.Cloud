@@ -15,7 +15,11 @@ namespace SelesGames.WebApi.SelfHost
             Routes.MapHttpRoute(
                 name: "defaultRouting",
                 routeTemplate: "api/{controller}/{action}",
-                defaults: new { id = RouteParameter.Optional }
+                defaults: new 
+                { 
+                    id = RouteParameter.Optional,
+                    action = RouteParameter.Optional,
+                }
             );
 
             var jsonFormatter = (JsonMediaTypeFormatter)Formatters.First();
