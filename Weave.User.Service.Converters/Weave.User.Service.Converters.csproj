@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{335A5059-6C45-4CA7-B799-18B9CDB6C61B}</ProjectGuid>
+    <ProjectGuid>{618FE33A-3784-4ED5-954B-86E4B4E0748B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Weave.User.Service.Common</RootNamespace>
-    <AssemblyName>Weave.User.Service.Common</AssemblyName>
+    <RootNamespace>Weave.User.Service.Converters</RootNamespace>
+    <AssemblyName>Weave.User.Service.Converters</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,34 +30,25 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.WindowsAzure.StorageClient, Version=1.7.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AzureCredentials.cs" />
-    <Compile Include="Contracts\IUserWriter.cs" />
+    <Compile Include="BusinessObjectToDataStore.cs" />
+    <Compile Include="BusinessObjectToServerOutgoing.cs" />
+    <Compile Include="DataStoreToBusinessObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repositories\UserRepository.cs" />
-    <Compile Include="TempUserWriter.cs" />
+    <Compile Include="ServerIncomingToBusinessObject.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Weave.Portable\Weave.User.Service.DTOs\Weave.User.Service.DTOs.csproj">
       <Project>{75f2f4b1-beb2-4ac6-a935-5a795c5a79a0}</Project>
       <Name>Weave.User.Service.DTOs</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Common.Azure\Common.Azure.csproj">
-      <Project>{6211d4f0-8390-4dfa-a1d2-ba4aa7c28348}</Project>
-      <Name>Common.Azure</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SelesGames.Common\SelesGames.Common.csproj">
       <Project>{5b792c4b-80d8-420d-9fa7-e567faf1f7b1}</Project>
       <Name>SelesGames.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SelesGames.SmartBlobClient\Common.Azure.SmartBlobClient.csproj">
-      <Project>{d115cf60-990a-4138-8496-538a6ce74541}</Project>
-      <Name>Common.Azure.SmartBlobClient</Name>
     </ProjectReference>
     <ProjectReference Include="..\Weave.User.BusinessObjects\Weave.User.BusinessObjects.csproj">
       <Project>{db5274e6-15f6-4ec8-920a-842ea93a2601}</Project>
@@ -66,10 +57,6 @@
     <ProjectReference Include="..\Weave.User.DataStore\Weave.User.DataStore.csproj">
       <Project>{458cbdea-f41c-4209-9dec-b2f285c217ab}</Project>
       <Name>Weave.User.DataStore</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Weave.User.Service.Converters\Weave.User.Service.Converters.csproj">
-      <Project>{618fe33a-3784-4ed5-954b-86e4b4e0748b}</Project>
-      <Name>Weave.User.Service.Converters</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

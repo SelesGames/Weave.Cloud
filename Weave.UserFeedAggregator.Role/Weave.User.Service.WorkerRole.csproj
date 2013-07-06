@@ -99,9 +99,17 @@
       <Project>{db5274e6-15f6-4ec8-920a-842ea93a2601}</Project>
       <Name>Weave.User.BusinessObjects</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Weave.User.Service.Cache\Weave.User.Service.Cache.csproj">
+      <Project>{edb6b676-e4fd-4b51-8c5b-98c7d1837ef6}</Project>
+      <Name>Weave.User.Service.Cache</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Weave.User.Service.Common\Weave.User.Service.Common.csproj">
       <Project>{335a5059-6c45-4ca7-b799-18b9cdb6c61b}</Project>
       <Name>Weave.User.Service.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Weave.User.Service.Converters\Weave.User.Service.Converters.csproj">
+      <Project>{618fe33a-3784-4ed5-954b-86e4b4e0748b}</Project>
+      <Name>Weave.User.Service.Converters</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
