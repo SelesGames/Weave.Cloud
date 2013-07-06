@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 //using Weave.AccountManagement.DTOs;
 using Weave.RssAggregator.Core.DTOs.Incoming;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
-using Weave.UserFeedAggregator.Repositories;
-using Weave.UserFeedAggregator.Role.Controllers;
+using Weave.User.Service.Repositories;
+using Weave.User.Service.Role.Controllers;
 
 namespace Test.AccountManagement
 {

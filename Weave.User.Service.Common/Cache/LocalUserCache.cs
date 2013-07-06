@@ -3,7 +3,7 @@ using System;
 using System.Threading.Tasks;
 using Weave.User.BusinessObjects;
 
-namespace Weave.UserFeedAggregator.Cache
+namespace Weave.User.Service.Cache
 {
     public class LocalUserCache : LocalMemoryCache<Guid, Task<UserInfo>>
     {

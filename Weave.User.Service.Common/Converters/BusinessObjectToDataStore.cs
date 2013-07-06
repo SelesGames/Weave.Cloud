@@ -3,7 +3,7 @@ using System.Linq;
 using Weave.User.BusinessObjects;
 using Store = Weave.User.DataStore;
 
-namespace Weave.UserFeedAggregator.Converters
+namespace Weave.User.Service.Converters
 {
     public class BusinessObjectToDataStore :
         IConverter<Image, Store.Image>,

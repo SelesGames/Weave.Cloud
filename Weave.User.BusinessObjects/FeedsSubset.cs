@@ -18,7 +18,7 @@ namespace Weave.User.BusinessObjects
 
         public async Task Refresh()
         {
-            if (feeds == null || !feeds.Any())
+            if (EnumerableEx.IsNullOrEmpty(feeds))
                 return;
 
             var client = new NewsServer();
@@ -31,7 +31,7 @@ namespace Weave.User.BusinessObjects
 
         public void MarkEntry()
         {
-            if (feeds == null || !feeds.Any())
+            if (EnumerableEx.IsNullOrEmpty(feeds))
                 return;
 
             var now = DateTime.UtcNow;
@@ -41,6 +41,20 @@ namespace Weave.User.BusinessObjects
                 feed.MostRecentEntrance = now;
             }
         }
+
+        public void ExtendEntry()
+        {
+            if (EnumerableEx.IsNullOrEmpty(feeds))
+                return;
+
+            var now = DateTime.UtcNow;
+            foreach (var feed in feeds)
+            {
+                feed.MostRecentEntrance = now;
+            }
+        }
+
+
 
 
         #region IEnumerable interface implementation

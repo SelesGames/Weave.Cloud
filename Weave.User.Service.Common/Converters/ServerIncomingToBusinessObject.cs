@@ -3,7 +3,7 @@ using System.Linq;
 using Weave.User.BusinessObjects;
 using Incoming = Weave.User.Service.DTOs.ServerIncoming;
 
-namespace Weave.UserFeedAggregator.Converters
+namespace Weave.User.Service.Converters
 {
     public class ServerIncomingToBusinessObject :
         IConverter<Incoming.NewFeed, Feed>,

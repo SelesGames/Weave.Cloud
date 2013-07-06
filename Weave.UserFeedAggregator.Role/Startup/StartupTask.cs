@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.Web.Http.Dependencies;
 using System.Web.Http.SelfHost;
 
-namespace Weave.UserFeedAggregator.Role.Startup
+namespace Weave.User.Service.Role.Startup
 {
     internal class StartupTask
     {

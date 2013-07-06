@@ -1,11 +1,11 @@
 ﻿using SelesGames.Common;
 using System.Threading.Tasks;
 using Weave.User.BusinessObjects;
-using Weave.UserFeedAggregator.Converters;
-using Weave.UserFeedAggregator.Repositories;
+using Weave.User.Service.Converters;
+using Weave.User.Service.Repositories;
 using Store = Weave.User.DataStore;
 
-namespace Weave.UserFeedAggregator
+namespace Weave.User.Service
 {
     public class TempUserWriter : IUserWriter
     {

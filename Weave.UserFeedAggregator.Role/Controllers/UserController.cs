@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Weave.User.BusinessObjects;
 using Weave.User.Service.Contracts;
-using Weave.UserFeedAggregator.Converters;
 using Weave.User.Service.DTOs;
+using Weave.User.Service.Converters;
 using Incoming = Weave.User.Service.DTOs.ServerIncoming;
 using Outgoing = Weave.User.Service.DTOs.ServerOutgoing;
 
-namespace Weave.UserFeedAggregator.Role.Controllers
+namespace Weave.User.Service.Role.Controllers
 {
     public class UserController : ApiController, IWeaveUserService
     {
@@ -109,7 +109,7 @@ namespace Weave.UserFeedAggregator.Role.Controllers
         [HttpGet]
         [ActionName("news")]
         public async Task<Outgoing.NewsList> GetNews(
-            Guid userId, string category, bool refresh = false, bool markEntry = false, int skip = 0, int take = 10, NewsItemType type = NewsItemType.Any, bool requireImage = false)
+            Guid userId, string category, EntryType entry = EntryType.Peek, int skip = 0, int take = 10, NewsItemType type = NewsItemType.Any, bool requireImage = false)
         {
             TimeSpan readTime, writeTime = TimeSpan.Zero;
 
@@ -120,20 +120,21 @@ namespace Weave.UserFeedAggregator.Role.Controllers
 
             var subset = userBO.CreateSubsetFromCategory(category);
 
-            if (markEntry)
-                subset.MarkEntry();
-
-            if (refresh)
+            if (entry == EntryType.Mark || entry == EntryType.ExtendRefresh)
             {
-                await subset.Refresh();
+                if (entry == EntryType.Mark)
+                    subset.MarkEntry();
 
-                sw = System.Diagnostics.Stopwatch.StartNew();
-                await writer.ImmediateWrite(userBO);
-                sw.Stop();
-                writeTime = sw.Elapsed;
+                else if (entry == EntryType.ExtendRefresh)
+                {
+                    subset.ExtendEntry();
+                    await subset.Refresh();
+                }
+
+                writer.DelayedWrite(userBO);
             }
 
-            var list = CreateNewsListFromSubset(userId, skip, take, type, requireImage, subset);
+            var list = CreateNewsListFromSubset(userId, entry, skip, take, type, requireImage, subset);
             list.DataStoreReadTime = readTime;
             list.DataStoreWriteTime = writeTime;
             return list;
@@ -142,7 +143,7 @@ namespace Weave.UserFeedAggregator.Role.Controllers
         [HttpGet]
         [ActionName("news")]
         public async Task<Outgoing.NewsList> GetNews(
-            Guid userId, Guid feedId, bool refresh = false, bool markEntry = false, int skip = 0, int take = 10, NewsItemType type = NewsItemType.Any, bool requireImage = false)
+            Guid userId, Guid feedId, EntryType entry = EntryType.Peek, int skip = 0, int take = 10, NewsItemType type = NewsItemType.Any, bool requireImage = false)
         {
             TimeSpan readTime, writeTime = TimeSpan.Zero;
 
@@ -153,26 +154,27 @@ namespace Weave.UserFeedAggregator.Role.Controllers
 
             var subset = userBO.CreateSubsetFromFeedIds(new[] { feedId });
 
-            if (markEntry)
-                subset.MarkEntry();
-
-            if (refresh)
+            if (entry == EntryType.Mark || entry == EntryType.ExtendRefresh)
             {
-                await subset.Refresh();
+                if (entry == EntryType.Mark)
+                    subset.MarkEntry();
 
-                sw = System.Diagnostics.Stopwatch.StartNew();
-                await writer.ImmediateWrite(userBO);
-                sw.Stop();
-                writeTime = sw.Elapsed;
+                else if (entry == EntryType.ExtendRefresh)
+                {
+                    subset.ExtendEntry();
+                    await subset.Refresh();
+                }
+
+                writer.DelayedWrite(userBO);
             }
 
-            var list = CreateNewsListFromSubset(userId, skip, take, type, requireImage, subset);
+            var list = CreateNewsListFromSubset(userId, entry, skip, take, type, requireImage, subset);
             list.DataStoreReadTime = readTime;
             list.DataStoreWriteTime = writeTime;
             return list;
         }
 
-        Outgoing.NewsList CreateNewsListFromSubset(Guid userId, int skip, int take, NewsItemType type, bool requireImage, FeedsSubset subset)
+        Outgoing.NewsList CreateNewsListFromSubset(Guid userId, EntryType entry, int skip, int take, NewsItemType type, bool requireImage, FeedsSubset subset)
         {
             var orderedNews = subset.AllOrderedNews().ToList();
 
@@ -198,6 +200,7 @@ namespace Weave.UserFeedAggregator.Role.Controllers
                 FeedCount = subset.Count(),
                 Feeds = subset.Select(ConvertToOutgoing).ToList(),
                 News = outgoingNews.Select(ConvertToOutgoing).ToList(),
+                EntryType = entry.ToString(),
             };
             var page = new Outgoing.PageInfo
             {

@@ -4,10 +4,10 @@ using Ninject;
 using System;
 using System.Threading.Tasks;
 using Weave.User.BusinessObjects;
-using Weave.UserFeedAggregator.Cache;
-using Weave.UserFeedAggregator.Repositories;
+using Weave.User.Service.Cache;
+using Weave.User.Service.Repositories;
 
-namespace Weave.UserFeedAggregator.Role.Startup
+namespace Weave.User.Service.Role.Startup
 {
     public class NinjectKernel : StandardKernel
     {

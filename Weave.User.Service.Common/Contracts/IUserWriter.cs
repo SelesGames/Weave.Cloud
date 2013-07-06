@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Weave.User.BusinessObjects;
 
-namespace Weave.UserFeedAggregator
+namespace Weave.User.Service
 {
     public interface IUserWriter
     {

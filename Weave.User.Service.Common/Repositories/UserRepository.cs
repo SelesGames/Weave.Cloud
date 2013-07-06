@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Weave.User.DataStore;
 
-namespace Weave.UserFeedAggregator.Repositories
+namespace Weave.User.Service.Repositories
 {
     public class UserRepository
     {

@@ -1,5 +1,5 @@
 ﻿
-namespace Weave.UserFeedAggregator
+namespace Weave.User.Service
 {
     public class AzureCredentials
     {
