@@ -25,6 +25,7 @@ namespace Weave.Article.Service.Client
 
             string append = "mark_read";
             var url = new UriBuilder(SERVICE_URL + append)
+                .AddParameter("userId", userId)
                 .ToString();
 
             var client = CreateClient();
