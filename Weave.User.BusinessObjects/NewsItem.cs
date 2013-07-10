@@ -48,6 +48,11 @@ namespace Weave.User.BusinessObjects
             return OriginalDownloadDateTime > Feed.PreviousEntrance;
         }
 
+        public bool IsCountedAsNew()
+        {
+            return OriginalDownloadDateTime > Feed.MostRecentEntrance;
+        }
+
 
 
 

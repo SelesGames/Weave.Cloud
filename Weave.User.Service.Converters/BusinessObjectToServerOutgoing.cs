@@ -58,7 +58,7 @@ namespace Weave.User.Service.Converters
                 Category = o.Category,
                 ArticleViewingType = (Weave.User.Service.DTOs.ArticleViewingType)o.ArticleViewingType,
                 TotalArticleCount = o.News == null ? 0 : o.News.Count,
-                NewArticleCount = o.News == null ? 0 : o.News.Count(x => x.IsNew()),
+                NewArticleCount = o.News == null ? 0 : o.News.Count(x => x.IsCountedAsNew()),
                 UnreadArticleCount = o.News == null ? 0 : o.News.Count(x => !x.HasBeenViewed),
                 TeaserImageUrl = o.TeaserImageUrl,
                 LastRefreshedOn = o.LastRefreshedOn,
