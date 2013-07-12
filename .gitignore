@@ -5,4 +5,4 @@ bin
 csx
 /WeaveFeedTester/publish
 *.dbmdl
-diagnostics.wadcfg
+rcf
