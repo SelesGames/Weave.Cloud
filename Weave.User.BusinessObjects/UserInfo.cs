@@ -144,9 +144,9 @@ namespace Weave.User.BusinessObjects
 
         #region Mark NewsItem read/unread
 
-        public async Task MarkNewsItemRead(Guid feedId, Guid newsItemId)
+        public async Task MarkNewsItemRead(Guid newsItemId)
         {
-            var newsItem = FindNewsItem(feedId, newsItemId);
+            var newsItem = FindNewsItem(newsItemId);
             if (newsItem == null)
                 return;
 
@@ -155,9 +155,9 @@ namespace Weave.User.BusinessObjects
             newsItem.HasBeenViewed = true;
         }
 
-        public async Task MarkNewsItemUnread(Guid feedId, Guid newsItemId)
+        public async Task MarkNewsItemUnread(Guid newsItemId)
         {
-            var newsItem = FindNewsItem(feedId, newsItemId);
+            var newsItem = FindNewsItem(newsItemId);
             if (newsItem == null)
                 return;
 
@@ -178,9 +178,9 @@ namespace Weave.User.BusinessObjects
                 newsItem.HasBeenViewed = true;
         }
 
-        public async Task AddFavorite(Guid feedId, Guid newsItemId)
+        public async Task AddFavorite(Guid newsItemId)
         {
-            var newsItem = FindNewsItem(feedId, newsItemId);
+            var newsItem = FindNewsItem(newsItemId);
             if (newsItem == null)
                 return;
 
@@ -189,9 +189,9 @@ namespace Weave.User.BusinessObjects
             newsItem.IsFavorite = true;
         }
 
-        public async Task RemoveFavorite(Guid feedId, Guid newsItemId)
+        public async Task RemoveFavorite(Guid newsItemId)
         {
-            var newsItem = FindNewsItem(feedId, newsItemId);
+            var newsItem = FindNewsItem(newsItemId);
             if (newsItem == null)
                 return;
 
@@ -206,14 +206,15 @@ namespace Weave.User.BusinessObjects
 
         #region helper methods
 
-        NewsItem FindNewsItem(Guid feedId, Guid newsItemId)
+        NewsItem FindNewsItem(/*Guid feedId,*/ Guid newsItemId)
         {
             if (EnumerableEx.IsNullOrEmpty(feedsList))
                 return null;
 
             var newsItem = feedsList
-                .Where(o => o.Id.Equals(feedId))
-                .SelectMany(o => o.News)
+                .AllNews()
+                //.Where(o => o.Id.Equals(feedId))
+                //.SelectMany(o => o.News)
                 .FirstOrDefault(o => o.Id.Equals(newsItemId));
 
             return newsItem;

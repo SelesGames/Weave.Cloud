@@ -116,12 +116,12 @@ namespace Weave.Identity.Service.WorkerRole.Controllers
         public async Task<IdentityInfo> GetUserFromUserNameAndPassword(string username, string password)
         {
             if (string.IsNullOrWhiteSpace(username))
-                throw new ArgumentException("googleToken in GetUserFromUserNameAndPassword");
+                throw new ArgumentException("username in GetUserFromUserNameAndPassword");
             if (string.IsNullOrWhiteSpace(password))
                 throw new ArgumentException("password in GetUserFromUserNameAndPassword");
 
             var ids = await client.Get<AuthInfo, IdentityInfo>(o => o
-                .Where(x => username.Equals(x.GoogleAuthString))
+                .Where(x => username.Equals(x.UserName))
                 .Select(Convert).AsQueryable());
 
             if (ids.Any())

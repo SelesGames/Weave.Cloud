@@ -352,19 +352,19 @@ namespace Weave.User.Service.Role.Controllers
 
         [HttpGet]
         [ActionName("mark_read")]
-        public async Task MarkArticleRead(Guid userId, Guid feedId, Guid newsItemId)
+        public async Task MarkArticleRead(Guid userId, Guid newsItemId)
         {
             var userBO = await userCache.Get(userId);
-            await userBO.MarkNewsItemRead(feedId, newsItemId);
+            await userBO.MarkNewsItemRead(newsItemId);
             writer.DelayedWrite(userBO);
         }
 
         [HttpGet]
         [ActionName("mark_unread")]
-        public async Task MarkArticleUnread(Guid userId, Guid feedId, Guid newsItemId)
+        public async Task MarkArticleUnread(Guid userId, Guid newsItemId)
         {
             var userBO = await userCache.Get(userId);
-            await userBO.MarkNewsItemUnread(feedId, newsItemId);
+            await userBO.MarkNewsItemUnread(newsItemId);
             writer.DelayedWrite(userBO);
         }
 
@@ -379,19 +379,19 @@ namespace Weave.User.Service.Role.Controllers
 
         [HttpGet]
         [ActionName("add_favorite")]
-        public async Task AddFavorite(Guid userId, Guid feedId, Guid newsItemId)
+        public async Task AddFavorite(Guid userId, Guid newsItemId)
         {
             var userBO = await userCache.Get(userId);
-            await userBO.AddFavorite(feedId, newsItemId);
+            await userBO.AddFavorite(newsItemId);
             writer.DelayedWrite(userBO);
         }
 
         [HttpGet]
         [ActionName("remove_favorite")]
-        public async Task RemoveFavorite(Guid userId, Guid feedId, Guid newsItemId)
+        public async Task RemoveFavorite(Guid userId, Guid newsItemId)
         {
             var userBO = await userCache.Get(userId);
-            await userBO.RemoveFavorite(feedId, newsItemId);
+            await userBO.RemoveFavorite(newsItemId);
             writer.DelayedWrite(userBO);
         }
 
