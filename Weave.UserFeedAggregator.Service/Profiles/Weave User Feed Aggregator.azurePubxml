@@ -3,7 +3,7 @@
   <PropertyGroup>
     <AzureCredentials>BizSpark 1111</AzureCredentials>
     <AzureDeleteDeploymentOnFailure>False</AzureDeleteDeploymentOnFailure>
-    <AzureDeploymentLabel>Weave User Feed Aggregator</AzureDeploymentLabel>
+    <AzureDeploymentLabel>Weave User Service</AzureDeploymentLabel>
     <AzureDeploymentReplacementMethod>BlastUpgrade</AzureDeploymentReplacementMethod>
     <AzureSlot>Production</AzureSlot>
     <AzureEnableRemoteDesktop>True</AzureEnableRemoteDesktop>
