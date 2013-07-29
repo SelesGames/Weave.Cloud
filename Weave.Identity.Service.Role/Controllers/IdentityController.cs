@@ -22,6 +22,7 @@ namespace Weave.Identity.Service.WorkerRole.Controllers
 
         [HttpGet]
         public Task<IdentityInfo> Get(
+            Guid? userId = null,
             string facebookToken = null, 
             string twitterToken = null,
             string microsoftToken = null,
@@ -29,6 +30,9 @@ namespace Weave.Identity.Service.WorkerRole.Controllers
             string username = null,
             string password = null)
         {
+            if (userId.HasValue)
+                return GetUserById(userId.Value);
+
             if (!string.IsNullOrWhiteSpace(facebookToken))
                 return GetUserFromFacebookToken(facebookToken);
 
@@ -52,6 +56,18 @@ namespace Weave.Identity.Service.WorkerRole.Controllers
 
 
         #region Specific Get implementations
+
+        public async Task<IdentityInfo> GetUserById(Guid userId)
+        {
+            var ids = await client.Get<AuthInfo, IdentityInfo>(o => o
+              .Where(x => userId.Equals(x.UserId))
+              .Select(Convert).AsQueryable());
+
+            if (ids.Any())
+                return ids.First();
+
+            throw ResponseHelper.CreateResponseException(HttpStatusCode.NotFound, "No user found matching that userId");          
+        }
 
         public async Task<IdentityInfo> GetUserFromFacebookToken(string facebookToken)
         {
