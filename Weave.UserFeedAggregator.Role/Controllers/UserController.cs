@@ -21,11 +21,33 @@ namespace Weave.User.Service.Role.Controllers
         IBasicCache<Guid, Task<UserInfo>> userCache;
         IUserWriter writer;
 
+        UserInfo userBO;
+        TimeSpan readTime = TimeSpan.Zero, writeTime = TimeSpan.Zero;
+
+
         public UserController(IBasicCache<Guid, Task<UserInfo>> userCache, IUserWriter writer)
         {
             this.userCache = userCache;
             this.writer = writer;
         }
+
+
+
+
+        //protected override void Initialize(HttpControllerContext controllerContext)
+        //{
+        //    base.Initialize(controllerContext);
+
+        //    KeyValuePair<string, string>? userIdKVP = controllerContext.Request.GetQueryNameValuePairs()
+        //        .FirstOrDefault(o => o.Key.Equals("userId", StringComparison.OrdinalIgnoreCase));
+
+        //    if (userIdKVP == null)
+        //        throw ResponseHelper.CreateResponseException(HttpStatusCode.BadRequest,
+        //            "You must specify a userId as a GUID");
+
+        //    var userId = userIdKVP.Value;
+        //    userBO = userCache.Get(userId);
+        //}
 
 
 
@@ -83,7 +105,7 @@ namespace Weave.User.Service.Role.Controllers
         [ActionName("info")]
         public async Task<Outgoing.UserInfo> GetUserInfo(Guid userId, bool refresh = false)
         {
-            var userBO = await userCache.Get(userId);
+            await VerifyUserId(userId);
 
             userBO.PreviousLoginTime = userBO.CurrentLoginTime;
             userBO.CurrentLoginTime = DateTime.UtcNow;
@@ -111,12 +133,7 @@ namespace Weave.User.Service.Role.Controllers
         public async Task<Outgoing.NewsList> GetNews(
             Guid userId, string category, EntryType entry = EntryType.Peek, int skip = 0, int take = 10, NewsItemType type = NewsItemType.Any, bool requireImage = false)
         {
-            TimeSpan readTime, writeTime = TimeSpan.Zero;
-
-            var sw = System.Diagnostics.Stopwatch.StartNew();
-            var userBO = await userCache.Get(userId);
-            sw.Stop();
-            readTime = sw.Elapsed;
+            await VerifyUserId(userId);
 
             var subset = userBO.CreateSubsetFromCategory(category);
 
@@ -145,12 +162,7 @@ namespace Weave.User.Service.Role.Controllers
         public async Task<Outgoing.NewsList> GetNews(
             Guid userId, Guid feedId, EntryType entry = EntryType.Peek, int skip = 0, int take = 10, NewsItemType type = NewsItemType.Any, bool requireImage = false)
         {
-            TimeSpan readTime, writeTime = TimeSpan.Zero;
-
-            var sw = System.Diagnostics.Stopwatch.StartNew();
-            var userBO = await userCache.Get(userId);
-            sw.Stop();
-            readTime = sw.Elapsed;
+            await VerifyUserId(userId);
 
             var subset = userBO.CreateSubsetFromFeedIds(new[] { feedId });
 
@@ -174,49 +186,6 @@ namespace Weave.User.Service.Role.Controllers
             return list;
         }
 
-        Outgoing.NewsList CreateNewsListFromSubset(Guid userId, EntryType entry, int skip, int take, NewsItemType type, bool requireImage, FeedsSubset subset)
-        {
-            var orderedNews = subset.AllOrderedNews().ToList();
-
-            IEnumerable<NewsItem> outgoingNews = orderedNews;
-
-            if (type == NewsItemType.New)
-                outgoingNews = outgoingNews.Where(o => o.IsNew()).ToList();
-
-            else if (type == NewsItemType.Viewed)
-                outgoingNews = outgoingNews.Where(o => o.HasBeenViewed);
-
-            else if (type == NewsItemType.Unviewed)
-                outgoingNews = outgoingNews.Where(o => !o.HasBeenViewed);
-
-            if (requireImage)
-                outgoingNews = outgoingNews.Where(o => o.HasImage);
-
-            outgoingNews = outgoingNews.Skip(skip).Take(take);
-
-            var outgoing = new Outgoing.NewsList
-            {
-                UserId = userId,
-                FeedCount = subset.Count(),
-                Feeds = subset.Select(ConvertToOutgoing).ToList(),
-                News = outgoingNews.Select(ConvertToOutgoing).ToList(),
-                EntryType = entry.ToString(),
-            };
-            var page = new Outgoing.PageInfo
-            {
-                Skip = skip,
-                Take = take,
-                IncludedArticleCount = outgoing.News == null ? 0 : outgoing.News.Count,
-            };
-            outgoing.Page = page;
-
-            outgoing.NewArticleCount = outgoing.Feeds == null ? 0 : outgoing.Feeds.Sum(o => o.NewArticleCount);
-            outgoing.UnreadArticleCount = outgoing.Feeds == null ? 0 : outgoing.Feeds.Sum(o => o.UnreadArticleCount);
-            outgoing.TotalArticleCount = outgoing.Feeds == null ? 0 : outgoing.Feeds.Sum(o => o.TotalArticleCount);
-
-            return outgoing;
-        }
-
         #endregion
 
 
@@ -228,7 +197,8 @@ namespace Weave.User.Service.Role.Controllers
         [ActionName("feeds")]
         public async Task<Outgoing.FeedsInfoList> GetFeeds(Guid userId, bool refresh = false, bool nested = false)
         {
-            var userBO = await userCache.Get(userId);
+            await VerifyUserId(userId);
+
             if (refresh)
             {
                 await userBO.RefreshAllFeeds();
@@ -241,7 +211,8 @@ namespace Weave.User.Service.Role.Controllers
         [ActionName("feeds")]
         public async Task<Outgoing.FeedsInfoList> GetFeeds(Guid userId, string category, bool refresh = false, bool nested = false)
         {
-            var userBO = await userCache.Get(userId);
+            await VerifyUserId(userId);
+
             var subset = userBO.CreateSubsetFromCategory(category);
             if (refresh)
             {
@@ -255,7 +226,8 @@ namespace Weave.User.Service.Role.Controllers
         [ActionName("feeds")]
         public async Task<Outgoing.FeedsInfoList> GetFeeds(Guid userId, Guid feedId, bool refresh = false, bool nested = false)
         {
-            var userBO = await userCache.Get(userId);
+            await VerifyUserId(userId);
+
             var subset = userBO.CreateSubsetFromFeedIds(new[] { feedId });
             if (refresh)
             {
@@ -269,7 +241,8 @@ namespace Weave.User.Service.Role.Controllers
         [ActionName("add_feed")]
         public async Task<Outgoing.Feed> AddFeed(Guid userId, [FromBody] Incoming.NewFeed feed)
         {
-            var userBO = await userCache.Get(userId);
+            await VerifyUserId(userId);
+
             var feedBO = ConvertToBusinessObject(feed);
             if (userBO.AddFeed(feedBO))
             {
@@ -286,7 +259,8 @@ namespace Weave.User.Service.Role.Controllers
         [ActionName("remove_feed")]
         public async Task RemoveFeed(Guid userId, Guid feedId)
         {
-            var userBO = await userCache.Get(userId);
+            await VerifyUserId(userId);
+
             userBO.RemoveFeed(feedId);
             writer.DelayedWrite(userBO);
         }
@@ -295,7 +269,8 @@ namespace Weave.User.Service.Role.Controllers
         [ActionName("update_feed")]
         public async Task UpdateFeed(Guid userId, [FromBody] Incoming.UpdatedFeed feed)
         {
-            var userBO = await userCache.Get(userId);
+            await VerifyUserId(userId);
+
             var feedBO = ConvertToBusinessObject(feed);
             userBO.UpdateFeed(feedBO);
             writer.DelayedWrite(userBO);
@@ -308,7 +283,7 @@ namespace Weave.User.Service.Role.Controllers
             if (changeSet == null)
                 return;
 
-            var userBO = await userCache.Get(userId);
+            await VerifyUserId(userId);
 
             var added = changeSet.Added;
             var removed = changeSet.Removed;
@@ -354,7 +329,7 @@ namespace Weave.User.Service.Role.Controllers
         [ActionName("mark_read")]
         public async Task MarkArticleRead(Guid userId, Guid newsItemId)
         {
-            var userBO = await userCache.Get(userId);
+            await VerifyUserId(userId);
             await userBO.MarkNewsItemRead(newsItemId);
             writer.DelayedWrite(userBO);
         }
@@ -363,7 +338,7 @@ namespace Weave.User.Service.Role.Controllers
         [ActionName("mark_unread")]
         public async Task MarkArticleUnread(Guid userId, Guid newsItemId)
         {
-            var userBO = await userCache.Get(userId);
+            await VerifyUserId(userId);
             await userBO.MarkNewsItemUnread(newsItemId);
             writer.DelayedWrite(userBO);
         }
@@ -372,7 +347,7 @@ namespace Weave.User.Service.Role.Controllers
         [ActionName("soft_read")]
         public async Task MarkArticlesSoftRead(Guid userId, [FromBody] List<Guid> newsItemIds)
         {
-            var userBO = await userCache.Get(userId);
+            await VerifyUserId(userId);
             userBO.MarkNewsItemsSoftRead(newsItemIds);
             writer.DelayedWrite(userBO);
         }
@@ -381,7 +356,7 @@ namespace Weave.User.Service.Role.Controllers
         [ActionName("add_favorite")]
         public async Task AddFavorite(Guid userId, Guid newsItemId)
         {
-            var userBO = await userCache.Get(userId);
+            await VerifyUserId(userId);
             await userBO.AddFavorite(newsItemId);
             writer.DelayedWrite(userBO);
         }
@@ -390,9 +365,77 @@ namespace Weave.User.Service.Role.Controllers
         [ActionName("remove_favorite")]
         public async Task RemoveFavorite(Guid userId, Guid newsItemId)
         {
-            var userBO = await userCache.Get(userId);
+            await VerifyUserId(userId);
             await userBO.RemoveFavorite(newsItemId);
             writer.DelayedWrite(userBO);
+        }
+
+        #endregion
+
+
+
+
+        #region helper methods
+
+        async Task VerifyUserId(Guid userId)
+        {
+            if (userId == Guid.Empty)
+                throw ResponseHelper.CreateResponseException(HttpStatusCode.BadRequest,
+                    "You must specify a valid userId as a GUID");
+
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+
+            userBO = await userCache.Get(userId);
+
+            sw.Stop();
+            readTime = sw.Elapsed;
+
+            if (userBO == null)
+                throw ResponseHelper.CreateResponseException(HttpStatusCode.NotFound,
+                    "No user found matching that userId");
+        }
+
+        Outgoing.NewsList CreateNewsListFromSubset(Guid userId, EntryType entry, int skip, int take, NewsItemType type, bool requireImage, FeedsSubset subset)
+        {
+            var orderedNews = subset.AllOrderedNews().ToList();
+
+            IEnumerable<NewsItem> outgoingNews = orderedNews;
+
+            if (type == NewsItemType.New)
+                outgoingNews = outgoingNews.Where(o => o.IsNew()).ToList();
+
+            else if (type == NewsItemType.Viewed)
+                outgoingNews = outgoingNews.Where(o => o.HasBeenViewed);
+
+            else if (type == NewsItemType.Unviewed)
+                outgoingNews = outgoingNews.Where(o => !o.HasBeenViewed);
+
+            if (requireImage)
+                outgoingNews = outgoingNews.Where(o => o.HasImage);
+
+            outgoingNews = outgoingNews.Skip(skip).Take(take);
+
+            var outgoing = new Outgoing.NewsList
+            {
+                UserId = userId,
+                FeedCount = subset.Count(),
+                Feeds = subset.Select(ConvertToOutgoing).ToList(),
+                News = outgoingNews.Select(ConvertToOutgoing).ToList(),
+                EntryType = entry.ToString(),
+            };
+            var page = new Outgoing.PageInfo
+            {
+                Skip = skip,
+                Take = take,
+                IncludedArticleCount = outgoing.News == null ? 0 : outgoing.News.Count,
+            };
+            outgoing.Page = page;
+
+            outgoing.NewArticleCount = outgoing.Feeds == null ? 0 : outgoing.Feeds.Sum(o => o.NewArticleCount);
+            outgoing.UnreadArticleCount = outgoing.Feeds == null ? 0 : outgoing.Feeds.Sum(o => o.UnreadArticleCount);
+            outgoing.TotalArticleCount = outgoing.Feeds == null ? 0 : outgoing.Feeds.Sum(o => o.TotalArticleCount);
+
+            return outgoing;
         }
 
         #endregion
