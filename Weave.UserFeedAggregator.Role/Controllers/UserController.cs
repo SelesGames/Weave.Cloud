@@ -1,4 +1,5 @@
 ﻿using Common.Caching;
+using Microsoft.WindowsAzure.StorageClient;
 using SelesGames.Common;
 using SelesGames.WebApi;
 using System;
@@ -385,14 +386,24 @@ namespace Weave.User.Service.Role.Controllers
 
             var sw = System.Diagnostics.Stopwatch.StartNew();
 
-            userBO = await userCache.Get(userId);
-
-            sw.Stop();
-            readTime = sw.Elapsed;
-
-            if (userBO == null)
+            try
+            {
+                userBO = await userCache.Get(userId);
+            }
+            catch (StorageClientException)
+            {
                 throw ResponseHelper.CreateResponseException(HttpStatusCode.NotFound,
                     "No user found matching that userId");
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                sw.Stop();
+                readTime = sw.Elapsed;
+            }
         }
 
         Outgoing.NewsList CreateNewsListFromSubset(Guid userId, EntryType entry, int skip, int take, NewsItemType type, bool requireImage, FeedsSubset subset)
