@@ -35,59 +35,13 @@ namespace Weave.User.Service.Role.Controllers
 
 
 
-        //protected override void Initialize(HttpControllerContext controllerContext)
-        //{
-        //    base.Initialize(controllerContext);
-
-        //    KeyValuePair<string, string>? userIdKVP = controllerContext.Request.GetQueryNameValuePairs()
-        //        .FirstOrDefault(o => o.Key.Equals("userId", StringComparison.OrdinalIgnoreCase));
-
-        //    if (userIdKVP == null)
-        //        throw ResponseHelper.CreateResponseException(HttpStatusCode.BadRequest,
-        //            "You must specify a userId as a GUID");
-
-        //    var userId = userIdKVP.Value;
-        //    userBO = userCache.Get(userId);
-        //}
-
-
-
-
         #region User creation
-
-        [HttpGet]
-        [ActionName("create")]
-        public async Task<Outgoing.UserInfo> CreateUser(Guid userId)
-        {
-            var existingUser = userCache.Get(userId);
-            var userBO = new UserInfo
-            {
-                Id = userId,
-            };
-            await writer.ImmediateWrite(userBO);
-            var outgoing = ConvertToOutgoing(userBO);
-            return outgoing;
-        }
-
-        [HttpGet]
-        [ActionName("create")]
-        public async Task<Outgoing.UserInfo> CreateUser(string userName, string password, Guid? userId = null)
-        {
-            var existingUser = userCache.Get(userId.Value);
-            var userBO = new UserInfo
-            {
-                Id = userId.Value,
-            };
-            await writer.ImmediateWrite(userBO);
-            var outgoing = ConvertToOutgoing(userBO);
-            return outgoing;
-        }
 
         [HttpPost]
         [ActionName("create")]
         public async Task<Outgoing.UserInfo> AddUserAndReturnUserInfo([FromBody] Incoming.UserInfo incomingUser)
         {
-            var userBO = ConvertToBusinessObject(incomingUser);
+            userBO = ConvertToBusinessObject(incomingUser);
             await writer.ImmediateWrite(userBO);
             await userBO.RefreshAllFeeds();
             writer.DelayedWrite(userBO);

@@ -1,7 +1,5 @@
 ﻿using Common.Azure;
-using Microsoft.WindowsAzure.StorageClient;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Weave.User.DataStore;
 
@@ -21,26 +19,6 @@ namespace Weave.User.Service.Repositories
         {
             var fileName = GetFileName(userId);
             return blobClient.Get<UserInfo>(fileName);
-        }
-
-        public async Task<UserInfo> GetOrCreate(Guid userId)
-        {
-            UserInfo user = null;
-            try
-            {
-                user = await Get(userId);
-            }
-            catch (StorageClientException storageException)
-            {
-                System.Diagnostics.Debug.WriteLine(storageException);
-                user = new UserInfo
-                {
-                    Id = userId,
-                    FeedCount = 0,
-                    Feeds = new List<Feed>(),
-                };
-            }
-            return user;
         }
 
         public Task Save(UserInfo user)
