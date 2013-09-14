@@ -159,7 +159,7 @@ namespace Weave.User.Service.Role.Controllers
                 await userBO.RefreshAllFeeds();
                 writer.DelayedWrite(userBO);
             }
-            return CreateOutgoingFeedsInfoList(userBO, userBO.Feeds, nested);
+            return CreateOutgoingFeedsInfoList(userBO.Feeds, nested);
         }
 
         [HttpGet]
@@ -174,7 +174,7 @@ namespace Weave.User.Service.Role.Controllers
                 await subset.Refresh();
                 writer.DelayedWrite(userBO);
             }
-            return CreateOutgoingFeedsInfoList(userBO, subset, nested);
+            return CreateOutgoingFeedsInfoList(subset, nested);
         }
 
         [HttpGet]
@@ -189,7 +189,7 @@ namespace Weave.User.Service.Role.Controllers
                 await subset.Refresh();
                 writer.DelayedWrite(userBO);
             }
-            return CreateOutgoingFeedsInfoList(userBO, subset, nested);
+            return CreateOutgoingFeedsInfoList(subset, nested);
         }
 
         [HttpPost]
@@ -442,12 +442,12 @@ namespace Weave.User.Service.Role.Controllers
         }
 
 
-        Outgoing.FeedsInfoList CreateOutgoingFeedsInfoList(UserInfo user, IEnumerable<Feed> feeds, bool returnNested)
+        Outgoing.FeedsInfoList CreateOutgoingFeedsInfoList(IEnumerable<Feed> feeds, bool returnNested)
         {
             Outgoing.FeedsInfoList outgoing = new Outgoing.FeedsInfoList
             {
-                UserId = user.Id,
-                TotalFeedCount = user.Feeds == null ? 0 : user.Feeds.Count,
+                UserId = userBO.Id,
+                TotalFeedCount = userBO.Feeds == null ? 0 : userBO.Feeds.Count,
             };
 
             if (EnumerableEx.IsNullOrEmpty(feeds))
