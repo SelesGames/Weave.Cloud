@@ -39,12 +39,12 @@
     <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArticleSaving\Image.cs" />
-    <Compile Include="UserSaving\ArticleViewingType.cs" />
-    <Compile Include="UserSaving\Feed.cs" />
-    <Compile Include="ArticleSaving\NewsItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UserSaving\UserInfo.cs" />
+    <Compile Include="Image.cs" />
+    <Compile Include="ArticleViewingType.cs" />
+    <Compile Include="Feed.cs" />
+    <Compile Include="NewsItem.cs" />
+    <Compile Include="UserInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
