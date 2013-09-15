@@ -30,7 +30,7 @@ namespace Weave.User.Service.Cache
         {
             var key = userId.ToString();
 
-            var o = cache.Get(key);
+            var o = SafeCacheGet(key);// cache.Get(key);
             if (o != null)
             {
                 return o.Cast<UserInfo>();
@@ -51,6 +51,22 @@ namespace Weave.User.Service.Cache
 
             cache.Put(key, user);
             writeQueue.Add(user);
+        }
+
+        public object SafeCacheGet(string key)
+        {
+            object result = null;
+
+            try
+            {
+                result = cache.Get(key);
+            }
+            catch (Exception ex)
+            {
+                DebugEx.WriteLine(ex);
+            }
+
+            return result;
         }
     }
 }

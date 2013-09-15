@@ -12,7 +12,7 @@ namespace Weave.User.Service.Cache
         {
             using (var gzipStream = new GZipStream(stream, CompressionMode.Decompress, true))
             {
-                return Serializer.Deserialize<UserInfo>(stream);
+                return Serializer.Deserialize<UserInfo>(gzipStream);
             }
         }
 
