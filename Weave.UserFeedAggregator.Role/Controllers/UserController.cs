@@ -86,7 +86,13 @@ namespace Weave.User.Service.Role.Controllers
         [HttpGet]
         [ActionName("news")]
         public async Task<Outgoing.NewsList> GetNews(
-            Guid userId, string category, EntryType entry = EntryType.Peek, int skip = 0, int take = 10, NewsItemType type = NewsItemType.Any, bool requireImage = false)
+            Guid userId, 
+            string category = "all news", 
+            EntryType entry = EntryType.Peek, 
+            int skip = 0, 
+            int take = 10, 
+            NewsItemType type = NewsItemType.Any, 
+            bool requireImage = false)
         {
             await VerifyUserId(userId);
 
