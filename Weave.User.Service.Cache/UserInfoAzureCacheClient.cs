@@ -1,5 +1,4 @@
-﻿using Common.Azure;
-using Microsoft.ApplicationServer.Caching;
+﻿using Microsoft.ApplicationServer.Caching;
 using System;
 using System.Threading.Tasks;
 using Weave.User.DataStore;
@@ -7,21 +6,24 @@ using Weave.User.Service.Cache.Extensions;
 
 namespace Weave.User.Service.Cache
 {
-    public class AzureDataCacheClient
+    public class UserInfoAzureCacheClient
     {
-        readonly string CACHE_NAME = "articlestate";
+        readonly string CACHE_NAME = "user";
         DataCache cache;
-        IAzureBlobClient blobClient;
-        AzureBlobWriteQueue<UserInfo> writeQueue;
+        UserInfoBlobWriteQueue writeQueue;
+        UserInfoBlobClient userInfoBlobClient;
 
-        public AzureDataCacheClient(IAzureBlobClient blobClient)
+        public UserInfoAzureCacheClient(UserInfoBlobClient userInfoBlobClient)
         {
-            this.blobClient = blobClient;
+            this.userInfoBlobClient = userInfoBlobClient;
 
             // Cache client configured by settings in application configuration file.
-            var cacheFactory = new DataCacheFactory();
+            var config = new DataCacheFactoryConfiguration();
+            config.SerializationProperties = 
+                new DataCacheSerializationProperties(DataCacheObjectSerializerType.CustomSerializer, new UserInfoCacheSerializer());
+            var cacheFactory = new DataCacheFactory(config);
             cache = cacheFactory.GetCache(CACHE_NAME);
-            writeQueue = new AzureBlobWriteQueue<UserInfo>(blobClient);
+            writeQueue = new UserInfoBlobWriteQueue(userInfoBlobClient);
         }
 
         public async Task<UserInfo> Get(Guid userId)
@@ -36,7 +38,7 @@ namespace Weave.User.Service.Cache
 
             // there was a cache miss if we get this far
 
-            var x = await blobClient.Get<UserInfo>(key);
+            var x = await userInfoBlobClient.Get(userId);
 
             cache.Put(key, x);
 
@@ -48,7 +50,7 @@ namespace Weave.User.Service.Cache
             var key = userId.ToString();
 
             cache.Put(key, user);
-            writeQueue.Add(key, user);
+            writeQueue.Add(user);
         }
     }
 }

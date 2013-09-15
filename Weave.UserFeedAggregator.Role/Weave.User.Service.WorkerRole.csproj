@@ -32,11 +32,39 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.ApplicationServer.Caching.AzureClientHelper, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Azure Cache Service\Microsoft.ApplicationServer.Caching.AzureClientHelper.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ApplicationServer.Caching.AzureCommon, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Azure Cache Service\Microsoft.ApplicationServer.Caching.AzureCommon.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ApplicationServer.Caching.Client, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Azure Cache Service\Microsoft.ApplicationServer.Caching.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ApplicationServer.Caching.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Azure Cache Service\Microsoft.ApplicationServer.Caching.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.DistributedCache, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Azure Cache Service\Microsoft.Web.DistributedCache.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.WindowsAzure.ServiceRuntime, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.WindowsAzure.StorageClient, Version=1.7.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\WindowsAzure.Storage.1.7.0.0\lib\net35-full\Microsoft.WindowsAzure.StorageClient.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsFabric.Common, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Azure Cache Service\Microsoft.WindowsFabric.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsFabric.Data.Common, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Azure Cache Service\Microsoft.WindowsFabric.Data.Common.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\lib\Newtonsoft.Json.dll</HintPath>
@@ -103,14 +131,13 @@
       <Project>{edb6b676-e4fd-4b51-8c5b-98c7d1837ef6}</Project>
       <Name>Weave.User.Service.Cache</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Weave.User.Service.Common\Weave.User.Service.Common.csproj">
-      <Project>{335a5059-6c45-4ca7-b799-18b9cdb6c61b}</Project>
-      <Name>Weave.User.Service.Common</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Weave.User.Service.Converters\Weave.User.Service.Converters.csproj">
       <Project>{618fe33a-3784-4ed5-954b-86e4b4e0748b}</Project>
       <Name>Weave.User.Service.Converters</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

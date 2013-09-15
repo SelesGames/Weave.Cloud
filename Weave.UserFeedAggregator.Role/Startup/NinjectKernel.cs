@@ -5,7 +5,6 @@ using System;
 using System.Threading.Tasks;
 using Weave.User.BusinessObjects;
 using Weave.User.Service.Cache;
-using Weave.User.Service.Repositories;
 
 namespace Weave.User.Service.Role.Startup
 {
@@ -22,14 +21,13 @@ namespace Weave.User.Service.Role.Startup
                 useHttps: false)
                 {
                     ContentType = "application/json", 
-                    //UseGzipOnUpload = true,
+                    UseGzipOnUpload = true,
                 };
 
-            var userRepo = new UserRepository(blobClient);
+            var userInfoBlobClient = new UserInfoBlobClient(blobClient);
+            var azureDataCacheClient = new UserInfoAzureCacheClient(userInfoBlobClient);
+            var userRepo = new UserRepository(azureDataCacheClient);
             Bind<UserRepository>().ToConstant(userRepo).InSingletonScope();
-            Bind<IUserWriter>().To<TempUserWriter>().InSingletonScope();
-            Bind<IExtendedCache<Guid, Task<UserInfo>>>().To<LocalUserCache>().InSingletonScope();
-            Bind<IBasicCache<Guid, Task<UserInfo>>>().To<TempUserCache>().InSingletonScope();
         }
     }
 }
