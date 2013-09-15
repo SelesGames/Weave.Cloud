@@ -7,10 +7,10 @@ using Store = Weave.User.DataStore;
 namespace Weave.User.Service.Converters
 {
     public class DataStoreToBusinessObject :
-        IConverter<User.DataStore.Image, Image>,
-        IConverter<User.DataStore.NewsItem, NewsItem>,
-        IConverter<User.DataStore.Feed, Feed>,
-        IConverter<User.DataStore.UserInfo, UserInfo>
+        IConverter<Store.Image, Image>,
+        IConverter<Store.NewsItem, NewsItem>,
+        IConverter<Store.Feed, Feed>,
+        IConverter<Store.UserInfo, UserInfo>
     {
         public static readonly DataStoreToBusinessObject Instance = new DataStoreToBusinessObject();
 
@@ -100,5 +100,20 @@ namespace Weave.User.Service.Converters
             n.Feed = f;
             return n;
         }
+
+        //public UserNewsItemState Convert(Store.UserNewsItemState o)
+        //{
+        //    return new UserNewsItemState(o.Id, o.NewsItemStates == null ? null : o.NewsItemStates.Select(Convert));
+        //}
+
+        //public NewsItemState Convert(Store.NewsItemState o)
+        //{
+        //    return new NewsItemState
+        //    {
+        //        Id = o.Id,
+        //        HasBeenViewed = o.HasBeenViewed,
+        //        IsFavorite = o.IsFavorite,
+        //    };
+        //}
     }
 }
