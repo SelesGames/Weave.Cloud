@@ -1,5 +1,4 @@
-﻿using Common.Caching;
-using Microsoft.WindowsAzure.StorageClient;
+﻿using Microsoft.WindowsAzure.StorageClient;
 using SelesGames.Common;
 using SelesGames.WebApi;
 using System;
@@ -9,6 +8,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Weave.User.BusinessObjects;
+using Weave.User.Service.Cache;
 using Weave.User.Service.Contracts;
 using Weave.User.Service.Converters;
 using Weave.User.Service.DTOs;
@@ -19,17 +19,15 @@ namespace Weave.User.Service.Role.Controllers
 {
     public class UserController : ApiController, IWeaveUserService
     {
-        IBasicCache<Guid, Task<UserInfo>> userCache;
-        IUserWriter writer;
+        UserRepository userRepo;
 
         UserInfo userBO;
         TimeSpan readTime = TimeSpan.Zero, writeTime = TimeSpan.Zero;
 
 
-        public UserController(IBasicCache<Guid, Task<UserInfo>> userCache, IUserWriter writer)
+        public UserController(UserRepository cacheClient)
         {
-            this.userCache = userCache;
-            this.writer = writer;
+            this.userRepo = cacheClient;
         }
 
 
@@ -42,9 +40,8 @@ namespace Weave.User.Service.Role.Controllers
         public async Task<Outgoing.UserInfo> AddUserAndReturnUserInfo([FromBody] Incoming.UserInfo incomingUser)
         {
             userBO = ConvertToBusinessObject(incomingUser);
-            await writer.ImmediateWrite(userBO);
             await userBO.RefreshAllFeeds();
-            writer.DelayedWrite(userBO);
+            userRepo.Save(userBO.Id, userBO);
             var outgoing = ConvertToOutgoing(userBO);
             return outgoing;
         }
@@ -68,11 +65,15 @@ namespace Weave.User.Service.Role.Controllers
             if (refresh)
             {
                 await userBO.RefreshAllFeeds();
-                writer.DelayedWrite(userBO);
+                SaveUser();
             }
 
             var outgoing = ConvertToOutgoing(userBO);
             outgoing.LatestNews = userBO.GetLatestArticles().Select(ConvertToOutgoing).ToList();
+
+            outgoing.DataStoreReadTime = readTime;
+            outgoing.DataStoreWriteTime = writeTime;
+
             return outgoing;
         }
 
@@ -109,12 +110,10 @@ namespace Weave.User.Service.Role.Controllers
                     await subset.Refresh();
                 }
 
-                writer.DelayedWrite(userBO);
+                SaveUser();
             }
 
             var list = CreateNewsListFromSubset(userId, entry, skip, take, type, requireImage, subset);
-            list.DataStoreReadTime = readTime;
-            list.DataStoreWriteTime = writeTime;
             return list;
         }
 
@@ -138,12 +137,10 @@ namespace Weave.User.Service.Role.Controllers
                     await subset.Refresh();
                 }
 
-                writer.DelayedWrite(userBO);
+                SaveUser();
             }
 
             var list = CreateNewsListFromSubset(userId, entry, skip, take, type, requireImage, subset);
-            list.DataStoreReadTime = readTime;
-            list.DataStoreWriteTime = writeTime;
             return list;
         }
 
@@ -163,7 +160,7 @@ namespace Weave.User.Service.Role.Controllers
             if (refresh)
             {
                 await userBO.RefreshAllFeeds();
-                writer.DelayedWrite(userBO);
+                SaveUser();
             }
             return CreateOutgoingFeedsInfoList(userBO.Feeds, nested);
         }
@@ -178,7 +175,7 @@ namespace Weave.User.Service.Role.Controllers
             if (refresh)
             {
                 await subset.Refresh();
-                writer.DelayedWrite(userBO);
+                SaveUser();
             }
             return CreateOutgoingFeedsInfoList(subset, nested);
         }
@@ -193,7 +190,7 @@ namespace Weave.User.Service.Role.Controllers
             if (refresh)
             {
                 await subset.Refresh();
-                writer.DelayedWrite(userBO);
+                SaveUser();
             }
             return CreateOutgoingFeedsInfoList(subset, nested);
         }
@@ -207,7 +204,7 @@ namespace Weave.User.Service.Role.Controllers
             var feedBO = ConvertToBusinessObject(feed);
             if (userBO.AddFeed(feedBO))
             {
-                writer.DelayedWrite(userBO);
+                SaveUser();
                 return ConvertToOutgoing(feedBO);
             }
             else
@@ -223,7 +220,7 @@ namespace Weave.User.Service.Role.Controllers
             await VerifyUserId(userId);
 
             userBO.RemoveFeed(feedId);
-            writer.DelayedWrite(userBO);
+            SaveUser();
         }
 
         [HttpPost]
@@ -234,7 +231,7 @@ namespace Weave.User.Service.Role.Controllers
 
             var feedBO = ConvertToBusinessObject(feed);
             userBO.UpdateFeed(feedBO);
-            writer.DelayedWrite(userBO);
+            SaveUser();
         }
 
         [HttpPost]
@@ -276,7 +273,7 @@ namespace Weave.User.Service.Role.Controllers
                 }
             }
 
-            writer.DelayedWrite(userBO);
+            SaveUser();
         }
 
         #endregion
@@ -292,7 +289,7 @@ namespace Weave.User.Service.Role.Controllers
         {
             await VerifyUserId(userId);
             await userBO.MarkNewsItemRead(newsItemId);
-            writer.DelayedWrite(userBO);
+            SaveUser();
         }
 
         [HttpGet]
@@ -301,7 +298,7 @@ namespace Weave.User.Service.Role.Controllers
         {
             await VerifyUserId(userId);
             await userBO.MarkNewsItemUnread(newsItemId);
-            writer.DelayedWrite(userBO);
+            SaveUser();
         }
 
         [HttpGet]
@@ -310,7 +307,7 @@ namespace Weave.User.Service.Role.Controllers
         {
             await VerifyUserId(userId);
             userBO.MarkNewsItemsSoftRead(newsItemIds);
-            writer.DelayedWrite(userBO);
+            SaveUser();
         }
 
         [HttpGet]
@@ -319,7 +316,7 @@ namespace Weave.User.Service.Role.Controllers
         {
             await VerifyUserId(userId);
             await userBO.AddFavorite(newsItemId);
-            writer.DelayedWrite(userBO);
+            SaveUser();
         }
 
         [HttpGet]
@@ -328,7 +325,7 @@ namespace Weave.User.Service.Role.Controllers
         {
             await VerifyUserId(userId);
             await userBO.RemoveFavorite(newsItemId);
-            writer.DelayedWrite(userBO);
+            SaveUser();
         }
 
         #endregion
@@ -348,7 +345,7 @@ namespace Weave.User.Service.Role.Controllers
 
             try
             {
-                userBO = await userCache.Get(userId);
+                userBO = await userRepo.Get(userId);
             }
             catch (StorageClientException)
             {
@@ -406,7 +403,29 @@ namespace Weave.User.Service.Role.Controllers
             outgoing.UnreadArticleCount = outgoing.Feeds == null ? 0 : outgoing.Feeds.Sum(o => o.UnreadArticleCount);
             outgoing.TotalArticleCount = outgoing.Feeds == null ? 0 : outgoing.Feeds.Sum(o => o.TotalArticleCount);
 
+            outgoing.DataStoreReadTime = readTime;
+            outgoing.DataStoreWriteTime = writeTime;
+
             return outgoing;
+        }
+
+        void SaveUser()
+        {
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+
+            try
+            {
+                userRepo.Save(userBO.Id, userBO);
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                sw.Stop();
+                writeTime = sw.Elapsed;
+            }
         }
 
         #endregion
@@ -484,6 +503,9 @@ namespace Weave.User.Service.Role.Controllers
             {
                 outgoing.Feeds = outgoingFeeds;
             }
+
+            outgoing.DataStoreReadTime = readTime;
+            outgoing.DataStoreWriteTime = writeTime;
 
             return outgoing;
         }

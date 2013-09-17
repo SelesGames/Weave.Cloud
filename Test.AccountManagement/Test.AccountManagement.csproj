@@ -107,10 +107,6 @@
       <Project>{db5274e6-15f6-4ec8-920a-842ea93a2601}</Project>
       <Name>Weave.User.BusinessObjects</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Weave.User.Service.Common\Weave.User.Service.Common.csproj">
-      <Project>{335a5059-6c45-4ca7-b799-18b9cdb6c61b}</Project>
-      <Name>Weave.User.Service.Common</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Weave.UserFeedAggregator.Role\Weave.User.Service.WorkerRole.csproj">
       <Project>{a8e71851-2046-4176-b9ce-6d6cc659e567}</Project>
       <Name>Weave.User.Service.WorkerRole</Name>
