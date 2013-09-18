@@ -43,6 +43,11 @@ namespace Weave.User.Service.Role.Controllers
             await userBO.RefreshAllFeeds();
             userRepo.Save(userBO.Id, userBO);
             var outgoing = ConvertToOutgoing(userBO);
+            //outgoing.LatestNews = userBO.GetLatestArticles().Select(ConvertToOutgoing).ToList();
+
+            outgoing.DataStoreReadTime = readTime;
+            outgoing.DataStoreWriteTime = writeTime;
+
             return outgoing;
         }
 
