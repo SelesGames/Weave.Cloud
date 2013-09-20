@@ -33,7 +33,7 @@ namespace Weave.RssAggregator.Client
         }
 
 
-        public FeedRequester()
+        public Feed()
         {
             this.News = new List<Entry>();
             this.TimeOut = TimeSpan.FromMinutes(1);
@@ -138,26 +138,6 @@ namespace Weave.RssAggregator.Client
                 stream.Close();
             }
         }
-
-        //string GetEtag(HttpResponseMessage response)
-        //{
-        //    var headers = response.Headers;
-
-        //    if (headers == null) return null;
-
-        //    string eTag = null;
-
-        //    if (headers.ETag != null)
-        //        eTag = headers.ETag.Tag;
-        //    else
-        //    {
-        //        IEnumerable<string> headerValues;
-        //        if (headers.TryGetValues("etag", out headerValues))
-        //            eTag = headerValues.FirstOrDefault();
-        //    }
-
-        //    return eTag;
-        //}
 
         void ParseNewsFromLastRefreshTime(Stream stream)
         {

@@ -25,7 +25,7 @@ namespace Weave.RssAggregator.Core.DTOs.Incoming
                 var requester = CreateRequester(request, RequestTimeout);
                 var requestStatus = await requester.UpdateFeed();
 
-                if (requestStatus == FeedRequester.RequestStatus.Unmodified)
+                if (requestStatus == Feed.RequestStatus.Unmodified)
                 {
                     result = new FeedResult { Id = request.Id, Status = FeedResultStatus.Unmodified };
                 }
@@ -50,15 +50,15 @@ namespace Weave.RssAggregator.Core.DTOs.Incoming
             return result;
         }
 
-        static FeedRequester CreateRequester(FeedRequest request, TimeSpan timeout)
+        static Feed CreateRequester(FeedRequest request, TimeSpan timeout)
         {
-            return new FeedRequester
+            return new Feed
             {
                 FeedUri = request.Url,
                 MostRecentNewsItemPubDate = request.MostRecentNewsItemPubDate,
                 Etag = request.Etag,
                 LastModified = request.LastModified,
-                TimeOut = timeout,
+                UpdateTimeOut = timeout,
             };
         }
     }

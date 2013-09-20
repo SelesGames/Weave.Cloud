@@ -66,17 +66,17 @@ namespace Weave.RssAggregator.HighFrequency
             {
                 var refreshTime = DateTime.UtcNow;
 
-                var requester = new FeedRequester
+                var requester = new Feed
                 {
                     FeedId = this.FeedId,
                     FeedUri = this.FeedUri,
                     Etag = this.Etag,
                     LastModified = this.LastModified,
-                    TimeOut = this.RefreshTimeout,
+                    UpdateTimeOut = this.RefreshTimeout,
                 };
                 var result = await requester.UpdateFeed();
 
-                if (result == FeedRequester.RequestStatus.OK)
+                if (result == Feed.RequestStatus.OK)
                 {
                     this.Etag = requester.Etag;
                     this.LastModified = requester.LastModified;
@@ -104,7 +104,7 @@ namespace Weave.RssAggregator.HighFrequency
 
                     DebugEx.WriteLine("REFRESHED {0}  ({1})", Name, FeedUri);
                 }
-                else if (result == FeedRequester.RequestStatus.Unmodified)
+                else if (result == Feed.RequestStatus.Unmodified)
                 {
                     DebugEx.WriteLine("UNMODIFIED {0}  ({1})", Name, FeedUri);
                 }

@@ -45,7 +45,7 @@ namespace WeaveFeedTester
             if (SelectedFeed == null)
                 return;
 
-            var requester = new FeedRequester { FeedUri = SelectedFeed.FeedUri };
+            var requester = new Feed { FeedUri = SelectedFeed.FeedUri };
             await requester.UpdateFeed();
             Articles = new LinkedList<Article>(requester.News.Select(o =>
                 new Article 
