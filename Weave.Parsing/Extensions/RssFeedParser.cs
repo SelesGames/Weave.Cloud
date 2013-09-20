@@ -12,24 +12,17 @@ namespace Weave.Parsing
     {
         static readonly XNamespace atom = "http://www.w3.org/2005/Atom";
 
-        public static IEnumerable<IEntryIntermediate> ToRssIntermediates(this Stream stream)
+        public static IEnumerable<IEntryIntermediate> ToRssIntermediates(this MemoryStream ms)
         {
-            IEnumerable<IEntryIntermediate> elements = null;
+            var elements = ParseUsingCustomParser(ms);
 
-            using (var ms = stream.ToMemoryStream())
+            if (elements != null && elements.Any())
+                return elements;
+
+            else
             {
-                elements = ParseUsingCustomParser(ms);
-
-                if (elements != null && elements.Any())
-                    return elements;
-
-                else
-                {
-                    ms.Position = 0;
-                    elements = ParseUsingSyndicationFeed(ms);
-                }
-
-                ms.Close();
+                ms.Position = 0;
+                elements = ParseUsingSyndicationFeed(ms);
             }
 
             return elements;

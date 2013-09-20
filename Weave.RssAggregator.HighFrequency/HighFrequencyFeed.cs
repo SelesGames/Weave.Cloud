@@ -74,7 +74,7 @@ namespace Weave.RssAggregator.HighFrequency
                     LastModified = this.LastModified,
                     UpdateTimeOut = this.RefreshTimeout,
                 };
-                var result = await requester.UpdateFeed();
+                var result = await requester.Update();
 
                 if (result == Feed.RequestStatus.OK)
                 {
