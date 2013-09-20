@@ -107,12 +107,12 @@ namespace RssAggregator.ConsoleTesting
 
         static async Task TestBasicFreedRequester()
         {
-            var feedRequester = new FeedRequester
+            var feedRequester = new Feed
             {
                 FeedUri = "http://feeds.boingboing.net/boingboing/iBag",
             };
 
-            await feedRequester.UpdateFeed();
+            await feedRequester.Update();
             DebugEx.WriteLine(feedRequester);
         }
 

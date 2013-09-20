@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using Weave.Readability;
+using Weave.Mobilizer.DTOs;
 
 namespace WeaveFeedTester
 {

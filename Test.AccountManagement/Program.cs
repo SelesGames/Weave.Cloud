@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 //using Weave.AccountManagement.DTOs;
 using Weave.RssAggregator.Core.DTOs.Incoming;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
+using Weave.User.Service.Cache;
 using Weave.User.Service.Role.Controllers;
 
 namespace Test.AccountManagement
@@ -53,8 +54,10 @@ namespace Test.AccountManagement
             {
                 ContentType = "application/json"
             };
-            var userRepo = new UserRepository(blobClient);
-            var controller = new UserController(null, null);
+            var userInfoBlobClient = new UserInfoBlobClient(blobClient);
+            var cacheClient = new UserInfoAzureCacheClient(userInfoBlobClient);
+            var userRepo = new UserRepository(cacheClient);
+            var controller = new UserController(userRepo);
             return controller;
         }
 
