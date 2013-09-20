@@ -37,7 +37,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Converters\EntryToNewsItemConverter.cs" />
-    <Compile Include="FeedRequester.cs" />
     <Compile Include="RequestClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

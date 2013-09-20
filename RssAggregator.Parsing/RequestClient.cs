@@ -23,7 +23,7 @@ namespace Weave.RssAggregator.Core.DTOs.Incoming
             try
             {
                 var requester = CreateRequester(request, RequestTimeout);
-                var requestStatus = await requester.UpdateFeed();
+                var requestStatus = await requester.Update();
 
                 if (requestStatus == Feed.RequestStatus.Unmodified)
                 {
