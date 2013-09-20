@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Weave.RssAggregator.Client;
+using Weave.Parsing;
 using Weave.RssAggregator.LibraryClient;
 
 

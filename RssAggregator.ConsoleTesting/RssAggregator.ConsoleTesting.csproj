@@ -90,6 +90,10 @@
       <Project>{CAD7CC28-36E9-4B39-BA90-DF99815904EB}</Project>
       <Name>Common.Data</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FeedIconGrabber\FeedIconGrabber.csproj">
+      <Project>{374669da-dabc-48a0-b7b8-599d26be0156}</Project>
+      <Name>FeedIconGrabber</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RssAggregator.LibraryClient\RssAggregator.LibraryClient.csproj">
       <Project>{2db284eb-5b81-425a-957e-77eeb704ebdc}</Project>
       <Name>RssAggregator.LibraryClient</Name>

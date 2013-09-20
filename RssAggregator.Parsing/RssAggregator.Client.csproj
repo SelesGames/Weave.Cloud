@@ -32,7 +32,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
@@ -41,21 +40,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Common.DateTime\Common.TimeFormatting.csproj">
-      <Project>{86060d7e-3115-4f54-8008-384b3d7c598e}</Project>
-      <Name>Common.TimeFormatting</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Common.Net.Http.Compression\Common.Net.Http.Compression.csproj">
-      <Project>{c3e23ea5-8542-464a-9598-d4d126e1eb97}</Project>
-      <Name>Common.Net.Http.Compression</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SelesGames.Common\SelesGames.Common.csproj">
       <Project>{5b792c4b-80d8-420d-9fa7-e567faf1f7b1}</Project>
       <Name>SelesGames.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SelesGames.WebApi\SelesGames.WebApi.csproj">
-      <Project>{bb3ea281-94b3-435f-a1ef-c395a7d1f25a}</Project>
-      <Name>SelesGames.WebApi</Name>
     </ProjectReference>
     <ProjectReference Include="..\Weave.Parsing\Weave.Parsing.csproj">
       <Project>{a9731e9c-72fc-4171-ba99-9a6f97cd379f}</Project>

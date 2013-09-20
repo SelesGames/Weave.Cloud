@@ -3,7 +3,7 @@ using SelesGames.Common;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Weave.RssAggregator.Client;
+using Weave.Parsing;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
 
 namespace Weave.RssAggregator.Core.DTOs.Incoming

@@ -83,6 +83,7 @@
     <Feed Name="Comic Book Resources" ViewType="ie">http://www.comicbookresources.com/feed.php?feed=all</Feed>
     <Feed Name="Comic Book Therapy">http://www.comicbooktherapy.com/category/comic-books/feed</Feed>
     <Feed Name="Comic Vine">http://feeds.feedburner.com/ComicvineSiteMashup</Feed>
+    <Feed Name="Comics Alliance">http://comicsalliance.com/feed/</Feed>
     <Feed Name="IGN">http://feeds.ign.com/ign/comics-articles</Feed>
     <Feed Name="Newsarama" ViewType="ie">http://feeds.newsarama.com/newsaramacomics?format=xml</Feed>
     <Feed Name="Mindless Ones">http://mindlessones.com/feed/</Feed>

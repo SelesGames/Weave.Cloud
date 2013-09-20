@@ -1,4 +1,5 @@
 ﻿using Common.Azure.ServiceBus;
+using FeedIconGrabber;
 using Microsoft.ServiceBus.Messaging;
 using Newtonsoft.Json;
 using Ninject;
@@ -15,7 +16,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Weave.Mobilizer.Client;
 using Weave.Parsing;
-using Weave.RssAggregator.Client;
 using Weave.RssAggregator.Core.DTOs.Incoming;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
 using Weave.RssAggregator.HighFrequency;
@@ -31,7 +31,9 @@ namespace RssAggregator.ConsoleTesting
         {
             try
             {
-                TestMobilizerUpload().Wait();
+                //TestInvidualFeedIconGrab().Wait();
+                TestFeedIconUrlGrabber().Wait();
+                //TestMobilizerUpload().Wait();
                 //TestRedirect().Wait();
                 //TestBasicFreedRequester().Wait();
                 //TestChangeProccer().Wait();
@@ -51,6 +53,69 @@ namespace RssAggregator.ConsoleTesting
 
             while (true)
                 Console.ReadLine();
+        }
+
+        static async Task TestInvidualFeedIconGrab()
+        {
+            var feed = new Feed { FeedUri = "http://www.pcgamer.com/feed/rss2" };
+            await feed.Update();
+
+            var domainUrl = feed.DomainUrl;
+            var grabber = new DomainIconAcquirer(domainUrl);
+            var url = await grabber.GetIconUrl();
+
+            Debug.Write(url);
+        }
+
+        static async Task TestFeedIconUrlGrabber()
+        {
+            var feedLibraryClient = new FeedLibraryClient(@"C:\WORK\CODE\SELES GAMES\Weave.Cloud\masterfeeds.xml");
+            await feedLibraryClient.LoadFeedsAsync();
+
+            var feeds = feedLibraryClient.Feeds
+                .Where(o => o.Category.Equals("technology", StringComparison.OrdinalIgnoreCase))
+                .Select(o => new Feed { FeedUri = o.FeedUri })
+                .Take(100)
+                .ToList();
+
+            var feedsWithIconUrls = new List<FeedWithIconUrl>();
+            foreach (var feed in feeds)
+            {
+                var feedWithIconUrl = await GetIconUrl(feed);
+                feedsWithIconUrls.Add(feedWithIconUrl);
+            }
+            //var feedsWithIconUrls = await Task.WhenAll(feeds.Select(GetIconUrl));
+
+            Debug.Write(feedsWithIconUrls);
+        }
+
+        static async Task<FeedWithIconUrl> GetIconUrl(Feed feed)
+        {
+            string iconUrl = null;
+
+            try
+            {
+                await feed.Update();
+                var grabber = new DomainIconAcquirer(feed.DomainUrl);
+                iconUrl = await grabber.GetIconUrl();
+            }
+            catch (Exception ex)
+            {
+                Debug.Write(ex);
+            }
+
+            return new FeedWithIconUrl { Feed = feed, IconUrl = iconUrl };
+        }
+
+        class FeedWithIconUrl
+        {
+            public Feed Feed { get; set; }
+            public string IconUrl { get; set; }
+
+            public override string ToString()
+            {
+                return string.Format("{0} --> ICON: {1}", Feed.FeedUri, IconUrl);
+            }
         }
 
         static async Task TestMobilizerUpload()

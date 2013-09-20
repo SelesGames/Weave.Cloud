@@ -9,10 +9,10 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Weave.Parsing;
+using System.Xml.Linq;
 using Weave.Parsing.Intermediates;
 
-namespace Weave.RssAggregator.Client
+namespace Weave.Parsing
 {
     public class Feed
     {
@@ -24,11 +24,11 @@ namespace Weave.RssAggregator.Client
         public string LastModified { get; set; }
         public TimeSpan UpdateTimeOut { get; set; }
 
-        public List<Entry> News { get; private set; }
         public RequestStatus Status { get; private set; }
         public string Name { get; private set; }
         public string Description { get; private set; }
         public string DomainUrl { get; private set; }
+        public List<Entry> News { get; private set; }
 
         public enum RequestStatus
         {
@@ -133,6 +133,7 @@ namespace Weave.RssAggregator.Client
             {
                 ms.Position = 0;
                 ParseFeedMetaData(ms);
+                ms.Position = 0;
                 ParseNewsFromLastRefreshTime(ms);
                 ms.Close();
             }
@@ -140,7 +141,19 @@ namespace Weave.RssAggregator.Client
 
         void ParseFeedMetaData(MemoryStream ms)
         {
+            XElement root = null;
 
+            var doc = XDocument.Load(ms, LoadOptions.None);
+
+            root = doc.Root;
+            var channel = doc.Descendants("channel").FirstOrDefault();
+
+            if (channel != null)
+                root = channel;
+
+            Name = root.Element("title").ValueOrDefault(null);
+            Description = root.Element("description").ValueOrDefault(null);
+            DomainUrl = root.Element("link").ValueOrDefault(null);
         }
 
         void ParseNewsFromLastRefreshTime(MemoryStream ms)
@@ -200,6 +213,11 @@ namespace Weave.RssAggregator.Client
                 DebugEx.WriteLine(e);
                 return null;
             }
+        }
+
+        public override string ToString()
+        {
+            return FeedUri;
         }
     }
 }
