@@ -30,6 +30,7 @@ namespace Weave.User.Service.Role.Controllers
         public UserController(UserRepository cacheClient, IWeaveArticleService articleServiceClient)
         {
             this.userRepo = cacheClient;
+            this.articleServiceClient = articleServiceClient;
         }
 
 
