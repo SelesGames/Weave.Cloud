@@ -114,6 +114,10 @@
       <Project>{5b792c4b-80d8-420d-9fa7-e567faf1f7b1}</Project>
       <Name>SelesGames.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SelesGames.HttpClient\SelesGames.HttpClient.csproj">
+      <Project>{bf0dc853-b353-4a92-b718-0a0ad067bfdf}</Project>
+      <Name>SelesGames.HttpClient</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Weave.Mobilizer.Client\Weave.Mobilizer.Client.csproj">
       <Project>{787ff65b-d0b3-4135-8495-ec5d4ff0a068}</Project>
       <Name>Weave.Mobilizer.Client</Name>
