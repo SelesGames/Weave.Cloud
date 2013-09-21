@@ -136,10 +136,6 @@
       <Project>{985dc92f-7c89-4e51-9736-cf9a9c5722da}</Project>
       <Name>Weave.Article.Service.Client</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Weave.RssAggregator.Core\RssAggregator.DTOs.csproj">
-      <Project>{2f1a280d-ee75-4dc1-a36c-f8e5488e3260}</Project>
-      <Name>RssAggregator.DTOs</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Weave.User.BusinessObjects\Weave.User.BusinessObjects.csproj">
       <Project>{db5274e6-15f6-4ec8-920a-842ea93a2601}</Project>
       <Name>Weave.User.BusinessObjects</Name>
