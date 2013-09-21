@@ -136,7 +136,7 @@ namespace Weave.Parsing
                 ParseFeedMetaData(ms);
                 ms.Position = 0;
                 ParseNewsFromLastRefreshTime(ms);
-                TryAggressiveDomainDiscovery();
+                await TryAggressiveDomainDiscovery();
                 ms.Close();
             }
         }
@@ -217,7 +217,7 @@ namespace Weave.Parsing
             }
         }
 
-        void TryAggressiveDomainDiscovery()
+        async Task TryAggressiveDomainDiscovery()
         {
             if (!string.IsNullOrEmpty(DomainUrl) || !IsAggressiveDomainDiscoveryEnabled)
                 return;
@@ -229,8 +229,10 @@ namespace Weave.Parsing
             string domainUrl = null;
 
             var link = firstNewsItem.Link;
+
             try
             {
+                link = await SelesGames.HttpClient.UrlHelper.GetFinalRedirectLocation(link);
                 var linkUri = new Uri(link, UriKind.Absolute);
                 domainUrl = linkUri.Scheme + "://" + linkUri.Host;
                 if (!Uri.IsWellFormedUriString(domainUrl, UriKind.Absolute))

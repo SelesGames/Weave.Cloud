@@ -31,8 +31,9 @@ namespace RssAggregator.ConsoleTesting
         {
             try
             {
+                TestIconDownloader().Wait();
                 //TestInvidualFeedIconGrab().Wait();
-                TestFeedIconUrlGrabber().Wait();
+                //TestFeedIconUrlGrabber().Wait();
                 //TestMobilizerUpload().Wait();
                 //TestRedirect().Wait();
                 //TestBasicFreedRequester().Wait();
@@ -55,6 +56,14 @@ namespace RssAggregator.ConsoleTesting
                 Console.ReadLine();
         }
 
+        static async Task TestIconDownloader()
+        {
+            var downloader = new IconDownloader();
+            await downloader.BeginDownload();
+
+            Debug.Write(downloader);
+        }
+
         static async Task TestInvidualFeedIconGrab()
         {
             var feed = new Feed { FeedUri = "http://www.pcgamer.com/feed/rss2" };
@@ -69,14 +78,16 @@ namespace RssAggregator.ConsoleTesting
 
         static async Task TestFeedIconUrlGrabber()
         {
-            var feedLibraryClient = new FeedLibraryClient(@"C:\WORK\CODE\SELES GAMES\Weave.Cloud\masterfeeds.xml");
-            await feedLibraryClient.LoadFeedsAsync();
+            //var feedLibraryClient = new FeedLibraryClient(@"C:\WORK\CODE\SELES GAMES\Weave.Cloud\masterfeeds.xml");
+            //await feedLibraryClient.LoadFeedsAsync();
 
-            var feeds = feedLibraryClient.Feeds
-                .Where(o => o.Category.Equals("technology", StringComparison.OrdinalIgnoreCase))
-                .Select(o => new Feed { FeedUri = o.FeedUri })
-                .Take(100)
-                .ToList();
+            //var feeds = feedLibraryClient.Feeds
+            //    .Where(o => o.Category.Equals("technology", StringComparison.OrdinalIgnoreCase))
+            //    .Select(o => new Feed { FeedUri = o.FeedUri, IsAggressiveDomainDiscoveryEnabled = true })
+            //    .Take(100)
+            //    .ToList();
+
+            var feeds = new List<Feed> { new Feed { FeedUri = "http://www.theverge.com/rss/index.xml", IsAggressiveDomainDiscoveryEnabled = true } };
 
             var feedsWithIconUrls = new List<FeedWithIconUrl>();
             foreach (var feed in feeds)
