@@ -3,6 +3,7 @@ using SelesGames.HttpClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace FeedIconGrabber
@@ -22,21 +23,6 @@ namespace FeedIconGrabber
 
         public async Task<string> GetIconUrl()
         {
-            //string domainUrl = null;
-
-            //var feed = new Feed
-            //{
-            //    FeedUri = "http://feeds.feedburner.com/uproxx/gammasquad",
-            //};
-
-            //var status = await feed.Update();
-            //if (status == Feed.RequestStatus.OK)
-            //{
-            //    domainUrl = feed.DomainUrl;
-            //}
-            //else
-            //    return;
-
             var client = new SmartHttpClient();
             using (var stream = await client.GetStreamAsync(domainUrl))
             {
@@ -44,131 +30,151 @@ namespace FeedIconGrabber
                 htmlDoc.Load(stream);
 
                 root = htmlDoc.DocumentNode;
-                var orderedIcons = GetIcons().OrderByDescending(o => o.Score);
+                var icons = await GetIcons();
+                var orderedIcons = icons.OrderByDescending(o => o.Score);
                 var bestPossibleIcon = orderedIcons.FirstOrDefault();
 
                 return bestPossibleIcon == null ? null : bestPossibleIcon.Link;
-
-                //// only accept valid html which describes 1 head node
-                //var head = htmlDoc.DocumentNode.Descendants("head").SingleOrDefault();
-
-                //if (head == null)
-                //    return;
-
-                //foreach (var link in head.Descendants("link"))
-                //{
-                //    if (link.Attributes["rel"].Value.Equals("apple-touch-icon", StringComparison.OrdinalIgnoreCase))
-                //        ;
-                //    HtmlAttribute att = link.Attributes["href"];
-                //    hrefTags.Add(att.Value);
-                //}
             }
         }
 
 
-
-
-        //LinkScore SelectScore(HtmlNode node)
-        //{
-        //    var rel = node.Attributes["rel"];
-        //    if (rel == null || string.IsNullOrEmpty(rel.Value))
-        //        return LinkScore.None;
-
-        //    if (rel.Value.Equals("apple-touch-icon", StringComparison.OrdinalIgnoreCase))
-        //    {
-        //        var link = GetLink(node);
-        //        if (string.IsNullOrEmpty(link))
-        //        {
-        //            return LinkScore.None;
-        //        }
-        //        else
-        //        {
-        //            return new LinkScore(link, 5);
-        //        }
-        //    }
-
-        //    else if (rel.Value.Equals("apple-touch-icon-precomposed", StringComparison.OrdinalIgnoreCase))
-        //    {
-        //        var link = GetLink(node);
-        //        if (string.IsNullOrEmpty(link))
-        //        {
-        //            return LinkScore.None;
-        //        }
-        //        else
-        //        {
-        //            return new LinkScore(link, 4);
-        //        }
-        //    }
-
-
-        //    return LinkScore.None;
-        //}
-
-        //string GetLink(HtmlNode node)
-        //{
-        //    var href = node.Attributes["href"];
-        //    if (href == null || string.IsNullOrEmpty(href.Value))
-        //        return null;
-
-        //    var hrefVal = href.Value;
-        //    string link = null;
-
-        //    if (hrefVal.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
-        //        hrefVal.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
-        //    {
-        //        link = hrefVal;
-        //    }
-
-        //    else
-        //    {
-        //        link = domainUrl + hrefVal;
-        //    }
-
-        //    if (Uri.IsWellFormedUriString(link, UriKind.Absolute))
-        //        return link;
-
-        //    return null;
-        //}
 
 
 
 
         #region Private Helper functions for grabbing the different favicons
 
-        IEnumerable<LinkScore> GetIcons()
+        //async Task<IEnumerable<LinkScore>> GetIcons()
+        //{
+        //    List<LinkScore> scores = new List<LinkScore>();
+
+        //    var linkScore = await GetLinkFromHtml("apple-touch-icon", 5);
+        //    if (linkScore != null)
+        //        scores.Add(linkScore);
+
+        //    linkScore = await GetLinkFromHtml("apple-touch-icon-precomposed", 4);
+        //    if (linkScore != null)
+        //        scores.Add(linkScore);
+
+        //    linkScore = await GetLinkFromHtml("shortcut icon", 3);
+        //    if (linkScore != null)
+        //        scores.Add(linkScore);
+
+        //    linkScore = await GetLinkFromHtml("icon", 2);
+        //    if (linkScore != null)
+        //        scores.Add(linkScore);
+
+        //    return scores;
+        //}
+
+        //readonly string LINK_SEARCH_TEMPLATE = "/html/head/link[@rel='{0}' and @href]";
+
+        //async Task<LinkScore> GetLinkFromHtml(string iconType, int score)
+        //{
+        //    var search = string.Format(LINK_SEARCH_TEMPLATE, iconType);
+
+        //    var linkNode = root.SelectSingleNode(search);
+        //    if (linkNode != null)
+        //    {
+        //        var link = GetLink(linkNode.Attributes["href"].Value);
+        //        if (link != null)
+        //        {
+        //            var linkIsValid = await TestLinkValidity(link);
+        //            if (linkIsValid)
+        //                return new LinkScore(link, score, linkNode.OuterHtml);
+        //        }
+        //    }
+
+        //    return null;
+        //}
+
+        async Task<IEnumerable<LinkScore>> GetIcons()
         {
-            var linkScore = CreateLinkScoreOrNull("apple-touch-icon", 5);
-            if (linkScore != null)
-                yield return linkScore;
+            List<LinkScore> scores = new List<LinkScore>();
 
-            linkScore = CreateLinkScoreOrNull("apple-touch-icon-precomposed", 4);
-            if (linkScore != null)
-                yield return linkScore;
+            // only accept valid html which describes 1 head node
+            var head = root.Descendants("head").SingleOrDefault();
 
-            linkScore = CreateLinkScoreOrNull("shortcut icon", 3);
-            if (linkScore != null)
-                yield return linkScore;
+            if (head == null)
+                return scores;
 
-            linkScore = CreateLinkScoreOrNull("icon", 2);
+            LinkScore linkScore = null;
+
+            foreach (var link in head.Descendants("link"))
+            {
+                linkScore = await GetLinkFromHtml(link, "apple-touch-icon", 10);
+                if (linkScore != null)
+                    scores.Add(linkScore);
+
+                linkScore = await GetLinkFromHtml(link, "apple-touch-icon-precomposed", 8);
+                if (linkScore != null)
+                    scores.Add(linkScore);
+
+                linkScore = await GetLinkFromHtml(link, "shortcut icon", 2);
+                if (linkScore != null)
+                    scores.Add(linkScore);
+
+                linkScore = await GetLinkFromHtml(link, "icon", 1);
+                if (linkScore != null)
+                    scores.Add(linkScore);
+            }
+
+            linkScore = await GetLinkFromRootDirectory("apple-touch-icon-57x57-precomposed.png", 3);
             if (linkScore != null)
-                yield return linkScore;
+                scores.Add(linkScore);
+
+            linkScore = await GetLinkFromRootDirectory("apple-touch-icon-57x57.png", 4);
+            if (linkScore != null)
+                scores.Add(linkScore);
+
+            linkScore = await GetLinkFromRootDirectory("apple-touch-icon-precomposed.png", 4);
+            if (linkScore != null)
+                scores.Add(linkScore);
+
+            linkScore = await GetLinkFromRootDirectory("apple-touch-icon.png", 5);
+            if (linkScore != null)
+                scores.Add(linkScore);
+
+            linkScore = await GetLinkFromRootDirectory("apple-touch-icon-152x152-precomposed.png", 4);
+            if (linkScore != null)
+                scores.Add(linkScore);
+
+            linkScore = await GetLinkFromRootDirectory("apple-touch-icon-152x152.png", 5);
+            if (linkScore != null)
+                scores.Add(linkScore);
+
+            return scores;
         }
 
-        readonly string LINK_SEARCH_TEMPLATE = "/html/head/link[@rel='{0}' and @href]";
-
-        LinkScore CreateLinkScoreOrNull(string iconType, int score)
+        async Task<LinkScore> GetLinkFromHtml(HtmlNode node, string iconType, int score)
         {
-            var search = string.Format(LINK_SEARCH_TEMPLATE, iconType);
+            var rel = node.Attributes["rel"];
+            if (rel == null || string.IsNullOrEmpty(rel.Value))
+                return null;
 
-            var linkNode = root.SelectSingleNode(search);
-            if (linkNode != null)
+            if (rel.Value.Equals(iconType, StringComparison.OrdinalIgnoreCase))
             {
-                var link = GetLink(linkNode.Attributes["href"].Value);
+                var link = GetLink(node);
                 if (link != null)
-                    return new LinkScore(link, score, linkNode.OuterHtml);
+                {
+                    var linkIsValid = await TestLinkValidity(link);
+                    if (linkIsValid)
+                        return new LinkScore(link, score, node.OuterHtml);
+                }
             }
 
             return null;
+        }
+
+        string GetLink(HtmlNode node)
+        {
+            var href = node.Attributes["href"];
+            if (href == null || string.IsNullOrEmpty(href.Value))
+                return null;
+
+            var hrefVal = href.Value;
+            return GetLink(hrefVal);
         }
 
         string GetLink(string url)
@@ -190,6 +196,43 @@ namespace FeedIconGrabber
                 return link;
 
             return null;
+        }
+
+        async Task<LinkScore> GetLinkFromRootDirectory(string fileName, int score)
+        {
+            string url = domainUrl;
+
+            if (!domainUrl.EndsWith("/"))
+                url += "/";
+
+            url += fileName;
+
+            var link = GetLink(url);
+            if (link != null)
+            {
+                var linkIsValid = await TestLinkValidity(link);
+                if (linkIsValid)
+                    return new LinkScore(link, score, null);
+            }
+
+            return null;
+        }
+
+        async Task<bool> TestLinkValidity(string link)
+        {
+            var client = new SmartHttpClient();
+            var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Head, link));
+            return 
+                response.IsSuccessStatusCode && 
+                IsImageType(response.Content.Headers.ContentType.MediaType);
+        }
+
+        bool IsImageType(string mediaType)
+        {
+            return
+                //mediaType.Equals("image/png", StringComparison.OrdinalIgnoreCase) ||
+                //mediaType.Equals("image/jpeg", StringComparison.OrdinalIgnoreCase);
+                mediaType.StartsWith("image/", StringComparison.OrdinalIgnoreCase);
         }
 
         #endregion

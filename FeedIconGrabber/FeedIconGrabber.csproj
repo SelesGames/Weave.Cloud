@@ -43,9 +43,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DomainIconAcquirer.cs" />
+    <Compile Include="IconDownloader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\RssAggregator.LibraryClient\RssAggregator.LibraryClient.csproj">
+      <Project>{2db284eb-5b81-425a-957e-77eeb704ebdc}</Project>
+      <Name>RssAggregator.LibraryClient</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SelesGames.HttpClient\SelesGames.HttpClient.csproj">
       <Project>{bf0dc853-b353-4a92-b718-0a0ad067bfdf}</Project>
       <Name>SelesGames.HttpClient</Name>
