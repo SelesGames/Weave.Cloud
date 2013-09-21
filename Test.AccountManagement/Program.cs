@@ -57,7 +57,7 @@ namespace Test.AccountManagement
             var userInfoBlobClient = new UserInfoBlobClient(blobClient);
             var cacheClient = new UserInfoAzureCacheClient(userInfoBlobClient);
             var userRepo = new UserRepository(cacheClient);
-            var controller = new UserController(userRepo);
+            var controller = new UserController(userRepo, new Weave.Article.Service.Client.ServiceClient());
             return controller;
         }
 

@@ -59,6 +59,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Weave.Portable\Weave.Article.Service.Contracts\Weave.Article.Service.Contracts.csproj">
+      <Project>{d727f239-ee96-4b05-8f17-65871b52b260}</Project>
+      <Name>Weave.Article.Service.Contracts</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Weave.Portable\Weave.User.Service.Contracts\Weave.User.Service.Contracts.csproj">
       <Project>{02f3363f-7b0f-4c5f-9123-b388f2870c35}</Project>
       <Name>Weave.User.Service.Contracts</Name>
@@ -94,6 +98,10 @@
     <ProjectReference Include="..\SelesGames.SmartBlobClient\Common.Azure.SmartBlobClient.csproj">
       <Project>{d115cf60-990a-4138-8496-538a6ce74541}</Project>
       <Name>Common.Azure.SmartBlobClient</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Weave.Article.Service.Client\Weave.Article.Service.Client.csproj">
+      <Project>{985dc92f-7c89-4e51-9736-cf9a9c5722da}</Project>
+      <Name>Weave.Article.Service.Client</Name>
     </ProjectReference>
     <ProjectReference Include="..\Weave.Mobilizer.HtmlParser\Weave.Mobilizer.HtmlParser.csproj">
       <Project>{8993c056-b00f-4bad-a1fc-c944af40a993}</Project>

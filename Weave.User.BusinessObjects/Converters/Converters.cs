@@ -6,8 +6,7 @@ namespace Weave.User.BusinessObjects.Converters
 {
     public class Converters :
         IConverter<Weave.RssAggregator.Core.DTOs.Outgoing.NewsItem, NewsItem>,
-        IConverter<Weave.RssAggregator.Core.DTOs.Outgoing.Image, Image>,
-        IConverter<NewsItem, Weave.Article.Service.DTOs.ServerIncoming.SavedNewsItem>
+        IConverter<Weave.RssAggregator.Core.DTOs.Outgoing.Image, Image>
     {
         public static readonly Converters Instance = new Converters();
 
@@ -40,24 +39,6 @@ namespace Weave.User.BusinessObjects.Converters
                 HasBeenViewed = false,
                 IsFavorite = false,
                 Image = o.Image == null ? null : o.Image.Convert<RssAggregator.Core.DTOs.Outgoing.Image, Image>(Instance),
-            };
-        }
-
-        public Article.Service.DTOs.ServerIncoming.SavedNewsItem Convert(NewsItem o)
-        {
-            return new Article.Service.DTOs.ServerIncoming.SavedNewsItem
-            {
-                Title = o.Title,
-                Link = o.Link,
-                ImageUrl = o.ImageUrl, 
-                UtcPublishDateTime = o.UtcPublishDateTimeString,
-                YoutubeId = o.YoutubeId,
-                VideoUri = o.VideoUri,
-                PodcastUri = o.PodcastUri,
-                ZuneAppId = o.ZuneAppId,
-                SourceName = o.Feed.Name,
-                Tags = o.Feed.Category == null ? null : new[] { o.Feed.Category }.ToList(),
-                //Image = o.Image == null ? null : o.Image.Convert<Image, Outgoing.Image>(Instance),
             };
         }
     }

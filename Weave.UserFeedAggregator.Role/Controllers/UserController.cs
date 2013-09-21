@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
+using Weave.Article.Service.Contracts;
 using Weave.User.BusinessObjects;
 using Weave.User.Service.Cache;
 using Weave.User.Service.Contracts;
@@ -20,12 +21,13 @@ namespace Weave.User.Service.Role.Controllers
     public class UserController : ApiController, IWeaveUserService
     {
         UserRepository userRepo;
+        IWeaveArticleService articleServiceClient;
 
         UserInfo userBO;
         TimeSpan readTime = TimeSpan.Zero, writeTime = TimeSpan.Zero;
 
 
-        public UserController(UserRepository cacheClient)
+        public UserController(UserRepository cacheClient, IWeaveArticleService articleServiceClient)
         {
             this.userRepo = cacheClient;
         }
@@ -293,7 +295,12 @@ namespace Weave.User.Service.Role.Controllers
         public async Task MarkArticleRead(Guid userId, Guid newsItemId)
         {
             await VerifyUserId(userId);
-            await userBO.MarkNewsItemRead(newsItemId);
+
+            var newsItem = userBO.FindNewsItem(newsItemId);
+            var saved = ConvertToArticleService(newsItem);
+            await articleServiceClient.MarkRead(userId, saved);
+
+            userBO.MarkNewsItemRead(newsItem);
             SaveUser();
         }
 
@@ -302,7 +309,9 @@ namespace Weave.User.Service.Role.Controllers
         public async Task MarkArticleUnread(Guid userId, Guid newsItemId)
         {
             await VerifyUserId(userId);
-            await userBO.MarkNewsItemUnread(newsItemId);
+            await articleServiceClient.RemoveRead(userId, newsItemId);
+
+            userBO.MarkNewsItemUnread(newsItemId);
             SaveUser();
         }
 
@@ -320,7 +329,12 @@ namespace Weave.User.Service.Role.Controllers
         public async Task AddFavorite(Guid userId, Guid newsItemId)
         {
             await VerifyUserId(userId);
-            await userBO.AddFavorite(newsItemId);
+
+            var newsItem = userBO.FindNewsItem(newsItemId);
+            var favorited = ConvertToArticleService(newsItem);
+            await articleServiceClient.AddFavorite(userId, favorited);
+
+            userBO.AddFavorite(newsItem);
             SaveUser();
         }
 
@@ -329,7 +343,9 @@ namespace Weave.User.Service.Role.Controllers
         public async Task RemoveFavorite(Guid userId, Guid newsItemId)
         {
             await VerifyUserId(userId);
-            await userBO.RemoveFavorite(newsItemId);
+            await articleServiceClient.RemoveFavorite(userId, newsItemId);
+
+            userBO.RemoveFavorite(newsItemId);
             SaveUser();
         }
 
@@ -526,6 +542,11 @@ namespace Weave.User.Service.Role.Controllers
                 UnreadArticleCount = feeds == null ? 0 : feeds.Sum(o => o.UnreadArticleCount),
                 TotalArticleCount = feeds == null ? 0 : feeds.Sum(o => o.TotalArticleCount),
             };
+        }
+
+        Weave.Article.Service.DTOs.ServerIncoming.SavedNewsItem ConvertToArticleService(NewsItem newsItem)
+        {
+            return newsItem.Convert<NewsItem, Weave.Article.Service.DTOs.ServerIncoming.SavedNewsItem>(Converters.Converters.Instance);
         }
 
         #endregion

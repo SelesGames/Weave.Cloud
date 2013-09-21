@@ -1,17 +1,14 @@
-﻿using SelesGames.Common;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Weave.Article.Service.Contracts;
 
 namespace Weave.User.BusinessObjects
 {
     public class UserInfo
     {
         List<Feed> feedsList = new List<Feed>();
-        IWeaveArticleService articleServiceClient = new Article.Service.Client.ServiceClient();
 
         public Guid Id { get; set; }
         public IReadOnlyList<Feed> Feeds { get { return feedsList; } }
@@ -144,24 +141,25 @@ namespace Weave.User.BusinessObjects
 
         #region Mark NewsItem read/unread
 
-        public async Task MarkNewsItemRead(Guid newsItemId)
+        public void MarkNewsItemRead(Guid newsItemId)
         {
-            var newsItem = FindNewsItem(newsItemId);
+            MarkNewsItemRead(FindNewsItem(newsItemId));
+        }
+
+        public void MarkNewsItemRead(NewsItem newsItem)
+        {
             if (newsItem == null)
                 return;
 
-            var saved = newsItem.Convert<NewsItem, Weave.Article.Service.DTOs.ServerIncoming.SavedNewsItem>(Converters.Converters.Instance);
-            await articleServiceClient.MarkRead(Id, saved);
             newsItem.HasBeenViewed = true;
         }
 
-        public async Task MarkNewsItemUnread(Guid newsItemId)
+        public void MarkNewsItemUnread(Guid newsItemId)
         {
             var newsItem = FindNewsItem(newsItemId);
             if (newsItem == null)
                 return;
 
-            await articleServiceClient.RemoveRead(Id, newsItemId);
             newsItem.HasBeenViewed = false;
         }
 
@@ -178,24 +176,25 @@ namespace Weave.User.BusinessObjects
                 newsItem.HasBeenViewed = true;
         }
 
-        public async Task AddFavorite(Guid newsItemId)
+        public void AddFavorite(Guid newsItemId)
         {
-            var newsItem = FindNewsItem(newsItemId);
+            AddFavorite(FindNewsItem(newsItemId));
+        }
+
+        public void AddFavorite(NewsItem newsItem)
+        {
             if (newsItem == null)
                 return;
 
-            var favorited = newsItem.Convert<NewsItem, Weave.Article.Service.DTOs.ServerIncoming.SavedNewsItem>(Converters.Converters.Instance);
-            await articleServiceClient.AddFavorite(Id, favorited);
             newsItem.IsFavorite = true;
         }
 
-        public async Task RemoveFavorite(Guid newsItemId)
+        public void RemoveFavorite(Guid newsItemId)
         {
             var newsItem = FindNewsItem(newsItemId);
             if (newsItem == null)
                 return;
 
-            await articleServiceClient.RemoveFavorite(Id, newsItemId);
             newsItem.IsFavorite = false;
         }
 
@@ -206,15 +205,13 @@ namespace Weave.User.BusinessObjects
 
         #region helper methods
 
-        NewsItem FindNewsItem(/*Guid feedId,*/ Guid newsItemId)
+        public NewsItem FindNewsItem(Guid newsItemId)
         {
             if (EnumerableEx.IsNullOrEmpty(feedsList))
                 return null;
 
             var newsItem = feedsList
                 .AllNews()
-                //.Where(o => o.Id.Equals(feedId))
-                //.SelectMany(o => o.News)
                 .FirstOrDefault(o => o.Id.Equals(newsItemId));
 
             return newsItem;
