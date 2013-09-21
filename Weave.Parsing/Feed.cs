@@ -23,6 +23,7 @@ namespace Weave.Parsing
         public string Etag { get; set; }
         public string LastModified { get; set; }
         public TimeSpan UpdateTimeOut { get; set; }
+        public bool IsAggressiveDomainDiscoveryEnabled { get; set; }
 
         public RequestStatus Status { get; private set; }
         public string Name { get; private set; }
@@ -135,6 +136,7 @@ namespace Weave.Parsing
                 ParseFeedMetaData(ms);
                 ms.Position = 0;
                 ParseNewsFromLastRefreshTime(ms);
+                TryAggressiveDomainDiscovery();
                 ms.Close();
             }
         }
@@ -213,6 +215,30 @@ namespace Weave.Parsing
                 DebugEx.WriteLine(e);
                 return null;
             }
+        }
+
+        void TryAggressiveDomainDiscovery()
+        {
+            if (!string.IsNullOrEmpty(DomainUrl) || !IsAggressiveDomainDiscoveryEnabled)
+                return;
+
+            var firstNewsItem = News == null ? null : News.FirstOrDefault();
+            if (firstNewsItem == null)
+                return;
+
+            string domainUrl = null;
+
+            var link = firstNewsItem.Link;
+            try
+            {
+                var linkUri = new Uri(link, UriKind.Absolute);
+                domainUrl = linkUri.Scheme + "://" + linkUri.Host;
+                if (!Uri.IsWellFormedUriString(domainUrl, UriKind.Absolute))
+                    return;
+            }
+            catch { }
+
+            DomainUrl = domainUrl;
         }
 
         public override string ToString()
