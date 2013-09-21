@@ -40,9 +40,11 @@
   <ItemGroup>
     <Compile Include="CompressionSettings.cs" />
     <Compile Include="ContentEncoderSettings.cs" />
+    <Compile Include="EnumerableEx.cs" />
     <Compile Include="SmartHttpClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UriBuilderExtensions.cs" />
+    <Compile Include="UrlHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common.Net.Http.Compression\Common.Net.Http.Compression.csproj">
