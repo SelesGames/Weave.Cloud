@@ -12,6 +12,7 @@ namespace Weave.RssAggregator.LibraryClient
         string libraryUrl;
         ConditionalHttpClient<List<FeedSource>> client;
 
+        public XElement Xml { get; private set; }
         public List<FeedSource> Feeds { get; private set; }
         public event EventHandler FeedsUpdated;
 
@@ -40,22 +41,23 @@ namespace Weave.RssAggregator.LibraryClient
             else
             {
                 var xdoc = XDocument.Load(libraryUrl);
-                Feeds = Parse(xdoc.Root);
+                Xml = xdoc.Root;
+                Feeds = ParseXml();
             }
         }
 
-        void ListenForChanges()
-        {
-            var poller = new WebResourcePoller<List<FeedSource>>(TimeSpan.FromSeconds(10), client);
-            poller.Subscribe(OnChange);
-        }
+        //void ListenForChanges()
+        //{
+        //    var poller = new WebResourcePoller<List<FeedSource>>(TimeSpan.FromSeconds(10), client);
+        //    poller.Subscribe(OnChange);
+        //}
 
-        void OnChange(List<FeedSource> feeds)
-        {
-            Feeds = feeds;
-            if (FeedsUpdated != null)
-                FeedsUpdated(this, EventArgs.Empty);
-        }
+        //void OnChange(List<FeedSource> feeds)
+        //{
+        //    Feeds = feeds;
+        //    if (FeedsUpdated != null)
+        //        FeedsUpdated(this, EventArgs.Empty);
+        //}
 
 
 
@@ -64,13 +66,13 @@ namespace Weave.RssAggregator.LibraryClient
 
         List<FeedSource> Parse(Stream stream)
         {
-            var doc = XElement.Load(stream);
-            return Parse(doc);
+            Xml = XElement.Load(stream);
+            return ParseXml();
         }
 
-        List<FeedSource> Parse(XElement doc)
+        List<FeedSource> ParseXml()
         {
-            return doc.Descendants("Feed")
+            return Xml.Descendants("Feed")
                 .Select(feed =>
                     new FeedSource
                     {

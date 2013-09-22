@@ -37,10 +37,6 @@ namespace Weave.RssAggregator.LibraryClient
         public async Task<bool> CheckForUpdate()
         {
             var handler = new HttpClientCompressionHandler();
-            //{
-            //    AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-            //};
-
             var request = new HttpClient(handler);
 
             request.Timeout = RequestTimeout;

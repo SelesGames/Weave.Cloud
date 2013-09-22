@@ -31,7 +31,8 @@ namespace RssAggregator.ConsoleTesting
         {
             try
             {
-                TestIconDownloader().Wait();
+                TestFeedsFileWriter().Wait();
+                //TestIconDownloader().Wait();
                 //TestInvidualFeedIconGrab().Wait();
                 //TestFeedIconUrlGrabber().Wait();
                 //TestMobilizerUpload().Wait();
@@ -54,6 +55,13 @@ namespace RssAggregator.ConsoleTesting
 
             while (true)
                 Console.ReadLine();
+        }
+
+        static async Task TestFeedsFileWriter()
+        {
+            var setter = new XmlIconUrlSetter();
+            await setter.RewriteXml();
+            Console.Write("done");
         }
 
         static async Task TestIconDownloader()
