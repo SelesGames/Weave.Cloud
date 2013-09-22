@@ -40,7 +40,7 @@ namespace Weave.RssAggregator.LibraryClient
             }
             else
             {
-                var xdoc = XDocument.Load(libraryUrl);
+                var xdoc = XDocument.Load(libraryUrl, LoadOptions.PreserveWhitespace);
                 Xml = xdoc.Root;
                 Feeds = ParseXml();
             }
@@ -66,7 +66,7 @@ namespace Weave.RssAggregator.LibraryClient
 
         List<FeedSource> Parse(Stream stream)
         {
-            Xml = XElement.Load(stream);
+            Xml = XElement.Load(stream, LoadOptions.PreserveWhitespace);
             return ParseXml();
         }
 
