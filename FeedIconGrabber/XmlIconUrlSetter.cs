@@ -31,7 +31,20 @@ namespace FeedIconGrabber
                 if (matchingFile == null)
                     continue;
 
-                feed.Add(new XAttribute("IconUrl", AzurePath + matchingFile));
+                var iconUrl = AzurePath + matchingFile;
+
+                var existingIconUrlAttribute = feed.Attribute("IconUrl");
+                if (existingIconUrlAttribute == null || string.IsNullOrEmpty(existingIconUrlAttribute.Value))
+                {
+                    feed.Add(new XAttribute("IconUrl", iconUrl));
+                }
+                else
+                {
+                    if (existingIconUrlAttribute.Value != iconUrl)
+                    {
+                        existingIconUrlAttribute.Value = iconUrl;
+                    }
+                }
             }
 
             xml.Save(FEEDS_FILEPATH, SaveOptions.DisableFormatting);
