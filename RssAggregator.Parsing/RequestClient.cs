@@ -22,8 +22,16 @@ namespace Weave.RssAggregator.Core.DTOs.Incoming
             FeedResult result;
             try
             {
-                var requester = CreateRequester(request, RequestTimeout);
-                var requestStatus = await requester.Update();
+                var feed = new Feed
+                {
+                    FeedUri = request.Url,
+                    MostRecentNewsItemPubDate = request.MostRecentNewsItemPubDate,
+                    Etag = request.Etag,
+                    LastModified = request.LastModified,
+                    UpdateTimeOut = RequestTimeout,
+                };
+
+                var requestStatus = await feed.Update();
 
                 if (requestStatus == Feed.RequestStatus.Unmodified)
                 {
@@ -35,11 +43,11 @@ namespace Weave.RssAggregator.Core.DTOs.Incoming
                     {
                         Id = request.Id,
                         Status = FeedResultStatus.OK,
-                        Etag = requester.Etag,
-                        LastModified = requester.LastModified,
-                        MostRecentNewsItemPubDate = requester.MostRecentNewsItemPubDate,
-                        OldestNewsItemPubDate = requester.OldestNewsItemPubDate,
-                        News = requester.News.Select(o => o.Convert(EntryToNewsItemConverter.Instance)).ToList(),
+                        Etag = feed.Etag,
+                        LastModified = feed.LastModified,
+                        MostRecentNewsItemPubDate = feed.MostRecentNewsItemPubDate,
+                        OldestNewsItemPubDate = feed.OldestNewsItemPubDate,
+                        News = feed.News.Select(o => o.Convert(EntryToNewsItemConverter.Instance)).ToList(),
                     };
                 }
             }
@@ -48,18 +56,6 @@ namespace Weave.RssAggregator.Core.DTOs.Incoming
                 result = new FeedResult { Id = request.Id, Status = FeedResultStatus.Failed };
             }
             return result;
-        }
-
-        static Feed CreateRequester(FeedRequest request, TimeSpan timeout)
-        {
-            return new Feed
-            {
-                FeedUri = request.Url,
-                MostRecentNewsItemPubDate = request.MostRecentNewsItemPubDate,
-                Etag = request.Etag,
-                LastModified = request.LastModified,
-                UpdateTimeOut = timeout,
-            };
         }
     }
 }

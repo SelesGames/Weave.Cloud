@@ -10,7 +10,6 @@ namespace Weave.RssAggregator.LowFrequency
         public Guid FeedId { get; private set; }
         public string Name { get; private set; }
         public string FeedUri { get; private set; }
-        public string IconUri { get; private set; }
         public string MostRecentNewsItemPubDate { get; set; }
         public string OldestNewsItemPubDate { get; set; }
         public IReadOnlyList<NewsItem> News { get; set; }
