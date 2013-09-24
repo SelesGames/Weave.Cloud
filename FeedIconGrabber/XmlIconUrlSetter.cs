@@ -11,7 +11,7 @@ namespace FeedIconGrabber
     public class XmlIconUrlSetter
     {
         readonly string AzurePath = "http://weave.blob.core.windows.net/icons/";
-        readonly string PATH = @"C:\WORK\CODE\SELES GAMES\icons";
+        readonly string PATH = @"C:\WORK\CODE\SELES GAMES\Weave.Windows8\icons";
         readonly string FEEDS_FILEPATH = @"C:\WORK\CODE\SELES GAMES\Weave.Cloud\masterfeeds.xml";
 
         public async Task RewriteXml()
