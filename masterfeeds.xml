@@ -143,7 +143,7 @@
     <Feed Name="Penny Arcade Report" ViewType="ie" IconUrl="http://weave.blob.core.windows.net/icons/Penny Arcade Report.png">http://feeds.penny-arcade.com/pa-report</Feed>
     <Feed Name="Polygon" IconUrl="http://weave.blob.core.windows.net/icons/Polygon.jpg">http://www.polygon.com/rss/index.xml</Feed>
     <Feed Name="Rock, Paper, Shotgun" IconUrl="http://weave.blob.core.windows.net/icons/Rock, Paper, Shotgun.ico">http://feeds.feedburner.com/RockPaperShotgun</Feed>
-    <Feed Name="Wired | GameLife" ViewType="ie">http://www.wired.com/gamelife/feed</Feed>
+    <Feed Name="Wired | GameLife" IconUrl="http://weave.blob.core.windows.net/icons/Wired.com.png" ViewType="ie">http://www.wired.com/gamelife/feed</Feed>
     <Feed Name="WoW Insider" IconUrl="http://weave.blob.core.windows.net/icons/WoW Insider.ico">http://wow.joystiq.com/rss.xml</Feed>
   </Category>
 
@@ -179,18 +179,18 @@
 
   <Category Type="Movies">
     <Feed Name="L.A. Times" IconUrl="http://weave.blob.core.windows.net/icons/L.A. Times.jpg">http://feeds.latimes.com/latimes/entertainment/news/movies</Feed>
-    <Feed Name="Variety.com">http://feeds.feedburner.com/variety/news/film</Feed>
+    <Feed Name="Variety.com" IconUrl="http://weave.blob.core.windows.net/icons/Variety.jpg">http://feeds.feedburner.com/variety/news/film</Feed>
     <Feed Name="The Hollywood Reporter" IconUrl="http://weave.blob.core.windows.net/icons/The Hollywood Reporter.jpg">http://feeds.feedburner.com/thr/film</Feed>
     <Feed Name="Rotten Tomatoes" IconUrl="http://weave.blob.core.windows.net/icons/Rotten Tomatoes.png">http://www.rottentomatoes.com/syndication/rss/top_news.xml</Feed>
-    <Feed Name="The Hollywood Reporter | Movie Reviews">http://feeds.feedburner.com/thr/reviews/film</Feed>
+    <Feed Name="The Hollywood Reporter | Movie Reviews" IconUrl="http://weave.blob.core.windows.net/icons/The Hollywood Reporter.jpg">http://feeds.feedburner.com/thr/reviews/film</Feed>
     <Feed Name="Latino Review">http://latino-review.com/feed/</Feed>
     <Feed Name="FilmDrunk" IconUrl="http://weave.blob.core.windows.net/icons/FilmDrunk.png">http://filmdrunk.uproxx.com/feed</Feed>
     <Feed Name="Film School Rejects" IconUrl="http://weave.blob.core.windows.net/icons/Film School Rejects.jpg">http://www.filmschoolrejects.com/feed</Feed>
-    <Feed Name="Hitfix.com" ViewType="ie">http://www.hitfix.com/movies.rss</Feed>
+    <Feed Name="Hitfix.com" IconUrl="http://weave.blob.core.windows.net/icons/HitFix.jpg" ViewType="ie">http://www.hitfix.com/movies.rss</Feed>
     <Feed Name="Indiewire" IconUrl="http://weave.blob.core.windows.net/icons/IndieWire.jpg">http://www.indiewire.com/rss/rssFeed.jsp?id=c1c2a9e0-e876-11e0-99d1-12313931436e</Feed>
     <Feed Name="Movieline" IconUrl="http://weave.blob.core.windows.net/icons/Movieline.ico">http://www.movieline.com/rss/index.xml</Feed>
     <Feed Name="Very Aware" IconUrl="http://weave.blob.core.windows.net/icons/Very Aware.ico">http://feeds.feedburner.com/VeryAware</Feed>
-    <Feed Name="Wired | Underwire">http://www.wired.com/underwire/feed/</Feed>
+    <Feed Name="Wired | Underwire" IconUrl="http://weave.blob.core.windows.net/icons/Wired.com.png">http://www.wired.com/underwire/feed/</Feed>
   </Category>
 
 
@@ -238,7 +238,7 @@
     <Feed Name="Popular Science" IconUrl="http://weave.blob.core.windows.net/icons/Popular Science.jpg">http://www.popsci.com/rss.xml</Feed>
     <Feed Name="Scientific American" IconUrl="http://weave.blob.core.windows.net/icons/Scientific American.jpg">http://rss.sciam.com/ScientificAmerican-Global</Feed>
     <Feed Name="Smithsonian Science" IconUrl="http://weave.blob.core.windows.net/icons/Smithsonian Science.jpg">http://smithsonianscience.org/feed/</Feed>
-    <Feed Name="Wired Science" ViewType="ie">http://www.wired.com/wiredscience/feed/</Feed>
+    <Feed Name="Wired Science" IconUrl="http://weave.blob.core.windows.net/icons/Wired.com.png" ViewType="ie">http://www.wired.com/wiredscience/feed/</Feed>
     <Feed Name="Universe Today" IconUrl="http://weave.blob.core.windows.net/icons/Universe Today.png">http://feeds.feedburner.com/universetoday/pYdq</Feed>
   </Category>
 
@@ -248,7 +248,7 @@
     <Feed Name="Deadspin" IconUrl="http://weave.blob.core.windows.net/icons/Deadspin.jpg">http://feeds.gawker.com/deadspin/vip</Feed>
     <Feed Name="ESPN" ViewType="ie" IconUrl="http://weave.blob.core.windows.net/icons/ESPN.jpg">http://sports.espn.go.com/espn/rss/news</Feed>
     <Feed Name="L.A. Times" IconUrl="http://weave.blob.core.windows.net/icons/L.A. Times.jpg">http://feeds.latimes.com/latimes/sports</Feed>
-    <Feed Name="SI.com" ViewType="ie">http://rss.cnn.com/rss/si_topstories.rss</Feed>
+    <Feed Name="SI.com" IconUrl="http://weave.blob.core.windows.net/icons/Sports Illustrated.jpg" ViewType="ie">http://rss.cnn.com/rss/si_topstories.rss</Feed>
     <Feed Name="The Guardian" IconUrl="http://weave.blob.core.windows.net/icons/The Guardian.jpg">http://feeds.guardian.co.uk/theguardian/sport/rss</Feed>
     <Feed Name="Yahoo! Sports" IconUrl="http://weave.blob.core.windows.net/icons/Yahoo! Sports.png">http://sports.yahoo.com/top/rss.xml</Feed>
   </Category>
@@ -283,20 +283,20 @@
     <Feed Name="VentureBeat" IconUrl="http://weave.blob.core.windows.net/icons/VentureBeat.jpg">http://feeds.venturebeat.com/Venturebeat</Feed>
     <Feed Name="VR-Zone">http://feeds.feedburner.com/vr-zone</Feed>
     <Feed Name="Wired.com" ViewType="ie" IconUrl="http://weave.blob.core.windows.net/icons/Wired.com.png">http://feeds.wired.com/wired/index</Feed>
-    <Feed Name="Wired.com | Gadget Lab" ViewType="ie">http://www.wired.com/gadgetlab/feed</Feed>
+    <Feed Name="Wired.com | Gadget Lab" IconUrl="http://weave.blob.core.windows.net/icons/Wired.com.png" ViewType="ie">http://www.wired.com/gadgetlab/feed</Feed>
     <Feed Name="ZDNet">http://www.zdnet.com/search?t=1&amp;mode=rss</Feed>
   </Category>
   
 
   <Category Type="TV">
     <Feed Name="L.A. Times" IconUrl="http://weave.blob.core.windows.net/icons/L.A. Times.jpg">http://feeds.latimes.com/latimes/entertainment/news/tv</Feed>
-    <Feed Name="Variety.com">http://feeds.feedburner.com/variety/news/tv</Feed>
+    <Feed Name="Variety.com" IconUrl="http://weave.blob.core.windows.net/icons/Variety.jpg">http://feeds.feedburner.com/variety/news/tv</Feed>
     <Feed Name="The Hollywood Reporter" IconUrl="http://weave.blob.core.windows.net/icons/The Hollywood Reporter.jpg">http://feeds.feedburner.com/thr/television</Feed>
     <Feed Name="USA Today" IconUrl="http://weave.blob.core.windows.net/icons/USA Today.jpg">http://rssfeeds.usatoday.com/UsatodaycomTelevision-TopStories</Feed>
-    <Feed Name="Hitfix.com" ViewType="ie">http://www.hitfix.com/tv.rss</Feed>
+    <Feed Name="Hitfix.com" IconUrl="http://weave.blob.core.windows.net/icons/HitFix.jpg" ViewType="ie">http://www.hitfix.com/tv.rss</Feed>
     <Feed Name="The Ausiello Files" IconUrl="http://weave.blob.core.windows.net/icons/The Ausiello Files.ico">http://feeds.ew.com/entertainmentweekly/ausiellofiles</Feed>
     <Feed Name="Ken Tucker's TV" IconUrl="http://weave.blob.core.windows.net/icons/Ken Tucker's TV.ico">http://feeds.ew.com/entertainmentweekly/watching-tv</Feed>
-    <Feed Name="The Hollywood Reporter | TV Reviews">http://feeds.feedburner.com/thr/reviews/tv</Feed>
+    <Feed Name="The Hollywood Reporter | TV Reviews" IconUrl="http://weave.blob.core.windows.net/icons/The Hollywood Reporter.jpg">http://feeds.feedburner.com/thr/reviews/tv</Feed>
     <Feed Name="Entertainment Weekly" IconUrl="http://weave.blob.core.windows.net/icons/Entertainment Weekly.ico">http://feeds.ew.com/entertainmentweekly/tvwatch</Feed>
     <Feed Name="Warming Glow" IconUrl="http://weave.blob.core.windows.net/icons/Warming Glow.png">http://warmingglow.uproxx.com/feed</Feed>
     <Feed Name="TV Guide" IconUrl="http://weave.blob.core.windows.net/icons/TV Guide.jpg">http://rss.tvguide.com/breakingnews</Feed>
