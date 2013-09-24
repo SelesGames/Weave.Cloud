@@ -21,6 +21,7 @@ namespace Weave.RssAggregator.Core.DTOs.Outgoing
         [ProtoMember(6)] public string LastModified { get; set; }  //optional
         [ProtoMember(7)] public List<NewsItem> News { get; set; }
         [ProtoMember(8)] public bool FromCache { get; set; }
+        [ProtoMember(9)] public string IconUri { get; set; }
 
         public override string ToString()
         {

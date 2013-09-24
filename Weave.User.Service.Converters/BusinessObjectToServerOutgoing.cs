@@ -55,6 +55,7 @@ namespace Weave.User.Service.Converters
                 Id = o.Id,
                 Uri = o.Uri,
                 Name = o.Name,
+                IconUri = o.IconUri,
                 Category = o.Category,
                 ArticleViewingType = (Weave.User.Service.DTOs.ArticleViewingType)o.ArticleViewingType,
                 TotalArticleCount = o.News == null ? 0 : o.News.Count,

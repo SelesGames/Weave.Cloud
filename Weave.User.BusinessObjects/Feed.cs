@@ -21,6 +21,7 @@ namespace Weave.User.BusinessObjects
         public Guid Id { get; set; }
         public string Uri { get; set; }
         public string Name { get; set; }
+        public string IconUri { get; set; }
         public string Category { get; set; }
         public string Etag { get; set; }
         public string LastModified { get; set; }
@@ -104,6 +105,7 @@ namespace Weave.User.BusinessObjects
                 AddNews(update.News);
                 //RecalculateNewsHash();
 
+                IconUri = update.IconUri;
                 Etag = update.Etag;
                 LastModified = update.LastModified;
                 MostRecentNewsItemPubDate = update.MostRecentNewsItemPubDate;

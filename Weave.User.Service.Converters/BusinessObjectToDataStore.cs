@@ -32,6 +32,7 @@ namespace Weave.User.Service.Converters
                 Id = o.Id,
                 FeedUri = o.Uri,
                 FeedName = o.Name,
+                IconUri = o.IconUri,
                 Category = o.Category,
                 Etag = o.Etag,
                 LastModified = o.LastModified,
