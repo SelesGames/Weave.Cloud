@@ -131,7 +131,7 @@
     <Feed Name="Destructoid" IconUrl="http://weave.blob.core.windows.net/icons/Destructoid.ico">http://feeds.feedburner.com/Destructoid</Feed>
     <Feed Name="EDGE" IconUrl="http://weave.blob.core.windows.net/icons/EDGE.png">http://www.edge-online.com/feed</Feed>
     <Feed Name="Eurogamer.net" IconUrl="http://weave.blob.core.windows.net/icons/Eurogamer.net.png">http://www.eurogamer.net/?format=rss</Feed>
-    <Feed Name="G4" IconUrl="http://weave.blob.core.windows.net/icons/G4.png">http://g4tv.com/rss/news/all</Feed>
+    <!--Feed Name="G4" IconUrl="http://weave.blob.core.windows.net/icons/G4.png">http://g4tv.com/rss/news/all</Feed-->
     <Feed Name="Gamasutra">http://feeds.feedburner.com/GamasutraNews</Feed>
     <Feed Name="Game Informer">http://www.gameinformer.com:80/feeds/thefeedrss.aspx</Feed>
     <Feed Name="gamesTM">http://www.gamestm.co.uk/feed</Feed>
