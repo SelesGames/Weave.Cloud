@@ -326,7 +326,7 @@
     <Feed Name="Mobility Digest">http://mobilitydigest.com/category/windowsphone/feed</Feed>
     <Feed Name="PhoneArena" ViewType="ie">http://www.phonearena.com/feed/windows/news</Feed>
     <Feed Name="Pocket-lint" IconUrl="http://weave.blob.core.windows.net/icons/Pocket-lint.png">http://www.pocket-lint.com/rss.phtml?type=news&amp;channels=windows+phone+7</Feed>
-    <Feed Name="Seles Games Twitter Feed" ViewType="ie">http://twitter.com/statuses/user_timeline/168187863.rss</Feed>
+    <!--Feed Name="Seles Games Twitter Feed" ViewType="ie">http://twitter.com/statuses/user_timeline/168187863.rss</Feed-->
     <Feed Name="Windows Phone Metro" ViewType="ie">http://windowsphonemetro.com/feed/</Feed>
     <Feed Name="Windows Team Blog" IconUrl="http://weave.blob.core.windows.net/icons/Windows Team Blog.ico">http://windowsteamblog.com/windows_phone/rss.aspx</Feed>
     <Feed Name="WMPoweruser.com" IconUrl="http://weave.blob.core.windows.net/icons/WMPoweruser.com.ico">http://feeds.feedburner.com/WmPowerUser</Feed>
