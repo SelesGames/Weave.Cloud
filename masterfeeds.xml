@@ -43,8 +43,8 @@
     <Feed Name="FPSRussia" ViewType="ie" IconUrl="http://weave.blob.core.windows.net/icons/FPSRussia.ico">http://gdata.youtube.com/feeds/base/users/FPSRussia/uploads?alt=rss</Feed>
     <Feed Name="Household Hacker" ViewType="ie" IconUrl="http://weave.blob.core.windows.net/icons/Household Hacker.ico">http://gdata.youtube.com/feeds/base/users/HouseholdHacker/uploads?alt=rss</Feed>
     <Feed Name="The Lonely Island" ViewType="ie" IconUrl="http://weave.blob.core.windows.net/icons/The Lonely Island.ico">http://gdata.youtube.com/feeds/base/users/thelonelyisland/uploads?alt=rss</Feed>
-    <Feed Name="The Verge | YouTube" ViewType="ie">http://gdata.youtube.com/feeds/base/users/theverge/uploads?alt=rss</Feed>
-    <Feed Name="WPCentral | YouTube" ViewType="ie">http://gdata.youtube.com/feeds/base/users/wmexperts/uploads?alt=rss</Feed>
+    <Feed Name="The Verge YouTube" ViewType="ie">http://gdata.youtube.com/feeds/base/users/theverge/uploads?alt=rss</Feed>
+    <Feed Name="WPCentral YouTube" ViewType="ie">http://gdata.youtube.com/feeds/base/users/wmexperts/uploads?alt=rss</Feed>
   </Category>
   
   
@@ -64,7 +64,6 @@
 
 
   <Category Type="Celebrity Gossip">
-    <Feed Name="X17 Online">http://x17online.com/index.xml</Feed>
     <Feed Name="In Touch Weekly" ViewType="ie" IconUrl="http://weave.blob.core.windows.net/icons/In Touch Weekly.png">http://feeds.feedburner.com/intouchweekly</Feed>
     <Feed Name="Hollybaby">http://www.hollybaby.com/feed/</Feed>
     <Feed Name="PopSugar" IconUrl="http://weave.blob.core.windows.net/icons/Popsugar.jpg">http://feeds.feedburner.com/popsugar</Feed>
@@ -72,6 +71,7 @@
     <Feed Name="The Superficial" IconUrl="http://weave.blob.core.windows.net/icons/The Superficial.ico">http://www.thesuperficial.com/feed</Feed>
     <Feed Name="TMZ" IconUrl="http://weave.blob.core.windows.net/icons/TMZ.jpg">http://www.tmz.com/rss.xml</Feed>
     <Feed Name="What Would Tyler Durden Do">http://feeds2.feedburner.com/wwtdd/atom</Feed>
+    <Feed Name="X17 Online">http://x17online.com/index.xml</Feed>
   </Category>
 
 
@@ -220,8 +220,8 @@
     <Feed Name="Coding Horror" IconUrl="http://weave.blob.core.windows.net/icons/Coding Horror.png">http://feeds.feedburner.com/codinghorror</Feed>
     <Feed Name="Girl Developer">http://girldeveloper.typepad.com/blog/rss.xml</Feed>
     <Feed Name="Riagenic">http://www.riagenic.com/feed</Feed>
-    <Feed Name="Scott Hanselman">http://feeds.feedburner.com/ScottHanselman</Feed>
     <Feed Name="Scott Guthrie">http://weblogs.asp.net/scottgu/rss.aspx</Feed>
+    <Feed Name="Scott Hanselman">http://feeds.feedburner.com/ScottHanselman</Feed>
     <Feed Name="The Daily WTF" IconUrl="http://weave.blob.core.windows.net/icons/The Daily WTF.ico">http://syndication.thedailywtf.com/TheDailyWtf</Feed>
   </Category>
 
@@ -234,7 +234,7 @@
     <Feed Name="io9" IconUrl="http://weave.blob.core.windows.net/icons/io9.jpg">http://feeds.gawker.com/io9/vip</Feed>
     <Feed Name="KQED Quest" IconUrl="http://weave.blob.core.windows.net/icons/KQED Quest.jpg">http://www.kqed.org/quest/blog/feed/</Feed>
     <Feed Name="NASA Watch" IconUrl="http://weave.blob.core.windows.net/icons/NASA Watch.png">http://feeds.feedburner.com/nasawatch/Aekt</Feed>
-    <Feed Name="NBC News: Science">http://rss.msnbc.msn.com/id/3032117/device/rss/for/mobile</Feed>
+    <Feed Name="NBC News Science">http://rss.msnbc.msn.com/id/3032117/device/rss/for/mobile</Feed>
     <Feed Name="Popular Science" IconUrl="http://weave.blob.core.windows.net/icons/Popular Science.jpg">http://www.popsci.com/rss.xml</Feed>
     <Feed Name="Scientific American" IconUrl="http://weave.blob.core.windows.net/icons/Scientific American.jpg">http://rss.sciam.com/ScientificAmerican-Global</Feed>
     <Feed Name="Smithsonian Science" IconUrl="http://weave.blob.core.windows.net/icons/Smithsonian Science.jpg">http://smithsonianscience.org/feed/</Feed>
@@ -316,10 +316,10 @@
 
 
   <Category Type="Windows Phone">
-    <Feed Name="All Things Digital | WP">http://mobilized.allthingsd.com/tag/windows-phone-7/feed/</Feed>
+    <Feed Name="All Things Digital | WP" IconUrl="http://weave.blob.core.windows.net/icons/AllThingsD-WP.png">http://mobilized.allthingsd.com/tag/windows-phone-7/feed/</Feed>
     <Feed Name="1800PocketPc">http://feeds.feedburner.com/RSS_1800PocketPC</Feed>
     <Feed Name="Best WP7 Games">http://feeds.feedburner.com/bestwp7games</Feed>
-    <Feed Name="BGR | WP">http://www.bgr.com/tag/windows-phone/feed</Feed>
+    <Feed Name="BGR | WP" IconUrl="http://weave.blob.core.windows.net/icons/BGR-WP.png">http://www.bgr.com/tag/windows-phone/feed</Feed>
     <Feed Name="Engadget | WP">http://www.engadget.com/tag/windowsphone/rss.xml</Feed>
     <Feed Name="EverythingWM" IconUrl="http://weave.blob.core.windows.net/icons/EverythingWM.png">http://feeds.feedburner.com/everythingwm</Feed>
     <Feed Name="MobileTechWorld" IconUrl="http://weave.blob.core.windows.net/icons/MobileTechWorld.ico">http://feeds.feedburner.com/mobiletechworld/</Feed>
