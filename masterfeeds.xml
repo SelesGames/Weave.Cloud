@@ -320,7 +320,7 @@
     <Feed Name="1800PocketPc">http://feeds.feedburner.com/RSS_1800PocketPC</Feed>
     <Feed Name="Best WP7 Games">http://feeds.feedburner.com/bestwp7games</Feed>
     <Feed Name="BGR | WP" IconUrl="http://weave.blob.core.windows.net/icons/BGR-WP.png">http://www.bgr.com/tag/windows-phone/feed</Feed>
-    <Feed Name="Engadget | WP">http://www.engadget.com/tag/windowsphone/rss.xml</Feed>
+    <Feed Name="Engadget | WP" IconUrl="http://weave.blob.core.windows.net/icons/Engadget-WP.png">http://www.engadget.com/tag/windowsphone/rss.xml</Feed>
     <Feed Name="EverythingWM" IconUrl="http://weave.blob.core.windows.net/icons/EverythingWM.png">http://feeds.feedburner.com/everythingwm</Feed>
     <Feed Name="MobileTechWorld" IconUrl="http://weave.blob.core.windows.net/icons/MobileTechWorld.ico">http://feeds.feedburner.com/mobiletechworld/</Feed>
     <Feed Name="Mobility Digest">http://mobilitydigest.com/category/windowsphone/feed</Feed>
