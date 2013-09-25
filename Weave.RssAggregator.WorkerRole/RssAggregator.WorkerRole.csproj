@@ -75,6 +75,10 @@
       <Project>{be97f564-16f5-4d09-9218-cc65e89df2ac}</Project>
       <Name>Ninject.WebApi</Name>
     </ProjectReference>
+    <ProjectReference Include="..\RssAggregator.IconCaching\RssAggregator.IconCaching.csproj">
+      <Project>{5eaf7a94-ddee-482b-874b-f5d509264b14}</Project>
+      <Name>RssAggregator.IconCaching</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RssAggregator.LowFrequency\RssAggregator.LowFrequency.csproj">
       <Project>{bdf7d1ee-a9f2-4971-9ebf-b711d6c4b857}</Project>
       <Name>RssAggregator.LowFrequency</Name>
