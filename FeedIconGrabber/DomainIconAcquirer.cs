@@ -41,53 +41,7 @@ namespace FeedIconGrabber
 
 
 
-
-
         #region Private Helper functions for grabbing the different favicons
-
-        //async Task<IEnumerable<LinkScore>> GetIcons()
-        //{
-        //    List<LinkScore> scores = new List<LinkScore>();
-
-        //    var linkScore = await GetLinkFromHtml("apple-touch-icon", 5);
-        //    if (linkScore != null)
-        //        scores.Add(linkScore);
-
-        //    linkScore = await GetLinkFromHtml("apple-touch-icon-precomposed", 4);
-        //    if (linkScore != null)
-        //        scores.Add(linkScore);
-
-        //    linkScore = await GetLinkFromHtml("shortcut icon", 3);
-        //    if (linkScore != null)
-        //        scores.Add(linkScore);
-
-        //    linkScore = await GetLinkFromHtml("icon", 2);
-        //    if (linkScore != null)
-        //        scores.Add(linkScore);
-
-        //    return scores;
-        //}
-
-        //readonly string LINK_SEARCH_TEMPLATE = "/html/head/link[@rel='{0}' and @href]";
-
-        //async Task<LinkScore> GetLinkFromHtml(string iconType, int score)
-        //{
-        //    var search = string.Format(LINK_SEARCH_TEMPLATE, iconType);
-
-        //    var linkNode = root.SelectSingleNode(search);
-        //    if (linkNode != null)
-        //    {
-        //        var link = GetLink(linkNode.Attributes["href"].Value);
-        //        if (link != null)
-        //        {
-        //            var linkIsValid = await TestLinkValidity(link);
-        //            if (linkIsValid)
-        //                return new LinkScore(link, score, linkNode.OuterHtml);
-        //        }
-        //    }
-
-        //    return null;
-        //}
 
         async Task<IEnumerable<LinkScore>> GetIcons()
         {
@@ -141,6 +95,10 @@ namespace FeedIconGrabber
                 scores.Add(linkScore);
 
             linkScore = await GetLinkFromRootDirectory("apple-touch-icon-152x152.png", 5);
+            if (linkScore != null)
+                scores.Add(linkScore);
+
+            linkScore = await GetLinkFromRootDirectory("favicon.ico", 1);
             if (linkScore != null)
                 scores.Add(linkScore);
 
