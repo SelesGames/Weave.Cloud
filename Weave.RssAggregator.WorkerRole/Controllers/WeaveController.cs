@@ -13,11 +13,13 @@ namespace Weave.RssAggregator.WorkerRole.Controllers
 {
     public class WeaveController : ApiController
     {
-        readonly FeedCache cache;
+        readonly FeedCache feedCache;
+        readonly IconUrlCache iconCache;
 
-        public WeaveController(FeedCache cache)
+        public WeaveController(FeedCache cache, IconUrlCache iconCache)
         {
-            this.cache = cache;
+            this.feedCache = cache;
+            this.iconCache = iconCache;
         }
 
         [HttpGet]
@@ -49,9 +51,9 @@ namespace Weave.RssAggregator.WorkerRole.Controllers
         {
             FeedResult result = null;
 
-            if (cache.ContainsValid(feedRequest.Url))
+            if (feedCache.ContainsValid(feedRequest.Url))
             {
-                result = cache.ToFeedResult(feedRequest);
+                result = feedCache.ToFeedResult(feedRequest);
             }
             else
             {
@@ -64,6 +66,9 @@ namespace Weave.RssAggregator.WorkerRole.Controllers
                 foreach (var newsItem in result.News)
                     newsItem.Description = null;
             }
+
+            var iconUrl = await iconCache.Get(feedRequest.Url);
+            result.IconUri = iconUrl;
             return result;
         }
 
