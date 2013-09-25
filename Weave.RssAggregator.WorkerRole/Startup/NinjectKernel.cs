@@ -3,6 +3,7 @@ using Common.Data;
 using Common.Data.Linq;
 using Microsoft.WindowsAzure.ServiceRuntime;
 using Ninject;
+using RssAggregator.IconCaching;
 using SelesGames.Common;
 using SelesGames.Common.Hashing;
 using System;
@@ -59,6 +60,8 @@ namespace Weave.RssAggregator.WorkerRole.Startup
             });
 
             Bind<SqlStoredProcClient>().ToMethod(_ => new SqlStoredProcClient(connectionString));
+
+            Bind<IconUrlCache>().ToSelf().InSingletonScope();
         }
     }
 }

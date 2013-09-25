@@ -99,7 +99,7 @@
     <Feed Name="dealspl.us" ViewType="ie" IconUrl="http://weave.blob.core.windows.net/icons/dealspl.us.png">http://feeds.feedburner.com/dealsplus</Feed>
     <Feed Name="Amazon Gold Box" ViewType="ie" IconUrl="http://weave.blob.core.windows.net/icons/Amazon Gold Box.png">http://rssfeeds.s3.amazonaws.com/goldbox</Feed>
     <Feed Name="Daily DVD Deals" ViewType="ie" IconUrl="http://weave.blob.core.windows.net/icons/Daily DVD Deals.png">http://feeds.feedburner.com/DailyDvdDeals</Feed>
-    <Feed Name="Daily Game Deals" ViewType="ie">http://feeds.feedburner.com/DailyGameDeals</Feed>
+    <Feed Name="Daily Game Deals" ViewType="ie" IconUrl="http://weave.blob.core.windows.net/icons/Daily DVD Deals.png">http://feeds.feedburner.com/DailyGameDeals</Feed>
   </Category>
 
 
@@ -329,8 +329,8 @@
     <Feed Name="Pocket-lint" IconUrl="http://weave.blob.core.windows.net/icons/Pocket-lint.png">http://www.pocket-lint.com/rss.phtml?type=news&amp;channels=windows+phone+7</Feed>
     <!--Feed Name="Seles Games Twitter Feed" ViewType="ie">http://twitter.com/statuses/user_timeline/168187863.rss</Feed-->
     <!--Feed Name="Windows Phone Metro" ViewType="ie">http://windowsphonemetro.com/feed/</Feed-->
-    <Feed Name="Windows Team Blog" IconUrl="http://weave.blob.core.windows.net/icons/Windows Team Blog.ico">http://windowsteamblog.com/windows_phone/rss.aspx</Feed>
-    <Feed Name="WMPoweruser.com" IconUrl="http://weave.blob.core.windows.net/icons/WMPoweruser.com.ico">http://feeds.feedburner.com/WmPowerUser</Feed>
+    <Feed Name="Windows Team Blog" IconUrl="http://weave.blob.core.windows.net/icons/Windows Team Blog.png">http://windowsteamblog.com/windows_phone/rss.aspx</Feed>
+    <Feed Name="WMPoweruser.com" IconUrl="http://weave.blob.core.windows.net/icons/WMPowerUser.png">http://feeds.feedburner.com/WmPowerUser</Feed>
     <Feed Name="WPCentral.com" IconUrl="http://weave.blob.core.windows.net/icons/WPCentral.png">http://feeds.feedburner.com/wmexperts?format=xml</Feed>
     <Feed Name="ZDNet" IconUrl="http://weave.blob.core.windows.net/icons/ZDNet.png">http://www.zdnet.com/topics/microsoft+windows+phone+7?o=1&amp;mode=rss&amp;tag=mantle_skin;content</Feed>
   </Category>

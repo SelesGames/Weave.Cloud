@@ -1,27 +1,25 @@
-﻿using Common.Azure;
-using Common.Azure.SmartBlobClient;
-using Common.Caching;
+﻿using Common.Caching;
 using FeedIconGrabber;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace RssAggregator.IconCaching
 {
     public class IconUrlCache : IBasicCache<string, Task<string>>
     {
+        string FALLBACK = "http://weave.blob.core.windows.net/icons/000.fallback.rss.jpg";
+
         Dictionary<string, string> hfFeedIconCache;
 
         public Task<string> Get(string key)
         {
-            if (hfFeedIconCache.ContainsKey(key))
-            {
-                return Task.FromResult(hfFeedIconCache[key]);
-            }
+            return Task.FromResult(FALLBACK);
+            //if (hfFeedIconCache.ContainsKey(key))
+            //{
+            //    return Task.FromResult(hfFeedIconCache[key]);
+            //}
 
-            else return null;
+            //else return null;
         }
 
         async Task<string> GetDynamically(string key)

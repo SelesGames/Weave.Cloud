@@ -82,6 +82,10 @@
       <Project>{84165f70-4beb-46e2-a122-01ada235950f}</Project>
       <Name>Common.Azure.ServiceBus</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Common.Caching\Common.Caching.csproj">
+      <Project>{c83ab657-c7a6-4cf8-b4f5-d4e01bf2e562}</Project>
+      <Name>Common.Caching</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common.Data.Linq\Common.Data.Linq.csproj">
       <Project>{F741017D-FD83-4F35-98A4-57AF366C1B53}</Project>
       <Name>Common.Data.Linq</Name>
@@ -93,6 +97,10 @@
     <ProjectReference Include="..\FeedIconGrabber\FeedIconGrabber.csproj">
       <Project>{374669da-dabc-48a0-b7b8-599d26be0156}</Project>
       <Name>FeedIconGrabber</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RssAggregator.IconCaching\RssAggregator.IconCaching.csproj">
+      <Project>{5eaf7a94-ddee-482b-874b-f5d509264b14}</Project>
+      <Name>RssAggregator.IconCaching</Name>
     </ProjectReference>
     <ProjectReference Include="..\RssAggregator.LibraryClient\RssAggregator.LibraryClient.csproj">
       <Project>{2db284eb-5b81-425a-957e-77eeb704ebdc}</Project>
