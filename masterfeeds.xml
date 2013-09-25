@@ -198,7 +198,7 @@
     <Feed Name="538" IconUrl="http://weave.blob.core.windows.net/icons/538.png">http://feeds.feedburner.com/538dotcom</Feed>
     <Feed Name="Breitbart" IconUrl="http://weave.blob.core.windows.net/icons/Breitbart.png">http://feeds.feedburner.com/BreitbartFeed</Feed>
     <Feed Name="BuzzFeed" IconUrl="http://weave.blob.core.windows.net/icons/BuzzFeed.png">http://www.buzzfeed.com/politics.xml</Feed>
-    <Feed Name="CNN" IconUrl="http://weave.blob.core.windows.net/icons/CNN Money.jpg">http://rss.cnn.com/rss/cnn_allpolitics.rss</Feed>
+    <Feed Name="CNN" IconUrl="http://weave.blob.core.windows.net/icons/CNN.jpg">http://rss.cnn.com/rss/cnn_allpolitics.rss</Feed>
     <Feed Name="Crooks and Liars" IconUrl="http://weave.blob.core.windows.net/icons/Crooks and Liars.jpg">http://feeds.feedburner.com/crooksandliars/YaCP</Feed>
     <Feed Name="FOX News" IconUrl="http://weave.blob.core.windows.net/icons/Fox News.jpg">http://feeds.foxnews.com/foxnews/politics</Feed>
     <Feed Name="Hot Air" IconUrl="http://weave.blob.core.windows.net/icons/Hot Air.jpg">http://feeds.feedburner.com/hotair/main</Feed>
@@ -294,7 +294,7 @@
     <Feed Name="The Hollywood Reporter" IconUrl="http://weave.blob.core.windows.net/icons/The Hollywood Reporter.jpg">http://feeds.feedburner.com/thr/television</Feed>
     <Feed Name="USA Today" IconUrl="http://weave.blob.core.windows.net/icons/USA Today.jpg">http://rssfeeds.usatoday.com/UsatodaycomTelevision-TopStories</Feed>
     <Feed Name="Hitfix.com" IconUrl="http://weave.blob.core.windows.net/icons/HitFix.jpg" ViewType="ie">http://www.hitfix.com/tv.rss</Feed>
-    <Feed Name="The Ausiello Files" IconUrl="http://weave.blob.core.windows.net/icons/Entertainment Weekly.png">http://feeds.ew.com/entertainmentweekly/ausiellofiles</Feed>
+    <Feed Name="The Ausiello Files" IconUrl="http://weave.blob.core.windows.net/icons/The Ausiello Files.ico">http://feeds.ew.com/entertainmentweekly/ausiellofiles</Feed>
     <Feed Name="Ken Tucker's TV" IconUrl="http://weave.blob.core.windows.net/icons/Ken Tucker's TV.png">http://feeds.ew.com/entertainmentweekly/watching-tv</Feed>
     <Feed Name="The Hollywood Reporter | TV Reviews" IconUrl="http://weave.blob.core.windows.net/icons/The Hollywood Reporter.jpg">http://feeds.feedburner.com/thr/reviews/tv</Feed>
     <Feed Name="Entertainment Weekly" IconUrl="http://weave.blob.core.windows.net/icons/Entertainment Weekly.png">http://feeds.ew.com/entertainmentweekly/tvwatch</Feed>
@@ -304,7 +304,7 @@
   
 
   <Category Type="U.S. News">
-    <Feed Name="CNN" IconUrl="http://weave.blob.core.windows.net/icons/CNN Money.jpg">http://rss.cnn.com/rss/cnn_us.rss</Feed>
+    <Feed Name="CNN" IconUrl="http://weave.blob.core.windows.net/icons/CNN.jpg">http://rss.cnn.com/rss/cnn_us.rss</Feed>
     <Feed Name="L.A. Times" IconUrl="http://weave.blob.core.windows.net/icons/L.A. Times.jpg">http://feeds.latimes.com/latimes/news/nationworld/nation</Feed>
     <Feed Name="MSNBC" ViewType="ie" IconUrl="http://weave.blob.core.windows.net/icons/MSNBC.png">http://rss.msnbc.msn.com/id/3032524/device/rss/rss.xml</Feed>
     <Feed Name="The Atlantic Wire" IconUrl="http://weave.blob.core.windows.net/icons/The Atlantic Wire.jpg">http://feeds.feedburner.com/TheAtlanticWire</Feed>
@@ -337,7 +337,7 @@
   
   <Category Type="World News">
     <Feed Name="Chicago Tribune" IconUrl="http://weave.blob.core.windows.net/icons/Chicago Tribune.png">http://feeds.chicagotribune.com/chicagotribune/news/nationworld/</Feed>
-    <Feed Name="CNN" IconUrl="http://weave.blob.core.windows.net/icons/CNN Money.jpg">http://rss.cnn.com/rss/cnn_world.rss</Feed>
+    <Feed Name="CNN" IconUrl="http://weave.blob.core.windows.net/icons/CNN.jpg">http://rss.cnn.com/rss/cnn_world.rss</Feed>
     <Feed Name="Huffington Post" IconUrl="http://weave.blob.core.windows.net/icons/Huffington Post.jpg">http://www.huffingtonpost.com/feeds/android/World_pulse.xml</Feed>
     <Feed Name="L.A. Times" IconUrl="http://weave.blob.core.windows.net/icons/L.A. Times.jpg">http://feeds.latimes.com/latimes/news/nationworld/world</Feed>
     <Feed Name="MSNBC" IconUrl="http://weave.blob.core.windows.net/icons/MSNBC.png">http://rss.msnbc.msn.com/id/3032506/device/rss/rss.xml</Feed>
