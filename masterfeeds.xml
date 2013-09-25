@@ -322,12 +322,13 @@
     <Feed Name="BGR | WP" IconUrl="http://weave.blob.core.windows.net/icons/BGR-WP.png">http://www.bgr.com/tag/windows-phone/feed</Feed>
     <Feed Name="Engadget | WP" IconUrl="http://weave.blob.core.windows.net/icons/Engadget-WP.png">http://www.engadget.com/tag/windowsphone/rss.xml</Feed>
     <Feed Name="EverythingWM" IconUrl="http://weave.blob.core.windows.net/icons/EverythingWM.png">http://feeds.feedburner.com/everythingwm</Feed>
-    <Feed Name="MobileTechWorld" IconUrl="http://weave.blob.core.windows.net/icons/MobileTechWorld.ico">http://feeds.feedburner.com/mobiletechworld/</Feed>
+    <!--Feed Name="MobileTechWorld" IconUrl="http://weave.blob.core.windows.net/icons/MobileTechWorld.ico">http://feeds.feedburner.com/mobiletechworld/</Feed-->
     <Feed Name="Mobility Digest" IconUrl="http://weave.blob.core.windows.net/icons/Mobility Digest.png">http://mobilitydigest.com/category/windowsphone/feed</Feed>
+    <Feed Name="Nokia Conversations">http://feeds.feedburner.com/NokiaConversations-Posts</Feed>
     <Feed Name="PhoneArena" ViewType="ie" IconUrl="http://weave.blob.core.windows.net/icons/PhoneArena.png">http://www.phonearena.com/feed/windows/news</Feed>
     <Feed Name="Pocket-lint" IconUrl="http://weave.blob.core.windows.net/icons/Pocket-lint.png">http://www.pocket-lint.com/rss.phtml?type=news&amp;channels=windows+phone+7</Feed>
     <!--Feed Name="Seles Games Twitter Feed" ViewType="ie">http://twitter.com/statuses/user_timeline/168187863.rss</Feed-->
-    <Feed Name="Windows Phone Metro" ViewType="ie">http://windowsphonemetro.com/feed/</Feed>
+    <!--Feed Name="Windows Phone Metro" ViewType="ie">http://windowsphonemetro.com/feed/</Feed-->
     <Feed Name="Windows Team Blog" IconUrl="http://weave.blob.core.windows.net/icons/Windows Team Blog.ico">http://windowsteamblog.com/windows_phone/rss.aspx</Feed>
     <Feed Name="WMPoweruser.com" IconUrl="http://weave.blob.core.windows.net/icons/WMPoweruser.com.ico">http://feeds.feedburner.com/WmPowerUser</Feed>
     <Feed Name="WPCentral.com" IconUrl="http://weave.blob.core.windows.net/icons/WPCentral.png">http://feeds.feedburner.com/wmexperts?format=xml</Feed>
@@ -399,6 +400,7 @@
   </Category-->
 
   <Category Type="Cars">
+    <Feed Name="/DRIVE" IconUrl="http://weave.blob.core.windows.net/icons/Drive.png">http://slashdrive.tv/rss</Feed>
     <Feed Name="Car and Driver" IconUrl="http://weave.blob.core.windows.net/icons/Car and Driver.jpg">http://feeds.feedburner.com/caranddriver/blog</Feed>
     <Feed Name="Jalopnik" IconUrl="http://weave.blob.core.windows.net/icons/Jalopnik.png">http://feeds.gawker.com/jalopnik/vip</Feed>
   </Category>
