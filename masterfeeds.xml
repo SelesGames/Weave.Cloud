@@ -261,7 +261,7 @@
     <Feed Name="Betanews" IconUrl="http://weave.blob.core.windows.net/icons/Betanews.png">http://feeds.betanews.com/bn</Feed>
     <Feed Name="Boing Boing" IconUrl="http://weave.blob.core.windows.net/icons/Boing Boing.png">http://feeds.boingboing.net/boingboing/iBag</Feed>
     <Feed Name="Boy Genius Report" IconUrl="http://weave.blob.core.windows.net/icons/Boy Genius Report (2).jpg">http://www.bgr.com/feed/</Feed>
-    <Feed Name="CenterNetworks" IconUrl="http://weave.blob.core.windows.net/icons/CenterNetworks.png">http://feeds.feedburner.com/Centernetworks</Feed>
+    <!--Feed Name="CenterNetworks" IconUrl="http://weave.blob.core.windows.net/icons/CenterNetworks.png">http://feeds.feedburner.com/Centernetworks</Feed-->
     <Feed Name="CNET" IconUrl="http://weave.blob.core.windows.net/icons/CNET.jpg">http://feeds.feedburner.com/cnet/NnTv?tag=contentBody.1</Feed>
     <Feed Name="CrunchGear" IconUrl="http://weave.blob.core.windows.net/icons/CrunchGear.png">http://feeds.feedburner.com/CrunchGear</Feed>
     <Feed Name="Digital Daily" IconUrl="http://weave.blob.core.windows.net/icons/Digital Daily.png">http://digitaldaily.allthingsd.com/feed/</Feed>
