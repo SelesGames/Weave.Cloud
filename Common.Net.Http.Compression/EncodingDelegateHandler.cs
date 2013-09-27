@@ -14,9 +14,6 @@ namespace Common.Net.Http.Compression
             {
                 HttpResponseMessage response = responseToCompleteTask.Result;
 
-                //if (response.IsSuccessStatusCode && response.Content != null)
-                //{
-                    //if (response.RequestMessage != null && response.RequestMessage.Headers != null)
                 if (response.HasEncodeableContent())
                 {
                     var acceptEncoding = response.RequestMessage.Headers.AcceptEncoding;
@@ -31,7 +28,6 @@ namespace Common.Net.Http.Compression
                         }
                     }
                 }
-                //}
 
                 return response;
             },

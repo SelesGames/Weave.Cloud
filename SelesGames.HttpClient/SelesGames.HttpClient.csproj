@@ -39,8 +39,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CompressionSettings.cs" />
+    <Compile Include="Extensions\HttpClientExtensions.cs" />
+    <Compile Include="HttpResourceListener.cs" />
     <Compile Include="ContentEncoderSettings.cs" />
-    <Compile Include="EnumerableEx.cs" />
+    <Compile Include="Helpers\EnumerableEx.cs" />
+    <Compile Include="Extensions\HttpResponseMessageExtensions.cs" />
     <Compile Include="SmartHttpClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UriBuilderExtensions.cs" />
