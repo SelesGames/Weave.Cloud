@@ -1,7 +1,7 @@
 ﻿using Common.Net.Http.Compression;
 using Common.TimeFormatting;
 using SelesGames.Common.Hashing;
-using SelesGames.WebApi.Extensions;
+using SelesGames.HttpClient;
 using System;
 using System.Collections.Generic;
 using System.IO;

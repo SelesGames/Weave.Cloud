@@ -1,7 +1,12 @@
-﻿using System;
+﻿using SelesGames.HttpClient;
+using SelesGames.HttpClient.Extensions;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -10,7 +15,6 @@ namespace Weave.RssAggregator.LibraryClient
     public class FeedLibraryClient
     {
         string libraryUrl;
-        ConditionalHttpClient<List<FeedSource>> client;
 
         public XElement Xml { get; private set; }
         public List<FeedSource> Feeds { get; private set; }
@@ -19,60 +23,43 @@ namespace Weave.RssAggregator.LibraryClient
         public FeedLibraryClient(string libraryUrl)
         {
             this.libraryUrl = libraryUrl;
-            client = new ConditionalHttpClient<List<FeedSource>>(libraryUrl, Parse);
-            //ListenForChanges();
         }
 
         public async Task LoadFeedsAsync()
         {
             if (Uri.IsWellFormedUriString(libraryUrl, UriKind.Absolute))
             {
-                if (client.LatestValue != null)
-                    Feeds = client.LatestValue;
-
-                else
+                var client = new SmartHttpClient();
+                using (var stream = await client.GetStreamAsync(libraryUrl))
                 {
-                    if (await client.CheckForUpdate())
-                        Feeds = client.LatestValue;
-                    else
-                        throw new Exception("unable to load feeds!");
+                    OnStreamRead(stream);
                 }
             }
             else
             {
                 var xdoc = XDocument.Load(libraryUrl, LoadOptions.PreserveWhitespace);
                 Xml = xdoc.Root;
-                Feeds = ParseXml();
+                ParseFeedsFromXml();
             }
         }
 
-        //void ListenForChanges()
-        //{
-        //    var poller = new WebResourcePoller<List<FeedSource>>(TimeSpan.FromSeconds(10), client);
-        //    poller.Subscribe(OnChange);
-        //}
-
-        //void OnChange(List<FeedSource> feeds)
-        //{
-        //    Feeds = feeds;
-        //    if (FeedsUpdated != null)
-        //        FeedsUpdated(this, EventArgs.Empty);
-        //}
+        public void ListenForChangesToFeeds()
+        {
+            CreateObservable()
+                .Select(o => o.Content.ReadAsStreamAsync().ToObservable())
+                .Merge()
+                .Subscribe(OnStreamRead);
+        }
 
 
 
 
         #region Load Feeds and Categories XML files
 
-        List<FeedSource> Parse(Stream stream)
+        void ParseFeedsFromXml()
         {
-            Xml = XElement.Load(stream, LoadOptions.PreserveWhitespace);
-            return ParseXml();
-        }
-
-        List<FeedSource> ParseXml()
-        {
-            return Xml.Descendants("Feed")
+            Feeds = Xml
+                .Descendants("Feed")
                 .Select(feed =>
                     new FeedSource
                     {
@@ -83,6 +70,9 @@ namespace Weave.RssAggregator.LibraryClient
                         Instructions = feed.Attribute("in").ValueOrDefault(),
                     })
                 .ToList();
+
+            if (FeedsUpdated != null)
+                FeedsUpdated(this, EventArgs.Empty);
         }
 
         ArticleViewingType ParseArticleViewingType(XElement feed)
@@ -110,6 +100,31 @@ namespace Weave.RssAggregator.LibraryClient
 
             else
                 return ArticleViewingType.Mobilizer;
+        }
+
+        #endregion
+
+
+
+
+        #region Auto-Detection of Changed Feeds
+
+        IObservable<HttpResponseMessage> CreateObservable()
+        {
+            var client = new SmartHttpClient();
+
+            return Observable.Create<HttpResponseMessage>(observer =>
+            {
+                return client.PollChangesToResource(libraryUrl, TimeSpan.FromMinutes(15), observer);
+            });
+        }
+
+        void OnStreamRead(Stream stream)
+        {
+            var xdoc = XDocument.Load(stream, LoadOptions.PreserveWhitespace);
+            Xml = xdoc.Root;
+
+            ParseFeedsFromXml();
         }
 
         #endregion
