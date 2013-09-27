@@ -68,8 +68,7 @@ namespace SelesGames.HttpClient
             var response = await GetAsync(url, cancellationToken).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
 
-            var result = await response.Content.ReadAsAsync<T>(formatters).ConfigureAwait(false);
-            return result;
+            return await ReadResponseContentAsync<T>(response).ConfigureAwait(false);
         }
 
         #endregion
@@ -89,12 +88,10 @@ namespace SelesGames.HttpClient
             return PostAsync(url, obj, CancellationToken.None);
         }
 
-
         public async Task<TResult> PostAsync<TPost, TResult>(string url, TPost obj, CancellationToken cancelToken)
         {
             var response = await PostAsync(url, obj, cancelToken);
-            var result = await response.Content.ReadAsAsync<TResult>(formatters).ConfigureAwait(false);
-            return result;
+            return await ReadResponseContentAsync<TResult>(response).ConfigureAwait(false);
         }
 
         public async Task<HttpResponseMessage> PostAsync<T>(string url, T obj, CancellationToken cancelToken)
@@ -107,6 +104,19 @@ namespace SelesGames.HttpClient
             var response = await base.PostAsync(url, content, cancelToken).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
             return response;
+        }
+
+        #endregion
+
+
+
+
+        #region Read Response.Content async public helper method
+
+        public async Task<T> ReadResponseContentAsync<T>(HttpResponseMessage response)
+        {
+            var result = await response.Content.ReadAsAsync<T>(formatters).ConfigureAwait(false);
+            return result;
         }
 
         #endregion
