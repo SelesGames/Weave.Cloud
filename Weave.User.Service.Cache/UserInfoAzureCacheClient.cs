@@ -53,7 +53,7 @@ namespace Weave.User.Service.Cache
             writeQueue.Add(user);
         }
 
-        public object SafeCacheGet(string key)
+        object SafeCacheGet(string key)
         {
             object result = null;
 
