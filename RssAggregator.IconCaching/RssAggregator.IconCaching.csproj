@@ -42,7 +42,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FeedUrlIconMapping.cs" />
     <Compile Include="HighFrequencyFeedIconUrlCache.cs" />
     <Compile Include="DynamicIconUrlCache.cs" />
     <Compile Include="IconUrlDataCache.cs" />

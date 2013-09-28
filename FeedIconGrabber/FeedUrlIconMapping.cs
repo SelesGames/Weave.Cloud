@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace RssAggregator.IconCaching
+namespace FeedIconGrabber
 {
     public class FeedUrlIconMappings : List<FeedUrlIconMapping>
     { }
