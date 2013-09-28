@@ -65,6 +65,7 @@ namespace Weave.RssAggregator.LibraryClient
                     {
                         Category = feed.Parent.Attribute("Type").ValueOrDefault(),
                         FeedName = feed.Attribute("Name").ValueOrDefault(),
+                        IconUrl = feed.Attribute("IconUrl").ValueOrDefault(),
                         FeedUri = feed.ValueOrDefault(),
                         ArticleViewingType = ParseArticleViewingType(feed),
                         Instructions = feed.Attribute("in").ValueOrDefault(),
