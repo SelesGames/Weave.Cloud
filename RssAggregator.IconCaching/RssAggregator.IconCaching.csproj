@@ -30,21 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.ApplicationServer.Caching.AzureClientHelper, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\Azure Cache Service\Microsoft.ApplicationServer.Caching.AzureClientHelper.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.ApplicationServer.Caching.AzureCommon, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\Azure Cache Service\Microsoft.ApplicationServer.Caching.AzureCommon.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.ApplicationServer.Caching.Client, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\Azure Cache Service\Microsoft.ApplicationServer.Caching.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.ApplicationServer.Caching.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\Azure Cache Service\Microsoft.ApplicationServer.Caching.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -66,10 +54,6 @@
       <Project>{b91ec96a-c4ea-4788-bc6c-dfa7f85bcb3a}</Project>
       <Name>Common.Azure.Caching</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Common.Azure\Common.Azure.csproj">
-      <Project>{6211d4f0-8390-4dfa-a1d2-ba4aa7c28348}</Project>
-      <Name>Common.Azure</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Common.Caching\Common.Caching.csproj">
       <Project>{c83ab657-c7a6-4cf8-b4f5-d4e01bf2e562}</Project>
       <Name>Common.Caching</Name>
@@ -81,10 +65,6 @@
     <ProjectReference Include="..\SelesGames.HttpClient\SelesGames.HttpClient.csproj">
       <Project>{bf0dc853-b353-4a92-b718-0a0ad067bfdf}</Project>
       <Name>SelesGames.HttpClient</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SelesGames.SmartBlobClient\Common.Azure.SmartBlobClient.csproj">
-      <Project>{d115cf60-990a-4138-8496-538a6ce74541}</Project>
-      <Name>Common.Azure.SmartBlobClient</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
