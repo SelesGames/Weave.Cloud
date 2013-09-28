@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace RssAggregator.IconCaching
 {
-    public class IconUrlDataCache : IExtendedCache<string, Task<string>>
+    public class IconUrlAzureDataCache : IExtendedCache<string, Task<string>>
     {
         readonly string CACHE_NAME = "iconurls";
 
         StandardAsyncDataCache<string> dataCache;
 
-        public IconUrlDataCache()
+        public IconUrlAzureDataCache()
         {
             var config = new DataCacheFactoryConfiguration();
             var cacheFactory = new DataCacheFactory(config);

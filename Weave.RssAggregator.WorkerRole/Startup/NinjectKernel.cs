@@ -1,4 +1,5 @@
 ﻿using Common.Azure.ServiceBus;
+using Common.Caching;
 using Common.Data;
 using Common.Data.Linq;
 using Microsoft.WindowsAzure.ServiceRuntime;
@@ -7,6 +8,7 @@ using RssAggregator.IconCaching;
 using SelesGames.Common;
 using SelesGames.Common.Hashing;
 using System;
+using System.Threading.Tasks;
 
 namespace Weave.RssAggregator.WorkerRole.Startup
 {
@@ -61,7 +63,20 @@ namespace Weave.RssAggregator.WorkerRole.Startup
 
             Bind<SqlStoredProcClient>().ToMethod(_ => new SqlStoredProcClient(connectionString));
 
-            Bind<NLevelIconUrlCache>().ToSelf().InSingletonScope();
+
+            var hfCache = new HighFrequencyFeedIconUrlCache();
+            hfCache.BeginListeningToResourceChanges();
+
+            var caches = new IExtendedCache<string, Task<string>>[] 
+            {
+                hfCache,
+                new IconUrlAzureDataCache(),
+                new DynamicIconUrlCache()
+            };
+
+            var nLevelCache = new NLevelIconUrlCache(caches);
+
+            Bind<NLevelIconUrlCache>().ToConstant(nLevelCache).InSingletonScope();
         }
     }
 }

@@ -15,17 +15,15 @@ namespace RssAggregator.IconCaching
         IExtendedCache<string, Task<string>>,
         IDisposable
     {
-        readonly string MAPPING_DEF_URL = "http://weave";
+        readonly string MAPPING_DEF_URL = "http://weave.blob.core.windows.net/settings/iconMap.json";
 
         bool isCacheLoaded = false;
-        string feedUrl;
         Dictionary<string, string> feedIconLookup;
         IDisposable listenerHandle;
         SmartHttpClient client;
 
-        public HighFrequencyFeedIconUrlCache(string feedUrl)
+        public HighFrequencyFeedIconUrlCache()
         {
-            this.feedUrl = feedUrl;
             client = new SmartHttpClient();
         }
 
@@ -73,11 +71,31 @@ namespace RssAggregator.IconCaching
 
 
 
-        #region IBasicCache<string, Task<string>>
+        #region IExtendedCache<string, Task<string>>
 
-        public Task<string> GetOrAdd(string key, Func<string, Task<string>> valueFactory)
+        public async Task<string> GetOrAdd(string key, Func<string, Task<string>> valueFactory)
         {
-            return Get(key);
+            if (isCacheLoaded)
+            {
+                if (feedIconLookup.ContainsKey(key))
+                {
+                    return feedIconLookup[key];
+                }
+                else
+                {
+                    return await valueFactory(key);
+                }
+            }
+            else
+            {
+                try
+                {
+                    return await Get(key);
+                }
+                catch { }
+
+                return await valueFactory(key);
+            }
         }
 
         #endregion

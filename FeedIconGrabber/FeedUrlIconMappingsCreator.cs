@@ -3,6 +3,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Weave.RssAggregator.LibraryClient;
+using Common.JsonDotNet;
+using Newtonsoft.Json;
+using System.Text;
 
 namespace FeedIconGrabber
 {
@@ -28,13 +31,18 @@ namespace FeedIconGrabber
             var feedUrlIconMappings = new FeedUrlIconMappings();
             feedUrlIconMappings.AddRange(feeds);
 
-            string fileName = string.Format("{0}\\{1}", PATH, "iconMap.xml");
+            string fileName = string.Format("{0}\\{1}", PATH, "iconMap.json");
 
-            var serializer = new XmlSerializer(typeof(FeedUrlIconMappings), "");
+            //var serializer = new XmlSerializer(typeof(FeedUrlIconMappings), "");
+            //var serializer = new Newtonsoft.Json.JsonSerializer(typeof(FeedUrlIconMappings), "");
 
-            using (var fs = new FileStream(fileName, FileMode.Create))
+            using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
             {
-                serializer.Serialize(fs, feedUrlIconMappings);
+                await fs.WriteObject(
+                    feedUrlIconMappings, 
+                    new JsonSerializerSettings { Formatting = Formatting.Indented },
+                    Encoding.UTF8);
+                //serializer.Serialize(fs, feedUrlIconMappings);
                 fs.Flush();
                 fs.Close();
             }

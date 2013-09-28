@@ -68,8 +68,13 @@ namespace Weave.RssAggregator.WorkerRole.Controllers
                     newsItem.Description = null;
             }
 
-            var iconUrl = await iconCache.Get(feedRequest.Url);
-            result.IconUri = iconUrl;
+            try
+            {
+                var iconUrl = await iconCache.Get(feedRequest.Url);
+                result.IconUri = iconUrl;
+            }
+            catch { }
+
             return result;
         }
 

@@ -44,7 +44,7 @@
   <ItemGroup>
     <Compile Include="HighFrequencyFeedIconUrlCache.cs" />
     <Compile Include="DynamicIconUrlCache.cs" />
-    <Compile Include="IconUrlDataCache.cs" />
+    <Compile Include="IconUrlAzureDataCache.cs" />
     <Compile Include="NLevelIconUrlCache.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
