@@ -1,27 +1,26 @@
-﻿using Common.Caching;
+﻿using Common.Azure.Caching.Extensions;
+using Common.Caching;
 using Microsoft.ApplicationServer.Caching;
 using System;
 using System.Collections.Generic;
-using Weave.User.Service.Cache.Extensions;
+using System.Threading.Tasks;
 
-
-namespace RssAggregator.IconCaching
+namespace Common.Azure.Caching
 {
-    public class StandardDataCache<T> : IBasicCache<string, T>, IExtendedCache<string, T>
+    public class StandardAsyncDataCache<T> : IBasicCache<string, Task<T>>, IExtendedCache<string, Task<T>>
     {
         DataCache cache;
 
-        public StandardDataCache(DataCache cache)
+        public StandardAsyncDataCache(DataCache cache)
         {
             this.cache = cache;
         }
-
-        public T Get(string key)
+        public Task<T> Get(string key)
         {
             var o = SafeCacheGet(key);
             if (o != null)
             {
-                return o.Cast<T>();
+                return Task.FromResult(o.Cast<T>());
             }
             else
             {
@@ -29,7 +28,7 @@ namespace RssAggregator.IconCaching
             }
         }
 
-        public T GetOrAdd(string key, Func<string, T> valueFactory)
+        public async Task<T> GetOrAdd(string key, Func<string, Task<T>> valueFactory)
         {
             var o = SafeCacheGet(key);
             if (o != null)
@@ -39,7 +38,7 @@ namespace RssAggregator.IconCaching
 
             // there was a cache miss if we get this far
 
-            var x = valueFactory(key);
+            var x = await valueFactory(key);
 
             cache.Put(key, x);
 

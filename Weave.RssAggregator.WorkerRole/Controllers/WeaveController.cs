@@ -15,9 +15,9 @@ namespace Weave.RssAggregator.WorkerRole.Controllers
     public class WeaveController : ApiController
     {
         readonly FeedCache feedCache;
-        readonly IconUrlCache iconCache;
+        readonly NLevelIconUrlCache iconCache;
 
-        public WeaveController(FeedCache cache, IconUrlCache iconCache)
+        public WeaveController(FeedCache cache, NLevelIconUrlCache iconCache)
         {
             this.feedCache = cache;
             this.iconCache = iconCache;

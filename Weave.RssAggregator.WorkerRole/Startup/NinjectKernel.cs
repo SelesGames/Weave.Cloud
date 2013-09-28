@@ -61,7 +61,7 @@ namespace Weave.RssAggregator.WorkerRole.Startup
 
             Bind<SqlStoredProcClient>().ToMethod(_ => new SqlStoredProcClient(connectionString));
 
-            Bind<IconUrlCache>().ToSelf().InSingletonScope();
+            Bind<NLevelIconUrlCache>().ToSelf().InSingletonScope();
         }
     }
 }

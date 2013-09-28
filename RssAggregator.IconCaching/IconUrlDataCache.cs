@@ -1,4 +1,5 @@
-﻿using Common.Caching;
+﻿using Common.Azure.Caching;
+using Common.Caching;
 using Microsoft.ApplicationServer.Caching;
 using System;
 using System.Threading.Tasks;
