@@ -56,8 +56,8 @@ namespace Common.Data.Linq
             if (ValidationEngine != null)
                 ValidationEngine.Validate(update);
 
-            var table = activeContext.GetTable<T>();
-            table.Attach(update, true);
+            //var table = activeContext.GetTable<T>();
+            //table.Attach(update, true);
         }
 
         public void Delete<T>(T obj)

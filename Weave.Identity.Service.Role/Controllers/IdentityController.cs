@@ -177,10 +177,37 @@ namespace Weave.Identity.Service.WorkerRole.Controllers
         [HttpPut]
         public async Task Update(IdentityInfo user)
         {
-            var sqlUser = Convert(user);
+            //var sqlUser = Convert(user);
 
-            client.Update(sqlUser);
-            await client.SubmitChanges();
+            Sql.AuthInfo existingUser = null;
+            try
+            {
+                existingUser = await client.GetSingle<Sql.AuthInfo>(o => o.UserId == user.UserId);
+            }
+            catch{}
+
+            if (existingUser == null)
+            {
+                await Add(user);
+                return;
+            }
+
+            existingUser.FacebookAuthString = user.FacebookAuthToken;
+            existingUser.GoogleAuthString = user.GoogleAuthToken;
+            existingUser.MicrosoftAuthString = user.MicrosoftAuthToken;
+            existingUser.TwitterAuthString = user.TwitterAuthToken;
+            existingUser.UserName = user.UserName;
+            existingUser.PasswordHash = user.PasswordHash;
+
+            try
+            {
+                client.Update(existingUser);
+                await client.SubmitChanges();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+            }
         }
 
 
