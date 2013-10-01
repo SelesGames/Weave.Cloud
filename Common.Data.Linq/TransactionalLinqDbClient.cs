@@ -1,9 +1,7 @@
 ﻿using Common.Validation;
 using System;
-using System.Collections.Generic;
 using System.Data.Linq;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Common.Data.Linq
 {
@@ -25,19 +23,10 @@ namespace Common.Data.Linq
 
         public ValidationEngine ValidationEngine { get; set; }
 
-        public Task<IQueryable<T>> Get<T>()
+        public IQueryable<T> Get<T>()
              where T : class
         {
-            var table = activeContext.GetTable<T>();
-            var o = table;
-            return Task.FromResult<IQueryable<T>>(o);
-        }
-
-        public Task<IEnumerable<TResult>> Get<T, TResult>(Func<IQueryable<T>, IQueryable<TResult>> operatorChain) where T : class
-        {
-            var table = activeContext.GetTable<T>();
-            var o = operatorChain(table);
-            return Task.FromResult<IEnumerable<TResult>>(o);
+            return activeContext.GetTable<T>();
         }
 
         public void Insert<T>(T obj)
@@ -55,9 +44,6 @@ namespace Common.Data.Linq
         {
             if (ValidationEngine != null)
                 ValidationEngine.Validate(update);
-
-            //var table = activeContext.GetTable<T>();
-            //table.Attach(update, true);
         }
 
         public void Delete<T>(T obj)
@@ -78,10 +64,9 @@ namespace Common.Data.Linq
                 activeContext.Dispose();
         }
 
-        public Task SubmitChanges()
+        public void SubmitChanges()
         {
             activeContext.SubmitChanges();
-            return Task.FromResult<object>(null);
         }
     }
 }
