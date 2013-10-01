@@ -5,6 +5,6 @@ namespace Common.Data
 {
     public interface IUnitOfWork : IDisposable
     {
-        Task SubmitChanges();
+        void SubmitChanges();
     }
 }
