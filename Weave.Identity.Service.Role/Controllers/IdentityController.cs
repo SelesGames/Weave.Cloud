@@ -5,13 +5,12 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
-using Weave.Identity.Service.Contracts;
 using Weave.Identity.Service.DTOs;
 using Weave.Identity.Service.Sql;
 
 namespace Weave.Identity.Service.WorkerRole.Controllers
 {
-    public class IdentityController : ApiController, IIdentityService
+    public class IdentityController : ApiController
     {
         ITransactionalDatabaseClient client;
 
@@ -19,39 +18,6 @@ namespace Weave.Identity.Service.WorkerRole.Controllers
         {
             this.client = client;
         }
-
-        [HttpGet]
-        [ActionName("sync")]
-        public Task<IdentityInfo> Sync(
-            Guid userId,
-            string facebookToken = null,
-            string twitterToken = null,
-            string microsoftToken = null,
-            string googleToken = null)
-        {
-            var tokens = new[] { facebookToken, twitterToken, microsoftToken, googleToken };
-
-            if (tokens.Count(o => !string.IsNullOrWhiteSpace(o)) > 1)
-            {
-                throw ResponseHelper.CreateResponseException(HttpStatusCode.BadRequest, "You can only specify one identity provider token at a time");          
-            }
-
-            if (!string.IsNullOrWhiteSpace(facebookToken))
-                return SyncFacebook(userId, facebookToken);
-
-            if (!string.IsNullOrWhiteSpace(twitterToken))
-                return SyncTwitter(userId, twitterToken);
-
-            if (!string.IsNullOrWhiteSpace(microsoftToken))
-                return SyncMicrosoft(userId, microsoftToken);
-
-            if (!string.IsNullOrWhiteSpace(googleToken))
-                return SyncGoogle(userId, googleToken);
-
-            throw ResponseHelper.CreateResponseException(HttpStatusCode.BadRequest,
-                "You must specify one of the following: facebookToken, twitterToken, microsoftToken, or googleToken");
-        }
-
 
         [HttpGet]
         public Task<IdentityInfo> Get(
@@ -84,8 +50,6 @@ namespace Weave.Identity.Service.WorkerRole.Controllers
             throw ResponseHelper.CreateResponseException(HttpStatusCode.BadRequest,
                 "You must specify one of the following: facebookToken, twitterToken, microsoftToken, googleToken, or username and password combo");
         }
-
-
 
 
 
@@ -245,229 +209,6 @@ namespace Weave.Identity.Service.WorkerRole.Controllers
                 System.Diagnostics.Debug.WriteLine(ex);
             }
         }
-
-
-
-
-        #region Sync functions - take in a userId and an identity provider token, and map or create an account as appropriate
-
-        public Task<IdentityInfo> SyncFacebook(Guid userId, string facebookToken)
-        {
-            IdentityInfo identity;
-
-            if (string.IsNullOrWhiteSpace(facebookToken))
-                throw new ArgumentException("facebookToken in SyncFacebook");
-
-            var matchingAccounts = client.Get<AuthInfo>()
-                .Where(x => x.UserId.Equals(userId) || facebookToken.Equals(x.FacebookAuthString))
-                .ToList();
-
-            var matchedUser = matchingAccounts.SingleOrDefault(o => o.UserId == userId);
-            var matchedToken = matchingAccounts.SingleOrDefault(o => o.FacebookAuthString == facebookToken);
-
-            // user exists, but facebook account is new
-            if (matchedUser != null && matchedToken == null)
-            {
-                matchedUser.FacebookAuthString = facebookToken;
-                client.Update(matchedUser);
-                client.SubmitChanges();
-                identity = Convert(matchedUser);
-            }
-
-            // facebook account exists but with a different UserId than what was provided
-            else if (matchedUser == null && matchedToken != null)
-            {
-                identity = Convert(matchedToken);
-            }
-            
-            // neither matched - brand new identity info
-            else if (matchedUser == null && matchedToken == null)
-            {
-                var newSqlIdentity = new AuthInfo
-                {
-                    UserId = userId,
-                    FacebookAuthString = facebookToken
-                };
-                client.Insert(newSqlIdentity);
-                client.SubmitChanges();
-                identity = Convert(newSqlIdentity);
-            }
-
-            // both facebook and userId matched.  Could be same or could be different users, but prioritize Facebook
-            else
-            {
-                identity = Convert(matchedToken);
-            }
-
-            if (identity != null)
-                return Task.FromResult(identity);
-
-            throw ResponseHelper.CreateResponseException(HttpStatusCode.NotFound, "No user found matching that facebookToken");
-        }
-
-        public Task<IdentityInfo> SyncTwitter(Guid userId, string twitterToken)
-        {
-            IdentityInfo identity;
-
-            if (string.IsNullOrWhiteSpace(twitterToken))
-                throw new ArgumentException("facebookToken in SyncTwitter");
-
-            var matchingAccounts = client.Get<AuthInfo>()
-                .Where(x => x.UserId.Equals(userId) || twitterToken.Equals(x.TwitterAuthString))
-                .ToList();
-
-            var matchedUser = matchingAccounts.SingleOrDefault(o => o.UserId == userId);
-            var matchedToken = matchingAccounts.SingleOrDefault(o => o.TwitterAuthString == twitterToken);
-
-            // user exists, but facebook account is new
-            if (matchedUser != null && matchedToken == null)
-            {
-                matchedUser.TwitterAuthString = twitterToken;
-                client.Update(matchedUser);
-                client.SubmitChanges();
-                identity = Convert(matchedUser);
-            }
-
-            // facebook account exists but with a different UserId than what was provided
-            else if (matchedUser == null && matchedToken != null)
-            {
-                identity = Convert(matchedToken);
-            }
-
-            // neither matched - brand new identity info
-            else if (matchedUser == null && matchedToken == null)
-            {
-                var newSqlIdentity = new AuthInfo
-                {
-                    UserId = userId,
-                    TwitterAuthString = twitterToken
-                };
-                client.Insert(newSqlIdentity);
-                client.SubmitChanges();
-                identity = Convert(newSqlIdentity);
-            }
-
-            // both facebook and userId matched.  Could be same or could be different users, but prioritize Facebook
-            else
-            {
-                identity = Convert(matchedToken);
-            }
-
-            if (identity != null)
-                return Task.FromResult(identity);
-
-            throw ResponseHelper.CreateResponseException(HttpStatusCode.NotFound, "No user found matching that facebookToken");
-        }
-
-        public Task<IdentityInfo> SyncMicrosoft(Guid userId, string microsoftToken)
-        {
-            IdentityInfo identity;
-
-            if (string.IsNullOrWhiteSpace(microsoftToken))
-                throw new ArgumentException("microsoftToken in SyncMicrosoft");
-
-            var matchingAccounts = client.Get<AuthInfo>()
-                .Where(x => x.UserId.Equals(userId) || microsoftToken.Equals(x.MicrosoftAuthString))
-                .ToList();
-
-            var matchedUser = matchingAccounts.SingleOrDefault(o => o.UserId == userId);
-            var matchedToken = matchingAccounts.SingleOrDefault(o => o.MicrosoftAuthString == microsoftToken);
-
-            // user exists, but facebook account is new
-            if (matchedUser != null && matchedToken == null)
-            {
-                matchedUser.MicrosoftAuthString = microsoftToken;
-                client.Update(matchedUser);
-                client.SubmitChanges();
-                identity = Convert(matchedUser);
-            }
-
-            // facebook account exists but with a different UserId than what was provided
-            else if (matchedUser == null && matchedToken != null)
-            {
-                identity = Convert(matchedToken);
-            }
-
-            // neither matched - brand new identity info
-            else if (matchedUser == null && matchedToken == null)
-            {
-                var newSqlIdentity = new AuthInfo
-                {
-                    UserId = userId,
-                    MicrosoftAuthString = microsoftToken
-                };
-                client.Insert(newSqlIdentity);
-                client.SubmitChanges();
-                identity = Convert(newSqlIdentity);
-            }
-
-            // both facebook and userId matched.  Could be same or could be different users, but prioritize Facebook
-            else
-            {
-                identity = Convert(matchedToken);
-            }
-
-            if (identity != null)
-                return Task.FromResult(identity);
-
-            throw ResponseHelper.CreateResponseException(HttpStatusCode.NotFound, "No user found matching that facebookToken");
-        }
-
-        public Task<IdentityInfo> SyncGoogle(Guid userId, string googleToken)
-        {
-            IdentityInfo identity;
-
-            if (string.IsNullOrWhiteSpace(googleToken))
-                throw new ArgumentException("googleToken in SyncGoogle");
-
-            var matchingAccounts = client.Get<AuthInfo>()
-                .Where(x => x.UserId.Equals(userId) || googleToken.Equals(x.GoogleAuthString))
-                .ToList();
-
-            var matchedUser = matchingAccounts.SingleOrDefault(o => o.UserId == userId);
-            var matchedToken = matchingAccounts.SingleOrDefault(o => o.GoogleAuthString == googleToken);
-
-            // user exists, but facebook account is new
-            if (matchedUser != null && matchedToken == null)
-            {
-                matchedUser.GoogleAuthString = googleToken;
-                client.Update(matchedUser);
-                client.SubmitChanges();
-                identity = Convert(matchedUser);
-            }
-
-            // facebook account exists but with a different UserId than what was provided
-            else if (matchedUser == null && matchedToken != null)
-            {
-                identity = Convert(matchedToken);
-            }
-
-            // neither matched - brand new identity info
-            else if (matchedUser == null && matchedToken == null)
-            {
-                var newSqlIdentity = new AuthInfo
-                {
-                    UserId = userId,
-                    GoogleAuthString = googleToken
-                };
-                client.Insert(newSqlIdentity);
-                client.SubmitChanges();
-                identity = Convert(newSqlIdentity);
-            }
-
-            // both facebook and userId matched.  Could be same or could be different users, but prioritize Facebook
-            else
-            {
-                identity = Convert(matchedToken);
-            }
-
-            if (identity != null)
-                return Task.FromResult(identity);
-
-            throw ResponseHelper.CreateResponseException(HttpStatusCode.NotFound, "No user found matching that facebookToken");
-        }
-
-        #endregion
 
 
 

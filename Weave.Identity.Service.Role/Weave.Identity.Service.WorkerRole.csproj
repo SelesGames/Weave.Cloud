@@ -50,6 +50,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\IdentityController.cs" />
+    <Compile Include="Controllers\SyncController.cs" />
+    <Compile Include="IdentityLogic.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup\NinjectKernel.cs" />
     <Compile Include="Startup\StartupTask.cs" />

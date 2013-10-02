@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Web.Http;
 using System.Web.Http.Dependencies;
 using System.Web.Http.SelfHost;
+using Weave.Identity.Service.WorkerRole.Controllers;
 
 namespace Weave.Identity.Service.WorkerRole.Startup
 {
@@ -29,11 +30,23 @@ namespace Weave.Identity.Service.WorkerRole.Startup
             Trace.WriteLine(string.Format("**** IP ADDRESS: {0}", ipString));
 
             var config = new StandardHttpSelfHostConfiguration(ipString) { DependencyResolver = resolver };
+
+            config.Routes.Clear();
+
             config.Routes.MapHttpRoute(
                 name: "newroute",
-                routeTemplate: "api/{controller}"//,
-                //defaults: new { id = RouteParameter.Optional }
+                routeTemplate: "api/{controller}"
             );
+
+            config.Routes.MapHttpRoute(
+                "syncroute",
+                routeTemplate: "api/identity/{controller}",
+                defaults: new
+                {
+                    controller = typeof(SyncController)
+                }
+            );
+
             new HttpSelfHostServer(config).OpenAsync().Wait();
 
             Trace.WriteLine("^&*^&*^&*^*&^  SERVER IS UP AND RUNNING!!!");
