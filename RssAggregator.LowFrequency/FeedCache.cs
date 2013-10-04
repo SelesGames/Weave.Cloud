@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Weave.RssAggregator.Core.DTOs.Incoming;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
 using Weave.RssAggregator.LibraryClient;
+using System.Reactive.Linq;
 
 namespace Weave.RssAggregator.LowFrequency
 {
@@ -40,7 +41,33 @@ namespace Weave.RssAggregator.LowFrequency
         #endregion
 
 
+        FeedUpdateNotice Parse(BrokeredMessage message)
+        {
+            FeedUpdateNotice notice = null;
 
+            try
+            {
+                var properties = message.Properties;
+                var id = message.MessageId;
+
+                if (!EnumerableEx.IsNullOrEmpty(properties) && 
+                    properties.ContainsKey("FeedId") && 
+                    properties.ContainsKey("RefreshTime"))
+                {
+                    var feedId = (Guid)properties["FeedId"];
+                    var refreshTime = (DateTime)properties["RefreshTime"];
+
+                    notice = new FeedUpdateNotice(message)
+                    {
+                        FeedId = feedId,
+                        RefreshTime = refreshTime,
+                    };
+                }
+            }
+            catch { }
+
+            return notice;
+        }
 
         public async Task InitializeAsync()
         {
@@ -58,7 +85,7 @@ namespace Weave.RssAggregator.LowFrequency
 
             var mediators = highFrequencyFeeds.Select(o => new HFeedDbMediator(dbClient, o));
             var client = await subscriptionConnector.CreateClient();
-            var observable = client.AsObservable();
+            var observable = client.AsObservable();//.Select(Parse).OfType<FeedUpdateNotice>();
 
 //            var options = new OnMessageOptions
 //            {

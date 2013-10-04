@@ -58,6 +58,34 @@ namespace Weave.RssAggregator.LowFrequency
             }
         }
 
+
+
+        public async void OnBrokeredMessageUpdateReceived(FeedUpdateNotice notice)
+        {
+            try
+            {
+                if (notice == null)
+                    return;
+
+                if (notice.FeedId.Equals(feed.FeedId) && notice.RefreshTime > LastRefresh)
+                {
+                    await LoadLatestNews();
+                }
+
+                DebugEx.WriteLine("completing message id: {0}", notice.MessageId);
+                await notice.MarkNoticeAsRead();
+                DebugEx.WriteLine("COMPLETED message id: {0}", notice.MessageId);
+            }
+#if DEBUG
+            catch (Exception e)
+            {
+                DebugEx.WriteLine(e);
+            }
+#else
+            catch { }
+#endif
+        }
+
         /*public*/ async void /*Task*/ OnBrokeredMessageUpdateReceived(BrokeredMessage message)
         {
             try
