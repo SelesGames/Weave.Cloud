@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
@@ -20,18 +21,30 @@ namespace Common.WebApi.Handlers
 
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var acceptEncodingHeader = request.Headers.AcceptEncoding;
+            var requestedAcceptEncoding = request.Headers.AcceptEncoding;
 
-            if (acceptEncodingHeader != null)
+            if (requestedAcceptEncoding != null)
             {
                 if (ClearRequestedAcceptEncoding)
-                    acceptEncodingHeader.Clear();
+                    requestedAcceptEncoding.Clear();
 
-                //if (!acceptEncodingHeader.Any())
-                acceptEncodingHeader.Add(acceptEncoding);
+                if (!requestedAcceptEncoding.Any(MatchesAcceptEncoding))
+                {
+                    requestedAcceptEncoding.Add(acceptEncoding);
+                }
             }
 
             return base.SendAsync(request, cancellationToken);
+        }
+
+        bool MatchesAcceptEncoding(StringWithQualityHeaderValue headerValue)
+        {
+            var accept = acceptEncoding.Value;
+
+            return
+                headerValue != null &&
+                headerValue.Value != null &&
+                headerValue.Value.Equals(accept, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.WindowsAzure.ServiceRuntime;
+﻿using Common.WebApi.Handlers;
+using Microsoft.WindowsAzure.ServiceRuntime;
 using Ninject;
 using Ninject.WebApi;
 using SelesGames.WebApi.SelfHost;
@@ -28,6 +29,7 @@ namespace Weave.User.Service.Role.Startup
             Trace.WriteLine(string.Format("**** IP ADDRESS: {0}", ipString));
 
             var config = new StandardHttpSelfHostConfiguration(ipString) { DependencyResolver = resolver };
+            config.MessageHandlers.Add(new InjectAcceptEncodingHandler("gzip"));
             new HttpSelfHostServer(config).OpenAsync().Wait();
 
             Trace.WriteLine("^&*^&*^&*^*&^  SERVER IS UP AND RUNNING!!!");
