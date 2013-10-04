@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 
 namespace Weave.RssAggregator.LowFrequency
@@ -57,7 +58,7 @@ namespace Weave.RssAggregator.LowFrequency
             }
         }
 
-        public async Task OnBrokeredMessageUpdateReceived(BrokeredMessage message)
+        /*public*/ async void /*Task*/ OnBrokeredMessageUpdateReceived(BrokeredMessage message)
         {
             try
             {
@@ -86,5 +87,31 @@ namespace Weave.RssAggregator.LowFrequency
             catch { }
 #endif
         }
+
+        public void Subscribe(IObservable<BrokeredMessage> observable)
+        {
+            observable
+                .Retry()
+                .Subscribe(OnBrokeredMessageUpdateReceived);
+        }
+
+//        async void OnBrokeredMessageUpdateReceived(BrokeredMessage message)
+//        {
+//            try
+//            {
+//                if (message.Properties.ContainsKey("RefreshTime") && ((DateTime)message.Properties["RefreshTime"]) > LastRefresh)
+//                    await LoadLatestNews();
+
+//                await message.CompleteAsync();
+//            }
+//#if DEBUG
+//            catch (Exception e)
+//            {
+//                DebugEx.WriteLine(e);
+//            }
+//#else
+//            catch { }
+//#endif
+//        }
     }
 }

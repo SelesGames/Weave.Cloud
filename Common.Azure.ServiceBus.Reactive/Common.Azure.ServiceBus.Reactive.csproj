@@ -33,6 +33,9 @@
     <Reference Include="Microsoft.ServiceBus, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Reactive.Core">
+      <HintPath>..\lib\System.Reactive.Core.dll</HintPath>
+    </Reference>
     <Reference Include="System.Reactive.Interfaces">
       <HintPath>..\lib\System.Reactive.Interfaces.dll</HintPath>
     </Reference>
@@ -44,8 +47,8 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SubscriptionConnector.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common.Azure.ServiceBus\Common.Azure.ServiceBus.csproj">

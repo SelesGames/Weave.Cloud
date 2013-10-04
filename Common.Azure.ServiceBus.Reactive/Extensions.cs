@@ -10,6 +10,11 @@ namespace Common.Azure.ServiceBus.Reactive
     {
         public static IObservable<BrokeredMessage> AsObservable(this SubscriptionClient client)
         {
+            return AsObservable(client, TimeSpan.FromSeconds(5));
+        }
+
+        public static IObservable<BrokeredMessage> AsObservable(this SubscriptionClient client, TimeSpan pollingInteval)
+        {
             return Observable.Create<BrokeredMessage>(observer =>
             {
                 IDisposable disp = Disposable.Empty;
@@ -42,7 +47,7 @@ namespace Common.Azure.ServiceBus.Reactive
                             }
 
                             if (shouldPause)
-                                await Task.Delay(5000);
+                                await Task.Delay(pollingInteval);
                         }
                     });
                 }

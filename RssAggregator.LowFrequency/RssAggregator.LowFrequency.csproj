@@ -38,6 +38,18 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Reactive.Core">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\System.Reactive.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Interfaces">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\System.Reactive.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Linq">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\System.Reactive.Linq.dll</HintPath>
+    </Reference>
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
@@ -49,6 +61,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common.Azure.ServiceBus.Reactive\Common.Azure.ServiceBus.Reactive.csproj">
+      <Project>{682a3907-afdd-4f98-ba04-3886cdbb520c}</Project>
+      <Name>Common.Azure.ServiceBus.Reactive</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common.Azure.ServiceBus\Common.Azure.ServiceBus.csproj">
       <Project>{84165f70-4beb-46e2-a122-01ada235950f}</Project>
       <Name>Common.Azure.ServiceBus</Name>
