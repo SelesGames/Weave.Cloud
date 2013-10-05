@@ -41,6 +41,8 @@ namespace Weave.RssAggregator.LowFrequency
         #endregion
 
 
+
+
         FeedUpdateNotice Parse(BrokeredMessage message)
         {
             FeedUpdateNotice notice = null;
@@ -74,54 +76,36 @@ namespace Weave.RssAggregator.LowFrequency
             var feedClient = new FeedLibraryClient(feedLibraryUrl);
 
             await feedClient.LoadFeedsAsync();
-            var libraryFeeds = feedClient.Feeds;
 
-            var highFrequencyFeeds = libraryFeeds
+            var libraryFeeds = feedClient.Feeds
                 .Distinct()
-                .Select(o => new CachedFeed(o.FeedName, o.FeedUri))
                 .ToList();
 
-            feeds = highFrequencyFeeds.ToDictionary(o => o.FeedUri);
+            var cachedFeeds = new List<CachedFeed>();
 
-            var mediators = highFrequencyFeeds.Select(o => new HFeedDbMediator(dbClient, o));
+            foreach (var o in libraryFeeds)
+            {
+                var cachedFeed = new CachedFeed(o.FeedName, o.FeedUri);
+
+                cachedFeeds.Add(cachedFeed);
+                feeds.Add(o.FeedUri, cachedFeed);
+
+                if (!string.IsNullOrWhiteSpace(o.CorrectedUri))
+                {
+                    feeds.Add(o.CorrectedUri, cachedFeed);
+                }
+            }
+
             var client = await subscriptionConnector.CreateClient();
             var observable = client.AsObservable();//.Select(Parse).OfType<FeedUpdateNotice>();
 
-//            var options = new OnMessageOptions
-//            {
-//                AutoComplete = false,               // Indicates if the message pump should call Complete() on messages after the callback has completed processing.
-//                MaxConcurrentCalls = 1,             // Indicates the maximum number of concurrent calls to the callback the pump should initiate. 
-//            };
-
-//            options.ExceptionReceived += LogErrors; // Enables notification of any errors encountered by the message pump.
-
-//            // Start receiving messages
-//            client.OnMessageAsync(async receivedMessage => // Initiates the message pump and callback is invoked for each message that is received, calling close on the client will stop the pump.
-//            {
-//#if DEBUG
-//                System.Diagnostics.Trace.WriteLine("Processing", receivedMessage.SequenceNumber.ToString());
-//#endif
-
-//                // Process the message
-//                foreach (var mediator in mediators)
-//                {
-//                    await mediator.OnBrokeredMessageUpdateReceived(receivedMessage);
-//                }
-//            }, options);
-
-
-            foreach (var mediator in mediators)
+            foreach (var cachedFeed in cachedFeeds)
             {
+                var mediator = new HFeedDbMediator(dbClient, cachedFeed);
                 await mediator.LoadLatestNews();
                 mediator.Subscribe(observable);
             }
         }
-
-        //void LogErrors(object sender, ExceptionReceivedEventArgs e)
-        //{
-        //    if (e != null && e.Exception != null)
-        //        System.Diagnostics.Trace.WriteLine(e.Exception.Message);
-        //}
 
         public FeedResult ToFeedResult(FeedRequest request)
         {
