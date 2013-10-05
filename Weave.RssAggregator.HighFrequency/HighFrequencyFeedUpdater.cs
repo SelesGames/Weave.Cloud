@@ -59,7 +59,7 @@ namespace Weave.RssAggregator.HighFrequency
             var highFrequencyFeeds = libraryFeeds
                 .Distinct()
                 //.Where(o => o.FeedUri == "http://feeds.feedburner.com/Destructoid")
-                .Select(o => new HighFrequencyFeed(o.FeedName, o.FeedUri, o.Instructions))
+                .Select(CreateHighFrequencyFeed)
                 .ToList();
 
             foreach (var feed in highFrequencyFeeds)
@@ -69,6 +69,23 @@ namespace Weave.RssAggregator.HighFrequency
             }
 
             feeds = highFrequencyFeeds.ToDictionary(o => o.FeedUri);
+        }
+
+        HighFrequencyFeed CreateHighFrequencyFeed(FeedSource o)
+        {
+            string originalUri = null, feedUri = null;
+
+            if (!string.IsNullOrWhiteSpace(o.CorrectedUri))
+            {
+                originalUri = o.FeedUri;
+                feedUri = o.CorrectedUri;
+            }
+            else
+            {
+                feedUri = o.FeedUri;
+            }
+
+            return new HighFrequencyFeed(o.FeedName, feedUri, originalUri, o.Instructions);
         }
 
 

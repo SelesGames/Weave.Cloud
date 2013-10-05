@@ -37,14 +37,14 @@ namespace Weave.RssAggregator.HighFrequency
         }
 
 
-        public HighFrequencyFeed(string name, string feedUri, string instructions)
+        public HighFrequencyFeed(string name, string feedUri, string originalUri, string instructions)
         {
             if (string.IsNullOrWhiteSpace(name))        throw new ArgumentException("name in HighFrequencyFeed ctor");
             if (string.IsNullOrWhiteSpace(feedUri))     throw new ArgumentException("name in HighFrequencyFeed ctor");
 
             Name = name;
             FeedUri = feedUri;
-            InitializeId();
+            InitializeId(string.IsNullOrWhiteSpace(originalUri) ? feedUri : originalUri);
             LastFeedState = FeedState.Uninitialized;
             FeedUpdate = feedUpdate.AsObservable();
             RefreshTimeout = TimeSpan.FromMinutes(1);
@@ -135,9 +135,9 @@ namespace Weave.RssAggregator.HighFrequency
 
         #region Private helper functions
 
-        void InitializeId()
+        void InitializeId(string uri)
         {
-            FeedId = CryptoHelper.ComputeHashUsedByMobilizer(FeedUri);
+            FeedId = CryptoHelper.ComputeHashUsedByMobilizer(uri);
         }
 
         bool IsNewsNew(List<Entry> news)
