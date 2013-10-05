@@ -29,6 +29,9 @@ namespace RssAggregator.IconCaching
 
         public void BeginListeningToResourceChanges()
         {
+            if (listenerHandle != null)
+                listenerHandle.Dispose();
+
             listenerHandle = client.PollChangesToResource(
                 MAPPING_DEF_URL,
                 TimeSpan.FromMinutes(15),
