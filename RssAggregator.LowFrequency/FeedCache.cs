@@ -5,11 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Disposables;
-using System.Threading.Tasks;
-using Weave.RssAggregator.Core.DTOs.Incoming;
-using Weave.RssAggregator.Core.DTOs.Outgoing;
-using Weave.RssAggregator.LibraryClient;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
+using Weave.RssAggregator.LibraryClient;
 
 namespace Weave.RssAggregator.LowFrequency
 {
@@ -17,6 +15,7 @@ namespace Weave.RssAggregator.LowFrequency
     {
         Dictionary<string, CachedFeed> feeds = new Dictionary<string, CachedFeed>();
         CompositeDisposable disposables = new CompositeDisposable();
+        object syncObject = new object();
 
         string feedLibraryUrl;
         DbClient dbClient;
@@ -43,32 +42,19 @@ namespace Weave.RssAggregator.LowFrequency
 
 
 
-        FeedUpdateNotice Parse(BrokeredMessage message)
+        public CachedFeed Get(string feedUrl)
         {
-            FeedUpdateNotice notice = null;
-
-            try
+            lock (syncObject)
             {
-                var properties = message.Properties;
-                var id = message.MessageId;
-
-                if (!EnumerableEx.IsNullOrEmpty(properties) && 
-                    properties.ContainsKey("FeedId") && 
-                    properties.ContainsKey("RefreshTime"))
+                if (feeds.ContainsKey(feedUrl))
                 {
-                    var feedId = (Guid)properties["FeedId"];
-                    var refreshTime = (DateTime)properties["RefreshTime"];
-
-                    notice = new FeedUpdateNotice(message)
-                    {
-                        FeedId = feedId,
-                        RefreshTime = refreshTime,
-                    };
+                    var feed = feeds[feedUrl];
+                    if (feed.LastFeedState != CachedFeed.FeedState.Uninitialized)
+                        return feed;
                 }
             }
-            catch { }
 
-            return notice;
+            return null;
         }
 
         public async Task InitializeAsync()
@@ -97,7 +83,7 @@ namespace Weave.RssAggregator.LowFrequency
             }
 
             var client = await subscriptionConnector.CreateClient();
-            var observable = client.AsObservable();//.Select(Parse).OfType<FeedUpdateNotice>();
+            var observable = client.AsObservable().Select(Parse).OfType<FeedUpdateNotice>();
 
             foreach (var cachedFeed in cachedFeeds)
             {
@@ -107,39 +93,47 @@ namespace Weave.RssAggregator.LowFrequency
             }
         }
 
-        public FeedResult ToFeedResult(FeedRequest request)
+
+
+
+        #region private helper methods
+
+        FeedUpdateNotice Parse(BrokeredMessage message)
         {
-            var feedUrl = request.Url;
-            if (feeds.ContainsKey(feedUrl))
+            FeedUpdateNotice notice = null;
+
+            try
             {
-                var feed = feeds[feedUrl];
-                return feed.ToFeedResult(request);
+                var properties = message.Properties;
+                var id = message.MessageId;
+
+                if (!EnumerableEx.IsNullOrEmpty(properties) &&
+                    properties.ContainsKey("FeedId") &&
+                    properties.ContainsKey("RefreshTime"))
+                {
+                    var feedId = (Guid)properties["FeedId"];
+                    var refreshTime = (DateTime)properties["RefreshTime"];
+
+                    notice = new FeedUpdateNotice(message)
+                    {
+                        FeedId = feedId,
+                        RefreshTime = refreshTime,
+                    };
+                }
             }
-            else
-                return new FeedResult { Id = request.Id, Status = FeedResultStatus.Failed };
+            catch { }
+
+            return notice;
         }
 
-        public bool ContainsValid(string feedUrl)
-        {
-            if (feeds.ContainsKey(feedUrl))
-            {
-                var feed = feeds[feedUrl];
-                if (feed.LastFeedState != CachedFeed.FeedState.Uninitialized)
-                    return true;
-            }
+        #endregion
 
-            return false;
-        }
 
-        public CachedFeed Get(string feedUrl)
-        {
-            return feeds[feedUrl];
-        }
+
 
         public void Dispose()
         {
             disposables.Dispose();
-            feeds = null;
         }
     }
 }

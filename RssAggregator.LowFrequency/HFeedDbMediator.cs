@@ -58,9 +58,14 @@ namespace Weave.RssAggregator.LowFrequency
             }
         }
 
+        public void Subscribe(IObservable<FeedUpdateNotice> observable)
+        {
+            observable
+                .Retry()
+                .Subscribe(OnBrokeredMessageUpdateReceived);
+        }
 
-
-        public async void OnBrokeredMessageUpdateReceived(FeedUpdateNotice notice)
+        async void OnBrokeredMessageUpdateReceived(FeedUpdateNotice notice)
         {
             try
             {
@@ -85,61 +90,5 @@ namespace Weave.RssAggregator.LowFrequency
             catch { }
 #endif
         }
-
-        /*public*/ async void /*Task*/ OnBrokeredMessageUpdateReceived(BrokeredMessage message)
-        {
-            try
-            {
-                var properties = message.Properties;
-                var id = message.MessageId;
-
-                if (EnumerableEx.IsNullOrEmpty(properties))
-                    return;
-
-                if (properties.ContainsKey("FeedId") && properties["FeedId"].Equals(feed.FeedId))
-                {
-                    if (properties.ContainsKey("RefreshTime") && ((DateTime)properties["RefreshTime"]) > LastRefresh)
-                        await LoadLatestNews();
-
-                    DebugEx.WriteLine("completing message id: {0}", id);
-                    await message.CompleteAsync();
-                    DebugEx.WriteLine("COMPLETED message id: {0}", id);
-                }
-            }
-#if DEBUG
-            catch (Exception e)
-            {
-                DebugEx.WriteLine(e);
-            }
-#else
-            catch { }
-#endif
-        }
-
-        public void Subscribe(IObservable<BrokeredMessage> observable)
-        {
-            observable
-                .Retry()
-                .Subscribe(OnBrokeredMessageUpdateReceived);
-        }
-
-//        async void OnBrokeredMessageUpdateReceived(BrokeredMessage message)
-//        {
-//            try
-//            {
-//                if (message.Properties.ContainsKey("RefreshTime") && ((DateTime)message.Properties["RefreshTime"]) > LastRefresh)
-//                    await LoadLatestNews();
-
-//                await message.CompleteAsync();
-//            }
-//#if DEBUG
-//            catch (Exception e)
-//            {
-//                DebugEx.WriteLine(e);
-//            }
-//#else
-//            catch { }
-//#endif
-//        }
     }
 }

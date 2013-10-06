@@ -52,9 +52,10 @@ namespace Weave.RssAggregator.WorkerRole.Controllers
         {
             FeedResult result = null;
 
-            if (feedCache.ContainsValid(feedRequest.Url))
+            var cachedFeed = feedCache.Get(feedRequest.Url);
+            if (cachedFeed != null)
             {
-                result = feedCache.ToFeedResult(feedRequest);
+                result = cachedFeed.ToFeedResult(feedRequest);
             }
             else
             {
