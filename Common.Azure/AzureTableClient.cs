@@ -11,20 +11,17 @@ namespace Common.Azure
 {
     public class AzureTableClient
     {
-        //CloudStorageAccount account;
-        string tableName;
         TableServiceContext context;
 
         public TimeSpan ReadTimeout { get; set; }
         public TimeSpan WriteTimeout { get; set; }
         public string TableEndpoint { get; private set; }
 
-        public AzureTableClient(string storageAccountName, string key, bool useHttps, string tableName)
+        public AzureTableClient(string storageAccountName, string key, bool useHttps)
         {
             var blobCred = new StorageCredentialsAccountAndKey(storageAccountName, key);
             var account = new CloudStorageAccount(blobCred, useHttps);
             TableEndpoint = account.TableEndpoint.ToString();
-            this.tableName = tableName;
 
             ReadTimeout = TimeSpan.FromSeconds(30);
             WriteTimeout = TimeSpan.FromMinutes(1);
@@ -33,7 +30,7 @@ namespace Common.Azure
             context = client.GetDataServiceContext();
         }
 
-        public Task<IEnumerable<T>> Get<T>(CancellationToken cancelToken, Func<IQueryable<T>, IQueryable<T>> operatorChain = null, RetryPolicy retryPolicy = null)
+        public Task<IEnumerable<T>> Get<T>(CancellationToken cancelToken, string tableName, Func<IQueryable<T>, IQueryable<T>> operatorChain = null, RetryPolicy retryPolicy = null)
         {
             var query = context.CreateQuery<T>(tableName);
             if (operatorChain != null)
@@ -47,7 +44,7 @@ namespace Common.Azure
             return tsQuery.GetResultsAsync(cancelToken);
         }
 
-        public void Insert<T>(T obj)
+        public void Insert<T>(T obj, string tableName)
         {
             context.AddObject(tableName, obj);
         }
@@ -61,40 +58,6 @@ namespace Common.Azure
         {
             var saveChangesOptions = SaveChangesOptions.Batch;// | SaveChangesOptions.ContinueOnError | SaveChangesOptions.ReplaceOnUpdate;
             return context.SaveChangesAsync(saveChangesOptions, cancelToken);
-            //return context.SaveChangesAsync(cancelToken);
         }
-
-
-        //public Task Save(string fileName, Stream obj)
-        //{
-        //    var client = account.CreateCloudBlobClient();
-        //    var container = client.GetContainerReference(this.container);
-        //    var blob = container.GetBlobReference(fileName);
-
-        //    if (!string.IsNullOrEmpty(ContentType))
-        //        blob.Properties.ContentType = ContentType;
-        //    ////blob.Properties.ContentEncoding = "gzip";
-
-        //    BlobRequestOptions options = new BlobRequestOptions();
-        //    options.AccessCondition = AccessCondition.None;
-        //    options.Timeout = WriteTimeout;
-
-        //    //using (var ms = new MemoryStream())
-        //    //{
-        //    //    await obj.CopyToAsync(ms);
-        //    //    ms.Position = 0;
-        //    //    await blob.UploadFromStreamAsync(ms, options);
-        //    //}
-        //    return blob.UploadFromStreamAsync(obj, options);
-        //}
-
-        //public Task Delete(string fileName)
-        //{
-        //    var client = account.CreateCloudBlobClient();
-        //    var container = client.GetContainerReference(this.container);
-        //    var blob = container.GetBlobReference(fileName);
-
-        //    return blob.DeleteAsync();
-        //}
     }
 }

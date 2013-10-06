@@ -1,20 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.WindowsAzure.StorageClient;
+using System.Threading;
 
 namespace Common.Azure.Logging
 {
     public class LogClient
     {
-        AzureTableClient tableClient;
+        string storageAccountName, key;
+        bool useHttps;
 
-        public LogClient(string storageAccountName, string key, bool useHttps, string tableName)
+        public LogClient(string storageAccountName, string key, bool useHttps)
         {
-            tableClient = new AzureTableClient(storageAccountName, key, useHttps, tableName);
+            this.storageAccountName = storageAccountName;
+            this.key = key;
+            this.useHttps = useHttps;
         }
 
-        public async void Log(
+        public async void Log(TableServiceEntity entity, string tableName)
+        {
+            var tableClient = CreateTableClient();
+            tableClient.Insert(entity, tableName);
+            await tableClient.SaveChanges(CancellationToken.None);
+        }
+
+        AzureTableClient CreateTableClient()
+        {
+            return new AzureTableClient(storageAccountName, key, useHttps);
+        }
     }
 }
