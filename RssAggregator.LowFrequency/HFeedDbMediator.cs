@@ -58,28 +58,24 @@ namespace Weave.RssAggregator.LowFrequency
             }
         }
 
-        public void Subscribe(IObservable<FeedUpdateNotice> observable)
-        {
-            observable
-                .Retry()
-                .Subscribe(OnBrokeredMessageUpdateReceived);
-        }
-
-        async void OnBrokeredMessageUpdateReceived(FeedUpdateNotice notice)
+        public async void ProcessFeedUpdateNotice(FeedUpdateNotice notice)
         {
             try
             {
                 if (notice == null)
                     return;
 
-                if (notice.FeedId.Equals(feed.FeedId) && notice.RefreshTime > LastRefresh)
+                if (notice.FeedId.Equals(feed.FeedId))
                 {
-                    await LoadLatestNews();
-                }
+                    if (notice.RefreshTime > LastRefresh)
+                    {
+                        await LoadLatestNews();
+                    }
 
-                DebugEx.WriteLine("completing message id: {0}", notice.MessageId);
-                await notice.MarkNoticeAsRead();
-                DebugEx.WriteLine("COMPLETED message id: {0}", notice.MessageId);
+                    DebugEx.WriteLine("completing message id: {0}", notice.MessageId);
+                    await notice.MarkNoticeAsRead();
+                    DebugEx.WriteLine("COMPLETED message id: {0}", notice.MessageId);
+                }
             }
 #if DEBUG
             catch (Exception e)

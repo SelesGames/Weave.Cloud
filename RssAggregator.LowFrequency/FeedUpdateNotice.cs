@@ -15,6 +15,7 @@ namespace Weave.RssAggregator.LowFrequency
 
         public string MessageId { get; set; }
         public Guid FeedId { get; set; }
+        public string FeedUri { get; set; }
         public DateTime RefreshTime { get; set; }
 
         public Task MarkNoticeAsRead()

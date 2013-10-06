@@ -14,6 +14,8 @@ namespace Weave.RssAggregator.LowFrequency
     public class FeedCache : IDisposable
     {
         Dictionary<string, CachedFeed> feeds = new Dictionary<string, CachedFeed>();
+        List<HFeedDbMediator> mediators = new List<HFeedDbMediator>();
+
         CompositeDisposable disposables = new CompositeDisposable();
         object syncObject = new object();
 
@@ -82,15 +84,33 @@ namespace Weave.RssAggregator.LowFrequency
                 }
             }
 
-            var client = await subscriptionConnector.CreateClient();
-            var observable = client.AsObservable().Select(Parse).OfType<FeedUpdateNotice>();
+            mediators = cachedFeeds.Select(cachedFeed => new HFeedDbMediator(dbClient, cachedFeed)).ToList();
 
-            foreach (var cachedFeed in cachedFeeds)
+            foreach (var mediator in mediators)
             {
-                var mediator = new HFeedDbMediator(dbClient, cachedFeed);
                 await mediator.LoadLatestNews();
-                mediator.Subscribe(observable);
             }
+
+            var client = await subscriptionConnector.CreateClient();
+
+            client
+                .AsObservable()
+                .Select(Parse)
+                .OfType<FeedUpdateNotice>()
+                .Subscribe(OnFeedUpdateReceived, OnError);
+        }
+
+        void OnFeedUpdateReceived(FeedUpdateNotice notice)
+        {
+            foreach (var mediator in mediators)
+            {
+                mediator.ProcessFeedUpdateNotice(notice);
+            }
+        }
+
+        void OnError(Exception exception)
+        {
+            DebugEx.WriteLine(exception);
         }
 
 
@@ -113,10 +133,13 @@ namespace Weave.RssAggregator.LowFrequency
                 {
                     var feedId = (Guid)properties["FeedId"];
                     var refreshTime = (DateTime)properties["RefreshTime"];
+                    var feedUri = (string)properties["FeedUri"];
 
                     notice = new FeedUpdateNotice(message)
                     {
+                        MessageId = message.MessageId,
                         FeedId = feedId,
+                        FeedUri = feedUri,
                         RefreshTime = refreshTime,
                     };
                 }
