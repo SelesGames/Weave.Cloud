@@ -12,7 +12,7 @@ namespace FeedIconGrabber
     public class FeedUrlIconMappingsCreator
     {
         readonly string FEEDS_FILE = @"C:\WORK\CODE\SELES GAMES\Weave.Cloud\masterfeeds.xml";
-        readonly string PATH = @"C:\WORK\CODE\SELES GAMES";
+        readonly string PATH = @"C:\WORK\CODE\SELES GAMES\Weave.Cloud";
 
         public async Task BeginDownload()
         {
