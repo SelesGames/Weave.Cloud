@@ -171,7 +171,7 @@
 
   <Category Type="Microsoft">
     <Feed Name="All About Microsoft" IconUrl="http://weave.blob.core.windows.net/icons/All About Microsoft.png">http://www.zdnet.com/blog/microsoft/rss</Feed>
-    <Feed Name="Engadget" IconUrl="http://weave.blob.core.windows.net/icons/Engadget-WP.png">http://www.engadget.com/tag/microsoft/rss.xml</Feed>
+    <Feed Name="Engadget" CorrectedUrl="http://www.engadget.com/tag/microsoft/rss-full.xml" IconUrl="http://weave.blob.core.windows.net/icons/Engadget-WP.png">http://www.engadget.com/tag/microsoft/rss.xml</Feed>
     <Feed Name="WinRumors" IconUrl="http://weave.blob.core.windows.net/icons/WinRumors.png">http://feeds.feedburner.com/WinRumors</Feed>
     <Feed Name="All Things Digital" IconUrl="http://weave.blob.core.windows.net/icons/All Things Digital.jpg">http://allthingsd.com/tag/microsoft/feed/</Feed>
   </Category>
@@ -260,12 +260,12 @@
     <Feed Name="Ars Technica" IconUrl="http://weave.blob.core.windows.net/icons/Ars Technica.png">http://feeds.arstechnica.com/arstechnica/index</Feed>
     <Feed Name="Betanews" IconUrl="http://weave.blob.core.windows.net/icons/Betanews.png">http://feeds.betanews.com/bn</Feed>
     <Feed Name="Boing Boing" IconUrl="http://weave.blob.core.windows.net/icons/Boing Boing.png">http://feeds.boingboing.net/boingboing/iBag</Feed>
-    <Feed Name="Boy Genius Report" IconUrl="http://weave.blob.core.windows.net/icons/Boy Genius Report (2).jpg">http://www.bgr.com/feed/</Feed>
+    <Feed Name="BGR" IconUrl="http://weave.blob.core.windows.net/icons/BGR.jpg">http://www.bgr.com/feed/</Feed>
     <!--Feed Name="CenterNetworks" IconUrl="http://weave.blob.core.windows.net/icons/CenterNetworks.png">http://feeds.feedburner.com/Centernetworks</Feed-->
     <Feed Name="CNET" IconUrl="http://weave.blob.core.windows.net/icons/CNET.jpg">http://feeds.feedburner.com/cnet/NnTv?tag=contentBody.1</Feed>
     <Feed Name="CrunchGear" IconUrl="http://weave.blob.core.windows.net/icons/CrunchGear.png">http://feeds.feedburner.com/CrunchGear</Feed>
     <Feed Name="Digital Daily" IconUrl="http://weave.blob.core.windows.net/icons/Digital Daily.png">http://digitaldaily.allthingsd.com/feed/</Feed>
-    <Feed Name="Engadget" IconUrl="http://weave.blob.core.windows.net/icons/Engadget-WP.png">http://www.engadget.com/rss.xml</Feed>
+    <Feed Name="Engadget" CorrectedUrl="http://www.engadget.com/rss-full.xml" IconUrl="http://weave.blob.core.windows.net/icons/Engadget.png">http://www.engadget.com/rss.xml</Feed>
     <Feed Name="Geek.com" IconUrl="http://weave.blob.core.windows.net/icons/Geek.com.png">http://www.geek.com/feed/</Feed>
     <Feed Name="GigaOM" IconUrl="http://weave.blob.core.windows.net/icons/GigaOM.jpg">http://feeds.feedburner.com/ommalik</Feed>
     <Feed Name="Gizmodo" in="mu" IconUrl="http://weave.blob.core.windows.net/icons/Gizmodo.png">http://feeds.gawker.com/gizmodo/vip</Feed>
@@ -320,7 +320,7 @@
     <Feed Name="1800PocketPc" IconUrl="http://weave.blob.core.windows.net/icons/1800PocketPc.png">http://feeds.feedburner.com/RSS_1800PocketPC</Feed>
     <Feed Name="Best WP7 Games" IconUrl="http://weave.blob.core.windows.net/icons/Best WP7 Games.png">http://feeds.feedburner.com/bestwp7games</Feed>
     <Feed Name="BGR | WP" IconUrl="http://weave.blob.core.windows.net/icons/BGR-WP.png">http://www.bgr.com/tag/windows-phone/feed</Feed>
-    <Feed Name="Engadget | WP" IconUrl="http://weave.blob.core.windows.net/icons/Engadget-WP.png">http://www.engadget.com/tag/windowsphone/rss.xml</Feed>
+    <Feed Name="Engadget | WP" CorrectedUrl="http://www.engadget.com/tag/windowsphone/rss-full.xml" IconUrl="http://weave.blob.core.windows.net/icons/Engadget-WP.png">http://www.engadget.com/tag/windowsphone/rss.xml</Feed>
     <Feed Name="EverythingWM" IconUrl="http://weave.blob.core.windows.net/icons/EverythingWM.png">http://feeds.feedburner.com/everythingwm</Feed>
     <!--Feed Name="MobileTechWorld" IconUrl="http://weave.blob.core.windows.net/icons/MobileTechWorld.ico">http://feeds.feedburner.com/mobiletechworld/</Feed-->
     <Feed Name="Mobility Digest" IconUrl="http://weave.blob.core.windows.net/icons/Mobility Digest.png">http://mobilitydigest.com/category/windowsphone/feed</Feed>
