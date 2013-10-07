@@ -26,15 +26,13 @@ namespace FeedIconGrabber
                         Url = o.FeedUri,
                         IconUrl = o.IconUrl,
                     }
-                );
+                )
+                .OrderBy(o => o.Url);
 
             var feedUrlIconMappings = new FeedUrlIconMappings();
             feedUrlIconMappings.AddRange(feeds);
 
             string fileName = string.Format("{0}\\{1}", PATH, "iconMap.json");
-
-            //var serializer = new XmlSerializer(typeof(FeedUrlIconMappings), "");
-            //var serializer = new Newtonsoft.Json.JsonSerializer(typeof(FeedUrlIconMappings), "");
 
             using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
             {
@@ -42,7 +40,7 @@ namespace FeedIconGrabber
                     feedUrlIconMappings, 
                     new JsonSerializerSettings { Formatting = Formatting.Indented },
                     Encoding.UTF8);
-                //serializer.Serialize(fs, feedUrlIconMappings);
+
                 fs.Flush();
                 fs.Close();
             }
