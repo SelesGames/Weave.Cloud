@@ -848,11 +848,23 @@
     "IconUrl": "http://weave.blob.core.windows.net/icons/Engadget.png"
   },
   {
+    "Url": "http://www.engadget.com/rss-full.xml",
+    "IconUrl": "http://weave.blob.core.windows.net/icons/Engadget.png"
+  },
+  {
     "Url": "http://www.engadget.com/tag/microsoft/rss.xml",
     "IconUrl": "http://weave.blob.core.windows.net/icons/Engadget-WP.png"
   },
   {
+    "Url": "http://www.engadget.com/tag/microsoft/rss-full.xml",
+    "IconUrl": "http://weave.blob.core.windows.net/icons/Engadget-WP.png"
+  },
+  {
     "Url": "http://www.engadget.com/tag/windowsphone/rss.xml",
+    "IconUrl": "http://weave.blob.core.windows.net/icons/Engadget-WP.png"
+  },
+  {
+    "Url": "http://www.engadget.com/tag/windowsphone/rss-full.xml",
     "IconUrl": "http://weave.blob.core.windows.net/icons/Engadget-WP.png"
   },
   {

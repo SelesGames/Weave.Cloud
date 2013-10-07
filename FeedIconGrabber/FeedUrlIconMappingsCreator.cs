@@ -6,6 +6,7 @@ using Weave.RssAggregator.LibraryClient;
 using Common.JsonDotNet;
 using Newtonsoft.Json;
 using System.Text;
+using System.Collections.Generic;
 
 namespace FeedIconGrabber
 {
@@ -19,15 +20,30 @@ namespace FeedIconGrabber
             var feedLibraryClient = new FeedLibraryClient(FEEDS_FILE);
             await feedLibraryClient.LoadFeedsAsync();
 
-            var feeds = feedLibraryClient.Feeds
-                .Select(o =>
-                    new FeedUrlIconMapping
+            var feeds = new List<FeedUrlIconMapping>();
+
+            foreach (var feed in feedLibraryClient.Feeds)
+            {
+                var feedIconMap = new FeedUrlIconMapping
+                {
+                    Url = feed.FeedUri,
+                    IconUrl = feed.IconUrl
+                };
+
+                feeds.Add(feedIconMap);
+
+                if (!string.IsNullOrWhiteSpace(feed.CorrectedUri))
+                {
+                    feedIconMap = new FeedUrlIconMapping
                     {
-                        Url = o.FeedUri,
-                        IconUrl = o.IconUrl,
-                    }
-                )
-                .OrderBy(o => o.Url);
+                        Url = feed.CorrectedUri,
+                        IconUrl = feed.IconUrl
+                    };
+                    feeds.Add(feedIconMap);
+                }
+            }
+
+           feeds = feeds.OrderBy(o => o.Url).ToList();
 
             var feedUrlIconMappings = new FeedUrlIconMappings();
             feedUrlIconMappings.AddRange(feeds);
