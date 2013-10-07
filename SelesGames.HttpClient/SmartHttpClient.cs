@@ -42,7 +42,6 @@ namespace SelesGames.HttpClient
             this.encoderSettings = encoderSettings;
             this.compressionSettings = compressionSettings;
 
-            //DefaultRequestHeaders.
             var accept = encoderSettings.Accept;
             if (!string.IsNullOrEmpty(accept))
                 DefaultRequestHeaders.TryAddWithoutValidation("Accept", accept);
@@ -91,19 +90,19 @@ namespace SelesGames.HttpClient
         public async Task<TResult> PostAsync<TPost, TResult>(string url, TPost obj, CancellationToken cancelToken)
         {
             var response = await PostAsync(url, obj, cancelToken);
+            response.EnsureSuccessStatusCode();
+
             return await ReadResponseContentAsync<TResult>(response).ConfigureAwait(false);
         }
 
-        public async Task<HttpResponseMessage> PostAsync<T>(string url, T obj, CancellationToken cancelToken)
+        public Task<HttpResponseMessage> PostAsync<T>(string url, T obj, CancellationToken cancelToken)
         {
             var mediaType = new MediaTypeHeaderValue(encoderSettings.ContentType);
             var formatter = FindWriteFormatter<T>(mediaType);
 
             var content = new ObjectContent<T>(obj, formatter, mediaType);
 
-            var response = await base.PostAsync(url, content, cancelToken).ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-            return response;
+            return base.PostAsync(url, content, cancelToken);
         }
 
         #endregion

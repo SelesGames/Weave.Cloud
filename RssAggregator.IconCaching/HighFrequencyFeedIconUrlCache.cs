@@ -34,7 +34,7 @@ namespace RssAggregator.IconCaching
 
             listenerHandle = client.PollChangesToResource(
                 MAPPING_DEF_URL,
-                TimeSpan.FromMinutes(15),
+                TimeSpan.FromMinutes(1),
                 OnResourceUpdated);
         }
 
