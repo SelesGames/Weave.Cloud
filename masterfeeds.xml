@@ -172,6 +172,7 @@
   <Category Type="Microsoft">
     <Feed Name="All About Microsoft" IconUrl="http://weave.blob.core.windows.net/icons/All About Microsoft.png">http://www.zdnet.com/blog/microsoft/rss</Feed>
     <Feed Name="Engadget" CorrectedUrl="http://www.engadget.com/tag/microsoft/rss-full.xml" IconUrl="http://weave.blob.core.windows.net/icons/Engadget-WP.png">http://www.engadget.com/tag/microsoft/rss.xml</Feed>
+    <Feed Name="Neowin">http://www.neowin.net/news/rss/microsoft</Feed>
     <Feed Name="WinRumors" IconUrl="http://weave.blob.core.windows.net/icons/WinRumors.png">http://feeds.feedburner.com/WinRumors</Feed>
     <Feed Name="All Things Digital" IconUrl="http://weave.blob.core.windows.net/icons/All Things Digital.jpg">http://allthingsd.com/tag/microsoft/feed/</Feed>
   </Category>
@@ -329,6 +330,7 @@
     <Feed Name="Pocket-lint" IconUrl="http://weave.blob.core.windows.net/icons/Pocket-lint.png">http://www.pocket-lint.com/rss.phtml?type=news&amp;channels=windows+phone+7</Feed>
     <!--Feed Name="Seles Games Twitter Feed" ViewType="ie">http://twitter.com/statuses/user_timeline/168187863.rss</Feed-->
     <!--Feed Name="Windows Phone Metro" ViewType="ie">http://windowsphonemetro.com/feed/</Feed-->
+    <Feed Name="Windows Phone Daily" in="mu">http://feeds.feedburner.com/windowsphonedaily/DnwK</Feed>
     <Feed Name="Windows Team Blog" IconUrl="http://weave.blob.core.windows.net/icons/Windows Team Blog.png">http://windowsteamblog.com/windows_phone/rss.aspx</Feed>
     <Feed Name="WMPoweruser.com" IconUrl="http://weave.blob.core.windows.net/icons/WMPowerUser.png">http://feeds.feedburner.com/WmPowerUser</Feed>
     <Feed Name="WPCentral.com" IconUrl="http://weave.blob.core.windows.net/icons/WPCentral.png">http://feeds.feedburner.com/wmexperts?format=xml</Feed>
