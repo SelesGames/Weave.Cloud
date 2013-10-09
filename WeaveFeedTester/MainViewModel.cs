@@ -29,7 +29,7 @@ namespace WeaveFeedTester
         public async Task LoadFeeds()
         {
             //var client = new ExpandedLibrary("https://weave.blob.core.windows.net/settings/masterfeeds.xml");
-            var client = new FeedLibraryClient(@"C:\Users\Arashj\Desktop\Code\SELES GAMES\Weave.Cloud\masterfeeds.xml");
+            var client = new FeedLibraryClient(@"C:\WORK\CODE\SELES GAMES\Weave.Cloud\masterfeeds.xml");
             await client.LoadFeedsAsync();
             var feeds = client.Feeds;
 
