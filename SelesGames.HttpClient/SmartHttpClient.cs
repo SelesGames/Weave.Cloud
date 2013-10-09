@@ -82,11 +82,6 @@ namespace SelesGames.HttpClient
             return PostAsync<TPost, TResult>(url, obj, CancellationToken.None);
         }
 
-        public Task PostAsync<TPost>(string url, TPost obj)
-        {
-            return PostAsync(url, obj, CancellationToken.None);
-        }
-
         public async Task<TResult> PostAsync<TPost, TResult>(string url, TPost obj, CancellationToken cancelToken)
         {
             var response = await PostAsync(url, obj, cancelToken);
