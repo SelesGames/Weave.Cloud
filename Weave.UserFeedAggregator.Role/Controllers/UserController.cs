@@ -40,13 +40,53 @@ namespace Weave.User.Service.Role.Controllers
 
         [HttpPost]
         [ActionName("create")]
-        public async Task<Outgoing.UserInfo> AddUserAndReturnUserInfo([FromBody] Incoming.UserInfo incomingUser)
+        public async Task<Outgoing.UserInfo> AddUserAndReturnUserInfo([FromBody] Incoming.UserInfo incomingUser = null)
         {
+            bool isIdEmpty = false;
+            bool doesUserAlreadyExist = false;
+
+            incomingUser = incomingUser ?? new Incoming.UserInfo();
+
+            if (Guid.Empty == incomingUser.Id)
+            {
+                isIdEmpty = true;
+                incomingUser.Id = Guid.NewGuid();
+            }
+
+            if (!isIdEmpty)
+            {
+                var sw = System.Diagnostics.Stopwatch.StartNew();
+
+                try
+                {
+                    userBO = await userRepo.Get(incomingUser.Id);
+                    if (userBO != null)
+                        doesUserAlreadyExist = true;
+                }
+                catch (StorageClientException)
+                {
+                    // if we get here, we couldn't find the user
+                }
+                catch
+                {
+                    throw;
+                }
+                finally
+                {
+                    sw.Stop();
+                    readTime = sw.Elapsed;
+                }
+            }
+
+            if (doesUserAlreadyExist)
+            {
+                throw ResponseHelper.CreateResponseException(HttpStatusCode.BadRequest, "A user with that Id already exists");
+            }
+
             userBO = ConvertToBusinessObject(incomingUser);
             await userBO.RefreshAllFeeds();
             userRepo.Save(userBO.Id, userBO);
             var outgoing = ConvertToOutgoing(userBO);
-            //outgoing.LatestNews = userBO.GetLatestArticles().Select(ConvertToOutgoing).ToList();
 
             outgoing.DataStoreReadTime = readTime;
             outgoing.DataStoreWriteTime = writeTime;
@@ -355,7 +395,7 @@ namespace Weave.User.Service.Role.Controllers
 
 
 
-        #region helper methods
+        #region Helper methods
 
         async Task VerifyUserId(Guid userId)
         {
