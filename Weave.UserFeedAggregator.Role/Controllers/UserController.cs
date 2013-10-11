@@ -38,9 +38,16 @@ namespace Weave.User.Service.Role.Controllers
 
         #region User creation
 
+        [HttpGet]
+        [ActionName("create")]
+        public Task<Outgoing.UserInfo> Create()
+        {
+            return AddUserAndReturnUserInfo(null);
+        }
+
         [HttpPost]
         [ActionName("create")]
-        public async Task<Outgoing.UserInfo> AddUserAndReturnUserInfo([FromBody] Incoming.UserInfo incomingUser = null)
+        public async Task<Outgoing.UserInfo> AddUserAndReturnUserInfo([FromBody] Incoming.UserInfo incomingUser)
         {
             bool isIdEmpty = false;
             bool doesUserAlreadyExist = false;
