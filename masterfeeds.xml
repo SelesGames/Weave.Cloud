@@ -11,7 +11,77 @@
     <Feed Name="k">http://winsource.com/feed/</Feed>
     <Feed Name="o">http://feeds2.feedburner.com/feliciaday</Feed>
     <Feed Name="p">http://fatuglyorslutty.com/feed/rss/</Feed>
-  </Category--> 
+  </Category-->
+
+  <Category Type="On Deck">
+    <Feed Name="Next Big Future">http://feeds.feedburner.com/blogspot/advancednano</Feed>
+    <Feed Name="Vulture">http://feeds.feedburner.com/nymag/vulture</Feed>
+    <Feed Name="Smithsonian Magazine"></Feed>
+    <Feed Name="Collider">http://collider.com/category/News/feed</Feed>
+    <!--Feed Name="News Republic"></Feed> not available -->
+    <Feed Name="Tor.com" in="mu">http://www.tor.com/rss/frontpage_full</Feed>
+    <!--Feed Name="Amanpour"></Feed-->
+    <!--Feed Name="NYMag.com"></Feed-->
+    <Feed Name="A.V. Club">http://feeds.theonion.com/avclub/tvclub/</Feed>
+    <Feed Name="A.V. Club">http://feeds.theonion.com/avclub/film/</Feed>
+    <Feed Name="A.V. Club">http://feeds.theonion.com/AVBooks/</Feed>
+    <Feed Name="Comic Mix">http://www.comicmix.com/feed/</Feed>
+    <Feed Name="Quartz">http://qz.com/feed</Feed>
+    <Feed Name="Mother Jones">http://feeds.feedburner.com/motherjones/Politics</Feed>
+    <Feed Name="Jezebel"></Feed>
+    <Feed Name="Informed Comment">http://www.juancole.com/rss.xml</Feed>
+    <Feed Name="ThinkProgress">http://thinkprogress.org/feed/</Feed>
+    <Feed Name="Pajiba">http://feeds.feedburner.com/Pajiba</Feed>
+    <Feed Name="Kottke.org">http://feeds.kottke.org/main</Feed>
+    <Feed Name="Xamarin">http://blog.xamarin.com/feed/</Feed>
+    <Feed Name="VentureBeat">http://feeds.venturebeat.com/VentureBeat</Feed>
+    <Feed Name=".NET Curry">http://feeds.feedburner.com/netCurryRecentArticles</Feed>
+    <Feed Name="Infoq"></Feed>
+    <Feed Name="Crunchyroll"></Feed>
+    <Feed Name="Lego Cuusoo">http://blog.lego.cuusoo.com/feed/</Feed>
+    <Feed Name="The Brothers Brick">http://feeds.feedburner.com/TheBrothersBrick</Feed>
+    <Feed Name="Brickd">http://www.brickd.com/rss</Feed>
+    <Feed Name="The Brick Blogger">http://feeds.feedburner.com/thebrickblogger</Feed>
+    <Feed Name="iFanboy" in="mu">http://feeds.feedburner.com/ifanboy</Feed>
+    <Feed Name="International Policy Digets"></Feed>
+    <Feed Name="Bigstory.ap.org"></Feed>
+    <Feed Name="Wonkette" in="mu">http://wonkette.com/feed</Feed>
+    <Feed Name="All About Windows Phone" in="mu">http://rss.allaboutwindowsphone.com/aawp-feed-full-all.xml</Feed>
+    <Feed Name="Al Jazeera">http://america.aljazeera.com/content/ajam/articles.rss</Feed>
+    <Feed Name="Buzzfeed">http://www.buzzfeed.com/index-tame.xml</Feed>
+    <Feed Name="GQ">http://www.gq.com/services/rss/feeds/latest.xml</Feed>
+    <Feed Name="Vanity fair"></Feed>
+    <Feed Name="LA Mag.com"></Feed>
+    <Feed Name="Grantland.com"></Feed>
+    
+    <!-- photography -->
+    <Feed Name="ThomasHawk.com" in="mu">http://thomashawk.com/feed</Feed>
+    <Feed Name="TheBigPicture Boston.com">http://feeds.boston.com/boston/bigpicture/index</Feed>
+
+    <!-- Lifestyle -->
+    <Feed Name="Sea of Shoes"></Feed>
+    <Feed Name="Fashiontoast"></Feed>
+    <Feed Name="Style Bubble"></Feed>
+    <Feed Name="The Blonde Salad"></Feed>
+    
+    <!-- Cars -->
+    <Feed Name="Autoblog"></Feed>
+    <Feed Name="The Truth About Cars"></Feed>
+    <Feed Name="Topgear.com"></Feed>
+    <Feed Name="Wired.com/autopia"></Feed>
+    
+    <!-- Politics -->
+    <Feed Name="The Daily Kos"></Feed>
+
+    <!-- Cooking -->-->
+    <Feed Name="Smitten Kitchen"></Feed>
+    <Feed Name="Latartine Gourmande"></Feed>
+    <Feed Name="lolcookbooks.com"></Feed>
+    <Feed Name="The Kitchn"></Feed>
+    <Feed Name="Delish.com"></Feed>
+    <Feed Name=""></Feed>
+
+  </Category>
   
 
   <Category Type="Pop &amp; Geek Culture">
