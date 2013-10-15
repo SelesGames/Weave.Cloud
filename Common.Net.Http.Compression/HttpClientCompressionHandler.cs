@@ -7,13 +7,10 @@ namespace Common.Net.Http.Compression
 {
     public class HttpClientCompressionHandler : HttpClientHandler
     {
-        //public HttpClientCompressionHandler()
-        //{
-            //UseProxy = false;
-            //AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-        //}
-
-        //public override bool SupportsProxy { get { return false; } }
+        public override bool SupportsAutomaticDecompression
+        {
+            get { return false; }
+        }
 
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, System.Threading.CancellationToken cancellationToken)
         {
