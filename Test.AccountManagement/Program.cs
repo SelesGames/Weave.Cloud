@@ -37,8 +37,8 @@ namespace Test.AccountManagement
 
         static async Task TestMobilizer()
         {
-            var parser = new Weave.Mobilizer.HtmlParser.Parser();
-            await parser.TryStuff();
+            //var parser = new Weave.Mobilizer.HtmlParser.Parser();
+            //await parser.TryStuff();
             DebugEx.WriteLine("finished parser testing");
         }
 

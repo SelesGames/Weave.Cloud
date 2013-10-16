@@ -21,12 +21,12 @@ namespace Weave.Mobilizer.HtmlParser
 //"http://www.guardian.co.uk/world/2013/jun/23/chen-guangcheng-visits-taiwan";
 "http://www.wpcentral.com/e-online-releases-official-app-windows-phone-8";
 
-        public async Task TryStuff()
-        {
-            var dto = await new MobilizerServiceClient("hxyuiplkx78!ksdfl").Get(testurl);
-            ProcessContent(dto);
-            System.Diagnostics.Debug.WriteLine(dto);
-        }
+        //public async Task TryStuff()
+        //{
+        //    var dto = await new MobilizerServiceClient("hxyuiplkx78!ksdfl").Get(testurl);
+        //    ProcessContent(dto);
+        //    System.Diagnostics.Debug.WriteLine(dto);
+        //}
 
         public void ProcessContent(ReadabilityResult result)
         {

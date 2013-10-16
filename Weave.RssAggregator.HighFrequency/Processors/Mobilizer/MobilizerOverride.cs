@@ -1,6 +1,8 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Weave.Mobilizer.Client;
+using Weave.Mobilizer.DTOs;
+using Weave.Mobilizer.HtmlParser;
 
 namespace Weave.RssAggregator.HighFrequency
 {
@@ -28,17 +30,22 @@ namespace Weave.RssAggregator.HighFrequency
         {
             try
             {
-                await client.Post(e.Link,
-                    new Weave.Mobilizer.DTOs.ReadabilityResult
-                    {
-                        title = e.Title,
-                        url = e.Link,
-                        date_published = e.UtcPublishDateTimeString,
-                        domain = feed.FeedUri,
-                        content = e.Description,
-                        author = null,
-                        word_count = "not available",
-                    });
+                var readabilityResult = new ReadabilityResult
+                {
+                    title = e.Title,
+                    url = e.Link,
+                    date_published = e.UtcPublishDateTimeString,
+                    domain = feed.FeedUri,
+                    content = e.Description,
+                    author = null,
+                    word_count = "not available",
+                    lead_image_url = e.OriginalImageUrl,
+                };
+
+                var parser = new Parser();
+                parser.ProcessContent(readabilityResult);
+
+                await client.Post(e.Link, readabilityResult);
             }
             catch { }
         }

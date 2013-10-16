@@ -122,6 +122,10 @@
       <Project>{787ff65b-d0b3-4135-8495-ec5d4ff0a068}</Project>
       <Name>Weave.Mobilizer.Client</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Weave.Mobilizer.HtmlParser\Weave.Mobilizer.HtmlParser.csproj">
+      <Project>{8993c056-b00f-4bad-a1fc-c944af40a993}</Project>
+      <Name>Weave.Mobilizer.HtmlParser</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Weave.Parsing\Weave.Parsing.csproj">
       <Project>{a9731e9c-72fc-4171-ba99-9a6f97cd379f}</Project>
       <Name>Weave.Parsing</Name>
