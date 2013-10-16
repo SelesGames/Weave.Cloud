@@ -22,7 +22,7 @@ namespace FeedIconGrabber
 
             var feeds = new List<FeedUrlIconMapping>();
 
-            foreach (var feed in feedLibraryClient.Feeds)
+            foreach (var feed in feedLibraryClient.Feeds.Where(IsFeedAndIconUrisSet))
             {
                 var feedIconMap = new FeedUrlIconMapping
                 {
@@ -60,6 +60,11 @@ namespace FeedIconGrabber
                 fs.Flush();
                 fs.Close();
             }
+        }
+
+        static bool IsFeedAndIconUrisSet(FeedSource feed)
+        {
+            return !string.IsNullOrWhiteSpace(feed.FeedUri) && !string.IsNullOrWhiteSpace(feed.IconUrl);
         }
     }
 }

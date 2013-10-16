@@ -432,6 +432,10 @@
     "IconUrl": "http://weave.blob.core.windows.net/icons/Gadling.png"
   },
   {
+    "Url": "http://feeds.feedburner.com/windowsphonedaily/DnwK",
+    "IconUrl": "http://weave.blob.core.windows.net/icons/WindowsPhoneDaily.png"
+  },
+  {
     "Url": "http://feeds.feedburner.com/WinRumors",
     "IconUrl": "http://weave.blob.core.windows.net/icons/WinRumors.png"
   },
@@ -545,7 +549,7 @@
   },
   {
     "Url": "http://feeds.reuters.com/reuters/businessNews",
-    "IconUrl": "http://weave.blob.core.windows.net/icons/Reuters (2).jpg"
+    "IconUrl": "http://weave.blob.core.windows.net/icons/Reuters.png"
   },
   {
     "Url": "http://feeds.seriouseats.com/seriouseatsfeaturesvideos",
@@ -942,6 +946,10 @@
   {
     "Url": "http://www.movieline.com/rss/index.xml",
     "IconUrl": "http://weave.blob.core.windows.net/icons/Movieline.png"
+  },
+  {
+    "Url": "http://www.neowin.net/news/rss/microsoft",
+    "IconUrl": "http://weave.blob.core.windows.net/icons/Neowin.png"
   },
   {
     "Url": "http://www.newyorker.com/online/blogs/newsdesk/rss.xml",
