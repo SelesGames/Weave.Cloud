@@ -34,7 +34,7 @@ namespace Weave.RssAggregator.LowFrequency
             {
                 var now = DateTime.UtcNow;
 
-                var news = await dbClient.GetLatestNNewsAsBlobList(feed.FeedId);
+                var news = await dbClient.GetLatestNNewsAsBlobList(feed.FeedId, 64);
 
                 // if there is no news, assume something is wrong and leave it in the Uninitialized FeedState
                 if (news == null || !news.Any())
