@@ -176,6 +176,28 @@ namespace Weave.User.BusinessObjects
                 newsItem.HasBeenViewed = true;
         }
 
+        public void MarkCategorySoftRead(string category)
+        {
+            if (feedsList == null)
+                return;
+
+            foreach (var newsItem in feedsList.OfCategory(category).AllNews())
+            {
+                newsItem.HasBeenViewed = true;
+            }
+        }
+
+        public void MarkFeedSoftRead(Guid feedId)
+        {
+            if (feedsList == null)
+                return;
+
+            foreach (var newsItem in feedsList.Where(o => o.Id == feedId).AllNews())
+            {
+                newsItem.HasBeenViewed = true;
+            }
+        }
+
         public void AddFavorite(Guid newsItemId)
         {
             AddFavorite(FindNewsItem(newsItemId));

@@ -373,6 +373,24 @@ namespace Weave.User.Service.Role.Controllers
         }
 
         [HttpGet]
+        [ActionName("soft_read")]
+        public async Task MarkArticlesSoftRead(Guid userId, string category)
+        {
+            await VerifyUserId(userId);
+            userBO.MarkCategorySoftRead(category);
+            SaveUser();
+        }
+
+        [HttpGet]
+        [ActionName("soft_read")]
+        public async Task MarkArticlesSoftRead(Guid userId, Guid feedId)
+        {
+            await VerifyUserId(userId);
+            userBO.MarkFeedSoftRead(feedId);
+            SaveUser();
+        }
+
+        [HttpGet]
         [ActionName("add_favorite")]
         public async Task AddFavorite(Guid userId, Guid newsItemId)
         {

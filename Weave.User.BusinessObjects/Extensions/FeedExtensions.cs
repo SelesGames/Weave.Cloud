@@ -28,10 +28,5 @@ namespace Weave.User.BusinessObjects
         {
             return feeds.AllNews().OrderByDescending(o => o.UtcPublishDateTime);
         }
-
-        //public static bool AreThereTooManyFeeds(this IEnumerable<FeedSource> feeds)
-        //{
-        //    return feeds.Count() > weave.Data.Weave4DataAccessLayer.MaxAllowedSources;
-        //}
     }
 }
