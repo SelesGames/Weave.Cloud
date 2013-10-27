@@ -363,7 +363,7 @@ namespace Weave.User.Service.Role.Controllers
             SaveUser();
         }
 
-        [HttpGet]
+        [HttpPost]
         [ActionName("soft_read")]
         public async Task MarkArticlesSoftRead(Guid userId, [FromBody] List<Guid> newsItemIds)
         {
