@@ -23,8 +23,19 @@ namespace Weave.User.Service.Cache
                 new DataCacheSerializationProperties(DataCacheObjectSerializerType.CustomSerializer, new UserInfoCacheSerializer());
             var cacheFactory = new DataCacheFactory(config);
             cache = cacheFactory.GetCache(CACHE_NAME);
+
+            //cache.AddCacheLevelBulkCallback(null);
+            //cache.AddCacheLevelCallback(
+            //    DataCacheOperations.AddItem | DataCacheOperations.RemoveItem | DataCacheOperations.ReplaceItem,
+            //    OnCacheUpdated);
+
             writeQueue = new UserInfoBlobWriteQueue(userInfoBlobClient);
         }
+
+        //void OnCacheUpdated(string cacheName, string regionName, string key, DataCacheItemVersion version, DataCacheOperations cacheOperation, DataCacheNotificationDescriptor nd)
+        //{
+
+        //}
 
         public async Task<UserInfo> Get(Guid userId)
         {
