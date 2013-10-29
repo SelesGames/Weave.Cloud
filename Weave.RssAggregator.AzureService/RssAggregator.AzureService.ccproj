@@ -42,7 +42,7 @@
     <Folder Include="Profiles" />
   </ItemGroup>
   <ItemGroup>
-    <PublishProfile Include="Profiles\Weave RSS AggregatorStaging.azurePubxml" />
+    <PublishProfile Include="Profiles\Weave Aggregator.azurePubxml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Weave.RssAggregator.WorkerRole\RssAggregator.WorkerRole.csproj">
