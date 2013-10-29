@@ -1,4 +1,5 @@
-﻿using Microsoft.ApplicationServer.Caching;
+﻿using Common.Azure.Caching.Local;
+using Microsoft.ApplicationServer.Caching;
 using System;
 using System.Threading.Tasks;
 using Weave.User.DataStore;
@@ -9,9 +10,10 @@ namespace Weave.User.Service.Cache
     public class UserInfoAzureCacheClient
     {
         readonly string CACHE_NAME = "user";
-        DataCache cache;
+        //DataCache cache;
         UserInfoBlobWriteQueue writeQueue;
         UserInfoBlobClient userInfoBlobClient;
+        AzureLocalCache cache;
 
         public UserInfoAzureCacheClient(UserInfoBlobClient userInfoBlobClient)
         {
@@ -22,7 +24,8 @@ namespace Weave.User.Service.Cache
             config.SerializationProperties = 
                 new DataCacheSerializationProperties(DataCacheObjectSerializerType.CustomSerializer, new UserInfoCacheSerializer());
             var cacheFactory = new DataCacheFactory(config);
-            cache = cacheFactory.GetCache(CACHE_NAME);
+            var cache = cacheFactory.GetCache(CACHE_NAME);
+            this.cache = new AzureLocalCache(cache);
 
             //cache.AddCacheLevelBulkCallback(null);
             //cache.AddCacheLevelCallback(
@@ -41,10 +44,12 @@ namespace Weave.User.Service.Cache
         {
             var key = userId.ToString();
 
-            var o = SafeCacheGet(key);// cache.Get(key);
-            if (o != null)
+            object user;
+
+            user = SafeCacheGet(key);
+            if (user != null && user is UserInfo)
             {
-                return o.Cast<UserInfo>();
+                return (UserInfo)user;
             }
 
             // there was a cache miss if we get this far
