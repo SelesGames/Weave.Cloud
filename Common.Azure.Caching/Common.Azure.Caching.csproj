@@ -63,6 +63,9 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Local\AzureCacheItem.cs" />
+    <Compile Include="Local\AzureCacheMissException.cs" />
+    <Compile Include="Local\AzureLocalCache.cs" />
     <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="Extensions\TaskEx.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
