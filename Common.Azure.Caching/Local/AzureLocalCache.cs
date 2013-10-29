@@ -18,7 +18,7 @@ namespace Common.Azure.Caching.Local
 
         #region Get
 
-        public T Get<T>(string key) where T : class
+        public object Get(string key)
         {
             var localCopy = localCache.GetOrAdd(key, GetFromOuterCache);
 
@@ -41,13 +41,19 @@ namespace Common.Azure.Caching.Local
                 }
             }
 
-            return localCopy.GetValue<T>();
+            return localCopy.Value;
         }
 
         AzureCacheItem GetFromOuterCache(string key)
         {
             DataCacheItemVersion version;
+
             var outerCopy = outerCache.Get(key, out version);
+            if (outerCopy == null)
+            {
+                throw new AzureCacheMissException(key);
+            }
+
             var localCopy = new AzureCacheItem(outerCopy, version) { IsNew = true };
             return localCopy;
         }

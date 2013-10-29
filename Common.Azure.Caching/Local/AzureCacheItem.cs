@@ -17,10 +17,5 @@ namespace Common.Azure.Caching.Local
             Value = val;
             Version = version;
         }
-
-        public T GetValue<T>()
-        {
-            return (T)Value;
-        }
     }
 }
