@@ -213,7 +213,7 @@
     <Feed Name="Penny Arcade Report" ViewType="ie" IconUrl="http://weave.blob.core.windows.net/icons/Penny Arcade Report.png">http://feeds.penny-arcade.com/pa-report</Feed>
     <Feed Name="Polygon" IconUrl="http://weave.blob.core.windows.net/icons/Polygon.jpg">http://www.polygon.com/rss/index.xml</Feed>
     <Feed Name="Rock, Paper, Shotgun" IconUrl="http://weave.blob.core.windows.net/icons/Rock, Paper, Shotgun.png">http://feeds.feedburner.com/RockPaperShotgun</Feed>
-    <Feed Name="Wired | GameLife" IconUrl="http://weave.blob.core.windows.net/icons/Wired.com.png" ViewType="ie">http://www.wired.com/gamelife/feed</Feed>
+    <Feed Name="Wired | GameLife" IconUrl="http://weave.blob.core.windows.net/icons/Wired.com.png">http://www.wired.com/gamelife/feed</Feed>
     <Feed Name="WoW Insider" IconUrl="http://weave.blob.core.windows.net/icons/WoW Insider.png">http://wow.joystiq.com/rss.xml</Feed>
   </Category>
 
@@ -309,7 +309,7 @@
     <Feed Name="Popular Science" IconUrl="http://weave.blob.core.windows.net/icons/Popular Science.jpg">http://www.popsci.com/rss.xml</Feed>
     <Feed Name="Scientific American" IconUrl="http://weave.blob.core.windows.net/icons/Scientific American.jpg">http://rss.sciam.com/ScientificAmerican-Global</Feed>
     <Feed Name="Smithsonian Science" IconUrl="http://weave.blob.core.windows.net/icons/Smithsonian Science.jpg">http://smithsonianscience.org/feed/</Feed>
-    <Feed Name="Wired Science" IconUrl="http://weave.blob.core.windows.net/icons/Wired.com.png" ViewType="ie">http://www.wired.com/wiredscience/feed/</Feed>
+    <Feed Name="Wired Science" IconUrl="http://weave.blob.core.windows.net/icons/Wired.com.png">http://www.wired.com/wiredscience/feed/</Feed>
     <Feed Name="Universe Today" IconUrl="http://weave.blob.core.windows.net/icons/Universe Today.png">http://feeds.feedburner.com/universetoday/pYdq</Feed>
   </Category>
 
@@ -353,8 +353,8 @@
     <Feed Name="The Verge" IconUrl="http://weave.blob.core.windows.net/icons/The Verge YouTube.png">http://www.theverge.com/rss/index.xml</Feed>
     <Feed Name="VentureBeat" IconUrl="http://weave.blob.core.windows.net/icons/VentureBeat.jpg">http://feeds.venturebeat.com/Venturebeat</Feed>
     <Feed Name="VR-Zone" IconUrl="http://weave.blob.core.windows.net/icons/VR-Zone.png">http://feeds.feedburner.com/vr-zone</Feed>
-    <Feed Name="Wired.com" ViewType="ie" IconUrl="http://weave.blob.core.windows.net/icons/Wired.com.png">http://feeds.wired.com/wired/index</Feed>
-    <Feed Name="Wired.com | Gadget Lab" IconUrl="http://weave.blob.core.windows.net/icons/Wired.com.png" ViewType="ie">http://www.wired.com/gadgetlab/feed</Feed>
+    <Feed Name="Wired.com" IconUrl="http://weave.blob.core.windows.net/icons/Wired.com.png">http://feeds.wired.com/wired/index</Feed>
+    <Feed Name="Wired.com | Gadget Lab" IconUrl="http://weave.blob.core.windows.net/icons/Wired.com.png">http://www.wired.com/gadgetlab/feed</Feed>
     <Feed Name="ZDNet" IconUrl="http://weave.blob.core.windows.net/icons/ZDNet.png">http://www.zdnet.com/search?t=1&amp;mode=rss</Feed>
   </Category>
   
