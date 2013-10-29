@@ -6,6 +6,19 @@ namespace Weave.User.Service.Cache.Extensions
 {
     internal static class TaskEx
     {
+        public static async void Fire(this Task t, Action<Exception> onError = null)
+        {
+            try
+            {
+                await t;
+            }
+            catch (Exception e)
+            {
+                if (onError != null)
+                    onError(e);
+            }
+        }
+
         public static async Task Retry(Func<Task> func, int maxAttempts, TimeSpan waitTime)
         {
             int retryCount = 0;
