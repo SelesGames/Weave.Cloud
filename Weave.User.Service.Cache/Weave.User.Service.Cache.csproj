@@ -76,6 +76,10 @@
     <Compile Include="UserRepository.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common.Azure.Caching\Common.Azure.Caching.csproj">
+      <Project>{b91ec96a-c4ea-4788-bc6c-dfa7f85bcb3a}</Project>
+      <Name>Common.Azure.Caching</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common.Azure\Common.Azure.csproj">
       <Project>{6211d4f0-8390-4dfa-a1d2-ba4aa7c28348}</Project>
       <Name>Common.Azure</Name>
