@@ -9,7 +9,7 @@ namespace Weave.User.BusinessObjects.ServiceClients
 {
     public class ServiceClient
     {
-        const string SERVICE_URL = "http://weave2.cloudapp.net/api/Weave";
+        const string SERVICE_URL = "http://weave-aggregator.cloudapp.net/api/Weave";
 
         public async Task<List<FeedResult>> GetFeedResultsAsync(List<FeedRequest> outgoingFeedRequests)
         {
