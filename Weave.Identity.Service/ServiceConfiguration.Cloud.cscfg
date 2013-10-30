@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ServiceConfiguration serviceName="Weave.AccountManagement.Service" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="3" osVersion="*" schemaVersion="2013-03.2.0">
+<ServiceConfiguration serviceName="Weave.AccountManagement.Service" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="3" osVersion="*" schemaVersion="2013-10.2.2">
   <Role name="Weave.Identity.Service.WorkerRole">
     <Instances count="2" />
     <ConfigurationSettings>

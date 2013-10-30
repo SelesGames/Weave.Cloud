@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ServiceDefinition name="Weave.AccountManagement.Service" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2013-03.2.0">
+<ServiceDefinition name="Weave.AccountManagement.Service" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2013-10.2.2">
   <WorkerRole name="Weave.Identity.Service.WorkerRole" vmsize="ExtraSmall">
     <Runtime executionContext="elevated" />
     <Imports>
