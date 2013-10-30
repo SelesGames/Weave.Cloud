@@ -65,7 +65,7 @@ namespace Weave.User.Service.Cache
         {
             var key = userId.ToString();
 
-            Task.Factory.StartNew(() => cache.Put(key, user)).Fire();
+            cache.Put(key, user);
             writeQueue.Add(user);
         }
 
