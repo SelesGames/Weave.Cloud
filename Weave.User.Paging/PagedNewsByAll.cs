@@ -3,7 +3,7 @@ namespace Weave.User.Paging
 {
     public class PagedNewsByAll : PagedNewsBase
     {
-        public string CreateFileName()
+        public override string CreateFileName()
         {
             return string.Format(
                 "{0}-{1}",

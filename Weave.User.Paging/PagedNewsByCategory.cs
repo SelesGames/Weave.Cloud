@@ -5,7 +5,7 @@ namespace Weave.User.Paging
     {
         public string Category { get; set; }
 
-        public string CreateFileName()
+        public override string CreateFileName()
         {
             return string.Format(
                 "{0}-{1}-{2}",
