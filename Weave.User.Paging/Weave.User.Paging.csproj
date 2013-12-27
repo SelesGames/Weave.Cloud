@@ -37,10 +37,15 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PagedNewsBase.cs" />
-    <Compile Include="PagedNewsByAll.cs" />
-    <Compile Include="PagedNewsByCategory.cs" />
-    <Compile Include="PagedNewsByFeed.cs">
+    <Compile Include="Lists\ListInfoBase.cs" />
+    <Compile Include="Lists\ListInfoByAll.cs" />
+    <Compile Include="Lists\ListInfoByCategory.cs" />
+    <Compile Include="Lists\ListInfoByFeed.cs" />
+    <Compile Include="Lists\MasterListsInfo.cs" />
+    <Compile Include="News\PagedNewsBase.cs" />
+    <Compile Include="News\PagedNewsByAll.cs" />
+    <Compile Include="News\PagedNewsByCategory.cs" />
+    <Compile Include="News\PagedNewsByFeed.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="PagedNewsHelper.cs" />

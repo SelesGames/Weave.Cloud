@@ -1,5 +1,5 @@
 ﻿
-namespace Weave.User.Paging
+namespace Weave.User.Paging.News
 {
     public class PagedNewsByCategory : PagedNewsBase
     {
@@ -8,9 +8,10 @@ namespace Weave.User.Paging
         public override string CreateFileName()
         {
             return string.Format(
-                "{0}-{1}-{2}",
+                "{0}-{1}-{2}-{3}",
                 UserId.ToString("N"),
                 System.Web.HttpUtility.UrlEncode(Category),
+                ListId.ToString("N"),
                 Index);
         }
     }

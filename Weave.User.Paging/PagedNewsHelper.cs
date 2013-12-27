@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Weave.User.BusinessObjects;
+using Weave.User.Paging.Lists;
+using Weave.User.Paging.News;
 
 namespace Weave.User.Paging
 {
@@ -11,15 +13,30 @@ namespace Weave.User.Paging
         UserInfo user;
         int pageSize;
 
+        // volatile, figure out better approach
+        DateTime now;
+        Guid listId;
+        ListInfoByAll listInfoByAllNews;
+        List<ListInfoByCategory> listInfoByCategory;
+        List<ListInfoByFeed> listInfoByFeed;
+
+        MasterListsInfo masterList;
+
         public PagedNewsHelper(UserInfo user, int pageSize = 50)
         {
             this.user = user;
             this.pageSize = pageSize;
+
+            listInfoByCategory = new List<ListInfoByCategory>();
+            listInfoByFeed = new List<ListInfoByFeed>();
+
+            masterList = new MasterListsInfo();
         }
 
         public async Task Update()
         {
-            var now = DateTime.UtcNow;
+            now = DateTime.UtcNow;
+            listId = Guid.NewGuid();
 
             await user.RefreshAllFeeds();
 
@@ -28,14 +45,22 @@ namespace Weave.User.Paging
             if (updatedFeeds.Count == 0)
                 return;
 
-            var categories = updatedFeeds.Select(o => o.Category).Distinct().ToList();
+            var updatedCategories = updatedFeeds.Select(o => o.Category).Distinct().ToList();
             var allFeeds = user.Feeds;
+
+            listInfoByFeed.AddRange(updatedFeeds.Select(CreateListInfoForFeed));
+            listInfoByCategory.AddRange(updatedCategories.Select(CreateListInfoForCategory));
+            listInfoByAllNews = CreateListInfoForAllNews();
+
+            masterList.AllNewsLists.Add(listInfoByAllNews);
+            masterList.CategoryLists.AddRange(listInfoByCategory);
+            masterList.FeedLists.AddRange(listInfoByFeed);
 
             var pagedNews = new IEnumerable<PagedNewsBase>[] 
             {
-                updatedFeeds.SelectMany(CreateNewsPagesForFeed),
-                categories.SelectMany(CreateNewsPagesForCategory),
-                CreateNewsPagesForAll(),
+                listInfoByAllNews.PagedNews, 
+                listInfoByCategory.SelectMany(o => o.PagedNews), 
+                listInfoByFeed.SelectMany(o => o.PagedNews)
             }
             .SelectMany(o => o);
 
@@ -58,57 +83,95 @@ namespace Weave.User.Paging
 
         #region Page Chunking functions
 
-        IEnumerable<PagedNewsByCategory> CreateNewsPagesForAll()
+        ListInfoByAll CreateListInfoForAllNews()
         {
             var news = user.Feeds.AllNews().ToList();
+            var pageCount = (int)Math.Ceiling((double)news.Count / (double)pageSize);
 
-            return Enumerable
-                .Range(0, (int)Math.Ceiling((double)news.Count / (double)pageSize))
-                .Select(i => news.Skip(i * pageSize).Take(pageSize).ToList())
-                .Select((o, i) =>
-                    new PagedNewsByCategory
-                    {
-                        UserId = user.Id,
-                        Index = i,
-                        NewsCount = o.Count,
-                        News = o.Select(Convert).ToList(),
-                    });
+            return new ListInfoByAll
+            {
+                ListId = listId,
+                CreatedOn = now,
+                LastAccess = null,
+                PageSize = pageSize,
+                PageCount = pageCount,
+                PagedNews =
+                    Enumerable
+                        .Range(0, pageCount)
+                        .Select(i => news.Skip(i * pageSize).Take(pageSize).ToList())
+                        .Select((o, i) =>
+                            new PagedNewsByAll
+                            {
+                                UserId = user.Id,
+                                ListId = listId,
+                                Index = i,
+                                NewsCount = o.Count,
+                                News = o.Select(Convert).ToList(),
+                            })
+                        .ToList()
+            };
         }
 
-        IEnumerable<PagedNewsByCategory> CreateNewsPagesForCategory(string category)
+        ListInfoByCategory CreateListInfoForCategory(string category)
         {
             var news = user.Feeds.OfCategory(category).AllNews().ToList();
+            var pageCount = (int)Math.Ceiling((double)news.Count / (double)pageSize);
 
-            return Enumerable
-                .Range(0, (int)Math.Ceiling((double)news.Count / (double)pageSize))
-                .Select(i => news.Skip(i * pageSize).Take(pageSize).ToList())
-                .Select((o, i) =>
-                    new PagedNewsByCategory
-                    {
-                        UserId = user.Id,
-                        Category = category,
-                        Index = i,
-                        NewsCount = o.Count,
-                        News = o.Select(Convert).ToList(),
-                    });
+            return new ListInfoByCategory
+            {
+                Category = category,
+                ListId = listId,
+                CreatedOn = now,
+                LastAccess = null,
+                PageSize = pageSize,
+                PageCount = pageCount,
+                PagedNews = 
+                    Enumerable
+                        .Range(0, pageCount)
+                        .Select(i => news.Skip(i * pageSize).Take(pageSize).ToList())
+                        .Select((o, i) =>
+                            new PagedNewsByCategory
+                            {
+                                UserId = user.Id,
+                                Category = category,
+                                ListId = listId,
+                                Index = i,
+                                NewsCount = o.Count,
+                                News = o.Select(Convert).ToList(),
+                            })
+                        .ToList(),
+            };
         }
 
-        IEnumerable<PagedNewsByFeed> CreateNewsPagesForFeed(Feed feed)
+        ListInfoByFeed CreateListInfoForFeed(Feed feed)
         {
             var news = feed.News;
+            var pageCount = (int)Math.Ceiling((double)news.Count / (double)pageSize);
 
-            return Enumerable
-                .Range(0, (int)Math.Ceiling((double)news.Count / (double)pageSize))
-                .Select(i => news.Skip(i * pageSize).Take(pageSize).ToList())
-                .Select((o, i) =>
-                    new PagedNewsByFeed
-                    {
-                        UserId = user.Id,
-                        FeedId = feed.Id,
-                        Index = i,
-                        NewsCount = o.Count,
-                        News = o.Select(Convert).ToList(),
-                    });
+            return new ListInfoByFeed
+            {
+                FeedId = feed.Id,
+                ListId = listId,
+                CreatedOn = now,
+                LastAccess = null,
+                PageSize = pageSize,
+                PageCount = pageCount,
+                PagedNews =
+                    Enumerable
+                        .Range(0, pageCount)
+                        .Select(i => news.Skip(i * pageSize).Take(pageSize).ToList())
+                        .Select((o, i) =>
+                            new PagedNewsByFeed
+                            {
+                                UserId = user.Id,
+                                FeedId = feed.Id,
+                                ListId = listId,
+                                Index = i,
+                                NewsCount = o.Count,
+                                News = o.Select(Convert).ToList(),
+                            })
+                        .ToList()
+            };
         }
 
         #endregion
