@@ -14,6 +14,7 @@ namespace Weave.User.BusinessObjects
     public class Feed
     {
         bool isUpdating = false;
+        List<NewsItem> previousNews;
         List<NewsItem> news;
         object syncObject = new object();
 
@@ -42,7 +43,6 @@ namespace Weave.User.BusinessObjects
 
 
         public Task CurrentRefresh { get; private set; }
-        public bool IsModified { get; private set; }
         public string TeaserImageUrl { get; private set; }
 
 
@@ -99,22 +99,25 @@ namespace Weave.User.BusinessObjects
 
         void HandleUpdate(FeedResult update)
         {
-            if (update.Status == FeedResultStatus.OK)
-            {
-                DeleteNewsOlderThan(update.OldestNewsItemPubDate);
-                AddNews(update.News);
-                //RecalculateNewsHash();
+            if (update == null ||
+                update.Status != FeedResultStatus.OK || 
+                EnumerableEx.IsNullOrEmpty(update.News))
+                return;
 
-                IconUri = update.IconUri;
-                Etag = update.Etag;
-                LastModified = update.LastModified;
-                MostRecentNewsItemPubDate = update.MostRecentNewsItemPubDate;
-                UpdateTeaserImage();
-                //SaveToUpdateHistory();
-            }
+            previousNews = news;
+
+            DeleteNewsOlderThan(update.OldestNewsItemPubDate);
+            AddNews(update.News);
+
+            if (news.IsSetEqualTo(previousNews, new NewsItemEqualityById()))
+                return;
 
             LastRefreshedOn = DateTime.UtcNow;
-            IsModified = true;
+            IconUri = update.IconUri;
+            Etag = update.Etag;
+            LastModified = update.LastModified;
+            MostRecentNewsItemPubDate = update.MostRecentNewsItemPubDate;
+            UpdateTeaserImage();
         }
 
         void DeleteNewsOlderThan(string date)
@@ -188,6 +191,19 @@ namespace Weave.User.BusinessObjects
                 .Where(o => o.HasImage)
                 .Select(o => o.GetBestImageUrl())
                 .FirstOrDefault();
+        }
+
+        class NewsItemEqualityById : IEqualityComparer<NewsItem>
+        {
+            public bool Equals(NewsItem x, NewsItem y)
+            {
+                return x.Id == y.Id;
+            }
+
+            public int GetHashCode(NewsItem obj)
+            {
+                return obj.Id.GetHashCode();
+            }
         }
 
         #endregion
