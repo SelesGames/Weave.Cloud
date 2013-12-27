@@ -43,9 +43,14 @@
     <Compile Include="PagedNewsByFeed.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="PagedNewsHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Weave.User.BusinessObjects\Weave.User.BusinessObjects.csproj">
+      <Project>{db5274e6-15f6-4ec8-920a-842ea93a2601}</Project>
+      <Name>Weave.User.BusinessObjects</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Weave.User.Paging.Store\Weave.User.Paging.Store.csproj">
       <Project>{b160a642-d8c8-4730-85ca-4b87c49bca6d}</Project>
       <Name>Weave.User.Paging.Store</Name>
