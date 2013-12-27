@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ninject.WebApi", "Ninject.WebApi\Ninject.WebApi.csproj", "{BE97F564-16F5-4D09-9218-CC65E89DF2AC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Library", "Library", "{F40BEE0B-DF4E-4407-AF75-78C75BFA48BA}"
@@ -171,6 +173,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Azure.ServiceBus.Reactive", "Common.Azure.ServiceBus.Reactive\Common.Azure.ServiceBus.Reactive.csproj", "{682A3907-AFDD-4F98-BA04-3886CDBB520C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Azure.Logging", "Common.Azure.Logging\Common.Azure.Logging.csproj", "{7B03A944-07F2-42CF-9E4B-9B530EE5444F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.User.Paging", "Weave.User.Paging\Weave.User.Paging.csproj", "{EA9FCF27-01B8-4AFF-8E30-F540632A9DB5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.User.Paging.Store", "Weave.User.Paging.Store\Weave.User.Paging.Store.csproj", "{B160A642-D8C8-4730-85CA-4B87C49BCA6D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1032,6 +1038,30 @@ Global
 		{7B03A944-07F2-42CF-9E4B-9B530EE5444F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{7B03A944-07F2-42CF-9E4B-9B530EE5444F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{7B03A944-07F2-42CF-9E4B-9B530EE5444F}.Release|x86.ActiveCfg = Release|Any CPU
+		{EA9FCF27-01B8-4AFF-8E30-F540632A9DB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA9FCF27-01B8-4AFF-8E30-F540632A9DB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA9FCF27-01B8-4AFF-8E30-F540632A9DB5}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{EA9FCF27-01B8-4AFF-8E30-F540632A9DB5}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{EA9FCF27-01B8-4AFF-8E30-F540632A9DB5}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{EA9FCF27-01B8-4AFF-8E30-F540632A9DB5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EA9FCF27-01B8-4AFF-8E30-F540632A9DB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA9FCF27-01B8-4AFF-8E30-F540632A9DB5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA9FCF27-01B8-4AFF-8E30-F540632A9DB5}.Release|ARM.ActiveCfg = Release|Any CPU
+		{EA9FCF27-01B8-4AFF-8E30-F540632A9DB5}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{EA9FCF27-01B8-4AFF-8E30-F540632A9DB5}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{EA9FCF27-01B8-4AFF-8E30-F540632A9DB5}.Release|x86.ActiveCfg = Release|Any CPU
+		{B160A642-D8C8-4730-85CA-4B87C49BCA6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B160A642-D8C8-4730-85CA-4B87C49BCA6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B160A642-D8C8-4730-85CA-4B87C49BCA6D}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{B160A642-D8C8-4730-85CA-4B87C49BCA6D}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{B160A642-D8C8-4730-85CA-4B87C49BCA6D}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{B160A642-D8C8-4730-85CA-4B87C49BCA6D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B160A642-D8C8-4730-85CA-4B87C49BCA6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B160A642-D8C8-4730-85CA-4B87C49BCA6D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B160A642-D8C8-4730-85CA-4B87C49BCA6D}.Release|ARM.ActiveCfg = Release|Any CPU
+		{B160A642-D8C8-4730-85CA-4B87C49BCA6D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{B160A642-D8C8-4730-85CA-4B87C49BCA6D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{B160A642-D8C8-4730-85CA-4B87C49BCA6D}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1105,6 +1135,8 @@ Global
 		{458CBDEA-F41C-4209-9DEC-B2F285C217AB} = {B3E30122-CA46-48C2-9A99-FFCE69AE7166}
 		{EDB6B676-E4FD-4B51-8C5B-98C7D1837EF6} = {B3E30122-CA46-48C2-9A99-FFCE69AE7166}
 		{618FE33A-3784-4ED5-954B-86E4B4E0748B} = {B3E30122-CA46-48C2-9A99-FFCE69AE7166}
+		{EA9FCF27-01B8-4AFF-8E30-F540632A9DB5} = {B3E30122-CA46-48C2-9A99-FFCE69AE7166}
+		{B160A642-D8C8-4730-85CA-4B87C49BCA6D} = {B3E30122-CA46-48C2-9A99-FFCE69AE7166}
 		{438B607A-6C4A-4329-97BA-CCBAD384F9E9} = {2E1B1CEA-00ED-4945-8050-1C1A80E91AC3}
 		{C816F0EB-9D9E-4484-A855-BE57B4AF147D} = {2E1B1CEA-00ED-4945-8050-1C1A80E91AC3}
 		{1A5136F0-480B-461C-B350-9AD42C0ECA97} = {2E1B1CEA-00ED-4945-8050-1C1A80E91AC3}
