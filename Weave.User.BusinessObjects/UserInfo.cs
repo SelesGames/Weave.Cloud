@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Weave.User.BusinessObjects.ArticleDeletionTimes;
 
 namespace Weave.User.BusinessObjects
 {
@@ -11,9 +12,11 @@ namespace Weave.User.BusinessObjects
         List<Feed> feedsList = new List<Feed>();
 
         public Guid Id { get; set; }
-        public IReadOnlyList<Feed> Feeds { get { return feedsList; } }
+        public IReadOnlyCollection<Feed> Feeds { get { return feedsList; } }
         public DateTime PreviousLoginTime { get; set; }
         public DateTime CurrentLoginTime { get; set; }
+        public string ArticleDeletionTimeForMarkedRead { get; set; }
+        public string ArticleDeletionTimeForUnread { get; set; }
 
         public Task RefreshAllFeeds()
         {
@@ -218,6 +221,34 @@ namespace Weave.User.BusinessObjects
                 return;
 
             newsItem.IsFavorite = false;
+        }
+
+        #endregion
+
+
+
+
+        #region Delete Old News
+
+        public void DeleteOldNews()
+        {
+            var markedReadTimes = new ArticleDeleteTimesForMarkedRead();
+            var unreadTimes = new ArticleDeleteTimesForUnread();
+
+            var markedReadyExpiry = markedReadTimes.GetByDisplayName(ArticleDeletionTimeForMarkedRead).Span;
+            var unreadExpiry = unreadTimes.GetByDisplayName(ArticleDeletionTimeForUnread).Span;
+
+            var now = DateTime.UtcNow;
+
+            foreach (var feed in Feeds)
+            {
+                feed.News = feed.News == null ? null :
+                    feed.News.Where(o =>
+                    o.IsFavorite ||
+                    (!o.HasBeenViewed && (now - o.OriginalDownloadDateTime) < unreadExpiry)
+                    ||
+                    (o.HasBeenViewed && (now - o.OriginalDownloadDateTime) < markedReadyExpiry)).ToList();
+            }
         }
 
         #endregion

@@ -14,6 +14,10 @@ namespace Weave.User.DataStore
         [DataMember(Order= 4)]  public DateTime PreviousLoginTime { get; set; }
         [DataMember(Order= 5)]  public DateTime CurrentLoginTime { get; set; }
 
+        [DataMember(Order= 6)]  public string ArticleDeletionTimeForMarkedRead { get; set; }
+        [DataMember(Order= 7)]  public string ArticleDeletionTimeForUnread { get; set; }
+
+
         public override string ToString()
         {
             return string.Format("{0} - {1}", Id.ToString("N"), CurrentLoginTime);

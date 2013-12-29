@@ -37,6 +37,9 @@
     <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArticleDeletionTimes\ArticleDeleteTime.cs" />
+    <Compile Include="ArticleDeletionTimes\ArticleDeleteTimesForMarkedRead.cs" />
+    <Compile Include="ArticleDeletionTimes\ArticleDeleteTimesForUnread.cs" />
     <Compile Include="ArticleViewingType.cs" />
     <Compile Include="Converters\Converters.cs" />
     <Compile Include="Extensions\FeedExtensions.cs" />

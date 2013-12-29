@@ -22,6 +22,8 @@ namespace Weave.User.Service.Converters
                 FeedCount = o.Feeds == null ? 0 : o.Feeds.Count,
                 PreviousLoginTime = o.PreviousLoginTime,
                 CurrentLoginTime = o.CurrentLoginTime,
+                ArticleDeletionTimeForMarkedRead = o.ArticleDeletionTimeForMarkedRead,
+                ArticleDeletionTimeForUnread = o.ArticleDeletionTimeForUnread,
             };
         }
 

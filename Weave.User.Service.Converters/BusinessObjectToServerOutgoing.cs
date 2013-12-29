@@ -77,6 +77,8 @@ namespace Weave.User.Service.Converters
                 Feeds = o.Feeds == null ? null : o.Feeds.OfType<Feed>().Select(Convert).ToList(),
                 PreviousLoginTime = o.PreviousLoginTime,
                 CurrentLoginTime = o.CurrentLoginTime,
+                ArticleDeletionTimeForMarkedRead = o.ArticleDeletionTimeForMarkedRead,
+                ArticleDeletionTimeForUnread = o.ArticleDeletionTimeForUnread,
             };
         }
     }

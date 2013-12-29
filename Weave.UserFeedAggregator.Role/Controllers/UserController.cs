@@ -117,6 +117,8 @@ namespace Weave.User.Service.Role.Controllers
             userBO.PreviousLoginTime = userBO.CurrentLoginTime;
             userBO.CurrentLoginTime = DateTime.UtcNow;
 
+            userBO.DeleteOldNews();
+
             if (refresh)
             {
                 await userBO.RefreshAllFeeds();
@@ -157,7 +159,10 @@ namespace Weave.User.Service.Role.Controllers
             if (entry == EntryType.Mark || entry == EntryType.ExtendRefresh)
             {
                 if (entry == EntryType.Mark)
+                {
+                    userBO.DeleteOldNews();
                     subset.MarkEntry();
+                }
 
                 else if (entry == EntryType.ExtendRefresh)
                 {
@@ -184,7 +189,10 @@ namespace Weave.User.Service.Role.Controllers
             if (entry == EntryType.Mark || entry == EntryType.ExtendRefresh)
             {
                 if (entry == EntryType.Mark)
+                {
+                    userBO.DeleteOldNews();
                     subset.MarkEntry();
+                }
 
                 else if (entry == EntryType.ExtendRefresh)
                 {
@@ -412,6 +420,22 @@ namespace Weave.User.Service.Role.Controllers
             await articleServiceClient.RemoveFavorite(userId, newsItemId);
 
             userBO.RemoveFavorite(newsItemId);
+            SaveUser();
+        }
+
+        #endregion
+
+
+
+
+        #region Article Expiry times (Marked Read and Unread Deletion times)
+
+        public async Task SetArticleDeleteTimes(Guid userId, Incoming.ArticleDeleteTimes articleDeleteTimes)
+        {
+            await VerifyUserId(userId);
+
+            userBO.ArticleDeletionTimeForMarkedRead = articleDeleteTimes.ArticleDeletionTimeForMarkedRead;
+            userBO.ArticleDeletionTimeForUnread = articleDeleteTimes.ArticleDeletionTimeForUnread;
             SaveUser();
         }
 
