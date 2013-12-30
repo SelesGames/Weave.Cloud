@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Weave.RssAggregator.Core.DTOs.Incoming;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
+using Weave.User.BusinessObjects.Comparers;
 using Weave.User.BusinessObjects.ServiceClients;
 
 namespace Weave.User.BusinessObjects
@@ -108,8 +109,9 @@ namespace Weave.User.BusinessObjects
 
             DeleteNewsOlderThan(update.OldestNewsItemPubDate);
             AddNews(update.News);
+            AdjustForDuplicateTitles();
 
-            if (news.IsSetEqualTo(previousNews, new NewsItemEqualityById()))
+            if (news.IsSetEqualTo(previousNews, new NewsItemIdComparer()))
                 return;
 
             LastRefreshedOn = DateTime.UtcNow;
@@ -122,7 +124,7 @@ namespace Weave.User.BusinessObjects
 
         void DeleteNewsOlderThan(string date)
         {
-            if (EnumerableEx.IsNullOrEmpty(News))
+            if (EnumerableEx.IsNullOrEmpty(news))
                 return;
 
             var tryGetOldestDate = date.TryGetUtcDate();
@@ -132,8 +134,8 @@ namespace Weave.User.BusinessObjects
                 lock (syncObject)
                 {
                     // keep all news that is newer than the oldest pub date, as well as all favorited news
-                    var correctedNews = News.Where(o => o.IsFavorite || o.UtcPublishDateTime >= oldestPubDate).ToList();
-                    News = correctedNews;
+                    var correctedNews = news.Where(o => o.IsFavorite || o.UtcPublishDateTime >= oldestPubDate).ToList();
+                    news = correctedNews;
                 }
             }
         }
@@ -154,10 +156,10 @@ namespace Weave.User.BusinessObjects
 
         bool DoesAnyExistingNewsItemMatch(Weave.RssAggregator.Core.DTOs.Outgoing.NewsItem newNewsItem)
         {
-            if (EnumerableEx.IsNullOrEmpty(News))
+            if (EnumerableEx.IsNullOrEmpty(news))
                 return false;
 
-            return News.Any(newsItem => newsItem.Id.Equals(newNewsItem.Id));
+            return news.Any(newsItem => newsItem.Id.Equals(newNewsItem.Id));
         }
 
         void AddNewNewsItems(IEnumerable<NewsItem> newsToAdd)
@@ -174,36 +176,28 @@ namespace Weave.User.BusinessObjects
 
             lock (syncObject)
             {
-                if (News == null)
-                    News = new List<NewsItem>();
+                if (news == null)
+                    news = new List<NewsItem>();
 
-                News.InsertRange(0, newsToAdd);
+                news.InsertRange(0, newsToAdd);
             }
+        }
+
+        void AdjustForDuplicateTitles()
+        {
+            news = news == null ? null : news.Distinct(new NewsItemTitleComparer(168d)).ToList();
         }
 
         void UpdateTeaserImage()
         {
-            if (EnumerableEx.IsNullOrEmpty(News))
+            if (EnumerableEx.IsNullOrEmpty(news))
                 return;
 
-            TeaserImageUrl = News
+            TeaserImageUrl = news
                 .OrderByDescending(o => o.UtcPublishDateTime)
                 .Where(o => o.HasImage)
                 .Select(o => o.GetBestImageUrl())
                 .FirstOrDefault();
-        }
-
-        class NewsItemEqualityById : IEqualityComparer<NewsItem>
-        {
-            public bool Equals(NewsItem x, NewsItem y)
-            {
-                return x.Id == y.Id;
-            }
-
-            public int GetHashCode(NewsItem obj)
-            {
-                return obj.Id.GetHashCode();
-            }
         }
 
         #endregion

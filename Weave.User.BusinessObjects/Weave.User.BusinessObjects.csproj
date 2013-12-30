@@ -47,6 +47,8 @@
     <Compile Include="FeedsSubset.cs" />
     <Compile Include="Image.cs" />
     <Compile Include="NewsItem.cs" />
+    <Compile Include="Comparers\NewsItemIdComparer.cs" />
+    <Compile Include="Comparers\NewsItemTitleComparer.cs" />
     <Compile Include="ServiceClients\NewsServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceClients\ServiceClient.cs" />

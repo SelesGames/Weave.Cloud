@@ -430,6 +430,8 @@ namespace Weave.User.Service.Role.Controllers
 
         #region Article Expiry times (Marked Read and Unread Deletion times)
 
+        [HttpPost]
+        [ActionName("set_delete_times")]
         public async Task SetArticleDeleteTimes(Guid userId, Incoming.ArticleDeleteTimes articleDeleteTimes)
         {
             await VerifyUserId(userId);
