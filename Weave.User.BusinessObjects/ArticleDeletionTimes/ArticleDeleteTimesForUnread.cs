@@ -17,7 +17,7 @@ namespace Weave.User.BusinessObjects.ArticleDeletionTimes
             this.Add(new ArticleDeleteTime { Display = "2 days", Span = TimeSpan.FromDays(2) });
             this.Add(new ArticleDeleteTime { Display = "3 days", Span = TimeSpan.FromDays(3) });
 
-            SelectedArticleDeleteTime = defaultTime = this[2];
+            SelectedArticleDeleteTime = defaultTime = this[3];
         }
 
         public ArticleDeleteTime GetByDisplayName(string displayName)
