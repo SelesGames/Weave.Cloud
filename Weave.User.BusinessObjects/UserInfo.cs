@@ -10,13 +10,36 @@ namespace Weave.User.BusinessObjects
     public class UserInfo
     {
         List<Feed> feedsList = new List<Feed>();
+        string articleDeletionTimeForMarkedRead, articleDeletionTimeForUnread;
 
         public Guid Id { get; set; }
         public IReadOnlyCollection<Feed> Feeds { get { return feedsList; } }
         public DateTime PreviousLoginTime { get; set; }
         public DateTime CurrentLoginTime { get; set; }
-        public string ArticleDeletionTimeForMarkedRead { get; set; }
-        public string ArticleDeletionTimeForUnread { get; set; }
+
+        public string ArticleDeletionTimeForMarkedRead
+        {
+            get { return articleDeletionTimeForMarkedRead; }
+            set
+            {
+                // verify that the passed in string is a legit delete time
+                var markedReadTimes = new ArticleDeleteTimesForMarkedRead();
+                var deleteTime = markedReadTimes.GetByDisplayName(value);
+                articleDeletionTimeForMarkedRead = deleteTime.Display;
+            }
+        }
+
+        public string ArticleDeletionTimeForUnread
+        {
+            get { return articleDeletionTimeForUnread; }
+            set
+            {
+                // verify that the passed in string is a legit delete time
+                var unreadTimes = new ArticleDeleteTimesForUnread();
+                var deleteTime = unreadTimes.GetByDisplayName(value);
+                articleDeletionTimeForUnread = deleteTime.Display;
+            }
+        }
 
         public Task RefreshAllFeeds()
         {
