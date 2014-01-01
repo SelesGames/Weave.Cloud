@@ -1,46 +1,77 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Weave.User.BusinessObjects;
 using Weave.User.Paging.Lists;
 using Weave.User.Paging.News;
 
 namespace Weave.User.Paging
 {
+    /// <summary>
+    /// Calculates the updated feeds, categories, and allnews for a given updated UserInfo
+    /// </summary>
     public class PagedNewsHelper
     {
-        UserInfo user;
-        int pageSize;
+        public static PagedNewsHelper CalculatePagedNews(UserInfo user, int pageSize = 50)
+        {
+            var helper = new PagedNewsHelper(user, pageSize);
+            helper.Update();
+            return helper;
+        }
 
-        // volatile, figure out better approach
-        DateTime now;
-        Guid listId;
-        ListInfoByAll listInfoByAllNews;
-        List<ListInfoByCategory> listInfoByCategory;
-        List<ListInfoByFeed> listInfoByFeed;
 
-        MasterListsInfo masterList;
 
-        public PagedNewsHelper(UserInfo user, int pageSize = 50)
+
+        #region Member variables
+
+        readonly UserInfo user;
+        readonly int pageSize;
+
+        #endregion
+
+
+
+
+        #region Public Readonly Properties
+
+        public DateTime TimeStamp { get; private set; }
+        public Guid ListId { get; private set; }
+        public ListInfoByAll UpdatedAllNewsList { get; private set; }
+        public List<ListInfoByCategory> UpdatedCategoryLists { get; private set; }
+        public List<ListInfoByFeed> UpdatedFeedLists { get; private set; }
+
+        #endregion
+
+
+
+
+        #region Private constructor
+
+        PagedNewsHelper(UserInfo user, int pageSize)
         {
             this.user = user;
             this.pageSize = pageSize;
 
-            listInfoByCategory = new List<ListInfoByCategory>();
-            listInfoByFeed = new List<ListInfoByFeed>();
+            UpdatedAllNewsList = new ListInfoByAll();
+            UpdatedCategoryLists = new List<ListInfoByCategory>();
+            UpdatedFeedLists = new List<ListInfoByFeed>();
 
-            masterList = new MasterListsInfo();
+            //masterList = new MasterListsInfo();
         }
 
-        public async Task Update()
+        #endregion
+
+
+
+
+        #region Update function - does all the work of calculating the 3 lists
+
+        void Update()
         {
-            now = DateTime.UtcNow;
-            listId = Guid.NewGuid();
+            TimeStamp = DateTime.UtcNow;
+            ListId = Guid.NewGuid();
 
-            await user.RefreshAllFeeds();
-
-            var updatedFeeds = user.Feeds.Where(o => o.LastRefreshedOn > now).ToList();
+            var updatedFeeds = user.Feeds.Where(o => o.LastRefreshedOn > TimeStamp).ToList();
 
             if (updatedFeeds.Count == 0)
                 return;
@@ -48,35 +79,13 @@ namespace Weave.User.Paging
             var updatedCategories = updatedFeeds.Select(o => o.Category).Distinct().ToList();
             var allFeeds = user.Feeds;
 
-            listInfoByFeed.AddRange(updatedFeeds.Select(CreateListInfoForFeed));
-            listInfoByCategory.AddRange(updatedCategories.Select(CreateListInfoForCategory));
-            listInfoByAllNews = CreateListInfoForAllNews();
-
-            masterList.AllNewsLists.Add(listInfoByAllNews);
-            masterList.CategoryLists.AddRange(listInfoByCategory);
-            masterList.FeedLists.AddRange(listInfoByFeed);
-
-            var pagedNews = new IEnumerable<PagedNewsBase>[] 
-            {
-                listInfoByAllNews.PagedNews, 
-                listInfoByCategory.SelectMany(o => o.PagedNews), 
-                listInfoByFeed.SelectMany(o => o.PagedNews)
-            }
-            .SelectMany(o => o);
-
-            foreach (var pNews in pagedNews)
-            {
-                var fileName = pNews.CreateFileName();
-                var store = pNews.CreateSerializablePagedNews();
-
-                Save(store, fileName);
-            }
+            UpdatedFeedLists.AddRange(updatedFeeds.Select(CreateListInfoForFeed));
+            UpdatedCategoryLists.AddRange(updatedCategories.Select(CreateListInfoForCategory));
+            UpdatedAllNewsList = CreateListInfoForAllNews();
         }
 
-        void Save(Store.News.PagedNews store, string fileName)
-        {
-            // TODO: write to azure storage here
-        }
+        #endregion
+
 
 
 
@@ -90,8 +99,8 @@ namespace Weave.User.Paging
 
             return new ListInfoByAll
             {
-                ListId = listId,
-                CreatedOn = now,
+                ListId = ListId,
+                CreatedOn = TimeStamp,
                 LastAccess = null,
                 PageSize = pageSize,
                 PageCount = pageCount,
@@ -103,7 +112,7 @@ namespace Weave.User.Paging
                             new PagedNewsByAll
                             {
                                 UserId = user.Id,
-                                ListId = listId,
+                                ListId = ListId,
                                 Index = i,
                                 NewsCount = o.Count,
                                 News = o.Select(Convert).ToList(),
@@ -120,8 +129,8 @@ namespace Weave.User.Paging
             return new ListInfoByCategory
             {
                 Category = category,
-                ListId = listId,
-                CreatedOn = now,
+                ListId = ListId,
+                CreatedOn = TimeStamp,
                 LastAccess = null,
                 PageSize = pageSize,
                 PageCount = pageCount,
@@ -134,7 +143,7 @@ namespace Weave.User.Paging
                             {
                                 UserId = user.Id,
                                 Category = category,
-                                ListId = listId,
+                                ListId = ListId,
                                 Index = i,
                                 NewsCount = o.Count,
                                 News = o.Select(Convert).ToList(),
@@ -151,8 +160,8 @@ namespace Weave.User.Paging
             return new ListInfoByFeed
             {
                 FeedId = feed.Id,
-                ListId = listId,
-                CreatedOn = now,
+                ListId = ListId,
+                CreatedOn = TimeStamp,
                 LastAccess = null,
                 PageSize = pageSize,
                 PageCount = pageCount,
@@ -165,7 +174,7 @@ namespace Weave.User.Paging
                             {
                                 UserId = user.Id,
                                 FeedId = feed.Id,
-                                ListId = listId,
+                                ListId = ListId,
                                 Index = i,
                                 NewsCount = o.Count,
                                 News = o.Select(Convert).ToList(),
