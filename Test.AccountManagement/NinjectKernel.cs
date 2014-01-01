@@ -19,15 +19,15 @@ namespace Weave.AccountManagement.WebRole.Startup
             //    "userinfo",
             //    false) { SerializerSettings = new JsonSerializerSettings { Formatting = Formatting.Indented }, UseGzipOnUpload = true };
 
-            var blobClient = new SmartBlobClient(
-                "weave",
-                "uudFrra70qkI64bifaI2Rrm37CZ1HkzaBQrLMyw6U/hmzNDZehXeo9DdUv7BCpuZY4N2q/CNpNwYxW2fa218xA==",
-                "userinfo",
-                false)
-            {
-                ContentType = "application/json",
-                UseGzipOnUpload = false
-            };
+            //var blobClient = new SmartBlobClient(
+            //    "weave",
+            //    "uudFrra70qkI64bifaI2Rrm37CZ1HkzaBQrLMyw6U/hmzNDZehXeo9DdUv7BCpuZY4N2q/CNpNwYxW2fa218xA==",
+            //    "userinfo",
+            //    false)
+            //{
+            //    ContentType = "application/json",
+            //    UseGzipOnUpload = false
+            //};
 
             //var userManager = new UserManager(blobClient);
 

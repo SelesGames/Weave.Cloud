@@ -104,9 +104,9 @@
       <Project>{75f2f4b1-beb2-4ac6-a935-5a795c5a79a0}</Project>
       <Name>Weave.User.Service.DTOs</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Common.Azure\Common.Azure.csproj">
-      <Project>{6211d4f0-8390-4dfa-a1d2-ba4aa7c28348}</Project>
-      <Name>Common.Azure</Name>
+    <ProjectReference Include="..\Common.Azure.Blob\Common.Azure.Blob.csproj">
+      <Project>{9259074d-90ae-4a44-a211-db3e122bf34e}</Project>
+      <Name>Common.Azure.Blob</Name>
     </ProjectReference>
     <ProjectReference Include="..\Common.Caching\Common.Caching.csproj">
       <Project>{c83ab657-c7a6-4cf8-b4f5-d4e01bf2e562}</Project>

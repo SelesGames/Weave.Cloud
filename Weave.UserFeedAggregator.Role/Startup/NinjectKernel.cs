@@ -14,14 +14,13 @@ namespace Weave.User.Service.Role.Startup
             var blobClient = new SmartBlobClient(
                 storageAccountName: "weaveuser",
                 key: "GBzJEaV/B5JQTmLFj/N7VJoYGZBQcEhasXha3RKbd4BRUVN5aaJ01KMo0MNNtNHnVhzJmqlDgqEyk4CPEvX56A==",
-                container: "user",
                 useHttps: false)
                 {
-                    ContentType = "application/json", 
-                    UseGzipOnUpload = true,
+                    DefaultContentType = "application/json",
+                    UseCompressionByDefault = true,
                 };
 
-            var userInfoBlobClient = new UserInfoBlobClient(blobClient);
+            var userInfoBlobClient = new UserInfoBlobClient(blobClient, containerName: "user");
             var azureDataCacheClient = new UserInfoAzureCacheClient(userInfoBlobClient);
             var userRepo = new UserRepository(azureDataCacheClient);
             Bind<UserRepository>().ToConstant(userRepo).InSingletonScope();

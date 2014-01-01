@@ -1,5 +1,5 @@
-﻿using Common.Azure.SmartBlobClient;
-using Microsoft.WindowsAzure;
+﻿using Common.Azure.Blob;
+using Common.Azure.SmartBlobClient;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -10,66 +10,40 @@ namespace Weave.Mobilizer.Cache
     public class AzureClient
     {
         readonly bool USE_HTTPS = false;
+        readonly string CONTAINER = "articles";
 
-        CloudStorageAccount csa;
         string account, key;
 
         public AzureClient(string account, string key)
         {
             this.account = account;
             this.key = key;
-            this.csa = new CloudStorageAccount(new StorageCredentialsAccountAndKey(account, key), USE_HTTPS);
         }
 
         public async Task Save(string url, ReadabilityResult result)
         {
-            var client = new SmartBlobClient(account, key, "articles", USE_HTTPS)
-            {
-                ContentType = "application/json; charset=utf-8",
-                UseGzipOnUpload = true,
-                WriteTimeout = TimeSpan.FromMinutes(3),
-            };
+            var client = new SmartBlobClient(account, key, USE_HTTPS);
 
-            await client.Save(url, result);
+            await client.Save(CONTAINER, url, result, 
+                new WriteRequestProperties
+                {
+                    ContentType = "application/json; charset=utf-8",
+                    UseCompression = true,
+                    RequestTimeOut = TimeSpan.FromMinutes(3),
+                });
 
             Debug.WriteLine(string.Format("{0} uploaded to azure", url), "AZURE");
         }
 
         public Task<ReadabilityResult> Get(string url)
         {
-            var client = new SmartBlobClient(account, key, "articles", USE_HTTPS)
-            {
-                ReadTimeout = TimeSpan.FromMinutes(8),
-            };
+            var client = new SmartBlobClient(account, key, USE_HTTPS);
 
-            return client.Get<ReadabilityResult>(url);
+            return client.Get<ReadabilityResult>(CONTAINER, url,
+                new RequestProperties
+                {
+                    RequestTimeOut = TimeSpan.FromMinutes(8)
+                });
         }
-
-        //public async Task DeleteOlderThan(TimeSpan ttl)
-        //{
-        //    var now = DateTime.UtcNow;
-
-        //    var blobClient = csa.CreateCloudBlobClient();
-        //    var blobContainer = blobClient.GetContainerReference("articles");
-
-        //    var blobs = blobContainer.ListBlobs().OfType<CloudBlockBlob>();
-        //    foreach (var blob in blobs)
-        //    {
-        //        var lastAccess = blob.Attributes.Properties.LastModifiedUtc;
-        //        var elapsed = now - lastAccess;
-        //        if (elapsed > ttl)
-        //        {
-        //            await blob.DeleteAsync();
-        //        }
-        //    }
-        //}
     }
-
-    //public static class CloudExtensions
-    //{
-    //    public static Task DeleteAsync(this CloudBlob blob)
-    //    {   
-    //        return Task.Factory.FromAsync(blob.BeginDelete, blob.EndDelete, null);
-    //    }
-    //}
 }

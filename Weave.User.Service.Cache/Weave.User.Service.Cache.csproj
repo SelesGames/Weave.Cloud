@@ -56,9 +56,9 @@
     <Compile Include="UserRepository.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Common.Azure\Common.Azure.csproj">
-      <Project>{6211d4f0-8390-4dfa-a1d2-ba4aa7c28348}</Project>
-      <Name>Common.Azure</Name>
+    <ProjectReference Include="..\Common.Azure.Blob\Common.Azure.Blob.csproj">
+      <Project>{9259074d-90ae-4a44-a211-db3e122bf34e}</Project>
+      <Name>Common.Azure.Blob</Name>
     </ProjectReference>
     <ProjectReference Include="..\SelesGames.Common\SelesGames.Common.csproj">
       <Project>{5b792c4b-80d8-420d-9fa7-e567faf1f7b1}</Project>

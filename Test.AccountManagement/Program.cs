@@ -44,17 +44,15 @@ namespace Test.AccountManagement
 
         static UserController CreateController()
         {
-           // var azureCred = new AzureCredentials("weaveuser", "GBzJEaV/B5JQTmLFj/N7VJoYGZBQcEhasXha3RKbd4BRUVN5aaJ01KMo0MNNtNHnVhzJmqlDgqEyk4CPEvX56A==", false);
-            //var userRepo = new UserRepository(azureCred);
             var blobClient = new SmartBlobClient(
-    storageAccountName: "weaveuser",
-    key: "GBzJEaV/B5JQTmLFj/N7VJoYGZBQcEhasXha3RKbd4BRUVN5aaJ01KMo0MNNtNHnVhzJmqlDgqEyk4CPEvX56A==",
-    container: "user",
-    useHttps: false)
+                storageAccountName: "weaveuser",
+                key: "GBzJEaV/B5JQTmLFj/N7VJoYGZBQcEhasXha3RKbd4BRUVN5aaJ01KMo0MNNtNHnVhzJmqlDgqEyk4CPEvX56A==",
+                useHttps: false)
             {
-                ContentType = "application/json"
+                DefaultContentType = "application/json"
             };
-            var userInfoBlobClient = new UserInfoBlobClient(blobClient);
+
+            var userInfoBlobClient = new UserInfoBlobClient(blobClient, containerName: "user");
             var cacheClient = new UserInfoAzureCacheClient(userInfoBlobClient);
             var userRepo = new UserRepository(cacheClient);
             var controller = new UserController(userRepo, new Weave.Article.Service.Client.ServiceClient());
