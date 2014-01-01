@@ -3,7 +3,7 @@ namespace Common.Azure.Blob
 {
     public class WriteRequestProperties : RequestProperties
     {
-        public bool UseCompression { get; set; }
+        public bool? UseCompression { get; set; }
 
         public string CacheControl { get; set; }
         public string ContentDisposition { get; set; }

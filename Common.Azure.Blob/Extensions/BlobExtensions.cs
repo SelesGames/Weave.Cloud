@@ -138,7 +138,7 @@ namespace Common.Azure.Blob
                 CacheControl = properties.CacheControl,
                 ContentDisposition = properties.ContentDisposition,
                 //ContentEncoding = properties.ContentEncoding,
-                ContentEncoding = properties.UseCompression ? "gzip" : null,
+                ContentEncoding = (properties.UseCompression.HasValue && properties.UseCompression.Value) ? "gzip" : null,
                 ContentLanguage = properties.ContentLanguage,
                 ContentMD5 = properties.ContentMD5,
                 ContentType = properties.ContentType,

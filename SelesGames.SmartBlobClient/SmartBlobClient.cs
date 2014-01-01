@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Common.Azure.Blob;
+using Common.Azure.Blob.Contracts;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Blob;
+using System;
 using System.IO;
 using System.Linq;
 using System.Net.Http.Formatting;
@@ -7,98 +11,133 @@ using System.Threading.Tasks;
 
 namespace Common.Azure.SmartBlobClient
 {
-    public class SmartBlobClient : IAzureBlobClient
+    public class SmartBlobClient : AzureBlobClient, IBlobRepository
     {
         MediaTypeFormatterCollection formatters;
-        AzureBlobStreamClient blobClient;
+
+        public string DefaultContentType { get; set; }
+        public bool? UseCompressionByDefault { get; set; }
 
 
 
 
-        #region Public Properties delegate to the underlying AzureBlobStreamClient
+        #region Constructors
 
-        public TimeSpan ReadTimeout
+        public SmartBlobClient(string storageAccountName, string key, bool useHttps)
+            : base(storageAccountName, key, useHttps)
         {
-            get { return blobClient.ReadTimeout; }
-            set { blobClient.ReadTimeout = value; }
-        }
-        public TimeSpan WriteTimeout
-        {
-            get { return blobClient.WriteTimeout; }
-            set { blobClient.WriteTimeout = value; }
-        }
-        public string ContentType
-        {
-            get { return blobClient.ContentType; }
-            set { blobClient.ContentType = value; }
-        }
-        public bool UseGzipOnUpload
-        {
-            get { return blobClient.UseGzipOnUpload; }
-            set { blobClient.UseGzipOnUpload = value; }
+            formatters = CreateDefaultMediaTypeFormatters();
+            DefaultContentType = "application/json";
         }
 
-        public string BlobEndpoint { get { return blobClient.BlobEndpoint; } }
-
+        public SmartBlobClient(CloudStorageAccount account)
+            : base(account)
+        {
+            formatters = CreateDefaultMediaTypeFormatters();
+            DefaultContentType = "application/json";
+        }
 
         #endregion
 
 
 
 
-        public SmartBlobClient(string storageAccountName, string key, string container, bool useHttps)
-        {
-            blobClient = new AzureBlobStreamClient(storageAccountName, key, container, useHttps);
-            ContentType = ContentEncoderSettings.Json;
-            formatters = CreateDefaultMediaTypeFormatters();
-        }
+        #region Generic Get
 
-        public async Task<T> Get<T>(string blobId)
+        public async Task<T> Get<T>(
+            string container,
+            string blobName,
+            AccessCondition accessCondition = null,
+            BlobRequestOptions options = null,
+            OperationContext operationContext = null)
         {
-            using (var content = await blobClient.Get(blobId))
+            using (var content = await this.GetBlobContent(container, blobName, accessCondition, options, operationContext))
             {
-                var contentType = content.Properties.ContentType;
-
-                MediaTypeHeaderValue mediaHeader;
-                if (!MediaTypeHeaderValue.TryParse(contentType, out mediaHeader))
-                {
-                    throw new Exception(string.Format("Invalid ContentType returned by the call to Get<T> in SmartBlobClient: {0}", contentType));
-                }
-
-                var deserializer = FindReadFormatter<T>(mediaHeader);
-
-                var result = await deserializer.ReadFromStreamAsync(typeof(T), content.Content, null, null);
-                return (T)result;
+                return await ReadContent<T>(content);
             }
         }
 
-        public async Task Save<T>(string blobId, T obj)
+        public async Task<T> Get<T>(string container, string blobName, RequestProperties properties)
         {
+            if (properties == null) throw new ArgumentNullException("properties");
+
+            using (var content = await this.GetBlobContent(container, blobName, properties))
+            {
+                return await ReadContent<T>(content);
+            }
+        }
+
+        #endregion
+
+
+
+
+        #region Generic Save
+
+        public async Task Save<T>(
+            string container,
+            string blobName,
+            T obj,
+            BlobProperties blobProperties = null,
+            AccessCondition accessCondition = null,
+            BlobRequestOptions options = null,
+            OperationContext operationContext = null)
+        {
+            blobProperties = blobProperties ?? new BlobProperties();
+
+            blobProperties.ContentEncoding = blobProperties.ContentEncoding ??
+                ((UseCompressionByDefault.HasValue && UseCompressionByDefault.Value) ? "gzip" : null);
+
+            blobProperties.ContentType = blobProperties.ContentType ?? DefaultContentType;
+            var formatter = GetBestTypeFormatterForContentType<T>(blobProperties.ContentType);
+
             using (var ms = new MemoryStream())
             {
-                MediaTypeHeaderValue mediaHeader;
-                if (!MediaTypeHeaderValue.TryParse(ContentType, out mediaHeader))
-                {
-                    throw new Exception(string.Format("Invalid ContentType returned by the call to Save<T> in SmartBlobClient: {0}", ContentType));
-                } 
-                
-                var serializer = FindWriteFormatter<T>(mediaHeader);
-
-                await serializer.WriteToStreamAsync(typeof(T), obj, ms, null, null);
+                await formatter.WriteToStreamAsync(typeof(T), obj, ms, null, null);
                 ms.Position = 0;
-                await blobClient.Save(blobId, ms);
+                await this.SaveBlobContent(container, blobName, ms, blobProperties, accessCondition, options, operationContext);
             }
         }
 
-        public Task Delete(string blobId)
+        public async Task Save<T>(string container, string blobName, T obj, WriteRequestProperties properties)
         {
-            return blobClient.Delete(blobId);
+            if (properties == null) throw new ArgumentNullException("properties");
+
+            properties.UseCompression = properties.UseCompression ?? UseCompressionByDefault;
+
+            properties.ContentType = properties.ContentType ?? DefaultContentType;
+            var formatter = GetBestTypeFormatterForContentType<T>(properties.ContentType);
+
+            using (var ms = new MemoryStream())
+            {
+                await formatter.WriteToStreamAsync(typeof(T), obj, ms, null, null);
+                ms.Position = 0;
+                await this.SaveBlobContent(container, blobName, ms, properties);
+            }
         }
+
+        #endregion
 
 
 
 
         #region helper methods
+
+        async Task<T> ReadContent<T>(BlobContent content)
+        {
+            var contentType = content.Properties.ContentType;
+
+            MediaTypeHeaderValue mediaHeader;
+            if (!MediaTypeHeaderValue.TryParse(contentType, out mediaHeader))
+            {
+                throw new Exception(string.Format("Invalid ContentType returned by the call to Get<T> in SmartBlobClient: {0}", contentType));
+            }
+
+            var deserializer = FindReadFormatter<T>(mediaHeader);
+
+            var result = await deserializer.ReadFromStreamAsync(typeof(T), content.Content, null, null);
+            return (T)result;
+        }
 
         MediaTypeFormatter FindReadFormatter<T>(MediaTypeHeaderValue mediaType)
         {
@@ -112,6 +151,28 @@ namespace Common.Azure.SmartBlobClient
 
             if (formatter == null)
                 throw new Exception(string.Format("unable to find a valid MediaTypeFormatter that matches {0}", mediaType));
+
+            return formatter;
+        }
+
+        MediaTypeFormatter GetBestTypeFormatterForContentType<T>(string contentType)
+        {
+            MediaTypeFormatter formatter = null;
+
+            if (!string.IsNullOrWhiteSpace(contentType))
+            {
+                MediaTypeHeaderValue mediaHeader;
+                if (!MediaTypeHeaderValue.TryParse(contentType, out mediaHeader))
+                {
+                    throw new Exception(string.Format("Invalid ContentType returned by the call to Save<T> in SmartBlobClient: {0}", contentType));
+                }
+
+                formatter = FindWriteFormatter<T>(mediaHeader);
+            }
+            else
+            {
+                formatter = formatters.First();
+            }
 
             return formatter;
         }
