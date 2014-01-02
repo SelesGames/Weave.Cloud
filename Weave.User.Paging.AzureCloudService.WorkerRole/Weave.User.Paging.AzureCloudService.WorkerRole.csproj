@@ -46,6 +46,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UserPagedNewsRecovery.cs" />
     <Compile Include="UserPagedNewsUpdater.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup\NinjectKernel.cs" />
@@ -60,6 +61,10 @@
       <Project>{9259074d-90ae-4a44-a211-db3e122bf34e}</Project>
       <Name>Common.Azure.Blob</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SelesGames.Common\SelesGames.Common.csproj">
+      <Project>{5b792c4b-80d8-420d-9fa7-e567faf1f7b1}</Project>
+      <Name>SelesGames.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SelesGames.SmartBlobClient\Common.Azure.SmartBlobClient.csproj">
       <Project>{d115cf60-990a-4138-8496-538a6ce74541}</Project>
       <Name>Common.Azure.SmartBlobClient</Name>
@@ -68,6 +73,10 @@
       <Project>{db5274e6-15f6-4ec8-920a-842ea93a2601}</Project>
       <Name>Weave.User.BusinessObjects</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Weave.User.DataStore\Weave.User.DataStore.csproj">
+      <Project>{458cbdea-f41c-4209-9dec-b2f285c217ab}</Project>
+      <Name>Weave.User.DataStore</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Weave.User.Paging.BusinessObjects\Weave.User.Paging.BusinessObjects.csproj">
       <Project>{ea9fcf27-01b8-4aff-8e30-f540632a9db5}</Project>
       <Name>Weave.User.Paging.BusinessObjects</Name>
@@ -75,6 +84,10 @@
     <ProjectReference Include="..\Weave.User.Paging.Store\Weave.User.Paging.Store.csproj">
       <Project>{b160a642-d8c8-4730-85ca-4b87c49bca6d}</Project>
       <Name>Weave.User.Paging.Store</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Weave.User.Service.Converters\Weave.User.Service.Converters.csproj">
+      <Project>{618fe33a-3784-4ed5-954b-86e4b4e0748b}</Project>
+      <Name>Weave.User.Service.Converters</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

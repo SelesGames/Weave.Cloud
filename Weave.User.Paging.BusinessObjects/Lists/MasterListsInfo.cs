@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Weave.User.Paging.Lists
 {
@@ -12,5 +9,12 @@ namespace Weave.User.Paging.Lists
         public List<ListInfoByAll> AllNewsLists { get; set; }
         public List<ListInfoByCategory> CategoryLists { get; set; }
         public List<ListInfoByFeed> FeedLists { get; set; }
+
+        public MasterListsInfo()
+        {
+            AllNewsLists = new List<ListInfoByAll>();
+            CategoryLists = new List<ListInfoByCategory>();
+            FeedLists = new List<ListInfoByFeed>();
+        }
     }
 }

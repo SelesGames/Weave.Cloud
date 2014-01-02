@@ -76,6 +76,7 @@ namespace Weave.User.Paging
 
             await Task.WhenAll(pagedNews.Select(Save));
             await Save(masterList);
+            await Save(user);
         }
 
 
@@ -98,6 +99,14 @@ namespace Weave.User.Paging
                 UserId = masterList.UserId,
             };
             await pageClient.Save(containerName, MASTER_LIST, masterList);
+        }
+
+        async Task Save(UserInfo user)
+        {
+            var blobName = string.Format("{0}{1}", userId, USER_APPEND);
+            var converter = Service.Converters.BusinessObjectToDataStore.Instance;
+            var storedUser = user.Convert<UserInfo, DataStore.UserInfo>(converter);
+            await userClient.Save(USER_CONTAINER, blobName, storedUser);
         }
 
         #endregion
