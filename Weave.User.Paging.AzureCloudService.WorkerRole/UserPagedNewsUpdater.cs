@@ -22,7 +22,7 @@ namespace Weave.User.Paging
         readonly SmartBlobClient pageClient;
         readonly string containerName;
 
-        readonly int PAGE_SIZE = 50;
+        readonly int PAGE_SIZE = 100;
         readonly string MASTER_LIST = "masterlist";
         readonly string USER_CONTAINER = "user";
         readonly string USER_APPEND = ".user";
@@ -54,16 +54,16 @@ namespace Weave.User.Paging
         {
             // get the user.  If no use matches this id, throw an exception
             var user = await GetUser();
+            await user.RefreshAllFeeds();
 
             // create the container for this User if it doesn't already exist
             var container = pageClient.GetContainerHandle(containerName);
             await container.CreateIfNotExistsAsync(BlobContainerPublicAccessType.Container, null, null);
 
-            var now = DateTime.UtcNow;
-            await user.RefreshAllFeeds();
-            var updateLists = PagedNewsHelper.CalculatePagedNewsSince(user, now, PAGE_SIZE);
-
             var masterList = await GetMasterListsInfo();
+
+            var updateLists = PagedNewsHelper.CalculatePagedNewsSince(user, masterList, PAGE_SIZE);
+
             masterList.AllNewsLists.Add(updateLists.UpdatedAllNewsList);
             masterList.CategoryLists.AddRange(updateLists.UpdatedCategoryLists);
             masterList.FeedLists.AddRange(updateLists.UpdatedFeedLists);
@@ -97,6 +97,11 @@ namespace Weave.User.Paging
                     RetryPolicy = new LinearRetry(TimeSpan.FromSeconds(2), 10),
                     MaximumExecutionTime = TimeSpan.FromMinutes(10),
                     ServerTimeout = TimeSpan.FromMinutes(10),
+                },
+                blobProperties: new BlobProperties
+                {
+                    ContentEncoding = "gzip",
+                    ContentType = "application/json"
                 });
         }
 

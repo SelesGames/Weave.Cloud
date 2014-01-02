@@ -63,13 +63,7 @@ namespace Weave.User.BusinessObjects
             if (string.IsNullOrEmpty(category))
                 throw new Exception("No category specified");
 
-            else if ("all news".Equals(category, StringComparison.OrdinalIgnoreCase))
-                feeds = feedsList;
-
-            else
-            {
-                feeds = feedsList.OfCategory(category);
-            }
+            feeds = feedsList.OfCategory(category);
 
             if (EnumerableEx.IsNullOrEmpty(feeds))
                 throw new Exception(string.Format("No feeds match category: {0}", category));

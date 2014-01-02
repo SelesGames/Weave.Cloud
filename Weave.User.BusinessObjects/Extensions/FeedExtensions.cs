@@ -6,14 +6,19 @@ namespace Weave.User.BusinessObjects
 {
     public static class FeedExtensions
     {
-        //public static IEnumerable<string> UniqueCategoryNames(this IEnumerable<Feed> feeds)
+        //public static IEnumerable<string> GetFullCategoryList(this IEnumerable<Feed> feeds)
         //{
-        //    return feeds.Select(o => o.Category).Distinct().OfType<string>();
+        //    var categories = new List<string> { "all news" };
+        //    categories.AddRange(feeds.Select(o => o.Category).Distinct().OfType<string>());
+        //    return categories;
         //}
 
         public static IEnumerable<Feed> OfCategory(this IEnumerable<Feed> feeds, string categoryName)
         {
             if (string.IsNullOrEmpty(categoryName))
+                return new List<Feed>();
+
+            if ("all news".Equals(categoryName, StringComparison.OrdinalIgnoreCase))
                 return feeds;
 
             return feeds.Where(o => categoryName.Equals(o.Category, StringComparison.OrdinalIgnoreCase));
