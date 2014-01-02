@@ -93,7 +93,7 @@ namespace Weave.User.Paging
 
         ListInfoByAll CreateListInfoForAllNews()
         {
-            var news = user.Feeds.AllNews().ToList();
+            var news = user.Feeds.AllOrderedNews().ToList();
             var pageCount = (int)Math.Ceiling((double)news.Count / (double)pageSize);
 
             return new ListInfoByAll
@@ -122,7 +122,7 @@ namespace Weave.User.Paging
 
         ListInfoByCategory CreateListInfoForCategory(string category)
         {
-            var news = user.Feeds.OfCategory(category).AllNews().ToList();
+            var news = user.Feeds.OfCategory(category).AllOrderedNews().ToList();
             var pageCount = (int)Math.Ceiling((double)news.Count / (double)pageSize);
 
             return new ListInfoByCategory
@@ -153,7 +153,7 @@ namespace Weave.User.Paging
 
         ListInfoByFeed CreateListInfoForFeed(Feed feed)
         {
-            var news = feed.News;
+            var news = feed.News.LatestNewsFirst().ToList();
             var pageCount = (int)Math.Ceiling((double)news.Count / (double)pageSize);
 
             return new ListInfoByFeed
