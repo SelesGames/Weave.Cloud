@@ -10,9 +10,16 @@ namespace Weave.User.Paging.AzureCloudService.WorkerRole.Startup
         {
             base.AddComponents();
 
-            var credentials = new StorageCredentials("weaveuser2", "JO5kSIOr+r3NdM45gfzb1szHe/hPx6f+MS7YOWogr8VDqSikiIP//OMUbOxCCMTFTcJgldVhl+Y0zP9WpvQV5g==");
-            var csa = new CloudStorageAccount(credentials, false);
-            this.Bind<CloudStorageAccount>().ToConstant(csa).InSingletonScope();
+            var userCred = new StorageCredentials("weaveuser2", "JO5kSIOr+r3NdM45gfzb1szHe/hPx6f+MS7YOWogr8VDqSikiIP//OMUbOxCCMTFTcJgldVhl+Y0zP9WpvQV5g==");
+            var userCsa = new CloudStorageAccount(userCred, false);
+
+            var pagingCred = new StorageCredentials("weaveuser2", "JO5kSIOr+r3NdM45gfzb1szHe/hPx6f+MS7YOWogr8VDqSikiIP//OMUbOxCCMTFTcJgldVhl+Y0zP9WpvQV5g==");
+            var pagingCsa = new CloudStorageAccount(pagingCred, false);
+
+            //var updater = new UserPagedNewsUpdater()
+
+
+            //this.Bind<CloudStorageAccount>().ToConstant(csa).InSingletonScope();
         }
     }
 }

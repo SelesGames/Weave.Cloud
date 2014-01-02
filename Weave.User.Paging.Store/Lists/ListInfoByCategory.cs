@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 
 namespace Weave.User.Paging.Store.Lists
 {
-    [DataContract]
+    //[DataContract]
     public class ListInfoByCategory
     {
         public Guid ListId { get; set; }

@@ -1,5 +1,7 @@
 ﻿using Common.Azure.SmartBlobClient;
 using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Blob;
+using Microsoft.WindowsAzure.Storage.RetryPolicies;
 using SelesGames.Common;
 using System;
 using System.Collections.Generic;
@@ -55,11 +57,11 @@ namespace Weave.User.Paging
 
             // create the container for this User if it doesn't already exist
             var container = pageClient.GetContainerHandle(containerName);
-            await container.CreateIfNotExistsAsync();
+            await container.CreateIfNotExistsAsync(BlobContainerPublicAccessType.Container, null, null);
 
-
+            var now = DateTime.UtcNow;
             await user.RefreshAllFeeds();
-            var updateLists = PagedNewsHelper.CalculatePagedNews(user, PAGE_SIZE);
+            var updateLists = PagedNewsHelper.CalculatePagedNewsSince(user, now, PAGE_SIZE);
 
             var masterList = await GetMasterListsInfo();
             masterList.AllNewsLists.Add(updateLists.UpdatedAllNewsList);
@@ -72,6 +74,7 @@ namespace Weave.User.Paging
                 updateLists.UpdatedCategoryLists.SelectMany(o => o.PagedNews), 
                 updateLists.UpdatedFeedLists.SelectMany(o => o.PagedNews)
             }
+            .OfType<IEnumerable<PagedNewsBase>>()
             .SelectMany(o => o);
 
             await Task.WhenAll(pagedNews.Select(Save));
@@ -88,17 +91,19 @@ namespace Weave.User.Paging
         {
             var fileName = pagedNews.CreateFileName();
             var store = pagedNews.CreateSerializablePagedNews();
-
-            await pageClient.Save(containerName, fileName, store);
+            await pageClient.Save(containerName, fileName, store,
+                options: new Microsoft.WindowsAzure.Storage.Blob.BlobRequestOptions
+                {
+                    RetryPolicy = new LinearRetry(TimeSpan.FromSeconds(2), 10),
+                    MaximumExecutionTime = TimeSpan.FromMinutes(10),
+                    ServerTimeout = TimeSpan.FromMinutes(10),
+                });
         }
 
         async Task Save(MasterListsInfo masterList)
         {
-            var store = new Weave.User.Paging.Store.Lists.MasterListsInfo
-            {
-                UserId = masterList.UserId,
-            };
-            await pageClient.Save(containerName, MASTER_LIST, masterList);
+            var store = Convert(masterList);
+            await pageClient.Save(containerName, MASTER_LIST, store);
         }
 
         async Task Save(UserInfo user)
@@ -106,7 +111,12 @@ namespace Weave.User.Paging
             var blobName = string.Format("{0}{1}", userId, USER_APPEND);
             var converter = Service.Converters.BusinessObjectToDataStore.Instance;
             var storedUser = user.Convert<UserInfo, DataStore.UserInfo>(converter);
-            await userClient.Save(USER_CONTAINER, blobName, storedUser);
+            await userClient.Save(USER_CONTAINER, blobName, storedUser, 
+                new Common.Azure.Blob.WriteRequestProperties
+                {
+                    ContentType = "application/json",
+                    UseCompression = true,
+                });
         }
 
         #endregion
@@ -133,8 +143,67 @@ namespace Weave.User.Paging
             }
             catch
             {
-                return new MasterListsInfo();
+                return new MasterListsInfo { UserId = userId };
             }
+        }
+
+        #endregion
+
+
+
+
+        #region Conversion helpers
+
+        Store.Lists.MasterListsInfo Convert(MasterListsInfo o)
+        {
+            return new Store.Lists.MasterListsInfo
+            {
+                UserId = o.UserId,
+                AllNewsLists = o.AllNewsLists == null ? null :
+                    o.AllNewsLists.Select(Convert).ToList(),
+                CategoryLists = o.CategoryLists == null ? null :
+                    o.CategoryLists.Select(Convert).ToList(),
+                FeedLists = o.FeedLists == null ? null :
+                    o.FeedLists.Select(Convert).ToList(),
+            };
+        }
+
+        Store.Lists.ListInfoByAll Convert(ListInfoByAll o)
+        {
+            return new Store.Lists.ListInfoByAll
+            {
+                ListId = o.ListId,
+                CreatedOn = o.CreatedOn,
+                LastAccess = o.LastAccess,
+                PageSize = o.PageSize,
+                PageCount = o.PageCount,
+            };
+        }
+
+        Store.Lists.ListInfoByCategory Convert(ListInfoByCategory o)
+        {
+            return new Store.Lists.ListInfoByCategory
+            {
+                ListId = o.ListId,
+                CreatedOn = o.CreatedOn,
+                LastAccess = o.LastAccess,
+                PageSize = o.PageSize,
+                PageCount = o.PageCount,
+                Category = o.Category,
+            };
+        }
+
+        Store.Lists.ListInfoByFeed Convert(ListInfoByFeed o)
+        {
+            return new Store.Lists.ListInfoByFeed
+            {
+                ListId = o.ListId,
+                CreatedOn = o.CreatedOn,
+                LastAccess = o.LastAccess,
+                PageSize = o.PageSize,
+                PageCount = o.PageCount,
+                FeedId = o.FeedId,
+            };
         }
 
         #endregion

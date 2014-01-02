@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 
 namespace Weave.User.Paging.Store.Lists
 {
-    [DataContract]
+    //[DataContract]
     public class MasterListsInfo
     {
         public Guid UserId { get; set; }

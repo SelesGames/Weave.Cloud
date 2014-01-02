@@ -12,9 +12,9 @@ namespace Weave.User.Paging
     /// </summary>
     public class PagedNewsHelper
     {
-        public static PagedNewsHelper CalculatePagedNews(UserInfo user, int pageSize = 50)
+        public static PagedNewsHelper CalculatePagedNewsSince(UserInfo user, DateTime timeStamp, int pageSize = 50)
         {
-            var helper = new PagedNewsHelper(user, pageSize);
+            var helper = new PagedNewsHelper(user, timeStamp, pageSize);
             helper.Update();
             return helper;
         }
@@ -47,16 +47,15 @@ namespace Weave.User.Paging
 
         #region Private constructor
 
-        PagedNewsHelper(UserInfo user, int pageSize)
+        PagedNewsHelper(UserInfo user, DateTime timeStamp, int pageSize)
         {
             this.user = user;
+            this.TimeStamp = timeStamp;
             this.pageSize = pageSize;
 
             UpdatedAllNewsList = new ListInfoByAll();
             UpdatedCategoryLists = new List<ListInfoByCategory>();
             UpdatedFeedLists = new List<ListInfoByFeed>();
-
-            //masterList = new MasterListsInfo();
         }
 
         #endregion
@@ -68,7 +67,7 @@ namespace Weave.User.Paging
 
         void Update()
         {
-            TimeStamp = DateTime.UtcNow;
+            //TimeStamp = DateTime.UtcNow;
             ListId = Guid.NewGuid();
 
             var updatedFeeds = user.Feeds.Where(o => o.LastRefreshedOn > TimeStamp).ToList();
@@ -76,7 +75,7 @@ namespace Weave.User.Paging
             if (updatedFeeds.Count == 0)
                 return;
 
-            var updatedCategories = updatedFeeds.Select(o => o.Category).Distinct().ToList();
+            var updatedCategories = updatedFeeds.Select(o => o.Category).Distinct().OfType<string>().ToList();
             var allFeeds = user.Feeds;
 
             UpdatedFeedLists.AddRange(updatedFeeds.Select(CreateListInfoForFeed));

@@ -16,11 +16,15 @@ namespace Test.UserPaging
             try
             {
                 TestPageCreation().Wait();
+                Console.WriteLine("success");
             }
             catch(Exception e)
             {
                 Console.WriteLine(e);
+                Console.WriteLine("fail");
             }
+
+            Console.WriteLine("completed");
 
             while (true)
                 Console.ReadLine();
