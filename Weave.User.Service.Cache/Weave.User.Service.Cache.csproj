@@ -38,6 +38,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\Azure Cache Service\Microsoft.ApplicationServer.Caching.Core.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.WindowsAzure.Storage, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Microsoft.WindowsAzure.Storage.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
@@ -63,6 +67,10 @@
     <ProjectReference Include="..\SelesGames.Common\SelesGames.Common.csproj">
       <Project>{5b792c4b-80d8-420d-9fa7-e567faf1f7b1}</Project>
       <Name>SelesGames.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SelesGames.SmartBlobClient\Common.Azure.SmartBlobClient.csproj">
+      <Project>{d115cf60-990a-4138-8496-538a6ce74541}</Project>
+      <Name>Common.Azure.SmartBlobClient</Name>
     </ProjectReference>
     <ProjectReference Include="..\Weave.User.BusinessObjects\Weave.User.BusinessObjects.csproj">
       <Project>{db5274e6-15f6-4ec8-920a-842ea93a2601}</Project>

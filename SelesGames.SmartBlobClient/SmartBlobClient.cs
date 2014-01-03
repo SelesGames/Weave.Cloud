@@ -1,5 +1,4 @@
 ﻿using Common.Azure.Blob;
-using Common.Azure.Blob.Contracts;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using System;
@@ -11,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Common.Azure.SmartBlobClient
 {
-    public class SmartBlobClient : AzureBlobClient, IBlobRepository
+    public class SmartBlobClient : AzureBlobClient
     {
         MediaTypeFormatterCollection formatters;
 

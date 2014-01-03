@@ -15,7 +15,11 @@ namespace Weave.User.Service.Cache
 
         public async void Add(UserInfo user)
         {
-            await TaskEx.Retry(() => blobClient.Save(user), 5, TimeSpan.FromSeconds(4));
+            try
+            {
+                await blobClient.Save(user);
+            }
+            catch { }
         }
     }
 }

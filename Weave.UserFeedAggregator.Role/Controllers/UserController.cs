@@ -1,4 +1,4 @@
-﻿using Microsoft.WindowsAzure.StorageClient;
+﻿using Microsoft.WindowsAzure.Storage;
 using SelesGames.Common;
 using SelesGames.WebApi;
 using System;
@@ -70,7 +70,7 @@ namespace Weave.User.Service.Role.Controllers
                     if (userBO != null)
                         doesUserAlreadyExist = true;
                 }
-                catch (StorageClientException)
+                catch (StorageException)
                 {
                     // if we get here, we couldn't find the user
                 }
@@ -461,7 +461,7 @@ namespace Weave.User.Service.Role.Controllers
             {
                 userBO = await userRepo.Get(userId);
             }
-            catch (StorageClientException)
+            catch (StorageException)
             {
                 throw ResponseHelper.CreateResponseException(HttpStatusCode.NotFound,
                     "No user found matching that userId");
@@ -531,8 +531,9 @@ namespace Weave.User.Service.Role.Controllers
             {
                 userRepo.Save(userBO.Id, userBO);
             }
-            catch
+            catch(Exception e)
             {
+                DebugEx.WriteLine(e);
                 throw;
             }
             finally

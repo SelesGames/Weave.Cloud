@@ -48,7 +48,6 @@
     <Compile Include="BlobContent.cs" />
     <Compile Include="Extensions\BlobExtensions.cs" />
     <Compile Include="Compression\MemoryStreamExtensions.cs" />
-    <Compile Include="Contracts\IBlobRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequestProperties.cs" />
     <Compile Include="WriteRequestProperties.cs" />
