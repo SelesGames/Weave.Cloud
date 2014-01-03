@@ -122,8 +122,9 @@ namespace Weave.User.Service.Role.Controllers
             if (refresh)
             {
                 await userBO.RefreshAllFeeds();
-                SaveUser();
             }
+
+            SaveUser();
 
             var outgoing = ConvertToOutgoing(userBO);
             outgoing.LatestNews = userBO.GetLatestArticles().Select(ConvertToOutgoing).ToList();
