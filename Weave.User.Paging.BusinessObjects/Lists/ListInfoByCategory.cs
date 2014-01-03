@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Weave.User.Paging.News;
+using Weave.User.Paging.BusinessObjects.News;
 
 namespace Weave.User.Paging.Lists
 {

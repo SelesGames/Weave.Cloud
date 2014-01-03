@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Weave.User.Paging.News
+namespace Weave.User.Paging.BusinessObjects.News
 {
     public abstract class PagedNewsBase
     {

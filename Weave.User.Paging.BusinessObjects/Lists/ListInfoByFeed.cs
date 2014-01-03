@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Weave.User.Paging.News;
+using Weave.User.Paging.BusinessObjects.News;
 
 namespace Weave.User.Paging.Lists
 {

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Weave.User.BusinessObjects;
+using Weave.User.Paging.BusinessObjects.Lists;
+using Weave.User.Paging.BusinessObjects.News;
 using Weave.User.Paging.Lists;
 
 namespace Weave.User.Paging.BusinessObjects
@@ -36,9 +38,9 @@ namespace Weave.User.Paging.BusinessObjects
 
         public DateTime TimeStamp { get; private set; }
         public Guid ListId { get; private set; }
-        public ListInfoByAll UpdatedAllNewsList { get; private set; }
-        public List<ListInfoByCategory> UpdatedCategoryLists { get; private set; }
-        public List<ListInfoByFeed> UpdatedFeedLists { get; private set; }
+        public ListInfo UpdatedAllNewsList { get; private set; }
+        public List<ListInfo> UpdatedCategoryLists { get; private set; }
+        public List<ListInfo> UpdatedFeedLists { get; private set; }
 
         #endregion
 
@@ -53,9 +55,9 @@ namespace Weave.User.Paging.BusinessObjects
             this.masterList = masterList;
             this.pageSize = pageSize;
 
-            UpdatedAllNewsList = new ListInfoByAll();
-            UpdatedCategoryLists = new List<ListInfoByCategory>();
-            UpdatedFeedLists = new List<ListInfoByFeed>();
+            UpdatedAllNewsList = new ListInfo();
+            UpdatedCategoryLists = new List<ListInfo>();
+            UpdatedFeedLists = new List<ListInfo>();
         }
 
         #endregion
@@ -100,15 +102,14 @@ namespace Weave.User.Paging.BusinessObjects
 
 
 
-
         #region Page Chunking functions
 
-        ListInfoByAll CreateListInfoForAllNews()
+        ListInfo CreateListInfoForAllNews()
         {
             var news = user.Feeds.AllOrderedNews().ToList();
             var pageCount = (int)Math.Ceiling((double)news.Count / (double)pageSize);
 
-            return new ListInfoByAll
+            return new ListInfo
             {
                 ListId = ListId,
                 CreatedOn = TimeStamp,
@@ -128,18 +129,18 @@ namespace Weave.User.Paging.BusinessObjects
                                 NewsCount = o.Count,
                                 News = o.Select(Convert).ToList(),
                             })
+                        .OfType<PagedNewsBase>()
                         .ToList()
             };
         }
 
-        ListInfoByCategory CreateListInfoForCategory(string category)
+        ListInfo CreateListInfoForCategory(string category)
         {
             var news = user.Feeds.OfCategory(category).AllOrderedNews().ToList();
             var pageCount = (int)Math.Ceiling((double)news.Count / (double)pageSize);
 
-            return new ListInfoByCategory
+            return new ListInfo
             {
-                Category = category,
                 ListId = ListId,
                 CreatedOn = TimeStamp,
                 LastAccess = null,
@@ -159,18 +160,18 @@ namespace Weave.User.Paging.BusinessObjects
                                 NewsCount = o.Count,
                                 News = o.Select(Convert).ToList(),
                             })
+                        .OfType<PagedNewsBase>()
                         .ToList(),
             };
         }
 
-        ListInfoByFeed CreateListInfoForFeed(Feed feed)
+        ListInfo CreateListInfoForFeed(Feed feed)
         {
             var news = new[] { feed }.AllOrderedNews().ToList();
             var pageCount = (int)Math.Ceiling((double)news.Count / (double)pageSize);
 
-            return new ListInfoByFeed
+            return new ListInfo
             {
-                FeedId = feed.Id,
                 ListId = ListId,
                 CreatedOn = TimeStamp,
                 LastAccess = null,
@@ -190,6 +191,7 @@ namespace Weave.User.Paging.BusinessObjects
                                 NewsCount = o.Count,
                                 News = o.Select(Convert).ToList(),
                             })
+                        .OfType<PagedNewsBase>()
                         .ToList()
             };
         }

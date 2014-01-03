@@ -1,5 +1,5 @@
 ﻿
-namespace Weave.User.Paging.News
+namespace Weave.User.Paging.BusinessObjects.News
 {
     public class PagedNewsByCategory : PagedNewsBase
     {
