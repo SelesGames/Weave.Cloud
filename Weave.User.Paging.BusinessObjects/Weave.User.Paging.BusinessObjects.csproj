@@ -38,7 +38,7 @@
   <ItemGroup>
     <Compile Include="Lists\CategoryPageList.cs" />
     <Compile Include="Lists\FeedPageList.cs" />
-    <Compile Include="Lists\ListCollection.cs" />
+    <Compile Include="Lists\PageListCollection.cs" />
     <Compile Include="Lists\ListInfo.cs" />
     <Compile Include="News\PagedNewsBase.cs" />
     <Compile Include="News\PagedNewsByAll.cs" />

@@ -5,13 +5,13 @@ using Weave.User.BusinessObjects;
 
 namespace Weave.User.Paging.BusinessObjects.Lists
 {
-    public class ListCollection
+    public class PageListCollection
     {
         public Guid UserId { get; set; }
         public List<CategoryPageList> CategoryLists { get; set; }
         public List<FeedPageList> FeedLists { get; set; }
 
-        public ListCollection()
+        public PageListCollection()
         {
             CategoryLists = new List<CategoryPageList>();
             FeedLists = new List<FeedPageList>();

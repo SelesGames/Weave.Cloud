@@ -12,7 +12,7 @@ namespace Weave.User.Paging.BusinessObjects
     /// </summary>
     public class PagedNewsHelper
     {
-        public static PagedNewsHelper CalculatePagedNewsSince(UserInfo user, ListCollection masterList, int pageSize = 50)
+        public static PagedNewsHelper CalculatePagedNewsSince(UserInfo user, PageListCollection masterList, int pageSize = 50)
         {
             var helper = new PagedNewsHelper(user, masterList, pageSize);
             helper.Update();
@@ -25,7 +25,7 @@ namespace Weave.User.Paging.BusinessObjects
         #region Member variables
 
         readonly UserInfo user;
-        readonly ListCollection masterList;
+        readonly PageListCollection masterList;
         readonly int pageSize;
 
         #endregion
@@ -48,7 +48,7 @@ namespace Weave.User.Paging.BusinessObjects
 
         #region Private constructor
 
-        PagedNewsHelper(UserInfo user, ListCollection masterList, int pageSize)
+        PagedNewsHelper(UserInfo user, PageListCollection masterList, int pageSize)
         {
             this.user = user;
             this.masterList = masterList;
