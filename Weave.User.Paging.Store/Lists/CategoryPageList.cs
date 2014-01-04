@@ -7,6 +7,7 @@ namespace Weave.User.Paging.Store.Lists
     {
         public string Category { get; set; }
         public Guid? LatestListId { get; set; }
+        public DateTime? LatestRefresh { get; set; }
         public List<ListInfo> Lists { get; set; }
     }
 }

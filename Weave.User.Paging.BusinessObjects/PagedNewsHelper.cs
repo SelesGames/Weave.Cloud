@@ -37,9 +37,9 @@ namespace Weave.User.Paging.BusinessObjects
 
         public DateTime TimeStamp { get; private set; }
         public Guid ListId { get; private set; }
-        public ListInfo UpdatedAllNewsList { get; private set; }
-        public List<ListInfo> UpdatedCategoryLists { get; private set; }
-        public List<ListInfo> UpdatedFeedLists { get; private set; }
+        //public List<CategoryListInfo> UpdatedCategoryLists { get; private set; }
+        //public List<FeedListInfo> UpdatedFeedLists { get; private set; }
+        public List<ListInfo> UpdatedLists { get; private set; }
 
         #endregion
 
@@ -54,9 +54,9 @@ namespace Weave.User.Paging.BusinessObjects
             this.masterList = masterList;
             this.pageSize = pageSize;
 
-            UpdatedAllNewsList = new ListInfo();
-            UpdatedCategoryLists = new List<ListInfo>();
-            UpdatedFeedLists = new List<ListInfo>();
+            //UpdatedCategoryLists = new List<CategoryListInfo>();
+            //UpdatedFeedLists = new List<FeedListInfo>();
+            UpdatedLists = new List<ListInfo>();
         }
 
         #endregion
@@ -85,9 +85,10 @@ namespace Weave.User.Paging.BusinessObjects
             var updatedCategories = updatedFeeds.Select(o => o.Category).Distinct().OfType<string>();
             var allFeeds = user.Feeds;
 
-            UpdatedFeedLists.AddRange(updatedFeeds.Select(CreateListInfoForFeed));
-            UpdatedCategoryLists.AddRange(updatedCategories.Select(CreateListInfoForCategory));
-            UpdatedAllNewsList = CreateListInfoForAllNews();
+            //UpdatedFeedLists.AddRange(updatedFeeds.Select(CreateListInfoForFeed));
+            //UpdatedCategoryLists.AddRange(updatedCategories.Select(CreateListInfoForCategory));
+            UpdatedLists.AddRange(updatedFeeds.Select(CreateListInfoForFeed));
+            UpdatedLists.AddRange(updatedCategories.Select(CreateListInfoForCategory));
         }
 
         bool FeedShouldBeIncluded(Feed feed)
@@ -103,43 +104,14 @@ namespace Weave.User.Paging.BusinessObjects
 
         #region Page Chunking functions
 
-        ListInfo CreateListInfoForAllNews()
-        {
-            var news = user.Feeds.AllOrderedNews().ToList();
-            var pageCount = (int)Math.Ceiling((double)news.Count / (double)pageSize);
-
-            return new ListInfo
-            {
-                ListId = ListId,
-                CreatedOn = TimeStamp,
-                LastAccess = null,
-                PageSize = pageSize,
-                PageCount = pageCount,
-                PagedNews =
-                    Enumerable
-                        .Range(0, pageCount)
-                        .Select(i => news.Skip(i * pageSize).Take(pageSize).ToList())
-                        .Select((o, i) =>
-                            new PagedNewsByAll
-                            {
-                                UserId = user.Id,
-                                ListId = ListId,
-                                Index = i,
-                                NewsCount = o.Count,
-                                News = o.Select(Convert).ToList(),
-                            })
-                        .OfType<PagedNewsBase>()
-                        .ToList()
-            };
-        }
-
-        ListInfo CreateListInfoForCategory(string category)
+        CategoryListInfo CreateListInfoForCategory(string category)
         {
             var news = user.Feeds.OfCategory(category).AllOrderedNews().ToList();
             var pageCount = (int)Math.Ceiling((double)news.Count / (double)pageSize);
 
-            return new ListInfo
+            return new CategoryListInfo
             {
+                Category = category,
                 ListId = ListId,
                 CreatedOn = TimeStamp,
                 LastAccess = null,
@@ -164,13 +136,14 @@ namespace Weave.User.Paging.BusinessObjects
             };
         }
 
-        ListInfo CreateListInfoForFeed(Feed feed)
+        FeedListInfo CreateListInfoForFeed(Feed feed)
         {
             var news = new[] { feed }.AllOrderedNews().ToList();
             var pageCount = (int)Math.Ceiling((double)news.Count / (double)pageSize);
 
-            return new ListInfo
+            return new FeedListInfo
             {
+                FeedId = feed.Id,
                 ListId = ListId,
                 CreatedOn = TimeStamp,
                 LastAccess = null,

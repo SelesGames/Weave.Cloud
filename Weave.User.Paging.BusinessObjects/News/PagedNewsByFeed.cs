@@ -9,8 +9,7 @@ namespace Weave.User.Paging.BusinessObjects.News
         public override string CreateFileName()
         {
             return string.Format(
-                "{0}-{1}-{2}-{3}",
-                UserId.ToString("N"),
+                "{0}-{1}-{2}",
                 FeedId.ToString("N"),
                 ListId.ToString("N"),
                 Index);

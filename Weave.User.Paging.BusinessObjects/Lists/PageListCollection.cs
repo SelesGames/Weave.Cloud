@@ -7,36 +7,80 @@ namespace Weave.User.Paging.BusinessObjects.Lists
 {
     public class PageListCollection
     {
-        public Guid UserId { get; set; }
-        public List<CategoryPageList> CategoryLists { get; set; }
-        public List<FeedPageList> FeedLists { get; set; }
+        Dictionary<string, CategoryPageList> categoryListLookup;
+        Dictionary<Guid, FeedPageList> feedListLookup;
 
-        public PageListCollection()
+        public Guid UserId { get; set; }
+
+        public IEnumerable<CategoryPageList> CategoryLists
         {
-            CategoryLists = new List<CategoryPageList>();
-            FeedLists = new List<FeedPageList>();
+            get { return categoryListLookup.Select(o => o.Value); }
+        }
+
+        public IEnumerable<FeedPageList> FeedLists
+        {
+            get { return feedListLookup.Select(o => o.Value); }
+        }
+
+        public PageListCollection(
+            IEnumerable<CategoryPageList> categories, 
+            IEnumerable<FeedPageList> feeds)
+        {
+            categoryListLookup = categories == null ? 
+                new Dictionary<string, CategoryPageList>() : categories.ToDictionary(o => o.Category);
+
+            feedListLookup = feeds == null ?
+                new Dictionary<Guid, FeedPageList>() : feeds.ToDictionary(o => o.FeedId);
         }
 
         public DateTime? GetLatestRefreshForFeed(Feed feed)
         {
-            var mostRecentList = FeedLists
-                .Where(o => o.FeedId == feed.Id)
-                .SelectMany(o => o.Lists)
-                .OrderByDescending(o => o.CreatedOn)
-                .FirstOrDefault();
-
-            return mostRecentList == null ? null : (DateTime?)mostRecentList.CreatedOn;
+            FeedPageList feedList;
+            if (feedListLookup.TryGetValue(feed.Id, out feedList))
+            {
+                return feedList.LatestRefresh;
+            }
+            return null;
         }
 
         public DateTime? GetLatestRefreshForCategory(string category)
         {
-            var mostRecentList = CategoryLists
-                .Where(o => o.Category.Equals(category, StringComparison.OrdinalIgnoreCase))
-                .SelectMany(o => o.Lists)
-                .OrderByDescending(o => o.CreatedOn)
-                .FirstOrDefault();
+            CategoryPageList categoryList;
+            if (categoryListLookup.TryGetValue(category, out categoryList))
+            {
+                return categoryList.LatestRefresh;
+            }
+            return null;
+        }
 
-            return mostRecentList == null ? null : (DateTime?)mostRecentList.CreatedOn;
+        public CategoryPageList Get(string category)
+        {
+            if (categoryListLookup.ContainsKey(category))
+                return categoryListLookup[category];
+            else
+                return null;
+        }
+
+        public FeedPageList Get(Guid feedId)
+        {
+            if (feedListLookup.ContainsKey(feedId))
+                return feedListLookup[feedId];
+            else
+                return null;
+        }
+
+        public void Add(CategoryListInfo list)
+        {
+            var pageList = Get(list.Category);
+            if (pageList != null)
+                pageList.Add(list);
+        }
+
+        public void Add(FeedListInfo list)
+        {
+            var pageList = Get(list.FeedId);
+            if (pageList != null)
+                pageList.Add(list);
         }
     }
 }
