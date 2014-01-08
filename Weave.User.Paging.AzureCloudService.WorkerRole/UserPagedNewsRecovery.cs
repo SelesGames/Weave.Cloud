@@ -26,7 +26,7 @@ namespace Weave.User.Paging.AzureCloudService.WorkerRole
 
 
 
-        public async Task<List<Store.News.NewsItem>> GetNewsForFeeds(
+        public async Task<List<Store.News.NewsItem>> GetNewsForFeed(
             Guid userId, 
             Guid feedId, 
             int skip, 
