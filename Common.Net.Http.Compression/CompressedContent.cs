@@ -9,8 +9,8 @@ namespace Common.Net.Http.Compression
 {
     public class CompressedContent : HttpContent
     {
-        private HttpContent originalContent;
-        private string encodingType;
+        HttpContent originalContent;
+        string encodingType;
 
         public CompressedContent(HttpContent content, string encodingType)
         {
@@ -37,32 +37,51 @@ namespace Common.Net.Http.Compression
         protected override bool TryComputeLength(out long length)
         {
             length = -1;
-
             return false;
         }
 
-        protected override Task SerializeToStreamAsync(Stream stream, TransportContext context)
+        protected async override Task SerializeToStreamAsync(Stream stream, TransportContext context)
         {
-            Stream compressedStream = null;
+            using (var compressedStream = CreateCompressedStream(stream, encodingType))
+            {
+                await originalContent.CopyToAsync(compressedStream).ConfigureAwait(false);
+                compressedStream.Flush();
+                compressedStream.Close();
+            }
+        }
 
+        Stream CreateCompressedStream(Stream stream, string encodingType)
+        {
             if (encodingType == "gzip")
             {
-                compressedStream = new GZipStream(stream, CompressionMode.Compress, leaveOpen: true);
+                return new GZipStream(stream, CompressionMode.Compress, leaveOpen: true);
             }
             else if (encodingType == "deflate")
             {
-                compressedStream = new DeflateStream(stream, CompressionMode.Compress, leaveOpen: true);
+                return new DeflateStream(stream, CompressionMode.Compress, leaveOpen: true);
             }
-
-            return originalContent.CopyToAsync(compressedStream).ContinueWith(tsk =>
+            else
             {
-                if (compressedStream != null)
-                {
-                    compressedStream.Flush();
-                    compressedStream.Close();
-                    compressedStream.Dispose();
-                }
-            });
+                throw new ArgumentException(string.Format("unsupported encodingType: {0}", encodingType));
+            }
         }
     }
 }
+
+
+
+
+//protected override Task SerializeToStreamAsync(Stream stream, TransportContext context)
+//{
+//    var compressedStream = CreateCompressedStream(stream, encodingType);
+
+//    return originalContent.CopyToAsync(compressedStream).ContinueWith(tsk =>
+//    {
+//        if (compressedStream != null)
+//        {
+//            compressedStream.Flush();
+//            compressedStream.Close();
+//            compressedStream.Dispose();
+//        }
+//    });
+//}

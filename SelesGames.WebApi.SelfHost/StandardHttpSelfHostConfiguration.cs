@@ -1,4 +1,5 @@
 ﻿using Common.Net.Http.Compression;
+//using SelesGames.WebApi.MediaTypeFormatters;
 using SelesGames.WebApi.Protobuf;
 using System.Linq;
 using System.Net.Http.Formatting;
@@ -27,6 +28,7 @@ namespace SelesGames.WebApi.SelfHost
 
             MessageHandlers.Add(new EncodingDelegateHandler());
             Formatters.Add(new ProtobufFormatter());
+            //Formatters.Add(new FlexFormatter(Formatters.ToList()));
         }
     }
 }

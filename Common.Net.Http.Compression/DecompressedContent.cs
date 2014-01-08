@@ -9,8 +9,8 @@ namespace Common.Net.Http.Compression
 {
     public class DecompressedContent : HttpContent
     {
-        private HttpContent originalContent;
-        private string encodingType;
+        HttpContent originalContent;
+        string encodingType;
 
         public DecompressedContent(HttpContent content, string encodingType)
         {
@@ -35,14 +35,13 @@ namespace Common.Net.Http.Compression
         protected override bool TryComputeLength(out long length)
         {
             length = -1;
-
             return false;
         }
 
         protected override async Task SerializeToStreamAsync(Stream stream, TransportContext context)
         {
             using (var ogStream = await originalContent.ReadAsStreamAsync().ConfigureAwait(false))
-            using (var gzip = CreateDecompressionsStream(ogStream))
+            using (var gzip = CreateDecompressedStream(ogStream))
             {
                 await gzip.CopyToAsync(stream).ConfigureAwait(false);
                 gzip.Close();
@@ -50,7 +49,7 @@ namespace Common.Net.Http.Compression
             }
         }
 
-        Stream CreateDecompressionsStream(Stream stream)
+        Stream CreateDecompressedStream(Stream stream)
         {
             if (encodingType == "gzip")
             {
@@ -60,8 +59,10 @@ namespace Common.Net.Http.Compression
             {
                 return new DeflateStream(stream, CompressionMode.Decompress, leaveOpen: false);
             }
-
-            else throw new Exception();
+            else
+            {
+                throw new ArgumentException(string.Format("unsupported encodingType: {0}", encodingType));
+            }
         }
     }
 }

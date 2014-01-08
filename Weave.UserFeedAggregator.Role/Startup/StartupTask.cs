@@ -30,6 +30,7 @@ namespace Weave.User.Service.Role.Startup
 
             var config = new StandardHttpSelfHostConfiguration(ipString) { DependencyResolver = resolver };
             config.MessageHandlers.Add(new InjectAcceptEncodingHandler("gzip"));
+            config.MessageHandlers.Add(new InjectContentTypeHandler("application/json"));
             new HttpSelfHostServer(config).OpenAsync().Wait();
 
             Trace.WriteLine("^&*^&*^&*^*&^  SERVER IS UP AND RUNNING!!!");

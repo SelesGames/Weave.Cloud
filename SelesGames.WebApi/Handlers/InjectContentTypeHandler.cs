@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Common.WebApi.Handlers
 {
@@ -14,7 +16,7 @@ namespace Common.WebApi.Handlers
                 throw new ArgumentException("invalid contentType in InjectContentTypeFilter constructor");
         }
 
-        protected override System.Threading.Tasks.Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, System.Threading.CancellationToken cancellationToken)
+        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             var requestMethod = request.Method;
 
