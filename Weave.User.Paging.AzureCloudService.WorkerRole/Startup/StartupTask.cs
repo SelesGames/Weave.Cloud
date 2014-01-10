@@ -6,7 +6,7 @@ namespace Weave.User.Paging.AzureCloudService.WorkerRole.Startup
 {
     internal class StartupTask
     {
-        IKernel kernel;
+        //IKernel kernel;
 
         public void OnStart()
         {

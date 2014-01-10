@@ -44,13 +44,12 @@ namespace Weave.User.BusinessObjects
 
         public bool IsNew()
         {
-            //return !HasBeenViewed && OriginalDownloadDateTime > Feed.PreviousEntrance;
-            return OriginalDownloadDateTime > Feed.PreviousEntrance;
+            return !HasBeenViewed && OriginalDownloadDateTime > Feed.PreviousEntrance;
         }
 
         public bool IsCountedAsNew()
         {
-            return OriginalDownloadDateTime > Feed.MostRecentEntrance;
+            return !HasBeenViewed && OriginalDownloadDateTime > Feed.MostRecentEntrance;
         }
 
 

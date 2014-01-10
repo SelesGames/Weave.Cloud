@@ -262,6 +262,7 @@ namespace Weave.User.BusinessObjects
                 feed.News = feed.News == null ? null :
                     feed.News.Where(o =>
                     o.IsFavorite ||
+                    o.IsNew() ||
                     (!o.HasBeenViewed && (now - o.OriginalDownloadDateTime) < unreadExpiry)
                     ||
                     (o.HasBeenViewed && (now - o.OriginalDownloadDateTime) < markedReadyExpiry)).ToList();

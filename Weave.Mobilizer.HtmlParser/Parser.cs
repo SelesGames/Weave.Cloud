@@ -14,12 +14,12 @@ namespace Weave.Mobilizer.HtmlParser
         ReadabilityResult result;
         HtmlDocument doc;
 
-        string testurl =
+        //string testurl =
 //"http://thenextweb.com/insider/2013/06/23/researchers-are-developing-a-system-to-securely-leak-information-by-surfing-the-web/?utm_source";
 //"http://www.theverge.com/2013/6/21/4451172/xbox-engineer-disappointed-pastebin-note-rumored-features?utm_source";
 //"http://news.cnet.com/8301-1009_3-57590599-83/whistle-blower-update-snowden-lands-in-moscow-wikileakers-gmail-searched/?part";
 //"http://www.guardian.co.uk/world/2013/jun/23/chen-guangcheng-visits-taiwan";
-"http://www.wpcentral.com/e-online-releases-official-app-windows-phone-8";
+//"http://www.wpcentral.com/e-online-releases-official-app-windows-phone-8";
 
         //public async Task TryStuff()
         //{

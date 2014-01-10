@@ -42,6 +42,7 @@
     <Compile Include="ArticleDeletionTimes\ArticleDeleteTimesForUnread.cs" />
     <Compile Include="ArticleViewingType.cs" />
     <Compile Include="Converters\Converters.cs" />
+    <Compile Include="Extensions\DtoExtensions.cs" />
     <Compile Include="Extensions\FeedExtensions.cs" />
     <Compile Include="Feed.cs" />
     <Compile Include="FeedsSubset.cs" />
