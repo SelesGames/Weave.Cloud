@@ -252,7 +252,7 @@ namespace Weave.User.BusinessObjects
             var markedReadTimes = new ArticleDeleteTimesForMarkedRead();
             var unreadTimes = new ArticleDeleteTimesForUnread();
 
-            var markedReadyExpiry = markedReadTimes.GetByDisplayName(ArticleDeletionTimeForMarkedRead).Span;
+            var markedReadExpiry = markedReadTimes.GetByDisplayName(ArticleDeletionTimeForMarkedRead).Span;
             var unreadExpiry = unreadTimes.GetByDisplayName(ArticleDeletionTimeForUnread).Span;
 
             var now = DateTime.UtcNow;
@@ -260,13 +260,25 @@ namespace Weave.User.BusinessObjects
             foreach (var feed in Feeds)
             {
                 feed.News = feed.News == null ? null :
-                    feed.News.Where(o =>
-                    o.IsFavorite ||
-                    o.IsNew() ||
-                    (!o.HasBeenViewed && (now - o.OriginalDownloadDateTime) < unreadExpiry)
-                    ||
-                    (o.HasBeenViewed && (now - o.OriginalDownloadDateTime) < markedReadyExpiry)).ToList();
+                    feed.News
+                        .Where(o => IsNewsKept(
+                            newsItem: o, 
+                            now: now, 
+                            markedReadExpiry: markedReadExpiry, 
+                            unreadExpiry: unreadExpiry))
+                        .ToList();
             }
+        }
+
+        bool IsNewsKept(NewsItem newsItem, DateTime now, TimeSpan markedReadExpiry, TimeSpan unreadExpiry)
+        {
+            var age = now - newsItem.UtcPublishDateTime;
+
+            return
+                newsItem.IsFavorite ||
+                newsItem.IsNew() ||
+                (!newsItem.HasBeenViewed && (age < unreadExpiry)) ||
+                (newsItem.HasBeenViewed && (age < markedReadExpiry));
         }
 
         #endregion

@@ -84,7 +84,8 @@ namespace Weave.User.BusinessObjects
         {
             var attempt = utcPublishDateTimeString.TryGetUtcDate();
             if (attempt.Item1)
-                UtcPublishDateTime = attempt.Item2;
+                // we have to call ".ToUniversalTime()" because .NET automatically converts the string to be in local time
+                UtcPublishDateTime = attempt.Item2.ToUniversalTime();
             else
                 FailedToParseUtcPublishDateTime = true;
         }
