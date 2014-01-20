@@ -117,13 +117,12 @@ namespace Weave.User.Service.Role.Controllers
             userBO.PreviousLoginTime = userBO.CurrentLoginTime;
             userBO.CurrentLoginTime = DateTime.UtcNow;
 
-            userBO.DeleteOldNews();
-
             if (refresh)
             {
                 await userBO.RefreshAllFeeds();
             }
 
+            userBO.DeleteOldNews();
             SaveUser();
 
             var outgoing = ConvertToOutgoing(userBO);
@@ -161,7 +160,6 @@ namespace Weave.User.Service.Role.Controllers
             {
                 if (entry == EntryType.Mark)
                 {
-                    userBO.DeleteOldNews();
                     subset.MarkEntry();
                 }
 
@@ -171,6 +169,7 @@ namespace Weave.User.Service.Role.Controllers
                     await subset.Refresh();
                 }
 
+                userBO.DeleteOldNews();
                 SaveUser();
             }
 
@@ -191,7 +190,6 @@ namespace Weave.User.Service.Role.Controllers
             {
                 if (entry == EntryType.Mark)
                 {
-                    userBO.DeleteOldNews();
                     subset.MarkEntry();
                 }
 
@@ -201,6 +199,7 @@ namespace Weave.User.Service.Role.Controllers
                     await subset.Refresh();
                 }
 
+                userBO.DeleteOldNews();
                 SaveUser();
             }
 
