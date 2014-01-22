@@ -6,6 +6,9 @@ using SelesGames.WebApi.SelfHost;
 using System.Diagnostics;
 using System.Web.Http.Dependencies;
 using System.Web.Http.SelfHost;
+using System.Web.Http;
+using System.Web.Http.Cors;
+using System.Threading.Tasks;
 
 namespace Weave.User.Service.Role.Startup
 {
@@ -31,6 +34,10 @@ namespace Weave.User.Service.Role.Startup
             var config = new StandardHttpSelfHostConfiguration(ipString) { DependencyResolver = resolver };
             config.MessageHandlers.Add(new InjectAcceptEncodingHandler("gzip"));
             config.MessageHandlers.Add(new InjectContentTypeHandler("application/json"));
+
+            var cors = new EnableCorsAttribute(origins: "*", headers: "*", methods: "*");
+            config.EnableCors(cors);
+
             new HttpSelfHostServer(config).OpenAsync().Wait();
 
             Trace.WriteLine("^&*^&*^&*^*&^  SERVER IS UP AND RUNNING!!!");
