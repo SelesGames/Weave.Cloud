@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="CompressionSettings.cs" />
     <Compile Include="Extensions\HttpClientExtensions.cs" />
+    <Compile Include="Extensions\SmartHttpClientExtensions.cs" />
     <Compile Include="HttpResourceListener.cs" />
     <Compile Include="ContentEncoderSettings.cs" />
     <Compile Include="Helpers\EnumerableEx.cs" />

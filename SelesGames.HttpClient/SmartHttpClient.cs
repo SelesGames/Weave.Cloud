@@ -20,6 +20,8 @@ namespace SelesGames.HttpClient
         ContentEncoderSettings encoderSettings;
         CompressionSettings compressionSettings;
 
+        internal MediaTypeFormatterCollection Formatters { get { return formatters; } }
+
 
 
 
@@ -31,7 +33,7 @@ namespace SelesGames.HttpClient
         public SmartHttpClient(ContentEncoderSettings encoderSettings, CompressionSettings compressionSettings = CompressionSettings.OnRequest | CompressionSettings.OnContent)
             : this(CreateDefaultMediaTypeFormatters(), encoderSettings, compressionSettings) { }
 
-        public SmartHttpClient(
+        SmartHttpClient(
             MediaTypeFormatterCollection formatters,
             ContentEncoderSettings encoderSettings,
             CompressionSettings compressionSettings = CompressionSettings.OnRequest | CompressionSettings.OnContent)
