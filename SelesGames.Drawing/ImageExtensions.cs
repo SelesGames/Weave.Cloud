@@ -60,7 +60,7 @@ namespace System.Drawing
                 //var imageAttributes = new ImageAttributes();
                 //imageAttributes.SetWrapMode(WrapMode.TileFlipXY);
 
-                ResizeTargets targets;
+                var targets = new ResizeTargets();
 
                 if (stretch == Stretch.Fill)
                     targets = new ResizeTargets { Width = targetWidth, Height = targetHeight, XOffset = 0, YOffset = 0 };

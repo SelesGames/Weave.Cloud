@@ -21,7 +21,7 @@ namespace ImageResizer.Role.Controllers
 
             using (var responseStream = await response.Content.ReadAsStreamAsync())
             using (var image = responseStream.ReadImage())
-            using (var resized = image.Resize(w, h, fill, ImageExtensions.Stretch.UniformToFill))
+            using (var resized = image.Resize(w, h, fill, Stretch.None))
             {
                 var ms = new MemoryStream();
                 resized.WriteToStream(ms, contentType, imageQuality);

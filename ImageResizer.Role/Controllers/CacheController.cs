@@ -74,7 +74,7 @@ namespace ImageResizer.Role.Controllers
 
                     using (var ms = new MemoryStream())
                     {
-                        using (var resizedAndCropped = image.CropAndResizeTo(width, height))
+                        using (var resizedAndCropped = image.Resize(width, height, Stretch.UniformToFill))
                         {
                             resizedAndCropped.WriteToStream(ms, contentType, settings.ImageQuality);
                             ms.Position = 0;
