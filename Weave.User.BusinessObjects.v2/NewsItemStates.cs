@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Weave.User.BusinessObjects.v2
 {
@@ -27,6 +28,15 @@ namespace Weave.User.BusinessObjects.v2
             }
 
             return result;
+        }
+
+        public void InitializeNewsItems(IEnumerable<string> ids)
+        {
+            var newIds = ids.Where(id => !this.ContainsKey(id)).ToList();
+            foreach (var id in newIds)
+            {
+                this.Add(id, (byte)NewsItemState.None);
+            }
         }
 
         public void MarkRead(string newsItemId)
