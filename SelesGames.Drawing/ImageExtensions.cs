@@ -22,59 +22,34 @@ namespace System.Drawing
 
     public static class ImageExtensions
     {
-        public static Image ReadImage(this Stream stream)
+        static Brush TRANSPARENT_BRUSH = new SolidBrush(Color.Transparent);
+
+
+
+
+        #region Resize operation, with 4 sizing modes
+
+        public static Image Resize(this Image imgToResize,
+            int targetWidth,
+            int targetHeight,
+            Stretch stretch = Stretch.Fill)
         {
-            //return new Bitmap(stream, false);
-            return Image.FromStream(stream);
+            return Resize(imgToResize, targetWidth, targetHeight, TRANSPARENT_BRUSH, stretch);
         }
 
-        public static Image CropAndResizeTo(this Image img, int targetWidth, int targetHeight)
-        {
-            var originalAspectRatio = (double)img.Width / (double)img.Height;
-            var targetAspectRatio = (double)targetWidth / (double)targetHeight;
-
-            if (originalAspectRatio < targetAspectRatio)
-            {
-                var scale = (double)targetWidth / (double)img.Width;
-                var resizeWidth = targetWidth;// = (int)(img.Width * scale);
-                var resizeHeight = (int)(img.Height * scale);
-
-                using (var resized = Resize(img, resizeWidth, resizeHeight))
-                {
-                    var yOffset = (int)Math.Max(0, (0.5d * resizeHeight) - (0.5d * targetHeight));
-
-                    var cropWindow = new Rectangle(0, yOffset, targetWidth, targetHeight);
-
-                    return Crop(resized, cropWindow);
-                }
-            }
-
-            else
-            {
-                var scale = (double)targetHeight / (double)img.Height;
-                var resizeWidth = (int)(img.Width * scale);
-                var resizeHeight = targetHeight;// = (int)(img.Height * scale);
-
-                using (var resized = Resize(img, resizeWidth, resizeHeight))
-                {
-                    var xOffset = (int)Math.Max(0, (0.5d * resizeWidth) - (0.5d * targetWidth));
-
-                    var cropWindow = new Rectangle(xOffset, 0, targetWidth, targetHeight);
-
-                    return Crop(resized, cropWindow);
-                }
-            }
-        }
-
-        public static Image Resize(this Image imgToResize, int targetWidth, int targetHeight)
+        public static Image Resize(this Image imgToResize, 
+            int targetWidth, 
+            int targetHeight, 
+            Brush fill,
+            Stretch stretch = Stretch.Fill)
         {
             Bitmap b = new Bitmap(targetWidth, targetHeight);
+
             // set the resolutions the same to avoid cropping due to resolution differences
             b.SetResolution(imgToResize.HorizontalResolution, imgToResize.VerticalResolution);
             
             using (Graphics g = Graphics.FromImage((Image)b))
             {
-                var fill = new SolidBrush(Color.FromArgb(255, 30, 30, 30));
                 g.FillRectangle(fill, 0, 0, targetWidth, targetHeight);
 
                 g.CompositingQuality = CompositingQuality.HighQuality;
@@ -84,10 +59,32 @@ namespace System.Drawing
                 g.CompositingMode = CompositingMode.SourceOver;
                 //var imageAttributes = new ImageAttributes();
                 //imageAttributes.SetWrapMode(WrapMode.TileFlipXY);
-                g.DrawImage(imgToResize, 0, 0, targetWidth, targetHeight);//, GraphicsUnit.Pixel, imageAttributes);
+
+                ResizeTargets targets;
+
+                if (stretch == Stretch.Fill)
+                    targets = new ResizeTargets { Width = targetWidth, Height = targetHeight, XOffset = 0, YOffset = 0 };
+            
+                else if (stretch == Stretch.Uniform)
+                    targets = GetResizeForUniform(imgToResize.Width, imgToResize.Height, targetWidth, targetHeight);
+
+                else if (stretch == Stretch.UniformToFill)
+                    targets = GetResizeForUniformToFill(imgToResize.Width, imgToResize.Height, targetWidth, targetHeight);
+
+                else if (stretch == Stretch.None)
+                    targets = GetResizeForNone(imgToResize.Width, imgToResize.Height, targetWidth, targetHeight);
+
+                g.DrawImage(imgToResize, targets.XOffset, targets.YOffset, targets.Width, targets.Height);
             }
             return b;
         }
+
+        #endregion
+
+
+
+
+        #region Crop operation
 
         public static Image Crop(this Image img, Rectangle cropArea)
         {
@@ -107,6 +104,13 @@ namespace System.Drawing
                 }
             }
         }
+
+        #endregion
+
+
+
+
+        #region Merge operation - combine multiple images into one image
 
         public enum MergeType
         {
@@ -151,6 +155,19 @@ namespace System.Drawing
             return b;
         }
 
+        #endregion
+
+
+
+
+        #region Stream/Image operations
+
+        public static Image ReadImage(this Stream stream)
+        {
+            //return new Bitmap(stream, false);
+            return Image.FromStream(stream);
+        }
+
         public static void WriteToStream(this Image img, Stream stream, string mimeType, long quality)
         {
             // image codec
@@ -169,6 +186,113 @@ namespace System.Drawing
             img.Save(stream, codecInfo, encoderParams);
         }
 
+        #endregion
+
+
+
+
+        #region private helper methods
+
+        struct ResizeTargets
+        {
+            public int Width { get; set; }
+            public int Height { get; set; }
+            public int XOffset { get; set; }
+            public int YOffset { get; set; }
+        }
+
+        static ResizeTargets GetResizeForUniform(int width, int height, int targetWidth, int targetHeight)
+        {
+            var aspectRatio = (double)width / (double)height;
+            var targetAspectRatio = (double)targetWidth / (double)targetHeight;
+
+            double scale;
+            int resizeWidth, resizeHeight, xOffset, yOffset;
+
+            // original aspect ratio is taller than the target aspect ratio
+            if (aspectRatio < targetAspectRatio)
+            {
+                scale = (double)targetHeight / (double)height;
+                resizeWidth = (int)(width * scale);
+                resizeHeight = targetHeight;
+                xOffset = (int)((double)(targetWidth - resizeWidth) / 2d);
+                yOffset = 0;
+            }
+
+            // original aspect ratio is wider than the target aspect ratio
+            else
+            {
+                scale = (double)targetWidth / (double)width;
+                resizeWidth = targetWidth;
+                resizeHeight = (int)(height * scale);
+                xOffset = 0;
+                yOffset = (int)((double)(targetHeight - resizeHeight) / 2d);
+            }
+
+            return new ResizeTargets
+            {
+                Width = resizeWidth,
+                Height = resizeHeight,
+                XOffset = xOffset,
+                YOffset = yOffset,
+            };
+        }
+
+        static ResizeTargets GetResizeForUniformToFill(int width, int height, int targetWidth, int targetHeight)
+        {
+            var aspectRatio = (double)width / (double)height;
+            var targetAspectRatio = (double)targetWidth / (double)targetHeight;
+
+            double scale;
+            int resizeWidth, resizeHeight, xOffset, yOffset;
+
+            // original aspect ratio is taller than the target aspect ratio
+            if (aspectRatio < targetAspectRatio)
+            {
+                scale = (double)targetWidth / (double)width;
+                resizeWidth = targetWidth;
+                resizeHeight = (int)(height * scale);
+                xOffset = 0;
+                yOffset = (int)((double)(targetHeight - resizeHeight) / 2d);
+            }
+
+            // original aspect ratio is wider than the target aspect ratio
+            else
+            {
+                scale = (double)targetHeight / (double)height;
+                resizeWidth = (int)(width * scale);
+                resizeHeight = targetHeight;
+                xOffset = (int)((double)(targetWidth - resizeWidth) / 2d);
+                yOffset = 0;
+            }
+
+            return new ResizeTargets
+            {
+                Width = resizeWidth,
+                Height = resizeHeight,
+                XOffset = xOffset,
+                YOffset = yOffset,
+            };
+        }
+
+        static ResizeTargets GetResizeForNone(int width, int height, int targetWidth, int targetHeight)
+        {
+            int resizeWidth, resizeHeight, xOffset, yOffset;
+
+            resizeWidth = targetWidth;
+            resizeHeight = targetHeight;
+            xOffset = (int)((double)(targetWidth - resizeWidth) / 2d);
+            yOffset = (int)((double)(targetHeight - resizeHeight) / 2d);
+
+            return new ResizeTargets
+            {
+                Width = resizeWidth,
+                Height = resizeHeight,
+                XOffset = xOffset,
+                YOffset = yOffset,
+            };
+        }
+
         static ImageCodecInfo GetEncoderInfo(this string mimeType)
         {
             // Get image codecs for all image formats
@@ -180,9 +304,9 @@ namespace System.Drawing
                     return codecs[i];
             return null;
         }
+
+        #endregion
     }
-
-
 }
 
 //namespace SelesGames.Drawing

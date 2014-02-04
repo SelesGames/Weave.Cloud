@@ -7,9 +7,9 @@ using System.Web.Http;
 
 namespace ImageResizer.Role.Controllers
 {
-    public class ImageController : ApiController
+    public class ResizeController : ApiController
     {
-        public async Task<HttpResponseMessage> GetImageCacheInfo(string url, int width, int height, string contentType = "image/jpeg", long imageQuality = 90L)
+        public async Task<HttpResponseMessage> Get(string url, int w, int h, string contentType = "image/jpeg", long imageQuality = 90L)
         {
             var client = new HttpClient();
             var response = await client.GetAsync(url);
@@ -17,12 +17,14 @@ namespace ImageResizer.Role.Controllers
             if (response.StatusCode != HttpStatusCode.OK)
                 return null;
 
+            var fill = new SolidBrush(Color.FromArgb(255, 255, 30, 30));
+
             using (var responseStream = await response.Content.ReadAsStreamAsync())
             using (var image = responseStream.ReadImage())
-            using (var resizedAndCropped = image.Resize(width, height, ImageExtensions.Stretch.UniformToFill))
-            { 
+            using (var resized = image.Resize(w, h, fill, ImageExtensions.Stretch.UniformToFill))
+            {
                 var ms = new MemoryStream();
-                resizedAndCropped.WriteToStream(ms, contentType, imageQuality);
+                resized.WriteToStream(ms, contentType, imageQuality);
                 ms.Position = 0;
 
                 var content = new StreamContent(ms);
