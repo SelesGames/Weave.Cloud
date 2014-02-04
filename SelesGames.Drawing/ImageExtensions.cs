@@ -279,8 +279,8 @@ namespace System.Drawing
         {
             int resizeWidth, resizeHeight, xOffset, yOffset;
 
-            resizeWidth = targetWidth;
-            resizeHeight = targetHeight;
+            resizeWidth = width;
+            resizeHeight = height;
             xOffset = (int)((double)(targetWidth - resizeWidth) / 2d);
             yOffset = (int)((double)(targetHeight - resizeHeight) / 2d);
 
