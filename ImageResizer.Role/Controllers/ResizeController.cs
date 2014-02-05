@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using SelesGames.Drawing.Fill;
+using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -9,7 +10,7 @@ namespace ImageResizer.Role.Controllers
 {
     public class ResizeController : ApiController
     {
-        public async Task<HttpResponseMessage> Get(string url, int w, int h, string contentType = "image/jpeg", long imageQuality = 90L)
+        public async Task<HttpResponseMessage> Get(string url, int w, int h, long imageQuality = 90L)
         {
             var client = new HttpClient();
             var response = await client.GetAsync(url);
@@ -17,11 +18,13 @@ namespace ImageResizer.Role.Controllers
             if (response.StatusCode != HttpStatusCode.OK)
                 return null;
 
+            var contentType = response.Content.Headers.ContentType.MediaType;
+
             var fill = new SolidBrush(Color.FromArgb(255, 255, 30, 30));
 
             using (var responseStream = await response.Content.ReadAsStreamAsync())
             using (var image = responseStream.ReadImage())
-            using (var resized = image.Resize(w, h, fill, Stretch.None))
+            using (var resized = image.Resize(w, h, new BorderSampleFillStrategy(), Stretch.Uniform))
             {
                 var ms = new MemoryStream();
                 resized.WriteToStream(ms, contentType, imageQuality);

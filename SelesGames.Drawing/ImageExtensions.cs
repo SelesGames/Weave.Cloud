@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using SelesGames.Drawing.Fill;
+using System.Collections.Generic;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
@@ -37,17 +38,28 @@ namespace System.Drawing
             return Resize(imgToResize, targetWidth, targetHeight, TRANSPARENT_BRUSH, stretch);
         }
 
+        public static Image Resize(this Image imgToResize,
+            int targetWidth,
+            int targetHeight,
+            Brush brush,
+            Stretch stretch = Stretch.Fill)
+        {
+            return Resize(imgToResize, targetWidth, targetHeight, new StandardFillStrategy(brush), stretch);
+        }
+
         public static Image Resize(this Image imgToResize, 
             int targetWidth, 
-            int targetHeight, 
-            Brush fill,
+            int targetHeight,
+            IFillStrategy fillStrategy,
             Stretch stretch = Stretch.Fill)
         {
             Bitmap b = new Bitmap(targetWidth, targetHeight);
 
             // set the resolutions the same to avoid cropping due to resolution differences
             b.SetResolution(imgToResize.HorizontalResolution, imgToResize.VerticalResolution);
-            
+
+            var fill = fillStrategy.CreateBrush(imgToResize, targetWidth, targetHeight);
+
             using (Graphics g = Graphics.FromImage((Image)b))
             {
                 g.FillRectangle(fill, 0, 0, targetWidth, targetHeight);
@@ -184,6 +196,22 @@ namespace System.Drawing
             encoderParams.Param[0] = qualityParam;
 
             img.Save(stream, codecInfo, encoderParams);
+        }
+
+        #endregion
+
+
+
+
+        #region Convert to a Bitmap
+
+        public static Bitmap ToBitmap(this Image image)
+        {
+            if (image is Bitmap)
+                return (Bitmap)image;
+
+            else
+                return new Bitmap(image);
         }
 
         #endregion

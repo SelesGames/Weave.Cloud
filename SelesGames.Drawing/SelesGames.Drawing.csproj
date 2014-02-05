@@ -37,8 +37,13 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BitmapExtensions.cs" />
+    <Compile Include="Fill\BorderSampleFillStrategy.cs" />
+    <Compile Include="Fill\ColorAggregate.cs" />
+    <Compile Include="Fill\IFillStrategy.cs" />
     <Compile Include="ImageExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Fill\StandardFillStrategy.cs" />
     <Compile Include="Stretch.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
