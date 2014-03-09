@@ -147,7 +147,7 @@ namespace RssAggregator.ConsoleTesting
         static async Task TestMobilizerUpload()
         {
             var client = new MobilizerServiceClient("hxyuiplkx78!ksdfl");
-            await client.Post("http://www.espn.com", new Weave.Mobilizer.DTOs.ReadabilityResult
+            await client.Post("http://www.espn.com", new Weave.Mobilizer.DTOs.MobilizerResult
                 {
                     author = "test",
                     content = "hello world",

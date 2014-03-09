@@ -23,7 +23,7 @@ namespace Weave.Mobilizer.Core.Controllers
             this.writeClient = writeClient;
         }
 
-        public async Task<ReadabilityResult> Get(string url, bool stripLeadImage = false)
+        public async Task<MobilizerResult> Get(string url, bool stripLeadImage = false)
         {
             var result = await cache.Get(UrlToFileName(url));
 
@@ -39,7 +39,7 @@ namespace Weave.Mobilizer.Core.Controllers
         }
 
         [TokenAuthorizationAttribute]
-        public Task Post(string url, [FromBody] ReadabilityResult article)
+        public Task Post(string url, [FromBody] MobilizerResult article)
         {
             return writeClient.Save(UrlToFileName(url), article);
         }

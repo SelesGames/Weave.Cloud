@@ -5,23 +5,23 @@ using Weave.Readability;
 
 namespace Weave.Mobilizer.Cache
 {
-    public class ReadabilityCache : IBasicCache<string, Task<ReadabilityResult>>
+    public class ReadabilityCache : IBasicCache<string, Task<MobilizerResult>>
     {
-        NLevelCache<string, Task<ReadabilityResult>> cache;
+        NLevelCache<string, Task<MobilizerResult>> cache;
         ReadabilityClient readabilityClient;
 
-        public ReadabilityCache(ReadabilityClient readabilityClient, params IExtendedCache<string, Task<ReadabilityResult>>[] caches)
+        public ReadabilityCache(ReadabilityClient readabilityClient, params IExtendedCache<string, Task<MobilizerResult>>[] caches)
         {
             this.readabilityClient = readabilityClient;
-            this.cache = new NLevelCache<string, Task<ReadabilityResult>>(caches);
+            this.cache = new NLevelCache<string, Task<MobilizerResult>>(caches);
         }
 
-        public Task<ReadabilityResult> Get(string key)
+        public Task<MobilizerResult> Get(string key)
         {
             return cache.GetOrAdd(key, GetFromReadability);
         }
 
-        async Task<ReadabilityResult> GetFromReadability(string url)
+        async Task<MobilizerResult> GetFromReadability(string url)
         {
             var result = await readabilityClient.GetAsync(url);
 

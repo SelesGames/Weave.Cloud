@@ -5,7 +5,7 @@ using Weave.Mobilizer.DTOs;
 
 namespace Weave.Mobilizer.Cache
 {
-    public class AzureStorageCache : IExtendedCache<string, Task<ReadabilityResult>>
+    public class AzureStorageCache : IExtendedCache<string, Task<MobilizerResult>>
     {
         AzureClient azureClient;
         //SerialDisposable timerDisposeHandle = new SerialDisposable();
@@ -19,7 +19,7 @@ namespace Weave.Mobilizer.Cache
         //public TimeSpan CacheTTL { get; private set; }
         //public TimeSpan CacheCleanupInterval { get; private set; }
 
-        public async Task<ReadabilityResult> GetOrAdd(string key, Func<string, Task<ReadabilityResult>> valueFactory)
+        public async Task<MobilizerResult> GetOrAdd(string key, Func<string, Task<MobilizerResult>> valueFactory)
         {
             try
             {

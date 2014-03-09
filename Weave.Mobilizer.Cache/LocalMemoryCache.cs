@@ -4,5 +4,5 @@ using Weave.Mobilizer.DTOs;
 
 namespace Weave.Mobilizer.Cache
 {
-    public class LocalMemoryCache : LocalMemoryCache<string, Task<ReadabilityResult>> { }
+    public class LocalMemoryCache : LocalMemoryCache<string, Task<MobilizerResult>> { }
 }

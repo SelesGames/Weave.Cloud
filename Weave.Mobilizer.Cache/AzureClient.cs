@@ -20,7 +20,7 @@ namespace Weave.Mobilizer.Cache
             this.key = key;
         }
 
-        public async Task Save(string url, ReadabilityResult result)
+        public async Task Save(string url, MobilizerResult result)
         {
             var client = new SmartBlobClient(account, key, USE_HTTPS);
 
@@ -35,11 +35,11 @@ namespace Weave.Mobilizer.Cache
             Debug.WriteLine(string.Format("{0} uploaded to azure", url), "AZURE");
         }
 
-        public Task<ReadabilityResult> Get(string url)
+        public Task<MobilizerResult> Get(string url)
         {
             var client = new SmartBlobClient(account, key, USE_HTTPS);
 
-            return client.Get<ReadabilityResult>(CONTAINER, url,
+            return client.Get<MobilizerResult>(CONTAINER, url,
                 new RequestProperties
                 {
                     RequestTimeOut = TimeSpan.FromMinutes(8)

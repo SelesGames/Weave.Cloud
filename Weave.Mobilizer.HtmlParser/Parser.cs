@@ -11,7 +11,7 @@ namespace Weave.Mobilizer.HtmlParser
     public class Parser
     {
         string mobilizerDetectedFirstImage;
-        ReadabilityResult result;
+        MobilizerResult result;
         HtmlDocument doc;
 
         //string testurl =
@@ -28,7 +28,7 @@ namespace Weave.Mobilizer.HtmlParser
         //    System.Diagnostics.Debug.WriteLine(dto);
         //}
 
-        public void ProcessContent(ReadabilityResult result)
+        public void ProcessContent(MobilizerResult result)
         {
             this.result = result;
             this.mobilizerDetectedFirstImage = result.lead_image_url;

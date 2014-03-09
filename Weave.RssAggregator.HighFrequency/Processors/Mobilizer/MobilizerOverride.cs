@@ -30,7 +30,7 @@ namespace Weave.RssAggregator.HighFrequency
         {
             try
             {
-                var readabilityResult = new ReadabilityResult
+                var readabilityResult = new MobilizerResult
                 {
                     title = e.Title,
                     url = e.Link,

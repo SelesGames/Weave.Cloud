@@ -15,14 +15,14 @@ namespace Weave.Readability
             this.token = token;
         }
 
-        public Task<ReadabilityResult> GetAsync(string url)
+        public Task<MobilizerResult> GetAsync(string url)
         {
             var fullUrl = string.Format(urlTemplate, token, url);
 #if DEBUG
             System.Diagnostics.Debug.WriteLine(string.Format("calling {0}", url), "READABILITY");
 #endif
             return new SmartHttpClient(ContentEncoderSettings.Json, CompressionSettings.OnContent | CompressionSettings.OnRequest)
-                .GetAsync<ReadabilityResult>(fullUrl, CancellationToken.None);
+                .GetAsync<MobilizerResult>(fullUrl, CancellationToken.None);
         }
     }
 }

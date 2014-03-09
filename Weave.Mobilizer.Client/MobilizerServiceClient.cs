@@ -19,7 +19,7 @@ namespace Weave.Mobilizer.Client
             this.token = token;
         }
 
-        public async Task<ReadabilityResult> Get(string url, bool stripLeadImage = false)
+        public async Task<MobilizerResult> Get(string url, bool stripLeadImage = false)
         {
             if (string.IsNullOrEmpty(url)) throw new ArgumentException("Not a valid url");
 
@@ -30,11 +30,11 @@ namespace Weave.Mobilizer.Client
                 .ToString();
 
             var client = CreateClient();
-            var result = await client.GetAsync<ReadabilityResult>(fullUrl, CancellationToken.None);
+            var result = await client.GetAsync<MobilizerResult>(fullUrl, CancellationToken.None);
             return result;
         }
 
-        public Task Post(string url, ReadabilityResult article)
+        public Task Post(string url, MobilizerResult article)
         {
             if (string.IsNullOrEmpty(url)) throw new ArgumentException("Not a valid url");
 
