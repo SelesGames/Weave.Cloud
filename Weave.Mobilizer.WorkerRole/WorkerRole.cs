@@ -3,9 +3,9 @@ using System;
 using System.Diagnostics;
 using System.Net;
 using System.Threading;
-using Weave.User.Service.Role.Startup;
+using Weave.Mobilizer.WorkerRole.Startup;
 
-namespace Weave.User.Service.Role
+namespace Weave.Mobilizer.WorkerRole
 {
     public class WorkerRole : RoleEntryPoint
     {
@@ -19,7 +19,7 @@ namespace Weave.User.Service.Role
         public override void Run()
         {
             // This is a sample worker implementation. Replace with your logic.
-            Trace.TraceInformation("Weave.User.Service.Role entry point called", "Information");
+            Trace.TraceInformation("Weave.Mobilizer.WorkerRole entry point called", "Information");
 
             while (true)
             {

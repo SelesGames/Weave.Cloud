@@ -1,15 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{F1B9B4E0-BD01-453C-B7C5-BF58AC032180}</ProjectGuid>
+    <ProjectGuid>{342F6892-D2C0-44B6-8459-7674B9BC5179}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Weave.Article.Service.WorkerRole</RootNamespace>
-    <AssemblyName>Weave.Article.Service.WorkerRole</AssemblyName>
+    <RootNamespace>Weave.Mobilizer.WorkerRole</RootNamespace>
+    <AssemblyName>Weave.Mobilizer.WorkerRole</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <RoleType>Worker</RoleType>
@@ -34,8 +34,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.WindowsAzure.Configuration, Version=1.8.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.WindowsAzure.ConfigurationManager.1.8.0.0\lib\net35-full\Microsoft.WindowsAzure.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAzure.Diagnostics, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.WindowsAzure.ServiceRuntime, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAzure.Storage, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\WindowsAzure.Storage.2.1.0.0\lib\net40\Microsoft.WindowsAzure.Storage.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -44,21 +54,27 @@
     <Reference Include="Ninject">
       <HintPath>..\lib\Ninject.dll</HintPath>
     </Reference>
-    <Reference Include="protobuf-net">
-      <HintPath>..\lib\protobuf-net.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.Formatting, Version=5.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.1.1\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
+    <Reference Include="System.Net.Http.Primitives">
+      <HintPath>..\lib\ASP.NET Web API\System.Net.Http.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Cors">
+      <HintPath>..\lib\ASP.NET Web API\System.Web.Cors.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.Http, Version=5.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.1.1\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.Cors">
+      <HintPath>..\lib\ASP.NET Web API\System.Web.Http.Cors.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Http.SelfHost, Version=5.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -66,25 +82,29 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controllers\ArticleController.cs" />
-    <Compile Include="SqlClient.cs" />
+    <Compile Include="Controllers\IPFController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup\NinjectKernel.cs" />
     <Compile Include="Startup\StartupTask.cs" />
+    <Compile Include="Web\TokenAuthorizationAttribute.cs" />
     <Compile Include="WorkerRole.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Weave.Portable\Weave.Article.Service.Contracts\Weave.Article.Service.Contracts.csproj">
-      <Project>{d727f239-ee96-4b05-8f17-65871b52b260}</Project>
-      <Name>Weave.Article.Service.Contracts</Name>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Weave.Portable\Weave.Mobilizer.Contracts\Weave.Mobilizer.Contracts.csproj">
+      <Project>{fc776ca4-35b3-4024-8667-cb265805a519}</Project>
+      <Name>Weave.Mobilizer.Contracts</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Weave.Portable\Weave.Article.Service.DTOs\Weave.Article.Service.DTOs.csproj">
-      <Project>{2b4d1af0-8c77-475d-8d14-db7b506f9450}</Project>
-      <Name>Weave.Article.Service.DTOs</Name>
+    <ProjectReference Include="..\..\Weave.Portable\Weave.Mobilizer.DTOs\Weave.Mobilizer.DTOs.csproj">
+      <Project>{0a9019e4-e76f-4fac-a5c7-70f32cf5e2c1}</Project>
+      <Name>Weave.Mobilizer.DTOs</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Common.Data\Common.Data.csproj">
-      <Project>{cad7cc28-36e9-4b39-ba90-df99815904eb}</Project>
-      <Name>Common.Data</Name>
+    <ProjectReference Include="..\Common.Caching\Common.Caching.csproj">
+      <Project>{c83ab657-c7a6-4cf8-b4f5-d4e01bf2e562}</Project>
+      <Name>Common.Caching</Name>
     </ProjectReference>
     <ProjectReference Include="..\Ninject.WebApi\Ninject.WebApi.csproj">
       <Project>{be97f564-16f5-4d09-9218-cc65e89df2ac}</Project>
@@ -102,9 +122,14 @@
       <Project>{bb3ea281-94b3-435f-a1ef-c395a7d1f25a}</Project>
       <Name>SelesGames.WebApi</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
+    <ProjectReference Include="..\Weave.Mobilizer.Cache\Weave.Mobilizer.Cache.csproj">
+      <Project>{1a5136f0-480b-461c-b350-9ad42c0eca97}</Project>
+      <Name>Weave.Mobilizer.Cache</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Weave.Mobilizer.Client\Weave.Mobilizer.Client.csproj">
+      <Project>{787ff65b-d0b3-4135-8495-ec5d4ff0a068}</Project>
+      <Name>Weave.Mobilizer.Client</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

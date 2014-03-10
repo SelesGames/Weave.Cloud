@@ -37,20 +37,26 @@
     <ServiceConfiguration Include="ServiceConfiguration.Cloud.cscfg" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Weave.Mobilizer.WebRole\Weave.Mobilizer.WebRole.csproj">
-      <Name>Weave.Mobilizer.WebRole</Name>
-      <Project>{c816f0eb-9d9e-4484-a855-be57b4af147d}</Project>
+    <ProjectReference Include="..\Weave.Mobilizer.WorkerRole\Weave.Mobilizer.WorkerRole.csproj">
+      <Name>Weave.Mobilizer.WorkerRole</Name>
+      <Project>{342f6892-d2c0-44b6-8459-7674b9bc5179}</Project>
       <Private>True</Private>
-      <RoleType>Web</RoleType>
-      <RoleName>Weave.Mobilizer.WebRole</RoleName>
+      <RoleType>Worker</RoleType>
+      <RoleName>Weave.Mobilizer.WorkerRole</RoleName>
       <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Profiles" />
+    <Folder Include="Weave.Mobilizer.WorkerRoleContent\" />
   </ItemGroup>
   <ItemGroup>
     <PublishProfile Include="Profiles\mobilizerStaging.azurePubxml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Weave.Mobilizer.WorkerRoleContent\diagnostics.wadcfg">
+      <SubType>Content</SubType>
+    </Content>
   </ItemGroup>
   <!-- Import the target files for this project template -->
   <PropertyGroup>

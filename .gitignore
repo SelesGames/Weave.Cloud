@@ -6,3 +6,5 @@ csx
 /WeaveFeedTester/publish
 *.dbmdl
 rcf
+
+/packages
