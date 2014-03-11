@@ -17,11 +17,11 @@ namespace Weave.Mobilizer.Cache
 
         public Task<MobilizerResult> Get(string key)
         {
-            return GetFromReadability(key);
+            return GetFromMobilizer(key);
             //return cache.GetOrAdd(key, GetFromReadability);
         }
 
-        async Task<MobilizerResult> GetFromReadability(string url)
+        async Task<MobilizerResult> GetFromMobilizer(string url)
         {
             var mobilizer = mobilizerStrategy.Select(url);
             var result = await mobilizer.Mobilize(url);

@@ -17,7 +17,7 @@ namespace Weave.Mobilizer.Cache.ReadSharp
                 var readOptions = new ReadOptions
                 {
                     HasHeadline = true,
-                    PrettyPrint = true,
+                    PrettyPrint = false,
                     MultipageDownload = true,
                 };
                 var article = await reader.Read(new Uri(originalUrl)).ConfigureAwait(false);

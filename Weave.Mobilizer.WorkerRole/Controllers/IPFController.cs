@@ -26,15 +26,6 @@ namespace Weave.Mobilizer.WorkerRole.Controllers
         public async Task<MobilizerResult> Get(string url, bool stripLeadImage = false)
         {
             var result = await cache.Get(UrlToFileName(url));
-
-            //if (stripLeadImage)
-            //{
-            //    //var sw = System.Diagnostics.Stopwatch.StartNew();
-            //    var parser = new Weave.Mobilizer.HtmlParser.Parser();
-            //    parser.ProcessContent(result);
-            //    //sw.Stop();
-            //    //System.Diagnostics.Debug.WriteLine(string.Format("elapsed time: {0} ms", sw.ElapsedMilliseconds));
-            //}
             return result;
         }
 
