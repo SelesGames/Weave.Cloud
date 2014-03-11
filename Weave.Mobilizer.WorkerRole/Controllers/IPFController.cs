@@ -14,10 +14,10 @@ namespace Weave.Mobilizer.WorkerRole.Controllers
         static readonly int MAX_AZURE_BLOB_NAME = 1024;
         static readonly int GUID_NO_HYPHENS_LENGTH = 32;
 
-        ReadabilityCache cache;
+        MobilizerResultCache cache;
         AzureClient writeClient;
 
-        public IPFController(ReadabilityCache cache, AzureClient writeClient)
+        public IPFController(MobilizerResultCache cache, AzureClient writeClient)
         {
             this.cache = cache;
             this.writeClient = writeClient;

@@ -50,7 +50,7 @@
     <Compile Include="LocalMemoryCache.cs" />
     <Compile Include="MobilizerSelector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReadabilityCache.cs" />
+    <Compile Include="MobilizerResultCache.cs" />
     <Compile Include="Readability\ReadabilityClient.cs" />
     <Compile Include="ReadSharp\ReadSharpClient.cs" />
   </ItemGroup>

@@ -18,11 +18,11 @@ namespace Weave.Mobilizer.WorkerRole.Startup
             var localCache = new LocalMemoryCache();
             var rc = new ReadabilityClient("a142c0cc575c6760d5c46247f8aa6aabbacb6fd8");
             var selector = new MobilizerSelector(rc);
-            var nLevelCache = new ReadabilityCache(selector, localCache, azureCache);
+            var nLevelCache = new MobilizerResultCache(selector, localCache, azureCache);
 
             Bind<AzureStorageCache>().ToConstant(azureCache).InSingletonScope();
             Bind<LocalMemoryCache>().ToConstant(localCache).InSingletonScope();
-            Bind<ReadabilityCache>().ToConstant(nLevelCache).InSingletonScope();
+            Bind<MobilizerResultCache>().ToConstant(nLevelCache).InSingletonScope();
         }
     }
 }

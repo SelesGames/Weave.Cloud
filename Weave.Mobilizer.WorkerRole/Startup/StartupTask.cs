@@ -7,11 +7,11 @@ using System.Diagnostics;
 using System.Web.Http.Dependencies;
 using System.Web.Http.SelfHost;
 using System.Web.Http;
-using System.Web.Http.Cors;
 using System.Threading.Tasks;
 using Weave.Mobilizer.Cache;
 using System;
 using Weave.Mobilizer.WorkerRole.Controllers;
+using System.Web.Http.Cors;
 
 namespace Weave.Mobilizer.WorkerRole.Startup
 {

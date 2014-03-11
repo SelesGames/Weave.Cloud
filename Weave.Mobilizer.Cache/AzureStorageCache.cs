@@ -31,7 +31,7 @@ namespace Weave.Mobilizer.Cache
                 // do something with exception;
             }
             var result = await valueFactory(key);
-            azureClient.Save(key, result);
+            await azureClient.Save(key, result);
             return result;
         }
 

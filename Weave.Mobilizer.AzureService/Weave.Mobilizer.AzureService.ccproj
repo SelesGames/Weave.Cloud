@@ -51,7 +51,7 @@
     <Folder Include="Weave.Mobilizer.WorkerRoleContent\" />
   </ItemGroup>
   <ItemGroup>
-    <PublishProfile Include="Profiles\mobilizerStaging.azurePubxml" />
+    <PublishProfile Include="Profiles\Mobilizer.azurePubxml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Weave.Mobilizer.WorkerRoleContent\diagnostics.wadcfg">

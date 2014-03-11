@@ -4,12 +4,12 @@ using Weave.Mobilizer.DTOs;
 
 namespace Weave.Mobilizer.Cache
 {
-    public class ReadabilityCache : IBasicCache<string, Task<MobilizerResult>>
+    public class MobilizerResultCache : IBasicCache<string, Task<MobilizerResult>>
     {
         NLevelCache<string, Task<MobilizerResult>> cache;
         IMobilizerStrategy mobilizerStrategy;
 
-        public ReadabilityCache(IMobilizerStrategy mobilizerStrategy, params IExtendedCache<string, Task<MobilizerResult>>[] caches)
+        public MobilizerResultCache(IMobilizerStrategy mobilizerStrategy, params IExtendedCache<string, Task<MobilizerResult>>[] caches)
         {
             this.mobilizerStrategy = mobilizerStrategy;
             this.cache = new NLevelCache<string, Task<MobilizerResult>>(caches);
@@ -17,8 +17,7 @@ namespace Weave.Mobilizer.Cache
 
         public Task<MobilizerResult> Get(string key)
         {
-            return GetFromMobilizer(key);
-            //return cache.GetOrAdd(key, GetFromReadability);
+            return cache.GetOrAdd(key, GetFromMobilizer);
         }
 
         async Task<MobilizerResult> GetFromMobilizer(string url)
