@@ -1,18 +1,17 @@
 ﻿using Common.Caching;
 using System.Threading.Tasks;
 using Weave.Mobilizer.DTOs;
-using Weave.Readability;
 
 namespace Weave.Mobilizer.Cache
 {
     public class ReadabilityCache : IBasicCache<string, Task<MobilizerResult>>
     {
         NLevelCache<string, Task<MobilizerResult>> cache;
-        ReadabilityClient readabilityClient;
+        IMobilizerStrategy mobilizerStrategy;
 
-        public ReadabilityCache(ReadabilityClient readabilityClient, params IExtendedCache<string, Task<MobilizerResult>>[] caches)
+        public ReadabilityCache(IMobilizerStrategy mobilizerStrategy, params IExtendedCache<string, Task<MobilizerResult>>[] caches)
         {
-            this.readabilityClient = readabilityClient;
+            this.mobilizerStrategy = mobilizerStrategy;
             this.cache = new NLevelCache<string, Task<MobilizerResult>>(caches);
         }
 
@@ -24,7 +23,8 @@ namespace Weave.Mobilizer.Cache
 
         async Task<MobilizerResult> GetFromReadability(string url)
         {
-            var result = await readabilityClient.GetAsync(url);
+            var mobilizer = mobilizerStrategy.Select(url);
+            var result = await mobilizer.Mobilize(url);
 
             // parse out the lead_image_url from the article content - clients should figure out their own way to display the lead_image_url
             //var sw = System.Diagnostics.Stopwatch.StartNew();
