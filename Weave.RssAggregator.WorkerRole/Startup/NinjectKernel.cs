@@ -29,15 +29,17 @@ namespace Weave.RssAggregator.WorkerRole.Startup
             var clientFactory = new ClientFactory(serviceBusCredentials);
 
             var roleId = RoleEnvironment.CurrentRoleInstance.UpdateDomain;
-            var roleInstanceHash = CryptoHelper.ComputeHashUsedByMobilizer(RoleEnvironment.CurrentRoleInstance.Role.Name).ToString();
-            roleInstanceHash = roleInstanceHash.Replace("-", null).Substring(0, 16);
+            var roleInstanceHash = CryptoHelper
+                .ComputeHashUsedByMobilizer(RoleEnvironment.CurrentRoleInstance.Role.Name)
+                .ToString("N")
+                .Substring(0, 6);
 
             var now = DateTime.UtcNow.ToString("yyyy-MM-dd_HH.mm");
 
             var subName = RoleEnvironment.IsEmulated ?
-                string.Format("{0}_{1}_emulator_{2}", roleInstanceHash, now, Guid.NewGuid().ToString("N"))
+                string.Format("{0}_{1}_emu_{2}", roleInstanceHash, now, Guid.NewGuid().ToString("N").Substring(0, 6))
                 :
-                string.Format("{0}_{1}_{2}", roleInstanceHash, now, Guid.NewGuid().ToString("N"));
+                string.Format("{0}_{1}_{2}", roleInstanceHash, now, Guid.NewGuid().ToString("N").Substring(0, 6));
 
             var subscriptionConnector = new SubscriptionConnector(clientFactory, "FeedUpdatedTopic", subName);
 
