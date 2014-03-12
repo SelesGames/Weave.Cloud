@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <AzureCredentials>Windows Azure BizSpark 1111</AzureCredentials>
+    <AzureCredentials>{"ServiceManagementEndpoint":"https:\/\/management.core.windows.net\/","SubscriptionId":"b5d2112d-b481-4c78-a659-710a6df060c7"}</AzureCredentials>
     <AzureDeploymentLabel>Weave Aggregator</AzureDeploymentLabel>
-    <AzureSlot>Production</AzureSlot>
+    <AzureSlot>Staging</AzureSlot>
     <AzureEnableWebDeploy>False</AzureEnableWebDeploy>
     <AzureHostedServiceName>weave-aggregator</AzureHostedServiceName>
     <AzureHostedServiceLabel>weave-aggregator</AzureHostedServiceLabel>
