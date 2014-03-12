@@ -35,9 +35,9 @@ namespace Weave.RssAggregator.WorkerRole.Startup
             var now = DateTime.UtcNow.ToString("yyyy-MM-dd_HH.mm");
 
             var subName = RoleEnvironment.IsEmulated ?
-                string.Format("Role_{0}_{1}_emulator_{2}", roleId, now, roleInstanceHash)
+                string.Format("{0}_{1}_emulator_{2}", roleInstanceHash, now, Guid.NewGuid().ToString("N"))
                 :
-                string.Format("Role_{0}_{1}_{2}", roleId, now, roleInstanceHash);
+                string.Format("{0}_{1}_{2}", roleInstanceHash, now, Guid.NewGuid().ToString("N"));
 
             var subscriptionConnector = new SubscriptionConnector(clientFactory, "FeedUpdatedTopic", subName);
 
