@@ -45,38 +45,3 @@ namespace RssAggregator.Role.HighFrequency
         }
     }
 }
-
-
-
-
-//void CreateAndStartServer()
-//{
-//    //var ip = RoleEnvironment.CurrentRoleInstance.InstanceEndpoints["Endpoint1"].IPEndpoint;
-//    //var ipString = string.Format("net.tcp://{0}", ip.ToString());
-//    //Trace.WriteLine(string.Format("**** IP ADDRESS: {0}", ipString));
-
-//    var sh = new ServiceHost(kernel.Get<HighFrequencyFeedRetriever>());
-
-//    //sh.AddServiceEndpoint(
-//    //   typeof(IHighFrequencyFeedRetriever), 
-//    //   new NetTcpBinding(),
-//    //   ipString);
-
-//    var relayBinding = new NetTcpRelayBinding { ConnectionMode = TcpRelayConnectionMode.Hybrid };
-//    relayBinding.Security.Mode = EndToEndSecurityMode.None;
-//    //relayBinding.Security.Message.ClientCredentialType = MessageCredentialType.None;
-//    //var relayBinding = new NetTcpRelayBinding();
-
-//    sh.AddServiceEndpoint(
-//       typeof(IHighFrequencyFeedRetriever),
-//       relayBinding,
-//       ServiceBusEnvironment.CreateServiceUri("sb", "weave-interop", "hf"))
-//        .Behaviors.Add(new TransportClientEndpointBehavior
-//        {
-//            TokenProvider = TokenProvider.CreateSharedSecretTokenProvider("owner", "R92FFdAujgEDEPnjLhxMfP06fH+qhmMwwuXetdyAEZM=")
-//        });
-
-//    sh.Open();
-
-//    Trace.WriteLine("^&*^&*^&*^*&^  SERVER IS UP AND RUNNING!!!");
-//}
