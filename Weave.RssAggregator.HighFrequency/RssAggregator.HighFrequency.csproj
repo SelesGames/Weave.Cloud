@@ -76,6 +76,10 @@
     <Compile Include="HighFrequencyFeed.cs" />
     <Compile Include="HighFrequencyFeedUpdater.cs" />
     <Compile Include="HighFrequencyFeedUpdateDto.cs" />
+    <Compile Include="Processors\BestImageSelector\BestImageSelectorHelper.cs" />
+    <Compile Include="Processors\BestImageSelector\BestImageSelectorProcessor.cs" />
+    <Compile Include="Processors\BestImageSelector\ImageInfo.cs" />
+    <Compile Include="Processors\BestImageSelector\ImageInfoClient.cs" />
     <Compile Include="Processors\BinaryConverter\EntryToBinaryUpdater.cs" />
     <Compile Include="Converters\EntryWithPostProcessInfoToNewsItemConverter.cs" />
     <Compile Include="Processors\EntryWithPostProcessInfo.cs" />

@@ -34,6 +34,7 @@ namespace RssAggregator.Role.HighFrequency
                 {
                     DelegateProvider.Create(() => this.Get<SqlSelectOnlyLatestNews>()),
                     DelegateProvider.Create(() => this.Get<RedirectResolver>()),
+                    DelegateProvider.Create(() => this.Get<BestImageSelectorProcessor>()),
                     DelegateProvider.Create(() => this.Get<ImageScalerUpdater>()),
                     DelegateProvider.Create(() => this.Get<EntryToBinaryUpdater>()),
                     DelegateProvider.Create(() => this.Get<SqlUpdater>()),
