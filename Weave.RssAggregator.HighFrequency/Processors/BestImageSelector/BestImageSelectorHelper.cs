@@ -27,6 +27,9 @@ namespace Weave.RssAggregator.HighFrequency.Processors.BestImageSelector
 
         void Apply(ImageInfo bestImage)
         {
+            if (bestImage == null)
+                return;
+
             entry.OriginalImageUrl = bestImage.ImageUrl;
             entry.ImageWidth = bestImage.ImageWidth;
             entry.ImageHeight = bestImage.ImageHeight;
@@ -34,8 +37,8 @@ namespace Weave.RssAggregator.HighFrequency.Processors.BestImageSelector
 
         async Task<ImageInfo> SelectBestImage()
         {
-            var original = GetImageInfoFromEntry();
-            var mobilized = GetImageInfoFromMobilized();
+            var original = TryGetImageInfoFromEntry();
+            var mobilized = TryGetImageInfoFromMobilized();
             await Task.WhenAll(original, mobilized);
 
             var imageInfoOriginal = original.Result;
@@ -47,23 +50,43 @@ namespace Weave.RssAggregator.HighFrequency.Processors.BestImageSelector
         // We use the criteria of largest image (in bytes) as being the best image available
         ImageInfo SelectBestImage(params ImageInfo[] imageInfo)
         {
-            return imageInfo.OrderByDescending(o => o.ContentLength).First();
+            return imageInfo.OfType<ImageInfo>().OrderByDescending(o => o.ContentLength).FirstOrDefault();
         }
 
-        async Task<ImageInfo> GetImageInfoFromEntry()
+        async Task<ImageInfo> TryGetImageInfoFromEntry()
         {
+            ImageInfo imageInfo = null;
+
             var imageUrl = entry.OriginalImageUrl;
-            var imageInfo = await imageInfoClient.Get(imageUrl);
-            imageInfo.ImageUrl = imageUrl;
+
+            if (string.IsNullOrWhiteSpace(imageUrl))
+                return null;
+
+            try
+            {
+                imageInfo = await imageInfoClient.Get(imageUrl);
+                imageInfo.ImageUrl = imageUrl;
+            }
+            catch { }
             return imageInfo;
         }
 
-        async Task<ImageInfo> GetImageInfoFromMobilized()
+        async Task<ImageInfo> TryGetImageInfoFromMobilized()
         {
-            var mobilizedResult = await GetMobilizedRepresentation();
-            var imageUrl = mobilizedResult.lead_image_url;
-            var imageInfo = await imageInfoClient.Get(imageUrl);
-            imageInfo.ImageUrl = imageUrl;
+            ImageInfo imageInfo = null;
+
+            try
+            {
+                var mobilizedResult = await GetMobilizedRepresentation();
+                var imageUrl = mobilizedResult.lead_image_url;
+
+                if (string.IsNullOrWhiteSpace(imageUrl))
+                    return null;
+
+                imageInfo = await imageInfoClient.Get(imageUrl);
+                imageInfo.ImageUrl = imageUrl;
+            }
+            catch { }
             return imageInfo;
         }
 
