@@ -25,6 +25,11 @@ namespace Weave.Mobilizer.WorkerRole.Controllers
 
         public async Task<MobilizerResult> Get(string url, bool stripLeadImage = false)
         {
+            try
+            {
+                NewRelic.Api.Agent.NewRelic.AddCustomParameter("URL", url);
+            }
+            catch { }
             var result = await cache.Get(UrlToFileName(url));
             return result;
         }
@@ -34,6 +39,11 @@ namespace Weave.Mobilizer.WorkerRole.Controllers
         {
             return writeClient.Save(UrlToFileName(url), article);
         }
+
+
+
+
+        #region Private helper methods
 
         // approach using MD5 and GUIDs
         string UrlToFileName(string url)
@@ -56,5 +66,7 @@ namespace Weave.Mobilizer.WorkerRole.Controllers
 
             return fileName;
         }
+
+        #endregion
     }
 }
