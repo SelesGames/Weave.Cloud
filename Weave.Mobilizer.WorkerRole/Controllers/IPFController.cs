@@ -1,4 +1,5 @@
 ﻿using SelesGames.Common.Hashing;
+using System;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
@@ -25,6 +26,15 @@ namespace Weave.Mobilizer.WorkerRole.Controllers
 
         public async Task<MobilizerResult> Get(string url, bool stripLeadImage = false)
         {
+            try
+            {
+                NewRelic.Api.Agent.NewRelic.AddCustomParameter("URL", url);
+            }
+            catch(Exception ex)
+            {
+                DebugEx.WriteLine(ex);
+            }
+
             var result = await cache.Get(UrlToFileName(url));
             return result;
         }
