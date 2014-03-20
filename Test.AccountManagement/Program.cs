@@ -19,7 +19,7 @@ namespace Test.AccountManagement
         {
             try
             {
-                TestMobilizer().Wait();
+                //TestMobilizer().Wait();
                 //CreateNewUser().Wait();
                 //TestRole2().Wait();
                 //TestRole().Wait();
@@ -37,12 +37,12 @@ namespace Test.AccountManagement
                 Console.ReadLine();
         }
 
-        static async Task TestMobilizer()
-        {
-            //var parser = new Weave.Mobilizer.HtmlParser.Parser();
-            //await parser.TryStuff();
-            DebugEx.WriteLine("finished parser testing");
-        }
+        //static async Task TestMobilizer()
+        //{
+        //    //var parser = new Weave.Mobilizer.HtmlParser.Parser();
+        //    //await parser.TryStuff();
+        //    DebugEx.WriteLine("finished parser testing");
+        //}
 
         static UserController CreateController()
         {
@@ -59,15 +59,15 @@ namespace Test.AccountManagement
             return controller;
         }
 
-        static async Task TestRole2()
-        {
-            var controller = CreateController();
+        //static async Task TestRole2()
+        //{
+        //    var controller = CreateController();
 
-            //var user = null;// await controller.RefreshAndReturnNews(Guid.Parse("ece6a3d1-b5e9-43b7-8cde-317d8dd3efb3"));
-            //var article = user.Feeds.SelectMany(o => o.News).First();
-            //await controller.MarkArticleRead(user.Id, article.FeedId, article.Id);
-            //DebugEx.WriteLine(user);
-        }
+        //    //var user = null;// await controller.RefreshAndReturnNews(Guid.Parse("ece6a3d1-b5e9-43b7-8cde-317d8dd3efb3"));
+        //    //var article = user.Feeds.SelectMany(o => o.News).First();
+        //    //await controller.MarkArticleRead(user.Id, article.FeedId, article.Id);
+        //    //DebugEx.WriteLine(user);
+        //}
 
         static async Task CreateNewUser()
         {
@@ -83,38 +83,38 @@ namespace Test.AccountManagement
             DebugEx.WriteLine(ouser);
         }
 
-        static async Task TestUserAccounts2()
-        {
-            //var blobClient = new SmartBlobClient("weaveuser", "GBzJEaV/B5JQTmLFj/N7VJoYGZBQcEhasXha3RKbd4BRUVN5aaJ01KMo0MNNtNHnVhzJmqlDgqEyk4CPEvX56A==", "user", false);
-            //var userRepo = new UserRepository(blobClient);
+        //static async Task TestUserAccounts2()
+        //{
+        //    //var blobClient = new SmartBlobClient("weaveuser", "GBzJEaV/B5JQTmLFj/N7VJoYGZBQcEhasXha3RKbd4BRUVN5aaJ01KMo0MNNtNHnVhzJmqlDgqEyk4CPEvX56A==", "user", false);
+        //    //var userRepo = new UserRepository(blobClient);
 
 
-            //var feeds = new MockFeeds();
+        //    //var feeds = new MockFeeds();
 
-            //var id = Guid.NewGuid();
+        //    //var id = Guid.NewGuid();
 
-            //var user = new Weave.User.Service.DTOs.ServerIncoming.UserInfo
-            //{
-            //    Id = id,
-            //    Feeds = feeds.Take(2).ToList(),
-            //};
+        //    //var user = new Weave.User.Service.DTOs.ServerIncoming.UserInfo
+        //    //{
+        //    //    Id = id,
+        //    //    Feeds = feeds.Take(2).ToList(),
+        //    //};
 
-            //await userRepo.Save(user);
+        //    //await userRepo.Save(user);
 
-            //user = null;
+        //    //user = null;
 
-            //user = await userRepo.Get(id);
-            //Console.WriteLine(user.Feeds.Count);
+        //    //user = await userRepo.Get(id);
+        //    //Console.WriteLine(user.Feeds.Count);
 
-            //user.Feeds.AddRange(feeds.Skip(3).Take(1));
+        //    //user.Feeds.AddRange(feeds.Skip(3).Take(1));
 
-            //await userRepo.Save(user);
+        //    //await userRepo.Save(user);
 
-            //user = null;
+        //    //user = null;
 
-            //user = await userRepo.Get(id);
-            //Console.WriteLine(user.Feeds.Count);
-        }
+        //    //user = await userRepo.Get(id);
+        //    //Console.WriteLine(user.Feeds.Count);
+        //}
 
         static async Task TestSmartHttpClient()
         {
