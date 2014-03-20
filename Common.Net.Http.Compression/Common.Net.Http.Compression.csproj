@@ -46,10 +46,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\Weave.Portable\Common.Net.Http.Compression\EncodingDelegateHandler.cs">
+      <Link>EncodingDelegateHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Weave.Portable\Common.Net.Http.Compression\Extensions\HttpResponseMessageExtensions.cs">
+      <Link>Extensions\HttpResponseMessageExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Weave.Portable\Common.Net.Http.Compression\Extensions\StringExtensions.cs">
+      <Link>Extensions\StringExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Weave.Portable\Common.Net.Http.Compression\HttpClientCompressionHandler.cs">
+      <Link>HttpClientCompressionHandler.cs</Link>
+    </Compile>
     <Compile Include="CompressedContent.cs" />
     <Compile Include="DecompressedContent.cs" />
-    <Compile Include="EncodingDelegateHandler.cs" />
-    <Compile Include="HttpClientCompressionHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

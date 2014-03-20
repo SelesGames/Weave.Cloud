@@ -67,21 +67,3 @@ namespace Common.Net.Http.Compression
         }
     }
 }
-
-
-
-
-//protected override Task SerializeToStreamAsync(Stream stream, TransportContext context)
-//{
-//    var compressedStream = CreateCompressedStream(stream, encodingType);
-
-//    return originalContent.CopyToAsync(compressedStream).ContinueWith(tsk =>
-//    {
-//        if (compressedStream != null)
-//        {
-//            compressedStream.Flush();
-//            compressedStream.Close();
-//            compressedStream.Dispose();
-//        }
-//    });
-//}
