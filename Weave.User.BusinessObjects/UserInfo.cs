@@ -188,9 +188,9 @@ namespace Weave.User.BusinessObjects
             if (newsItemIds == null || feedsList == null)
                 return;
 
-            var lookup = feedsList.AllNews().ToDictionary(o => o.Id);
+            var lookup = feedsList.AllNews().ToLookup(o => o.Id);
 
-            var newsItems = newsItemIds.Select(o => lookup.GetValueOrDefault(o)).OfType<NewsItem>();
+            var newsItems = newsItemIds.Where(o => lookup.Contains(o)).SelectMany(o => lookup[o]).OfType<NewsItem>();
 
             foreach (var newsItem in newsItems)
                 newsItem.HasBeenViewed = true;
