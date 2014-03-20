@@ -28,7 +28,6 @@ namespace SelesGames.WebApi.SelfHost
 
             MessageHandlers.Add(new EncodingDelegateHandler());
             Formatters.Add(new ProtobufFormatter());
-            //Formatters.Add(new FlexFormatter(Formatters.ToList()));
         }
     }
 }
