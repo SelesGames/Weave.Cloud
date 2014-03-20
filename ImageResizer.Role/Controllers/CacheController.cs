@@ -1,4 +1,4 @@
-﻿using Common.Azure;
+﻿using Common.Azure.Blob;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -80,7 +80,7 @@ namespace ImageResizer.Role.Controllers
                             ms.Position = 0;
                         }
 
-                        await blobClient.Save(blobFileName, ms);
+                        await blobClient.SaveBlobContent(settings.BlobImageContainer, blobFileName, ms);
                     }
 
                     fullFilePath = string.Format("{0}{1}/{2}", blobClient.BlobEndpoint, settings.BlobImageContainer, blobFileName);
@@ -103,12 +103,16 @@ namespace ImageResizer.Role.Controllers
             };
         }
 
-        AzureBlobStreamClient CreateBlobClient(string contentType)
+        AzureBlobClient CreateBlobClient(string contentType)
         {
-            return new AzureBlobStreamClient(settings.AzureStorageAccountName, settings.AzureStorageKey, settings.BlobImageContainer, false)
-            {
-                ContentType = contentType
-            };
+            return new AzureBlobClient(
+                storageAccountName: settings.AzureStorageAccountName,
+                key: settings.AzureStorageKey,
+                useHttps: false);
+            //return new AzureBlobClient(settings.AzureStorageAccountName, settings.AzureStorageKey, settings.BlobImageContainer, false)
+            //{
+            //    ContentType = contentType
+            //};
         }
     }
 }
