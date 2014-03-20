@@ -100,5 +100,17 @@ namespace Weave.User.BusinessObjects
         }
 
         #endregion
+
+
+
+
+        #region ToString override
+
+        public override string ToString()
+        {
+            return string.Format("{0}: {1}", Id.ToString("N"), Title);
+        }
+
+        #endregion
     }
 }
