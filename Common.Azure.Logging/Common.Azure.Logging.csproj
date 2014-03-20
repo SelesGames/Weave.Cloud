@@ -39,12 +39,6 @@
     <Compile Include="LogClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Common.Azure\Common.Azure.csproj">
-      <Project>{6211d4f0-8390-4dfa-a1d2-ba4aa7c28348}</Project>
-      <Name>Common.Azure</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

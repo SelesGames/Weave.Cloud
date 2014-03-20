@@ -79,10 +79,6 @@
     <Compile Include="WorkerRole.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Common.Azure\Common.Azure.csproj">
-      <Project>{6211d4f0-8390-4dfa-a1d2-ba4aa7c28348}</Project>
-      <Name>Common.Azure</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Ninject.WebApi\Ninject.WebApi.csproj">
       <Project>{be97f564-16f5-4d09-9218-cc65e89df2ac}</Project>
       <Name>Ninject.WebApi</Name>
