@@ -32,7 +32,7 @@ namespace Weave.User.Service.Role.Startup
             Trace.WriteLine(string.Format("**** IP ADDRESS: {0}", ipString));
 
             var config = new StandardHttpSelfHostConfiguration(ipString) { DependencyResolver = resolver };
-            config.MessageHandlers.Add(new InjectAcceptEncodingHandler("gzip"));
+            //config.MessageHandlers.Add(new InjectAcceptEncodingHandler("gzip"));
             config.MessageHandlers.Add(new InjectContentTypeHandler("application/json"));
 
             var cors = new EnableCorsAttribute(origins: "*", headers: "*", methods: "*");
