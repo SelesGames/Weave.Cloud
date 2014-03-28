@@ -340,6 +340,7 @@
     <Feed Name="Geek.com" IconUrl="http://weave.blob.core.windows.net/icons/Geek.com.png">http://www.geek.com/feed/</Feed>
     <Feed Name="GigaOM" IconUrl="http://weave.blob.core.windows.net/icons/GigaOM.jpg">http://feeds.feedburner.com/ommalik</Feed>
     <Feed Name="Gizmodo" in="mu" IconUrl="http://weave.blob.core.windows.net/icons/Gizmodo.png">http://feeds.gawker.com/gizmodo/vip</Feed>
+    <Feed Name="Ireland's Technology Blog">http://irelandstechnologyblog.com/feed/</Feed>
     <Feed Name="Lifehacker" in="mu" IconUrl="http://weave.blob.core.windows.net/icons/Lifehacker.png">http://feeds.gawker.com/lifehacker/vip</Feed>
     <Feed Name="Mashable" IconUrl="http://weave.blob.core.windows.net/icons/Mashable.png">http://feeds.mashable.com/Mashable</Feed>
     <Feed Name="PandoDaily" IconUrl="http://weave.blob.core.windows.net/icons/PandoDaily.jpg">http://pandodaily.com/feed</Feed>
