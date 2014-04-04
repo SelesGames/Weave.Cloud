@@ -39,9 +39,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="NewsItemState.cs" />
-    <Compile Include="NewsItemStates.cs" />
+    <Compile Include="Article State\NewsItemState.cs" />
+    <Compile Include="Article State\NewsItemStateCache.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="User\UserInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="News\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Weave.User.DataStore.v2\Weave.User.DataStore.v2.csproj">
+      <Project>{88d0785c-74d0-4ca9-bbad-b0d66bb92a63}</Project>
+      <Name>Weave.User.DataStore.v2</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -20,6 +20,5 @@ namespace Weave.User.DataStore.v2
         [DataMember(Order=10)]  public DateTime MostRecentEntrance { get; set; }
         [DataMember(Order=11)]  public DateTime PreviousEntrance { get; set; }
         [DataMember(Order=12)]  public ArticleViewingType ArticleViewingType { get; set; }
-        [DataMember(Order=13)]  public List<NewsItem> News { get; set; }
     }
 }
