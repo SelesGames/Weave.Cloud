@@ -123,6 +123,7 @@ namespace Weave.User.BusinessObjects.v2
 
             newsCollection[feed.Id] = news;
 
+            feed.NewsItemIds = news.Select(o => o.Id).ToList();
             feed.LastRefreshedOn = now;
             feed.IconUri = update.IconUri;
             feed.Etag = update.Etag;
@@ -150,7 +151,7 @@ namespace Weave.User.BusinessObjects.v2
 
         #region Convert functions
 
-        public Image Convert(RssAggregator.Core.DTOs.Outgoing.Image o)
+        static Image Convert(RssAggregator.Core.DTOs.Outgoing.Image o)
         {
             return new Image
             {
@@ -162,7 +163,7 @@ namespace Weave.User.BusinessObjects.v2
             };
         }
 
-        public NewsItem Convert(RssAggregator.Core.DTOs.Outgoing.NewsItem o)
+        static NewsItem Convert(RssAggregator.Core.DTOs.Outgoing.NewsItem o)
         {
             return new NewsItem
             {
