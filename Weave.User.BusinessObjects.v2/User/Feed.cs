@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SelesGames.Common.Hashing;
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
@@ -12,7 +13,8 @@ namespace Weave.User.BusinessObjects.v2
         public string IconUri { get; set; }
         public string Category { get; set; }
         public ArticleViewingType ArticleViewingType { get; set; }
-        
+        public string TeaserImageUrl { get; set; }
+
         // feed updating
         public string Etag { get; set; }
         public string LastModified { get; set; }
@@ -25,5 +27,11 @@ namespace Weave.User.BusinessObjects.v2
         public DateTime PreviousEntrance { get; set; }
 
         public List<Guid> NewsItemIds { get; set; }
+
+        public void EnsureGuidIsSet()
+        {
+            if (Guid.Empty.Equals(Id))
+                Id = CryptoHelper.ComputeHashUsedByMobilizer(Uri);
+        }
     }
 }

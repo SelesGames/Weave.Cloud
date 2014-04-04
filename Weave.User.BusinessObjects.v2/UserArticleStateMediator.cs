@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Weave.User.BusinessObjects.v2
 {
-    public class UserMediator
+    public class UserArticleStateMediator
     {
         NewsItemStateCache newsItemStateCache;
         UserInfo user;
 
-        public UserMediator(UserInfo user, NewsItemStateCache newsItemStateCache)
+        public UserArticleStateMediator(UserInfo user, NewsItemStateCache newsItemStateCache)
         {
             this.user = user;
             this.newsItemStateCache = newsItemStateCache;
