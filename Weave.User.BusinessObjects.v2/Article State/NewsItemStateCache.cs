@@ -12,6 +12,16 @@ namespace Weave.User.BusinessObjects.v2
             this.cache = cache;
         }
 
+        public IEnumerable<NewsItemState> MatchingIds(IEnumerable<Guid> ids)
+        {
+            foreach (var id in ids)
+            {
+                NewsItemState temp;
+                if (TryGet(id, out temp))
+                    yield return temp;
+            }
+        }
+
         public bool TryGet(Guid id, out NewsItemState state)
         {
             var key = CreateKey(id);

@@ -8,11 +8,11 @@ namespace Weave.User.DataStore.v2
     public class Feed
     {
         [DataMember(Order= 1)]  public Guid Id { get; set; }
-        [DataMember(Order= 2)]  public string FeedUri { get; set; }
-        [DataMember(Order= 3)]  public string FeedName { get; set; }
+        [DataMember(Order= 2)]  public string Uri { get; set; }
+        [DataMember(Order= 3)]  public string Name { get; set; }
         [DataMember(Order= 4)]  public string IconUri { get; set; }
-
         [DataMember(Order= 5)]  public string Category { get; set; }
+
         [DataMember(Order= 6)]  public string Etag { get; set; }
         [DataMember(Order= 7)]  public string LastModified { get; set; }
         [DataMember(Order= 8)]  public string MostRecentNewsItemPubDate { get; set; }
