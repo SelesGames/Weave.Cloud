@@ -4,7 +4,7 @@ using System.Linq;
 using Weave.User.BusinessObjects.v2;
 using Store = Weave.User.DataStore.v2;
 
-namespace Weave.User.Service.Converters
+namespace Weave.User.Service.Converters.v2
 {
     public class DataStoreToBusinessObject :
         IConverter<Store.Image, Image>,
@@ -28,7 +28,7 @@ namespace Weave.User.Service.Converters
             if (o.Feeds != null)
             {
                 foreach (var feed in o.Feeds.OfType<Store.Feed>().Select(Convert))
-                    user.AddFeed(feed, trustSource: true);
+                    user.Feeds.TryAdd(feed, trustSource: true);
             }
 
             return user;
@@ -36,7 +36,7 @@ namespace Weave.User.Service.Converters
 
         public Feed Convert(Store.Feed o)
         {
-            var feed = new Feed
+            return new Feed
             {
                 Id = o.Id,
                 Uri = o.Uri,
@@ -50,11 +50,7 @@ namespace Weave.User.Service.Converters
                 PreviousEntrance = o.PreviousEntrance,
                 MostRecentEntrance = o.MostRecentEntrance,
                 ArticleViewingType = (ArticleViewingType)o.ArticleViewingType,
-                //News = o.News == null ? null : o.News.OfType<Store.NewsItem>().Select(Convert).ToList(),
             };
-
-            feed.News = o.News == null ? null : GetJoinedNews(new[] { feed }, o.News.OfType<Store.NewsItem>().Select(Convert).ToList()).ToList();
-            return feed;
         }
 
         public NewsItem Convert(Store.NewsItem o)
@@ -88,33 +84,5 @@ namespace Weave.User.Service.Converters
                 SupportedFormats = o.SupportedFormats,
             };
         }
-
-        IEnumerable<NewsItem> GetJoinedNews(IEnumerable<Feed> feeds, IEnumerable<NewsItem> news)
-        {
-            return from n in news
-                   join f in feeds on n.Feed.Id equals f.Id
-                   select Convert(n, f);
-        }
-
-        NewsItem Convert(NewsItem n, Feed f)
-        {
-            n.Feed = f;
-            return n;
-        }
-
-        //public UserNewsItemState Convert(Store.UserNewsItemState o)
-        //{
-        //    return new UserNewsItemState(o.Id, o.NewsItemStates == null ? null : o.NewsItemStates.Select(Convert));
-        //}
-
-        //public NewsItemState Convert(Store.NewsItemState o)
-        //{
-        //    return new NewsItemState
-        //    {
-        //        Id = o.Id,
-        //        HasBeenViewed = o.HasBeenViewed,
-        //        IsFavorite = o.IsFavorite,
-        //    };
-        //}
     }
 }

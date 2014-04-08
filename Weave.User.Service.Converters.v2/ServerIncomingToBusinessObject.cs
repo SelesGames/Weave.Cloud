@@ -3,7 +3,7 @@ using System.Linq;
 using Weave.User.BusinessObjects.v2;
 using Incoming = Weave.User.Service.DTOs.ServerIncoming;
 
-namespace Weave.User.Service.Converters
+namespace Weave.User.Service.Converters.v2
 {
     public class ServerIncomingToBusinessObject :
         IConverter<Incoming.NewFeed, Feed>,
@@ -41,7 +41,7 @@ namespace Weave.User.Service.Converters
             if (o.Feeds != null)
             {
                 foreach (var feed in o.Feeds.OfType<Incoming.NewFeed>().Select(x => x.Convert<Incoming.NewFeed, Feed>(Instance)))
-                    user.AddFeed(feed, trustSource: false);
+                    user.Feeds.TryAdd(feed, trustSource: false);
             }
 
             return user;

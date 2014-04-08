@@ -3,7 +3,7 @@ using System.Linq;
 using Weave.User.BusinessObjects.v2;
 using Store = Weave.User.DataStore.v2;
 
-namespace Weave.User.Service.Converters
+namespace Weave.User.Service.Converters.v2
 {
     public class BusinessObjectToDataStore :
         IConverter<Image, Store.Image>,
@@ -43,7 +43,6 @@ namespace Weave.User.Service.Converters
                 PreviousEntrance = o.PreviousEntrance,
                 MostRecentEntrance = o.MostRecentEntrance,
                 ArticleViewingType = (Store.ArticleViewingType)o.ArticleViewingType,
-                News = o.News == null ? null : o.News.OfType<NewsItem>().Select(Convert).ToList(),
             };
         }
 
@@ -77,26 +76,5 @@ namespace Weave.User.Service.Converters
                 SupportedFormats = o.SupportedFormats,
             };
         }
-
-        //public Store.UserNewsItemState Convert(UserNewsItemState o)
-        //{
-        //    var newsItemStatesList = o.GetNewsItemStatesList();
-
-        //    return new Store.UserNewsItemState
-        //    {
-        //        Id = o.Id,
-        //        NewsItemStates = newsItemStatesList == null ? null : newsItemStatesList.Select(Convert).ToList(),
-        //    };
-        //}
-
-        //Store.NewsItemState Convert(NewsItemState o)
-        //{
-        //    return new Store.NewsItemState
-        //    {
-        //        Id = o.Id,
-        //        HasBeenViewed = o.HasBeenViewed,
-        //        IsFavorite = o.IsFavorite,
-        //    };
-        //}
     }
 }

@@ -4,7 +4,7 @@ using Weave.User.BusinessObjects.v2;
 using Outgoing = Weave.User.Service.DTOs.ServerOutgoing;
 
 
-namespace Weave.User.Service.Converters
+namespace Weave.User.Service.Converters.v2
 {
     public class BusinessObjectToServerOutgoing :
         IConverter<UserInfo, Outgoing.UserInfo>,

@@ -10,9 +10,9 @@ using System.Web.Http;
 using Weave.Article.Service.Contracts;
 using Weave.User.BusinessObjects;
 using Weave.User.BusinessObjects.v2;
-using Weave.User.Service.Cache;
+//using Weave.User.Service.Cache;
 using Weave.User.Service.Contracts;
-using Weave.User.Service.Converters;
+using Weave.User.Service.Converters.v2;
 using Weave.User.Service.DTOs;
 using Incoming = Weave.User.Service.DTOs.ServerIncoming;
 using Outgoing = Weave.User.Service.DTOs.ServerOutgoing;
@@ -23,11 +23,10 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
     {
         Guid userId;
         TimeSpan readTime = TimeSpan.Zero, writeTime = TimeSpan.Zero;
+        readonly IWeaveArticleService articleServiceClient;
 
-
-        public UserController(UserRepository cacheClient, IWeaveArticleService articleServiceClient)
+        public UserController(IWeaveArticleService articleServiceClient)
         {
-            this.userRepo = cacheClient;
             this.articleServiceClient = articleServiceClient;
         }
 
@@ -281,11 +280,9 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
             await VerifyUserId(userId);
 
             var user = await GetUser();
-            var mediator = new UserFeedsMediator(user);
-
             var feedBO = ConvertToBusinessObject(feed);
 
-            if (mediator.AddFeed(feedBO))
+            if (user.Feeds.TryAdd(feedBO))
             {
                 await Save(user);
                 return ConvertToOutgoing(feedBO);
@@ -303,9 +300,7 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
             await VerifyUserId(userId);
 
             var user = await GetUser();
-            var mediator = new UserFeedsMediator(user);
-
-            mediator.RemoveFeed(feedId);
+            user.Feeds.RemoveWithId(feedId);
             await Save(user);
         }
 
@@ -316,11 +311,9 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
             await VerifyUserId(userId);
 
             var user = await GetUser();
-            var mediator = new UserFeedsMediator(user);
-
             var feedBO = ConvertToBusinessObject(feed);
 
-            mediator.UpdateFeed(feedBO);
+            user.Feeds.Update(feedBO);
             await Save(user);
         }
 
@@ -338,14 +331,13 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
             var updated = changeSet.Updated;
 
             var user = await GetUser();
-            var mediator = new UserFeedsMediator(user);
 
             if (!EnumerableEx.IsNullOrEmpty(added))
             {
                 foreach (var feed in added)
                 {
                     var feedBO = ConvertToBusinessObject(feed);
-                    mediator.AddFeed(feedBO);
+                    user.Feeds.TryAdd(feedBO);
                 }
             }
 
@@ -353,7 +345,7 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
             {
                 foreach (var feedId in removed)
                 {
-                    mediator.RemoveFeed(feedId);
+                    user.Feeds.RemoveWithId(feedId);
                 }
             }
 
@@ -362,7 +354,7 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
                 foreach (var feed in updated)
                 {
                     var feedBO = ConvertToBusinessObject(feed);
-                    mediator.UpdateFeed(feedBO);
+                    user.Feeds.Update(feedBO);
                 }
             }
 
@@ -642,6 +634,11 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
         Outgoing.NewsItem ConvertToOutgoing(ExtendedNewsItem newsItem)
         {
             return BusinessObjectToServerOutgoing.Instance.Convert(newsItem);
+        }
+
+        Outgoing.Feed ConvertToOutgoing(Feed feed)
+        {
+            return BusinessObjectToServerOutgoing.Instance.Convert(feed);
         }
 
         Outgoing.Feed ConvertToOutgoing(ExtendedFeed feed)
