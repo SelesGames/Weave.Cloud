@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Weave.User.BusinessObjects
+namespace Weave.User.BusinessObjects.v2
 {
     public static class FeedExtensions
     {
@@ -23,20 +23,30 @@ namespace Weave.User.BusinessObjects
 
             return feeds.Where(o => categoryName.Equals(o.Category, StringComparison.OrdinalIgnoreCase));
         }
-    
-        public static IEnumerable<NewsItem> AllNews(this IEnumerable<Feed> feeds)
+
+        public static void MarkEntry(this IEnumerable<Feed> feeds)
         {
-            return feeds.Where(o => o.News != null).SelectMany(o => o.News);
+            if (EnumerableEx.IsNullOrEmpty(feeds))
+                return;
+
+            var now = DateTime.UtcNow;
+            foreach (var feed in feeds)
+            {
+                feed.PreviousEntrance = feed.MostRecentEntrance;
+                feed.MostRecentEntrance = now;
+            }
         }
 
-        public static IEnumerable<NewsItem> LatestNewsFirst(this IEnumerable<NewsItem> news)
+        public static void ExtendEntry(this IEnumerable<Feed> feeds)
         {
-            return news.OrderByDescending(o => o.UtcPublishDateTime);
-        }
+            if (EnumerableEx.IsNullOrEmpty(feeds))
+                return;
 
-        public static IEnumerable<NewsItem> AllOrderedNews(this IEnumerable<Feed> feeds)
-        {
-            return feeds.AllNews().LatestNewsFirst();
+            var now = DateTime.UtcNow;
+            foreach (var feed in feeds)
+            {
+                feed.MostRecentEntrance = now;
+            }
         }
     }
 }
