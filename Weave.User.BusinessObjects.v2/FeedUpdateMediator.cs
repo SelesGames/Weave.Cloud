@@ -177,8 +177,6 @@ namespace Weave.User.BusinessObjects.v2
                 VideoUri = o.VideoUri,
                 PodcastUri = o.PodcastUri,
                 ZuneAppId = o.ZuneAppId,
-                HasBeenViewed = false,
-                IsFavorite = false,
                 Image = o.Image == null ? null : Convert(o.Image),
             };
         }

@@ -21,6 +21,7 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
 {
     public class UserController : ApiController, IWeaveUserService
     {
+        Guid userId;
         TimeSpan readTime = TimeSpan.Zero, writeTime = TimeSpan.Zero;
 
 
@@ -218,14 +219,14 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
             await VerifyUserId(userId);
 
             var user = await GetUser();
+            var allnews = await GetAllNews();
+            var cache = await GetNewsItemStateCache();
 
             if (refresh)
             {
-                var allnews = await GetAllNews();
                 var subset = new FeedsSubset(user.Feeds);
                 await subset.Refresh(allnews);
 
-                var cache = await GetNewsItemStateCache();
                 Update(cache, allnews);
 
                 await Save(cache);
@@ -233,7 +234,7 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
                 await Save(user);
             }
 
-            return CreateOutgoingFeedsInfoList(user.Feeds, nested);
+            return CreateOutgoingFeedsInfoList(user, allnews, cache, nested);
         }
 
         [HttpGet]
@@ -504,11 +505,13 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
                 throw ResponseHelper.CreateResponseException(HttpStatusCode.BadRequest,
                     "You must specify a valid userId as a GUID");
 
+            this.userId = userId;
+
             var sw = System.Diagnostics.Stopwatch.StartNew();
 
             try
             {
-                userBO = await userRepo.Get(userId);
+                //userBO = await userRepo.Get(userId);
             }
             catch (StorageException)
             {
@@ -526,11 +529,21 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
             }
         }
 
-        Outgoing.NewsList CreateNewsListFromSubset(Guid userId, EntryType entry, int skip, int take, NewsItemType type, bool requireImage, FeedsSubset subset)
+        Outgoing.NewsList CreateNewsListFromSubset(
+            EntryType entry, 
+            int skip, 
+            int take, 
+            NewsItemType type, 
+            bool requireImage, 
+            IEnumerable<Feed> subset,
+            MasterNewsItemCollection allNews,
+            NewsItemStateCache stateCache)
         {
-            var orderedNews = subset.AllOrderedNews().ToList();
+            var feedGen = new ExtendedFeedsMediator(allNews, stateCache);
+            var extendedFeeds = feedGen.GetExtendedInfo(subset);
+            var orderedNews = extendedFeeds.AllOrderedNews();
 
-            IEnumerable<NewsItem> outgoingNews = orderedNews;
+            IEnumerable<ExtendedNewsItem> outgoingNews = orderedNews;
 
             if (type == NewsItemType.New)
                 outgoingNews = outgoingNews.Where(o => o.IsNew()).ToList();
@@ -542,15 +555,15 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
                 outgoingNews = outgoingNews.Where(o => !o.HasBeenViewed);
 
             if (requireImage)
-                outgoingNews = outgoingNews.Where(o => o.HasImage);
+                outgoingNews = outgoingNews.Where(o => o.NewsItem.HasImage);
 
             outgoingNews = outgoingNews.Skip(skip).Take(take);
 
             var outgoing = new Outgoing.NewsList
             {
                 UserId = userId,
-                FeedCount = subset.Count(),
-                Feeds = subset.Select(ConvertToOutgoing).ToList(),
+                FeedCount = extendedFeeds.Count(),
+                Feeds = extendedFeeds.Select(ConvertToOutgoing).ToList(),
                 News = outgoingNews.Select(ConvertToOutgoing).ToList(),
                 EntryType = entry.ToString(),
             };
@@ -599,44 +612,65 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
 
         #region Conversion Helpers
 
+
+
+
+        #region from incoming to business object
+
         UserInfo ConvertToBusinessObject(Incoming.UserInfo user)
         {
-            return user.Convert<Incoming.UserInfo, UserInfo>(ServerIncomingToBusinessObject.Instance);
+            return ServerIncomingToBusinessObject.Instance.Convert(user);
         }
 
-        Feed ConvertToBusinessObject(Incoming.NewFeed user)
+        Feed ConvertToBusinessObject(Incoming.NewFeed newFeed)
         {
-            return user.Convert<Incoming.NewFeed, Feed>(ServerIncomingToBusinessObject.Instance);
+            return ServerIncomingToBusinessObject.Instance.Convert(newFeed);
         }
 
-        Feed ConvertToBusinessObject(Incoming.UpdatedFeed user)
+        Feed ConvertToBusinessObject(Incoming.UpdatedFeed updatedFeed)
         {
-            return user.Convert<Incoming.UpdatedFeed, Feed>(ServerIncomingToBusinessObject.Instance);
-        }
-        
-    
-        Outgoing.NewsItem ConvertToOutgoing(NewsItem user)
-        {
-            return user.Convert<NewsItem, Outgoing.NewsItem>(BusinessObjectToServerOutgoing.Instance);
+            return ServerIncomingToBusinessObject.Instance.Convert(updatedFeed);
         }
 
-        Outgoing.Feed ConvertToOutgoing(Feed user)
+        #endregion
+
+
+
+
+        #region from business object to outgoing
+
+        Outgoing.NewsItem ConvertToOutgoing(ExtendedNewsItem newsItem)
         {
-            return user.Convert<Feed, Outgoing.Feed>(BusinessObjectToServerOutgoing.Instance);
+            return BusinessObjectToServerOutgoing.Instance.Convert(newsItem);
+        }
+
+        Outgoing.Feed ConvertToOutgoing(ExtendedFeed feed)
+        {
+            return BusinessObjectToServerOutgoing.Instance.Convert(feed);
         }
 
         Outgoing.UserInfo ConvertToOutgoing(UserInfo user)
         {
-            return user.Convert<UserInfo, Outgoing.UserInfo>(BusinessObjectToServerOutgoing.Instance);
+            return BusinessObjectToServerOutgoing.Instance.Convert(user);
         }
 
+        #endregion
 
-        Outgoing.FeedsInfoList CreateOutgoingFeedsInfoList(IEnumerable<Feed> feeds, bool returnNested)
+
+
+
+        Outgoing.FeedsInfoList CreateOutgoingFeedsInfoList(
+            UserInfo user,
+            MasterNewsItemCollection allNews,
+            NewsItemStateCache stateCache,
+            bool returnNested)
         {
+            var feeds = user.Feeds;
+
             Outgoing.FeedsInfoList outgoing = new Outgoing.FeedsInfoList
             {
-                UserId = userBO.Id,
-                TotalFeedCount = userBO.Feeds == null ? 0 : userBO.Feeds.Count,
+                UserId = user.Id,
+                TotalFeedCount = feeds == null ? 0 : feeds.Count,
             };
 
             if (EnumerableEx.IsNullOrEmpty(feeds))
@@ -648,6 +682,7 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
             }
 
             var outgoingFeeds = feeds.Select(ConvertToOutgoing).ToList();
+
             outgoing.NewArticleCount = outgoingFeeds.Sum(o => o.NewArticleCount);
             outgoing.UnreadArticleCount = outgoingFeeds.Sum(o => o.UnreadArticleCount);
             outgoing.TotalArticleCount = outgoingFeeds.Sum(o => o.TotalArticleCount);

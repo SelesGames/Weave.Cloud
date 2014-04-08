@@ -13,16 +13,16 @@ namespace Weave.User.BusinessObjects.v2
             return categories;
         }
 
-        public static IEnumerable<Feed> OfCategory(this IEnumerable<Feed> feeds, string categoryName)
-        {
-            if (string.IsNullOrEmpty(categoryName))
-                return new List<Feed>();
+        //public static IEnumerable<Feed> OfCategory(this IEnumerable<Feed> feeds, string categoryName)
+        //{
+        //    if (string.IsNullOrEmpty(categoryName))
+        //        return new List<Feed>();
 
-            if ("all news".Equals(categoryName, StringComparison.OrdinalIgnoreCase))
-                return feeds;
+        //    if ("all news".Equals(categoryName, StringComparison.OrdinalIgnoreCase))
+        //        return feeds;
 
-            return feeds.Where(o => categoryName.Equals(o.Category, StringComparison.OrdinalIgnoreCase));
-        }
+        //    return feeds.Where(o => categoryName.Equals(o.Category, StringComparison.OrdinalIgnoreCase));
+        //}
 
         public static void MarkEntry(this IEnumerable<Feed> feeds)
         {
