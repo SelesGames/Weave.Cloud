@@ -1,7 +1,6 @@
 ﻿using SelesGames.Common.Hashing;
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 
 namespace Weave.User.BusinessObjects.v2
 {

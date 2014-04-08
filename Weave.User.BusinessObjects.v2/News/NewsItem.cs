@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Common.TimeFormatting;
+﻿using Common.TimeFormatting;
+using System;
 
 namespace Weave.User.BusinessObjects.v2
 {
@@ -22,8 +18,6 @@ namespace Weave.User.BusinessObjects.v2
         public string VideoUri { get; set; }
         public string PodcastUri { get; set; }
         public string ZuneAppId { get; set; }
-        public bool IsFavorite { get; set; }
-        public bool HasBeenViewed { get; set; }
         public DateTime OriginalDownloadDateTime { get; set; }
         public Image Image { get; set; }
 
@@ -44,16 +38,6 @@ namespace Weave.User.BusinessObjects.v2
                 return Image.CreateImageUrl();
             }
             return ImageUrl;
-        }
-
-        public bool IsNew()
-        {
-            return !HasBeenViewed && OriginalDownloadDateTime > Feed.PreviousEntrance;
-        }
-
-        public bool IsCountedAsNew()
-        {
-            return !HasBeenViewed && OriginalDownloadDateTime > Feed.MostRecentEntrance;
         }
 
 

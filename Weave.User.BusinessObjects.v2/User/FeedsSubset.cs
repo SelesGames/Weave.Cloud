@@ -35,30 +35,30 @@ namespace Weave.User.BusinessObjects.v2
             await Task.WhenAll(feedUpdateMediators.Select(o => o.CurrentRefresh));
         }
 
-        public void MarkEntry()
-        {
-            if (EnumerableEx.IsNullOrEmpty(feeds))
-                return;
+        //public void MarkEntry()
+        //{
+        //    if (EnumerableEx.IsNullOrEmpty(feeds))
+        //        return;
 
-            var now = DateTime.UtcNow;
-            foreach (var feed in feeds)
-            {
-                feed.PreviousEntrance = feed.MostRecentEntrance;
-                feed.MostRecentEntrance = now;
-            }
-        }
+        //    var now = DateTime.UtcNow;
+        //    foreach (var feed in feeds)
+        //    {
+        //        feed.PreviousEntrance = feed.MostRecentEntrance;
+        //        feed.MostRecentEntrance = now;
+        //    }
+        //}
 
-        public void ExtendEntry()
-        {
-            if (EnumerableEx.IsNullOrEmpty(feeds))
-                return;
+        //public void ExtendEntry()
+        //{
+        //    if (EnumerableEx.IsNullOrEmpty(feeds))
+        //        return;
 
-            var now = DateTime.UtcNow;
-            foreach (var feed in feeds)
-            {
-                feed.MostRecentEntrance = now;
-            }
-        }
+        //    var now = DateTime.UtcNow;
+        //    foreach (var feed in feeds)
+        //    {
+        //        feed.MostRecentEntrance = now;
+        //    }
+        //}
 
 
 
