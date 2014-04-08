@@ -56,7 +56,6 @@
     <Compile Include="ServiceClients\ServiceClient.cs" />
     <Compile Include="UserArticleStateExtendedMediator.cs" />
     <Compile Include="UserArticleStateMediator.cs" />
-    <Compile Include="UserFeedsMediator.cs" />
     <Compile Include="User\ArticleViewingType.cs" />
     <Compile Include="User\ExtendedFeed.cs" />
     <Compile Include="User\Feed.cs" />

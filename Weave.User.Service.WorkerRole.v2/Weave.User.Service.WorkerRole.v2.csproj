@@ -58,6 +58,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.6.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Ninject">
+      <HintPath>..\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Services.Client" />
@@ -86,10 +89,10 @@
     <Compile Include="WorkerRole.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
+    <ProjectReference Include="..\..\Weave.Portable\Weave.User.Service.Contracts\Weave.User.Service.Contracts.csproj">
+      <Project>{02f3363f-7b0f-4c5f-9123-b388f2870c35}</Project>
+      <Name>Weave.User.Service.Contracts</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Weave.Portable\Weave.User.Service.DTOs\Weave.User.Service.DTOs.csproj">
       <Project>{75f2f4b1-beb2-4ac6-a935-5a795c5a79a0}</Project>
       <Name>Weave.User.Service.DTOs</Name>
@@ -114,6 +117,14 @@
       <Project>{88d0785c-74d0-4ca9-bbad-b0d66bb92a63}</Project>
       <Name>Weave.User.DataStore.v2</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Weave.User.Service.Converters.v2\Weave.User.Service.Converters.v2.csproj">
+      <Project>{15370b3d-b219-429d-bd70-3bd650241add}</Project>
+      <Name>Weave.User.Service.Converters.v2</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
