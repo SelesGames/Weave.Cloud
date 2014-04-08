@@ -39,8 +39,8 @@ namespace Weave.User.Service.Converters
             var feed = new Feed
             {
                 Id = o.Id,
-                Uri = o.FeedUri,
-                Name = o.FeedName,
+                Uri = o.Uri,
+                Name = o.Name,
                 IconUri = o.IconUri,
                 Category = o.Category,
                 Etag = o.Etag,
@@ -72,8 +72,6 @@ namespace Weave.User.Service.Converters
                 VideoUri = o.VideoUri,
                 PodcastUri = o.PodcastUri,
                 ZuneAppId = o.ZuneAppId,
-                HasBeenViewed = o.HasBeenViewed,
-                IsFavorite = o.IsFavorite,
                 OriginalDownloadDateTime = o.OriginalDownloadDateTime,
                 Image = o.Image == null ? null : Convert(o.Image),
             };

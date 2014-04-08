@@ -32,8 +32,8 @@ namespace Weave.User.Service.Converters
             return new Store.Feed
             {
                 Id = o.Id,
-                FeedUri = o.Uri,
-                FeedName = o.Name,
+                Uri = o.Uri,
+                Name = o.Name,
                 IconUri = o.IconUri,
                 Category = o.Category,
                 Etag = o.Etag,
@@ -61,8 +61,6 @@ namespace Weave.User.Service.Converters
                 VideoUri = o.VideoUri,
                 PodcastUri = o.PodcastUri,
                 ZuneAppId = o.ZuneAppId,
-                HasBeenViewed = o.HasBeenViewed,
-                IsFavorite = o.IsFavorite,
                 OriginalDownloadDateTime = o.OriginalDownloadDateTime,
                 Image = o.Image == null ? null : Convert(o.Image)
             };

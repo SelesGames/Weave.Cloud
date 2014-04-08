@@ -26,6 +26,15 @@ namespace Weave.User.Service.Converters
             };
         }
 
+        public Outgoing.NewsItem Convert(ExtendedNewsItem o)
+        {
+            var converted = Convert(o.NewsItem);
+            converted.IsNew = o.IsNew();
+            converted.HasBeenViewed = o.HasBeenViewed;
+            converted.IsFavorite = o.IsFavorite;
+            return converted;
+        }
+
         public Outgoing.NewsItem Convert(NewsItem o)
         {
             return new Outgoing.NewsItem
@@ -40,12 +49,18 @@ namespace Weave.User.Service.Converters
                 VideoUri = o.VideoUri,
                 PodcastUri = o.PodcastUri,
                 ZuneAppId = o.ZuneAppId,
-                IsNew = o.IsNew(),
-                HasBeenViewed = o.HasBeenViewed,
-                IsFavorite = o.IsFavorite,
                 OriginalDownloadDateTime = o.OriginalDownloadDateTime,
                 Image = o.Image == null ? null : Convert(o.Image),
             };
+        }
+
+        public Outgoing.Feed Convert(ExtendedFeed o)
+        {
+            var feed = Convert(o.Feed);
+            feed.TotalArticleCount = o.TotalArticleCount;
+            feed.NewArticleCount = o.NewArticleCount;
+            feed.UnreadArticleCount = o.UnreadArticleCount;
+            return feed;
         }
 
         public Outgoing.Feed Convert(Feed o)
@@ -58,9 +73,9 @@ namespace Weave.User.Service.Converters
                 IconUri = o.IconUri,
                 Category = o.Category,
                 ArticleViewingType = (Weave.User.Service.DTOs.ArticleViewingType)o.ArticleViewingType,
-                TotalArticleCount = o.News == null ? 0 : o.News.Count,
-                NewArticleCount = o.News == null ? 0 : o.News.Count(x => x.IsCountedAsNew()),
-                UnreadArticleCount = o.News == null ? 0 : o.News.Count(x => !x.HasBeenViewed),
+                //TotalArticleCount = o.News == null ? 0 : o.News.Count,
+                //NewArticleCount = o.News == null ? 0 : o.News.Count(x => x.IsCountedAsNew()),
+                //UnreadArticleCount = o.News == null ? 0 : o.News.Count(x => !x.HasBeenViewed),
                 TeaserImageUrl = o.TeaserImageUrl,
                 LastRefreshedOn = o.LastRefreshedOn,
                 MostRecentEntrance = o.MostRecentEntrance,
