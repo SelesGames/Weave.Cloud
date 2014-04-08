@@ -9,11 +9,9 @@ namespace Weave.User.BusinessObjects.v2
     public class UserArticleStateMediator
     {
         NewsItemStateCache newsItemStateCache;
-        UserInfo user;
 
-        public UserArticleStateMediator(UserInfo user, NewsItemStateCache newsItemStateCache)
+        public UserArticleStateMediator(NewsItemStateCache newsItemStateCache)
         {
-            this.user = user;
             this.newsItemStateCache = newsItemStateCache;
         }
 
@@ -54,34 +52,6 @@ namespace Weave.User.BusinessObjects.v2
                 return;
 
             foreach (var state in newsItemStateCache.MatchingIds(newsItemIds))
-            {
-                state.HasBeenViewed = true;
-            }
-        }
-
-        public void MarkCategorySoftRead(string category)
-        {
-            var newsItemIds = user.Feeds
-                .FindByCategory(category)
-                .SelectMany(o => o.NewsItemIds);
-
-            var states = newsItemStateCache.MatchingIds(newsItemIds);
-
-            foreach (var state in states)
-            {
-                state.HasBeenViewed = true;
-            }
-        }
-
-        public void MarkFeedSoftRead(Guid feedId)
-        {
-            var newsItemIds = user.Feeds
-                .FindById(feedId)
-                .SelectMany(o => o.NewsItemIds);
-
-            var states = newsItemStateCache.MatchingIds(newsItemIds);
-
-            foreach (var state in states)
             {
                 state.HasBeenViewed = true;
             }
