@@ -45,6 +45,7 @@
     <Compile Include="Extensions\ExtendedFeedExtensions.cs" />
     <Compile Include="Extensions\ExtendedNewsItemExtensions.cs" />
     <Compile Include="Extensions\FeedExtensions.cs" />
+    <Compile Include="FeedsUpdateMediator.cs" />
     <Compile Include="FeedUpdateMediator.cs" />
     <Compile Include="GetNewsMediator.cs" />
     <Compile Include="News\ExtendedNewsItem.cs" />
@@ -60,7 +61,6 @@
     <Compile Include="User\ExtendedFeed.cs" />
     <Compile Include="User\Feed.cs" />
     <Compile Include="User\FeedCollection.cs" />
-    <Compile Include="User\FeedsSubset.cs" />
     <Compile Include="User\UserInfo.cs" />
   </ItemGroup>
   <ItemGroup>

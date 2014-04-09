@@ -25,10 +25,61 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
         TimeSpan readTime = TimeSpan.Zero, writeTime = TimeSpan.Zero;
         readonly IWeaveArticleService articleServiceClient;
 
+        UserInfo __XX__user;
+        MasterNewsItemCollection __XX__allNews;
+        NewsItemStateCache __XX__stateCache;
+
+
+
+
+        #region Private member Properties that will throw exception is accessed before being initialized (i.e. hydrated)
+
+        UserInfo User
+        {
+            get
+            {
+                if (__XX__user == null)
+                    throw new Exception("you must hydrate user before using it");
+
+                return __XX__user;
+            }
+        }
+
+        MasterNewsItemCollection AllNews
+        {
+            get
+            {
+                if (__XX__allNews == null)
+                    throw new Exception("you must hydrate allNews before using it");
+
+                return __XX__allNews;
+            }
+        }
+
+        NewsItemStateCache StateCache
+        {
+            get
+            {
+                if (__XX__stateCache == null)
+                    throw new Exception("you must hydrate stateCache before using it");
+
+                return __XX__stateCache;
+            }
+        }
+
+        #endregion
+
+
+
+
+        #region Constructor
+
         public UserController(IWeaveArticleService articleServiceClient)
         {
             this.articleServiceClient = articleServiceClient;
         }
+
+        #endregion
 
 
 
@@ -136,7 +187,7 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
 
 
 
-        #region Get News for User (either by category or feedId)
+        #region Get News for User (either by category or feedId)  FULLY STUBBED
 
         [HttpGet]
         [ActionName("news")]
@@ -150,28 +201,14 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
             bool requireImage = false)
         {
             await VerifyUserId(userId);
+            await All(
+                HydrateUser(),
+                HydrateAllNews(),
+                HydrateStateCache()
+            );
 
-            var subset = userBO.CreateSubsetFromCategory(category);
-
-            if (entry == EntryType.Mark || entry == EntryType.ExtendRefresh)
-            {
-                if (entry == EntryType.Mark)
-                {
-                    subset.MarkEntry();
-                }
-
-                else if (entry == EntryType.ExtendRefresh)
-                {
-                    subset.ExtendEntry();
-                    await subset.Refresh();
-                }
-
-                userBO.DeleteOldNews();
-                SaveUser();
-            }
-
-            var list = CreateNewsListFromSubset(userId, entry, skip, take, type, requireImage, subset);
-            return list;
+            var subset = User.Feeds.FindByCategory(category);
+            return await GetNews(subset, entry, skip, take, type, requireImage);
         }
 
         [HttpGet]
@@ -180,27 +217,43 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
             Guid userId, Guid feedId, EntryType entry = EntryType.Peek, int skip = 0, int take = 10, NewsItemType type = NewsItemType.Any, bool requireImage = false)
         {
             await VerifyUserId(userId);
+            await All(
+                HydrateUser(),
+                HydrateAllNews(),
+                HydrateStateCache()
+            );
 
-            var subset = userBO.CreateSubsetFromFeedIds(new[] { feedId });
+            var subset = User.Feeds.FindById(feedId);
+            return await GetNews(subset, entry, skip, take, type, requireImage);
+        }
 
+        async Task<Outgoing.NewsList> GetNews(
+            IEnumerable<Feed> feeds, 
+            EntryType entry = EntryType.Peek, 
+            int skip = 0, 
+            int take = 10, 
+            NewsItemType type = NewsItemType.Any, 
+            bool requireImage = false)
+        {
             if (entry == EntryType.Mark || entry == EntryType.ExtendRefresh)
             {
                 if (entry == EntryType.Mark)
                 {
-                    subset.MarkEntry();
+                    feeds.MarkEntry();
                 }
 
                 else if (entry == EntryType.ExtendRefresh)
                 {
-                    subset.ExtendEntry();
-                    await subset.Refresh();
+                    feeds.ExtendEntry();
+                    var updater = new FeedsUpdateMediator(feeds, AllNews);
+                    await updater.Refresh();
                 }
 
-                userBO.DeleteOldNews();
-                SaveUser();
+                //userBO.DeleteOldNews();
+                await Save(User);
             }
 
-            var list = CreateNewsListFromSubset(userId, entry, skip, take, type, requireImage, subset);
+            var list = CreateNewsListFromSubset(entry, skip, take, type, requireImage, feeds);
             return list;
         }
 
@@ -209,31 +262,21 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
 
 
 
-        #region Get Feeds for User
+        #region Get Feeds for User  FULLY STUBBED
 
         [HttpGet]
         [ActionName("feeds")]
         public async Task<Outgoing.FeedsInfoList> GetFeeds(Guid userId, bool refresh = false, bool nested = false)
         {
             await VerifyUserId(userId);
+            await All(
+                HydrateUser(),
+                HydrateAllNews(),
+                HydrateStateCache()
+            );
 
-            var user = await GetUser();
-            var allnews = await GetAllNews();
-            var cache = await GetNewsItemStateCache();
-
-            if (refresh)
-            {
-                var subset = new FeedsSubset(user.Feeds);
-                await subset.Refresh(allnews);
-
-                Update(cache, allnews);
-
-                await Save(cache);
-                await Save(allnews);
-                await Save(user);
-            }
-
-            return CreateOutgoingFeedsInfoList(user, allnews, cache, nested);
+            var feeds = User.Feeds;
+            return await GetFeeds(feeds, refresh, nested);
         }
 
         [HttpGet]
@@ -241,14 +284,14 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
         public async Task<Outgoing.FeedsInfoList> GetFeeds(Guid userId, string category, bool refresh = false, bool nested = false)
         {
             await VerifyUserId(userId);
+            await All(
+                HydrateUser(),
+                HydrateAllNews(),
+                HydrateStateCache()
+            );
 
-            var subset = userBO.CreateSubsetFromCategory(category);
-            if (refresh)
-            {
-                await subset.Refresh();
-                SaveUser();
-            }
-            return CreateOutgoingFeedsInfoList(subset, nested);
+            var subset = User.Feeds.FindByCategory(category);
+            return await GetFeeds(subset, refresh, nested);
         }
 
         [HttpGet]
@@ -256,14 +299,31 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
         public async Task<Outgoing.FeedsInfoList> GetFeeds(Guid userId, Guid feedId, bool refresh = false, bool nested = false)
         {
             await VerifyUserId(userId);
+            await All(
+                HydrateUser(),
+                HydrateAllNews(),
+                HydrateStateCache()
+            );
 
-            var subset = userBO.CreateSubsetFromFeedIds(new[] { feedId });
+            var subset = User.Feeds.FindById(feedId);
+            return await GetFeeds(subset, refresh, nested);
+        }
+
+        async Task<Outgoing.FeedsInfoList> GetFeeds(IEnumerable<Feed> feeds, bool refresh, bool isNested)
+        {
             if (refresh)
             {
-                await subset.Refresh();
-                SaveUser();
+                var updater = new FeedsUpdateMediator(feeds, AllNews);
+                await updater.Refresh();
+
+                Update(StateCache, AllNews);
+
+                await Save(StateCache);
+                await Save(AllNews);
+                await Save(User);
             }
-            return CreateOutgoingFeedsInfoList(subset, nested);
+
+            return CreateOutgoingFeedsInfoList(feeds, isNested);
         }
 
         #endregion
@@ -278,13 +338,13 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
         public async Task<Outgoing.Feed> AddFeed(Guid userId, [FromBody] Incoming.NewFeed feed)
         {
             await VerifyUserId(userId);
+            await HydrateUser();
 
-            var user = await GetUser();
             var feedBO = ConvertToBusinessObject(feed);
 
-            if (user.Feeds.TryAdd(feedBO))
+            if (User.Feeds.TryAdd(feedBO))
             {
-                await Save(user);
+                await Save(User);
                 return ConvertToOutgoing(feedBO);
             }
             else
@@ -298,10 +358,10 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
         public async Task RemoveFeed(Guid userId, Guid feedId)
         {
             await VerifyUserId(userId);
+            await HydrateUser();
 
-            var user = await GetUser();
-            user.Feeds.RemoveWithId(feedId);
-            await Save(user);
+            User.Feeds.RemoveWithId(feedId);
+            await Save(User);
         }
 
         [HttpPost]
@@ -309,12 +369,12 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
         public async Task UpdateFeed(Guid userId, [FromBody] Incoming.UpdatedFeed feed)
         {
             await VerifyUserId(userId);
+            await HydrateUser();
 
-            var user = await GetUser();
             var feedBO = ConvertToBusinessObject(feed);
 
-            user.Feeds.Update(feedBO);
-            await Save(user);
+            User.Feeds.Update(feedBO);
+            await Save(User);
         }
 
         [HttpPost]
@@ -325,19 +385,18 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
                 return;
 
             await VerifyUserId(userId);
+            await HydrateUser();
 
             var added = changeSet.Added;
             var removed = changeSet.Removed;
             var updated = changeSet.Updated;
-
-            var user = await GetUser();
 
             if (!EnumerableEx.IsNullOrEmpty(added))
             {
                 foreach (var feed in added)
                 {
                     var feedBO = ConvertToBusinessObject(feed);
-                    user.Feeds.TryAdd(feedBO);
+                    User.Feeds.TryAdd(feedBO);
                 }
             }
 
@@ -345,7 +404,7 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
             {
                 foreach (var feedId in removed)
                 {
-                    user.Feeds.RemoveWithId(feedId);
+                    User.Feeds.RemoveWithId(feedId);
                 }
             }
 
@@ -354,11 +413,11 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
                 foreach (var feed in updated)
                 {
                     var feedBO = ConvertToBusinessObject(feed);
-                    user.Feeds.Update(feedBO);
+                    User.Feeds.Update(feedBO);
                 }
             }
 
-            await Save(user);
+            await Save(User);
         }
 
         #endregion
@@ -373,12 +432,11 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
         public async Task MarkArticleRead(Guid userId, Guid newsItemId)
         {
             await VerifyUserId(userId);
+            await HydrateStateCache();
 
-            var newsItemStateCache = await GetNewsItemStateCache();
-
-            var mediator = new UserArticleStateMediator(newsItemStateCache);
+            var mediator = new UserArticleStateMediator(StateCache);
             mediator.MarkNewsItemRead(newsItemId);
-            await Save(newsItemStateCache);
+            await Save(StateCache);
         }
 
         [HttpGet]
@@ -386,12 +444,11 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
         public async Task MarkArticleUnread(Guid userId, Guid newsItemId)
         {
             await VerifyUserId(userId);
+            await HydrateStateCache();
 
-            var newsItemStateCache = await GetNewsItemStateCache();
-
-            var mediator = new UserArticleStateMediator(newsItemStateCache);
+            var mediator = new UserArticleStateMediator(StateCache);
             mediator.MarkNewsItemUnread(newsItemId);
-            await Save(newsItemStateCache);
+            await Save(StateCache);
         }
 
         [HttpPost]
@@ -399,12 +456,11 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
         public async Task MarkArticlesSoftRead(Guid userId, [FromBody] List<Guid> newsItemIds)
         {
             await VerifyUserId(userId);
+            await HydrateStateCache();
 
-            var newsItemStateCache = await GetNewsItemStateCache();
-
-            var mediator = new UserArticleStateMediator(newsItemStateCache);
+            var mediator = new UserArticleStateMediator(StateCache);
             mediator.MarkNewsItemsSoftRead(newsItemIds);
-            await Save(newsItemStateCache);
+            await Save(StateCache);
         }
 
         [HttpGet]
@@ -412,13 +468,14 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
         public async Task MarkArticlesSoftRead(Guid userId, string category)
         {
             await VerifyUserId(userId);
+            await All(
+                HydrateUser(),
+                HydrateStateCache()
+            );
 
-            var user = await GetUser();
-            var newsItemStateCache = await GetNewsItemStateCache();
-
-            var mediator = new UserArticleStateExtendedMediator(user, newsItemStateCache);
+            var mediator = new UserArticleStateExtendedMediator(User, StateCache);
             mediator.MarkCategorySoftRead(category);
-            await Save(newsItemStateCache);
+            await Save(StateCache);
         }
 
         [HttpGet]
@@ -426,13 +483,14 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
         public async Task MarkArticlesSoftRead(Guid userId, Guid feedId)
         {
             await VerifyUserId(userId);
+            await All(
+                HydrateUser(),
+                HydrateStateCache()
+            );
 
-            var user = await GetUser();
-            var newsItemStateCache = await GetNewsItemStateCache();
-
-            var mediator = new UserArticleStateExtendedMediator(user, newsItemStateCache);
+            var mediator = new UserArticleStateExtendedMediator(User, StateCache);
             mediator.MarkFeedSoftRead(feedId);
-            await Save(newsItemStateCache);
+            await Save(StateCache);
         }
 
         [HttpGet]
@@ -440,12 +498,11 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
         public async Task AddFavorite(Guid userId, Guid newsItemId)
         {
             await VerifyUserId(userId);
+            await HydrateStateCache();
 
-            var newsItemStateCache = await GetNewsItemStateCache();
-
-            var mediator = new UserArticleStateMediator(newsItemStateCache);
+            var mediator = new UserArticleStateMediator(StateCache);
             mediator.AddFavorite(newsItemId);
-            await Save(newsItemStateCache);
+            await Save(StateCache);
         }
 
         [HttpGet]
@@ -453,12 +510,11 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
         public async Task RemoveFavorite(Guid userId, Guid newsItemId)
         {
             await VerifyUserId(userId);
+            await HydrateStateCache();
 
-            var newsItemStateCache = await GetNewsItemStateCache();
-
-            var mediator = new UserArticleStateMediator(newsItemStateCache);
+            var mediator = new UserArticleStateMediator(StateCache);
             mediator.RemoveFavorite(newsItemId);
-            await Save(newsItemStateCache);
+            await Save(StateCache);
         }
 
         #endregion
@@ -473,13 +529,12 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
         public async Task SetArticleDeleteTimes(Guid userId, Incoming.ArticleDeleteTimes articleDeleteTimes)
         {
             await VerifyUserId(userId);
+            await HydrateUser();
 
-            var user = await GetUser();
-
-            user.ArticleDeletionTimeForMarkedRead = articleDeleteTimes.ArticleDeletionTimeForMarkedRead;
-            user.ArticleDeletionTimeForUnread = articleDeleteTimes.ArticleDeletionTimeForUnread;
+            User.ArticleDeletionTimeForMarkedRead = articleDeleteTimes.ArticleDeletionTimeForMarkedRead;
+            User.ArticleDeletionTimeForUnread = articleDeleteTimes.ArticleDeletionTimeForUnread;
  
-            await Save(user);
+            await Save(User);
         }
 
 
@@ -527,11 +582,9 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
             int take, 
             NewsItemType type, 
             bool requireImage, 
-            IEnumerable<Feed> subset,
-            MasterNewsItemCollection allNews,
-            NewsItemStateCache stateCache)
+            IEnumerable<Feed> subset)
         {
-            var feedGen = new ExtendedFeedsMediator(allNews, stateCache);
+            var feedGen = new ExtendedFeedsMediator(AllNews, StateCache);
             var extendedFeeds = feedGen.GetExtendedInfo(subset);
             var orderedNews = extendedFeeds.AllOrderedNews();
 
@@ -575,6 +628,14 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
             outgoing.DataStoreWriteTime = writeTime;
 
             return outgoing;
+        }
+
+        /// <summary>
+        /// Encapsulates Task.Whenall just to make it a bit prettier
+        /// </summary>
+        Task All(params Task[] tasks)
+        {
+            return Task.WhenAll(tasks);
         }
 
         //void SaveUser()
@@ -656,29 +717,30 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
 
 
 
-        Outgoing.FeedsInfoList CreateOutgoingFeedsInfoList(
-            UserInfo user,
-            MasterNewsItemCollection allNews,
-            NewsItemStateCache stateCache,
-            bool returnNested)
+        Outgoing.FeedsInfoList CreateOutgoingFeedsInfoList(IEnumerable<Feed> feeds, bool returnNested)
         {
-            var feeds = user.Feeds;
+            if (EnumerableEx.IsNullOrEmpty(feeds))
+            {
+                return new Outgoing.FeedsInfoList
+                {
+                    UserId = User.Id,
+                    NewArticleCount = 0,
+                    UnreadArticleCount = 0,
+                    TotalArticleCount = 0,
+                    TotalFeedCount = 0,
+                };
+            }
+
+            var generator = new ExtendedFeedsMediator(AllNews, StateCache);
+            var extendedFeeds = generator.GetExtendedInfo(feeds).ToList();
 
             Outgoing.FeedsInfoList outgoing = new Outgoing.FeedsInfoList
             {
-                UserId = user.Id,
-                TotalFeedCount = feeds == null ? 0 : feeds.Count,
+                UserId = User.Id,
+                TotalFeedCount = extendedFeeds.Count,
             };
 
-            if (EnumerableEx.IsNullOrEmpty(feeds))
-            {
-                outgoing.NewArticleCount = 0;
-                outgoing.UnreadArticleCount = 0;
-                outgoing.TotalArticleCount = 0;
-                return outgoing;
-            }
-
-            var outgoingFeeds = feeds.Select(ConvertToOutgoing).ToList();
+            var outgoingFeeds = extendedFeeds.Select(ConvertToOutgoing).ToList();
 
             outgoing.NewArticleCount = outgoingFeeds.Sum(o => o.NewArticleCount);
             outgoing.UnreadArticleCount = outgoingFeeds.Sum(o => o.UnreadArticleCount);
@@ -729,6 +791,8 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
 
 
 
+        #region not yet implemented, recovery/hydration of necessary fields
+
         Task Save(UserInfo user)
         {
             throw new NotImplementedException();
@@ -742,6 +806,30 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
         Task Save(MasterNewsItemCollection allnews)
         {
             throw new NotImplementedException();
+        }
+
+        async Task HydrateUser()
+        {
+            if (User != null)
+                return;
+
+            __XX__user = await GetUser();
+        }
+
+        async Task HydrateAllNews()
+        {
+            if (AllNews != null)
+                return;
+
+            __XX__allNews = await GetAllNews();
+        }
+
+        async Task HydrateStateCache()
+        {
+            if (StateCache != null)
+                return;
+
+            __XX__stateCache = await GetNewsItemStateCache();
         }
 
         Task<UserInfo> GetUser()
@@ -763,5 +851,7 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
         {
             throw new NotImplementedException();
         }
+
+        #endregion
     }
 }
