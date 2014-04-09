@@ -13,6 +13,7 @@ namespace Weave.User.BusinessObjects.v2
     {
         readonly Feed feed;
         readonly MasterNewsItemCollection newsCollection;
+        readonly NewsItemStateCache stateCache;
         readonly NewsServer client;
 
         bool isUpdating = false;
@@ -23,14 +24,16 @@ namespace Weave.User.BusinessObjects.v2
         // Read-only properties
         public Task CurrentRefresh { get; private set; }
 
-        public FeedUpdateMediator(Feed feed, MasterNewsItemCollection newsCollection, NewsServer client)
+        public FeedUpdateMediator(Feed feed, MasterNewsItemCollection newsCollection, NewsItemStateCache stateCache, NewsServer client)
         {
             if (feed == null) throw new ArgumentNullException("feed");
             if (newsCollection == null) throw new ArgumentNullException("news");
+            if (stateCache == null) throw new ArgumentNullException("stateCache");
             if (client == null) throw new ArgumentNullException("client");
 
             this.feed = feed;
             this.newsCollection = newsCollection;
+            this.stateCache = stateCache;
             this.client = client;
         }
 
@@ -106,13 +109,16 @@ namespace Weave.User.BusinessObjects.v2
             foreach (var newsItem in updatedNews)
             {
                 newsItem.OriginalDownloadDateTime = now;
-                newsItem.Feed = feed;
             }
 
-            var mergedNews = news
-                .Union(updatedNews, newsItemTitleComparer)
+            var generator = new ExtendedNewsItemsMediator(stateCache);
+
+            var mergedNews = generator
+                .GetExtendedInfo(news.Union(updatedNews, newsItemTitleComparer))
+                .Select(SetFeedInfo)
                 .OrderByDescending(o => o.IsNew())
-                .ThenByDescending(o => o.UtcPublishDateTime)
+                .ThenByDescending(o => o.NewsItem.UtcPublishDateTime)
+                .Select(o => o.NewsItem)
                 .Take(TRIM)
                 .ToList();
 
@@ -130,6 +136,12 @@ namespace Weave.User.BusinessObjects.v2
             feed.LastModified = update.LastModified;
             feed.MostRecentNewsItemPubDate = update.MostRecentNewsItemPubDate;
             UpdateTeaserImage(news);
+        }
+
+        ExtendedNewsItem SetFeedInfo(ExtendedNewsItem extended)
+        {
+            extended.Feed = feed;
+            return extended;
         }
 
         void UpdateTeaserImage(IEnumerable<NewsItem> news)

@@ -29,6 +29,9 @@ namespace Weave.User.BusinessObjects.v2
 
                 var news = temp == null ? new List<ExtendedNewsItem>(0) : extendedNewsGenerator.GetExtendedInfo(temp).ToList();
 
+                foreach (var newsItem in news)
+                    newsItem.Feed = feed;
+
                 var extended = new ExtendedFeed(feed);
                 extended.News = news;
 

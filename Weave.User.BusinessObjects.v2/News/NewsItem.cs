@@ -10,7 +10,7 @@ namespace Weave.User.BusinessObjects.v2
         public bool FailedToParseUtcPublishDateTime { get; private set; }
 
         public Guid Id { get; set; }
-        public Feed Feed { get; set; }
+        public Guid FeedId { get; set; }
         public string Title { get; set; }
         public string Link { get; set; }
         public string ImageUrl { get; set; }

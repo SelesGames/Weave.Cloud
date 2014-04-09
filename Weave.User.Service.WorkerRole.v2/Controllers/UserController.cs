@@ -161,20 +161,27 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
         public async Task<Outgoing.UserInfo> GetUserInfo(Guid userId, bool refresh = false)
         {
             await VerifyUserId(userId);
+            await HydrateUser();
 
-            userBO.PreviousLoginTime = userBO.CurrentLoginTime;
-            userBO.CurrentLoginTime = DateTime.UtcNow;
+            User.PreviousLoginTime = User.CurrentLoginTime;
+            User.CurrentLoginTime = DateTime.UtcNow;
 
             if (refresh)
             {
-                await userBO.RefreshAllFeeds();
+                await All(
+                    HydrateAllNews(),
+                    HydrateStateCache()
+                );
+
+                var updater = new FeedsUpdateMediator(User.Feeds, AllNews, StateCache);
+                await updater.Refresh();
             }
 
-            userBO.DeleteOldNews();
-            SaveUser();
+            //userBO.DeleteOldNews();
+            await Save(User);
 
-            var outgoing = ConvertToOutgoing(userBO);
-            outgoing.LatestNews = userBO.GetLatestArticles().Select(ConvertToOutgoing).ToList();
+            var outgoing = ConvertToOutgoing(User);
+            //outgoing.LatestNews = userBO.GetLatestArticles().Select(ConvertToOutgoing).ToList();
 
             outgoing.DataStoreReadTime = readTime;
             outgoing.DataStoreWriteTime = writeTime;
@@ -245,7 +252,7 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
                 else if (entry == EntryType.ExtendRefresh)
                 {
                     feeds.ExtendEntry();
-                    var updater = new FeedsUpdateMediator(feeds, AllNews);
+                    var updater = new FeedsUpdateMediator(feeds, AllNews, StateCache);
                     await updater.Refresh();
                 }
 
@@ -313,7 +320,7 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
         {
             if (refresh)
             {
-                var updater = new FeedsUpdateMediator(feeds, AllNews);
+                var updater = new FeedsUpdateMediator(feeds, AllNews, StateCache);
                 await updater.Refresh();
 
                 Update(StateCache, AllNews);
@@ -716,7 +723,11 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
 
 
 
-
+        /// <summary>
+        /// We can definitely rewrite this to not have to depend on AllNews.
+        /// It would require storing the Category and FeedId for each NewsItem entry 
+        /// in the NewsItemStateCache
+        /// </summary>
         Outgoing.FeedsInfoList CreateOutgoingFeedsInfoList(IEnumerable<Feed> feeds, bool returnNested)
         {
             if (EnumerableEx.IsNullOrEmpty(feeds))

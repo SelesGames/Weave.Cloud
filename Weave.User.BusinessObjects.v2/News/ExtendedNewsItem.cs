@@ -18,17 +18,18 @@ namespace Weave.User.BusinessObjects.v2
 
         public NewsItem NewsItem { get { return newsItem; } }
 
+        public Feed Feed { get; set; }
         public bool IsFavorite { get; set; }
         public bool HasBeenViewed { get; set; }
 
         public bool IsNew()
         {
-            return !HasBeenViewed && newsItem.OriginalDownloadDateTime > newsItem.Feed.PreviousEntrance;
+            return !HasBeenViewed && newsItem.OriginalDownloadDateTime > Feed.PreviousEntrance;
         }
 
         public bool IsCountedAsNew()
         {
-            return !HasBeenViewed && newsItem.OriginalDownloadDateTime > newsItem.Feed.MostRecentEntrance;
+            return !HasBeenViewed && newsItem.OriginalDownloadDateTime > Feed.MostRecentEntrance;
         }
     }
 }
