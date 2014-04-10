@@ -40,7 +40,7 @@ namespace Weave.User.Service.Converters.v2
             return new Outgoing.NewsItem
             {
                 Id = o.Id,
-                FeedId = o.Feed.Id,
+                FeedId = o.FeedId,
                 Title = o.Title,
                 Link = o.Link,
                 ImageUrl = o.ImageUrl,

@@ -6,6 +6,8 @@ namespace Weave.User.BusinessObjects.v2
 {
     public class MasterNewsItemCollection : Dictionary<Guid, IEnumerable<NewsItem>>
     {
+        public MasterNewsItemCollection() { }
+
         public MasterNewsItemCollection(IEnumerable<NewsItem> news)
         {
             if (news == null) throw new ArgumentNullException("news");

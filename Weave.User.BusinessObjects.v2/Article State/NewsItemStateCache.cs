@@ -7,6 +7,8 @@ namespace Weave.User.BusinessObjects.v2
     {
         Weave.User.DataStore.v2.NewsItemStateCache cache;
 
+        public NewsItemStateCache() : this(new Weave.User.DataStore.v2.NewsItemStateCache()) { }
+
         public NewsItemStateCache(Weave.User.DataStore.v2.NewsItemStateCache cache)
         {
             this.cache = cache;

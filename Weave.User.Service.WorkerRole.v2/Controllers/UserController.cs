@@ -1,5 +1,4 @@
 ﻿using Microsoft.WindowsAzure.Storage;
-using SelesGames.Common;
 using SelesGames.WebApi;
 using System;
 using System.Collections.Generic;
@@ -8,7 +7,6 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Weave.Article.Service.Contracts;
-using Weave.User.BusinessObjects;
 using Weave.User.BusinessObjects.v2;
 //using Weave.User.Service.Cache;
 using Weave.User.Service.Contracts;
@@ -102,6 +100,8 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
 
             incomingUser = incomingUser ?? new Incoming.UserInfo();
 
+            UserInfo user;
+
             if (Guid.Empty == incomingUser.Id)
             {
                 isIdEmpty = true;
@@ -114,8 +114,8 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
 
                 try
                 {
-                    userBO = await userRepo.Get(incomingUser.Id);
-                    if (userBO != null)
+                    user = await GetUser();//.Get(incomingUser.Id);
+                    if (user != null)
                         doesUserAlreadyExist = true;
                 }
                 catch (StorageException)
@@ -138,10 +138,14 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
                 throw ResponseHelper.CreateResponseException(HttpStatusCode.BadRequest, "A user with that Id already exists");
             }
 
-            userBO = ConvertToBusinessObject(incomingUser);
-            await userBO.RefreshAllFeeds();
-            userRepo.Save(userBO.Id, userBO);
-            var outgoing = ConvertToOutgoing(userBO);
+            user = ConvertToBusinessObject(incomingUser);
+
+            var updater = new FeedsUpdateMediator(user.Feeds, new MasterNewsItemCollection(), new NewsItemStateCache());
+            await updater.Refresh();
+
+            await Save(user);
+
+            var outgoing = ConvertToOutgoing(user);
 
             outgoing.DataStoreReadTime = readTime;
             outgoing.DataStoreWriteTime = writeTime;
@@ -792,9 +796,9 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
             };
         }
 
-        Weave.Article.Service.DTOs.ServerIncoming.SavedNewsItem ConvertToArticleService(NewsItem newsItem)
+        Weave.Article.Service.DTOs.ServerIncoming.SavedNewsItem ConvertToArticleService(ExtendedNewsItem newsItem)
         {
-            return newsItem.Convert<NewsItem, Weave.Article.Service.DTOs.ServerIncoming.SavedNewsItem>(Converters.Converters.Instance);
+            return Converters.Converters.Instance.Convert(newsItem);
         }
 
         #endregion

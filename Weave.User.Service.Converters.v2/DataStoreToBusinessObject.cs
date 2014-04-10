@@ -58,8 +58,7 @@ namespace Weave.User.Service.Converters.v2
             return new NewsItem
             {
                 Id = o.Id,
-                //FeedId = o.FeedId,
-                Feed = new Feed { Id = o.FeedId },
+                FeedId = o.FeedId,
                 Title = o.Title,
                 Link = o.Link,
                 ImageUrl = o.ImageUrl,
