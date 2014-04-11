@@ -118,6 +118,10 @@
       <Project>{2f1a280d-ee75-4dc1-a36c-f8e5488e3260}</Project>
       <Name>RssAggregator.DTOs</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Weave.User.BusinessObjects.v2.Repositories\Weave.User.BusinessObjects.v2.Repositories.csproj">
+      <Project>{9013b4a8-81b5-4e15-a24c-02ea1d12be75}</Project>
+      <Name>Weave.User.BusinessObjects.v2.Repositories</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Weave.User.BusinessObjects.v2\Weave.User.BusinessObjects.v2.csproj">
       <Project>{d9503bab-8efb-45ad-8c4a-ce0b3586f718}</Project>
       <Name>Weave.User.BusinessObjects.v2</Name>

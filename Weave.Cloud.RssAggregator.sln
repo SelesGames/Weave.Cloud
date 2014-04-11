@@ -207,6 +207,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.User.Service.Converte
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "currently unused paging stuff", "currently unused paging stuff", "{88EBA72B-493B-4360-BA0C-8ACF9B201886}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.User.BusinessObjects.v2.Repositories", "Weave.User.BusinessObjects.v2.Repositories\Weave.User.BusinessObjects.v2.Repositories.csproj", "{9013B4A8-81B5-4E15-A24C-02EA1D12BE75}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1363,6 +1365,20 @@ Global
 		{15370B3D-B219-429D-BD70-3BD650241ADD}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{15370B3D-B219-429D-BD70-3BD650241ADD}.Release|x64.ActiveCfg = Release|Any CPU
 		{15370B3D-B219-429D-BD70-3BD650241ADD}.Release|x86.ActiveCfg = Release|Any CPU
+		{9013B4A8-81B5-4E15-A24C-02EA1D12BE75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9013B4A8-81B5-4E15-A24C-02EA1D12BE75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9013B4A8-81B5-4E15-A24C-02EA1D12BE75}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{9013B4A8-81B5-4E15-A24C-02EA1D12BE75}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{9013B4A8-81B5-4E15-A24C-02EA1D12BE75}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{9013B4A8-81B5-4E15-A24C-02EA1D12BE75}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9013B4A8-81B5-4E15-A24C-02EA1D12BE75}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9013B4A8-81B5-4E15-A24C-02EA1D12BE75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9013B4A8-81B5-4E15-A24C-02EA1D12BE75}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9013B4A8-81B5-4E15-A24C-02EA1D12BE75}.Release|ARM.ActiveCfg = Release|Any CPU
+		{9013B4A8-81B5-4E15-A24C-02EA1D12BE75}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{9013B4A8-81B5-4E15-A24C-02EA1D12BE75}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{9013B4A8-81B5-4E15-A24C-02EA1D12BE75}.Release|x64.ActiveCfg = Release|Any CPU
+		{9013B4A8-81B5-4E15-A24C-02EA1D12BE75}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1458,5 +1474,6 @@ Global
 		{7C116EF0-D551-4D63-94D9-6E610FFFB215} = {DF099DAE-E0FD-4999-851D-B6674A94FCFA}
 		{15370B3D-B219-429D-BD70-3BD650241ADD} = {DF099DAE-E0FD-4999-851D-B6674A94FCFA}
 		{88EBA72B-493B-4360-BA0C-8ACF9B201886} = {DF099DAE-E0FD-4999-851D-B6674A94FCFA}
+		{9013B4A8-81B5-4E15-A24C-02EA1D12BE75} = {DF099DAE-E0FD-4999-851D-B6674A94FCFA}
 	EndGlobalSection
 EndGlobal
