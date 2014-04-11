@@ -28,7 +28,6 @@
     <Feed Name="VentureBeat">http://feeds.venturebeat.com/VentureBeat</Feed>
     <Feed Name="Infoq"></Feed>
     <Feed Name="Crunchyroll"></Feed>
-    <Feed Name="The Brothers Brick">http://feeds.feedburner.com/TheBrothersBrick</Feed>
     <Feed Name="Brickd">http://www.brickd.com/rss</Feed>
     <Feed Name="The Brick Blogger">http://feeds.feedburner.com/thebrickblogger</Feed>
     <Feed Name="iFanboy" in="mu">http://feeds.feedburner.com/ifanboy</Feed>
@@ -389,6 +388,7 @@
     <Feed Name="All About Windows Phone" in="mu">http://rss.allaboutwindowsphone.com/aawp-feed-full-all.xml</Feed>
     <Feed Name="BGR | WP" IconUrl="http://weave.blob.core.windows.net/icons/BGR-WP.png">http://www.bgr.com/tag/windows-phone/feed</Feed>
     <Feed Name="Engadget | WP" CorrectedUrl="http://www.engadget.com/tag/windowsphone/rss-full.xml" IconUrl="http://weave.blob.core.windows.net/icons/Engadget-WP.png">http://www.engadget.com/tag/windowsphone/rss.xml</Feed>
+    <Feed Name="MetroAppSauce">http://metroappsauce.com/feed/</Feed>
     <Feed Name="Mobility Digest" IconUrl="http://weave.blob.core.windows.net/icons/Mobility Digest.png">http://mobilitydigest.com/category/windowsphone/feed</Feed>
     <Feed Name="Nokia Conversations" IconUrl="http://weave.blob.core.windows.net/icons/Nokia Conversations.png">http://feeds.feedburner.com/NokiaConversations-Posts</Feed>
     <Feed Name="PhoneArena" ViewType="ie" IconUrl="http://weave.blob.core.windows.net/icons/PhoneArena.png">http://www.phonearena.com/feed/windows/news</Feed>
