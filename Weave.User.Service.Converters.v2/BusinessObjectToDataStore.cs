@@ -43,6 +43,8 @@ namespace Weave.User.Service.Converters.v2
                 PreviousEntrance = o.PreviousEntrance,
                 MostRecentEntrance = o.MostRecentEntrance,
                 ArticleViewingType = (Store.ArticleViewingType)o.ArticleViewingType,
+                TeaserImageUrl = o.TeaserImageUrl,
+                NewsItemIds = o.NewsItemIds,
             };
         }
 

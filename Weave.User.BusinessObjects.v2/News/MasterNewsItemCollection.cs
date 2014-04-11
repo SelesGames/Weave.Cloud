@@ -10,11 +10,12 @@ namespace Weave.User.BusinessObjects.v2
 
         public MasterNewsItemCollection(IEnumerable<NewsItem> news)
         {
-            if (news == null) throw new ArgumentNullException("news");
-
-            foreach (var group in news.GroupBy(o => o.Id))
+            if (news != null)
             {
-                Add(group.Key, group);
+                foreach (var group in news.GroupBy(o => o.Id))
+                {
+                    Add(group.Key, group);
+                }
             }
         }
 

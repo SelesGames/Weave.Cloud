@@ -1,17 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using Store = Weave.User.DataStore.v2;
 
 namespace Weave.User.BusinessObjects.v2
 {
     public class NewsItemStateCache
     {
-        Weave.User.DataStore.v2.NewsItemStateCache cache;
+        Store.NewsItemStateCache cache;
 
-        public NewsItemStateCache() : this(new Weave.User.DataStore.v2.NewsItemStateCache()) { }
+        public NewsItemStateCache() : this(new Store.NewsItemStateCache()) { }
 
-        public NewsItemStateCache(Weave.User.DataStore.v2.NewsItemStateCache cache)
+        public NewsItemStateCache(Store.NewsItemStateCache cache)
         {
-            this.cache = cache;
+            this.cache = cache ?? new Store.NewsItemStateCache();
+        }
+
+        public Guid UserId { get; set; }
+
+        public Store.NewsItemStateCache Inner
+        {
+            get { return cache; }
         }
 
         public IEnumerable<NewsItemState> MatchingIds(IEnumerable<Guid> ids)
@@ -30,7 +38,7 @@ namespace Weave.User.BusinessObjects.v2
 
             state = new NewsItemState();
 
-            DataStore.v2.NewsItemState temp;
+            Store.NewsItemState temp;
             if (cache.TryGetValue(key, out temp))
             {
                 state.HasBeenViewed = temp.HasBeenViewed;

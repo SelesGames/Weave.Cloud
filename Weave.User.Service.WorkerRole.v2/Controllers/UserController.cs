@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Weave.Article.Service.Contracts;
 using Weave.User.BusinessObjects.v2;
+using Weave.User.BusinessObjects.v2.Repositories;
 //using Weave.User.Service.Cache;
 using Weave.User.Service.Contracts;
 using Weave.User.Service.Converters.v2;
@@ -19,27 +20,29 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
 {
     public class UserController : ApiController, IWeaveUserService
     {
-        Guid userId;
-        TimeSpan readTime = TimeSpan.Zero, writeTime = TimeSpan.Zero;
+        readonly UserInfoRepository repo;
         readonly IWeaveArticleService articleServiceClient;
 
-        UserInfo __XX__user;
-        MasterNewsItemCollection __XX__allNews;
-        NewsItemStateCache __XX__stateCache;
+        Guid userId;
+        TimeSpan readTime = TimeSpan.Zero, writeTime = TimeSpan.Zero;
+
+        UserInfo user;
+        MasterNewsItemCollection allNews;
+        NewsItemStateCache stateCache;
 
 
 
 
         #region Private member Properties that will throw exception is accessed before being initialized (i.e. hydrated)
 
-        UserInfo User
+        new UserInfo User
         {
             get
             {
-                if (__XX__user == null)
+                if (user == null)
                     throw new Exception("you must hydrate user before using it");
 
-                return __XX__user;
+                return user;
             }
         }
 
@@ -47,10 +50,10 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
         {
             get
             {
-                if (__XX__allNews == null)
+                if (allNews == null)
                     throw new Exception("you must hydrate allNews before using it");
 
-                return __XX__allNews;
+                return allNews;
             }
         }
 
@@ -58,10 +61,10 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
         {
             get
             {
-                if (__XX__stateCache == null)
+                if (stateCache == null)
                     throw new Exception("you must hydrate stateCache before using it");
 
-                return __XX__stateCache;
+                return stateCache;
             }
         }
 
@@ -72,8 +75,9 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
 
         #region Constructor
 
-        public UserController(IWeaveArticleService articleServiceClient)
+        public UserController(UserInfoRepository repo, IWeaveArticleService articleServiceClient)
         {
+            this.repo = repo;
             this.articleServiceClient = articleServiceClient;
         }
 
@@ -114,7 +118,8 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
 
                 try
                 {
-                    user = await GetUser();//.Get(incomingUser.Id);
+                    this.userId = incomingUser.Id;
+                    user = await GetUser();
                     if (user != null)
                         doesUserAlreadyExist = true;
                 }
@@ -828,7 +833,7 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
             if (User != null)
                 return;
 
-            __XX__user = await GetUser();
+            user = await GetUser();
         }
 
         async Task HydrateAllNews()
@@ -836,7 +841,7 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
             if (AllNews != null)
                 return;
 
-            __XX__allNews = await GetAllNews();
+            allNews = await GetAllNews();
         }
 
         async Task HydrateStateCache()
@@ -844,22 +849,22 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
             if (StateCache != null)
                 return;
 
-            __XX__stateCache = await GetNewsItemStateCache();
+            stateCache = await GetNewsItemStateCache();
         }
 
         Task<UserInfo> GetUser()
         {
-            throw new NotImplementedException();
+            return repo.GetUser(userId);
         }
 
         Task<MasterNewsItemCollection> GetAllNews()
         {
-            throw new NotImplementedException();
+            return repo.GetAllNews(userId);
         }
 
         Task<NewsItemStateCache> GetNewsItemStateCache()
         {
-            throw new NotImplementedException();
+            return repo.GetNewsItemStateCache(userId);
         }
 
         void Update(NewsItemStateCache cache, MasterNewsItemCollection allnews)
