@@ -47,7 +47,6 @@
     <Compile Include="Extensions\FeedExtensions.cs" />
     <Compile Include="FeedsUpdateMediator.cs" />
     <Compile Include="FeedUpdateMediator.cs" />
-    <Compile Include="GetNewsMediator.cs" />
     <Compile Include="News\ExtendedNewsItem.cs" />
     <Compile Include="News\Image.cs" />
     <Compile Include="News\MasterNewsItemCollection.cs" />
