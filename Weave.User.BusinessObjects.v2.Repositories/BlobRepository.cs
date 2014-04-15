@@ -13,7 +13,7 @@ namespace Weave.User.BusinessObjects.v2.Repositories
 
         const string USER_CONTAINER = "user";
         const string NEWS_CONTAINER = "news";
-        const string NEWS_STATE_CONTAINER = "newsState";
+        const string NEWS_STATE_CONTAINER = "newsstate";
 
 
         public BlobRepository(string account, string key)
