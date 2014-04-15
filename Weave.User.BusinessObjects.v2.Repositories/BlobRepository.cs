@@ -72,7 +72,7 @@ namespace Weave.User.BusinessObjects.v2.Repositories
 
         public Task Save(MasterNewsItemCollection allNews)
         {
-            var key = GenerateKeyFromUserId(allNews.UserId;
+            var key = GenerateKeyFromUserId(allNews.UserId);
             var store = Convert(allNews);
             var client = CreateNewsClient();
             return client.Save(NEWS_CONTAINER, key, store);
