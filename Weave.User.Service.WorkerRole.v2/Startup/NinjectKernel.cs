@@ -14,7 +14,7 @@ namespace Weave.User.Service.WorkerRole.v2.Startup
             var storageKey =
 "JO5kSIOr+r3NdM45gfzb1szHe/hPx6f+MS7YOWogr8VDqSikiIP//OMUbOxCCMTFTcJgldVhl+Y0zP9WpvQV5g==";
 
-            var repo = new UserInfoRepository(storageAccount, storageKey);
+            var repo = new BlobRepository(storageAccount, storageKey);
 
             Bind<IUserInfoRepository>().ToConstant(repo).InSingletonScope();
             Bind<IWeaveArticleService>().To<Article.Service.Client.ServiceClient>().InSingletonScope();

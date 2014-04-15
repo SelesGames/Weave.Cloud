@@ -9,7 +9,6 @@ using System.Web.Http;
 using Weave.Article.Service.Contracts;
 using Weave.User.BusinessObjects.v2;
 using Weave.User.BusinessObjects.v2.Repositories;
-//using Weave.User.Service.Cache;
 using Weave.User.Service.Contracts;
 using Weave.User.Service.Converters.v2;
 using Weave.User.Service.DTOs;
