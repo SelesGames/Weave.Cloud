@@ -108,6 +108,7 @@ namespace Weave.User.BusinessObjects.v2
 
             foreach (var newsItem in updatedNews)
             {
+                newsItem.FeedId = feed.Id;
                 newsItem.OriginalDownloadDateTime = now;
             }
 

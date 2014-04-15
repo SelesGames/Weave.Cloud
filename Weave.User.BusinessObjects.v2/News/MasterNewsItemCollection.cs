@@ -12,7 +12,8 @@ namespace Weave.User.BusinessObjects.v2
         {
             if (news != null)
             {
-                foreach (var group in news.GroupBy(o => o.Id))
+                var groups = news.GroupBy(o => o.FeedId);
+                foreach (var group in groups)
                 {
                     Add(group.Key, group);
                 }

@@ -28,6 +28,14 @@ namespace Weave.User.BusinessObjects.v2
                     extended.HasBeenViewed = state.HasBeenViewed;
                     yield return extended;
                 }
+                else
+                {
+                    yield return new ExtendedNewsItem(newsItem)
+                    {
+                        IsFavorite = false,
+                        HasBeenViewed = false,
+                    };
+                }
             }
         }
     }

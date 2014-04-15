@@ -36,15 +36,17 @@ namespace Weave.User.BusinessObjects.v2
         {
             var key = CreateKey(id);
 
-            state = new NewsItemState();
-
             Store.NewsItemState temp;
             if (cache.TryGetValue(key, out temp))
             {
-                state.HasBeenViewed = temp.HasBeenViewed;
-                state.IsFavorite = temp.IsFavorite;
+                state = new NewsItemState(temp);
+                state.Key = key;
+                //state.HasBeenViewed = temp.HasBeenViewed;
+                //state.IsFavorite = temp.IsFavorite;
                 return true;
             }
+
+            state = null;
             return false;
         }
 
@@ -52,16 +54,37 @@ namespace Weave.User.BusinessObjects.v2
         {
             var key = CreateKey(id);
             var temp = cache[key];
-            return new NewsItemState
+            return new NewsItemState(temp)
             {
-                HasBeenViewed = temp.HasBeenViewed,
-                IsFavorite = temp.IsFavorite,
+                Key = key,
+                //HasBeenViewed = temp.HasBeenViewed,
+                //IsFavorite = temp.IsFavorite,
             };
         }
 
         string CreateKey(Guid guid)
         {
             return guid.ToString("N");
+        }
+
+        public bool ContainsKey(Guid id)
+        {
+            var key = CreateKey(id);
+            return cache.ContainsKey(key);
+        }
+
+        public void Add(Guid id, NewsItemState state)
+        {
+            Add(CreateKey(id), state);
+        }
+
+        public void Add(string key, NewsItemState state)
+        {
+            cache.Add(key, new Store.NewsItemState
+            {
+                HasBeenViewed = state.HasBeenViewed,
+                IsFavorite = state.IsFavorite,
+            });
         }
     }
 }

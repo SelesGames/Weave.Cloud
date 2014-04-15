@@ -144,10 +144,20 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
 
             user = ConvertToBusinessObject(incomingUser);
 
-            var updater = new FeedsUpdateMediator(user.Feeds, new MasterNewsItemCollection(), new NewsItemStateCache());
+            allNews = new MasterNewsItemCollection { UserId = user.Id };
+            stateCache = new NewsItemStateCache { UserId = user.Id };
+
+            var updater = new FeedsUpdateMediator(user.Feeds, allNews, stateCache);
             await updater.Refresh();
 
-            await Save(user);
+            CreateNewStateCache();
+
+            await All(
+                Save(user),
+                Save(allNews),
+                Save(stateCache)
+            );
+
 
             var outgoing = ConvertToOutgoing(user);
 
@@ -269,7 +279,13 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
                 var cleaner = new NewsCleanupMediator(User, AllNews, StateCache);
                 cleaner.DeleteOldNews();
 
-                await Save(User);
+                CreateNewStateCache();
+
+                await All(
+                    Save(User),
+                    Save(AllNews),
+                    Save(StateCache)
+                );
             }
 
             var list = CreateNewsListFromSubset(entry, skip, take, type, requireImage, feeds);
@@ -335,11 +351,13 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
                 var updater = new FeedsUpdateMediator(feeds, AllNews, StateCache);
                 await updater.Refresh();
 
-                Update(StateCache, AllNews);
+                CreateNewStateCache();
 
-                await Save(StateCache);
-                await Save(AllNews);
-                await Save(User);
+                await All(
+                    Save(User),
+                    Save(AllNews),
+                    Save(StateCache)
+                );
             }
 
             return CreateOutgoingFeedsInfoList(feeds, isNested);
@@ -863,11 +881,6 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
             return repo.GetNewsItemStateCache(userId);
         }
 
-        void Update(NewsItemStateCache cache, MasterNewsItemCollection allnews)
-        {
-            throw new NotImplementedException();
-        }
-
         #endregion
 
 
@@ -882,14 +895,39 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
 
         Task Save(NewsItemStateCache newsItemStateCache)
         {
-            return repo.Save(user);
+            return repo.Save(newsItemStateCache);
         }
 
         Task Save(MasterNewsItemCollection allnews)
         {
-            return repo.Save(user);
+            return repo.Save(allnews);
         }
 
         #endregion
+
+
+
+
+        void CreateNewStateCache()
+        {
+            var news = AllNews.Values.SelectMany(o => o).ToList();
+            var matched = StateCache.MatchingIds(news.Select(o => o.Id));
+            var newCache = new NewsItemStateCache { UserId = StateCache.UserId };
+
+            foreach (var match in matched)
+            {
+                newCache.Add(match.Key, match);
+            }
+            
+            foreach (var item in news)
+            {
+                if (!newCache.ContainsKey(item.Id))
+                {
+                    newCache.Add(item.Id, new NewsItemState());
+                }
+            }
+
+            stateCache = newCache;
+        }
     }
 }
