@@ -16,6 +16,8 @@ namespace Weave.User.Service.WorkerRole.v2.Startup
 
             var repo = new BlobRepository(storageAccount, storageKey);
 
+            repo.CreateContainers().Wait();
+
             Bind<IUserInfoRepository>().ToConstant(repo).InSingletonScope();
             Bind<IWeaveArticleService>().To<Article.Service.Client.ServiceClient>().InSingletonScope();
         }

@@ -1,9 +1,11 @@
 ﻿using Common.Azure.SmartBlobClient;
+using Common.Azure.Blob;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Converters = Weave.User.Service.Converters.v2;
 using Store = Weave.User.DataStore.v2;
+using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace Weave.User.BusinessObjects.v2.Repositories
 {
@@ -20,6 +22,16 @@ namespace Weave.User.BusinessObjects.v2.Repositories
         {
             this.account = account;
             this.key = key;
+        }
+
+        public async Task CreateContainers()
+        {
+            var client = new SmartBlobClient(account, key, false);
+            var results = await Task.WhenAll(
+                client.CreateContainer(USER_CONTAINER, BlobContainerPublicAccessType.Blob),
+                client.CreateContainer(NEWS_CONTAINER, BlobContainerPublicAccessType.Blob),
+                client.CreateContainer(NEWS_STATE_CONTAINER, BlobContainerPublicAccessType.Blob)
+            );
         }
 
 
