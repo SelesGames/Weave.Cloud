@@ -652,9 +652,17 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
         /// <summary>
         /// Encapsulates Task.Whenall just to make it a bit prettier
         /// </summary>
-        Task All(params Task[] tasks)
+        async Task All(params Task[] tasks)
         {
-            return Task.WhenAll(tasks);
+            try
+            {
+                await Task.WhenAll(tasks);
+                DebugEx.WriteLine(tasks);
+            }
+            catch(Exception ex)
+            {
+                throw ResponseHelper.CreateResponseException(HttpStatusCode.NotFound, ex.Message);
+            }
         }
 
         //void SaveUser()
@@ -818,7 +826,7 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
 
         async Task HydrateUser()
         {
-            if (User != null)
+            if (user != null)
                 return;
 
             user = await GetUser();
@@ -826,7 +834,7 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
 
         async Task HydrateAllNews()
         {
-            if (AllNews != null)
+            if (allNews != null)
                 return;
 
             allNews = await GetAllNews();
@@ -834,7 +842,7 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
 
         async Task HydrateStateCache()
         {
-            if (StateCache != null)
+            if (stateCache != null)
                 return;
 
             stateCache = await GetNewsItemStateCache();
