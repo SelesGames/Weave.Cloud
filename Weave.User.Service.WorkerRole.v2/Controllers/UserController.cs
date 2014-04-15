@@ -20,7 +20,7 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
 {
     public class UserController : ApiController, IWeaveUserService
     {
-        readonly UserInfoRepository repo;
+        readonly IUserInfoRepository repo;
         readonly IWeaveArticleService articleServiceClient;
 
         Guid userId;
@@ -75,7 +75,7 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
 
         #region Constructor
 
-        public UserController(UserInfoRepository repo, IWeaveArticleService articleServiceClient)
+        public UserController(IUserInfoRepository repo, IWeaveArticleService articleServiceClient)
         {
             this.repo = repo;
             this.articleServiceClient = articleServiceClient;
@@ -170,23 +170,25 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
         public async Task<Outgoing.UserInfo> GetUserInfo(Guid userId, bool refresh = false)
         {
             await VerifyUserId(userId);
-            await HydrateUser();
+            await All(
+                HydrateUser(),
+                HydrateAllNews(),
+                HydrateStateCache()
+            );
 
             User.PreviousLoginTime = User.CurrentLoginTime;
             User.CurrentLoginTime = DateTime.UtcNow;
 
             if (refresh)
             {
-                await All(
-                    HydrateAllNews(),
-                    HydrateStateCache()
-                );
+
 
                 var updater = new FeedsUpdateMediator(User.Feeds, AllNews, StateCache);
                 await updater.Refresh();
             }
 
-            //userBO.DeleteOldNews();
+            var cleaner = new NewsCleanupMediator(User, AllNews, StateCache);
+            cleaner.DeleteOldNews();
             await Save(User);
 
             var outgoing = ConvertToOutgoing(User);
@@ -265,7 +267,9 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
                     await updater.Refresh();
                 }
 
-                //userBO.DeleteOldNews();
+                var cleaner = new NewsCleanupMediator(User, AllNews, StateCache);
+                cleaner.DeleteOldNews();
+
                 await Save(User);
             }
 
@@ -811,22 +815,7 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
 
 
 
-        #region not yet implemented, recovery/hydration of necessary fields
-
-        Task Save(UserInfo user)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task Save(NewsItemStateCache newsItemStateCache)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task Save(MasterNewsItemCollection allnews)
-        {
-            throw new NotImplementedException();
-        }
+        #region Recovery/hydration of necessary fields
 
         async Task HydrateUser()
         {
@@ -870,6 +859,28 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
         void Update(NewsItemStateCache cache, MasterNewsItemCollection allnews)
         {
             throw new NotImplementedException();
+        }
+
+        #endregion
+
+
+
+
+        #region Saves
+
+        Task Save(UserInfo user)
+        {
+            return repo.Save(user);
+        }
+
+        Task Save(NewsItemStateCache newsItemStateCache)
+        {
+            return repo.Save(user);
+        }
+
+        Task Save(MasterNewsItemCollection allnews)
+        {
+            return repo.Save(user);
         }
 
         #endregion

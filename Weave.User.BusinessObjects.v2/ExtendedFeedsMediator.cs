@@ -27,7 +27,10 @@ namespace Weave.User.BusinessObjects.v2
                 IEnumerable<NewsItem> temp;
                 allNews.TryGetValue(feed.Id, out temp);
 
-                var news = temp == null ? new List<ExtendedNewsItem>(0) : extendedNewsGenerator.GetExtendedInfo(temp).ToList();
+                var news = temp == null ? 
+                    new List<ExtendedNewsItem>(0) 
+                    : 
+                    extendedNewsGenerator.GetExtendedInfo(temp).ToList();
 
                 foreach (var newsItem in news)
                     newsItem.Feed = feed;

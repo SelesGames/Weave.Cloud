@@ -7,7 +7,7 @@ using Store = Weave.User.DataStore.v2;
 
 namespace Weave.User.BusinessObjects.v2.Repositories
 {
-    public class UserInfoRepository
+    public class UserInfoRepository : IUserInfoRepository
     {
         string account, key;
 

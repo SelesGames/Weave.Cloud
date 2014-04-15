@@ -38,6 +38,9 @@
   <ItemGroup>
     <Compile Include="Article State\NewsItemState.cs" />
     <Compile Include="Article State\NewsItemStateCache.cs" />
+    <Compile Include="ArticleDeletionTimes\ArticleDeleteTime.cs" />
+    <Compile Include="ArticleDeletionTimes\ArticleDeleteTimesForMarkedRead.cs" />
+    <Compile Include="ArticleDeletionTimes\ArticleDeleteTimesForUnread.cs" />
     <Compile Include="Comparers\NewsItemIdComparer.cs" />
     <Compile Include="Comparers\NewsItemTitleComparer.cs" />
     <Compile Include="ExtendedFeedsMediator.cs" />
@@ -47,6 +50,7 @@
     <Compile Include="Extensions\FeedExtensions.cs" />
     <Compile Include="FeedsUpdateMediator.cs" />
     <Compile Include="FeedUpdateMediator.cs" />
+    <Compile Include="NewsCleanupMediator.cs" />
     <Compile Include="News\ExtendedNewsItem.cs" />
     <Compile Include="News\Image.cs" />
     <Compile Include="News\MasterNewsItemCollection.cs" />
