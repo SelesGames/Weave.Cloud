@@ -64,7 +64,7 @@ namespace WeaveFeedTester
     {
         ArticleFormatter formatter = new ArticleFormatter();
 
-        public string GetFormattedHtml(ReadabilityResult result, string link, string articleTitle, string linkColor, string feedName)
+        public string GetFormattedHtml(MobilizerResult result, string link, string articleTitle, string linkColor, string feedName)
         {
             var domainUrl = result.domain;
             var domain = !string.IsNullOrEmpty(feedName) ? feedName : result.domain;

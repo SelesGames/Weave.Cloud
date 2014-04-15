@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Weave.Readability;
+using Weave.Mobilizer.Cache.Readability;
 
 namespace WeaveFeedTester
 {
@@ -24,7 +24,7 @@ namespace WeaveFeedTester
         public async Task LoadFormattedWebView()
         {
             var rb = new ReadabilityClient("a142c0cc575c6760d5c46247f8aa6aabbacb6fd8");
-            var rresult = await rb.GetAsync(Link);//, Title, "red", Source);
+            var rresult = await rb.Mobilize(Link);//, Title, "red", Source);
             var rformat = new ReadabilityFormatter();
             var html = rformat.GetFormattedHtml(rresult, Link, Title, "red", FormattedSource);
             MobilizedHtml = html;
