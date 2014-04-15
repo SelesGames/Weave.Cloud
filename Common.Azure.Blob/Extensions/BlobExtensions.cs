@@ -56,7 +56,7 @@ namespace Common.Azure.Blob
             var blob = client.GetBlobHandle(container, blobName);
 
             var ms = new MemoryStream();
-            await blob.DownloadToStreamAsync(ms, accessCondition, options, operationContext);
+            await blob.DownloadToStreamAsync(ms, accessCondition, options, operationContext).ConfigureAwait(false);
             ms.Position = 0;
 
             if ("gzip".Equals(blob.Properties.ContentEncoding, StringComparison.OrdinalIgnoreCase))
@@ -67,7 +67,7 @@ namespace Common.Azure.Blob
                 //if (magicNumber.Equals("1F-8B-08"))
                 //{
                 ms.Dispose();
-                var streamContent = await byteArray.DecompressToStream();
+                var streamContent = await byteArray.DecompressToStream().ConfigureAwait(false);
                 return BlobContent.Create(blob, streamContent);
                 //}
             }
@@ -136,7 +136,6 @@ namespace Common.Azure.Blob
             var blobProperties = new BlobProperties
             {
                 CacheControl = properties.CacheControl,
-                ContentDisposition = properties.ContentDisposition,
                 //ContentEncoding = properties.ContentEncoding,
                 ContentEncoding = (properties.UseCompression.HasValue && properties.UseCompression.Value) ? "gzip" : null,
                 ContentLanguage = properties.ContentLanguage,
@@ -202,7 +201,6 @@ namespace Common.Azure.Blob
                 return;
 
             destination.CacheControl = source.CacheControl;
-            destination.ContentDisposition = source.ContentDisposition;
             destination.ContentEncoding = source.ContentEncoding;
             destination.ContentLanguage = source.ContentLanguage;
             destination.ContentMD5 = source.ContentMD5;
