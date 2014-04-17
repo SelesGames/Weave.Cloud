@@ -267,6 +267,8 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
                 if (entry == EntryType.Mark)
                 {
                     feeds.MarkEntry();
+
+                    await All(Save(User));
                 }
 
                 else if (entry == EntryType.ExtendRefresh)
@@ -274,18 +276,15 @@ namespace Weave.User.Service.WorkerRole.v2.Controllers
                     feeds.ExtendEntry();
                     var updater = new FeedsUpdateMediator(feeds, AllNews, StateCache);
                     await updater.Refresh();
+
+                    CreateNewStateCache();
+
+                    await All(
+                        Save(User),
+                        Save(AllNews),
+                        Save(StateCache)
+                    );
                 }
-
-                var cleaner = new NewsCleanupMediator(User, AllNews, StateCache);
-                cleaner.DeleteOldNews();
-
-                CreateNewStateCache();
-
-                await All(
-                    Save(User),
-                    Save(AllNews),
-                    Save(StateCache)
-                );
             }
 
             var list = CreateNewsListFromSubset(entry, skip, take, type, requireImage, feeds);
