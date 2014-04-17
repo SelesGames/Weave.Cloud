@@ -3,7 +3,7 @@
 namespace Weave.User.DataStore.v2
 {
     [DataContract]
-    public struct NewsItemState
+    public class NewsItemState
     {
         [DataMember(Order= 1)]  public bool IsFavorite { get; set; }
         [DataMember(Order= 2)]  public bool HasBeenViewed { get; set; }
