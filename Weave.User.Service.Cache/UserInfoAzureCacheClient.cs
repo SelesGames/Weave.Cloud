@@ -9,8 +9,8 @@ namespace Weave.User.Service.Cache
 {
     public class UserInfoAzureCacheClient
     {
-        readonly string CACHE_NAME = "user";
-        DataCache cache;
+        //readonly string CACHE_NAME = "user";
+        //DataCache cache;
         UserInfoBlobWriteQueue writeQueue;
         UserInfoBlobClient userInfoBlobClient;
         //AzureLocalCache cache;
@@ -20,11 +20,11 @@ namespace Weave.User.Service.Cache
             this.userInfoBlobClient = userInfoBlobClient;
 
             // Cache client configured by settings in application configuration file.
-            var config = new DataCacheFactoryConfiguration();
-            config.SerializationProperties = 
-                new DataCacheSerializationProperties(DataCacheObjectSerializerType.CustomSerializer, new UserInfoCacheSerializer());
-            var cacheFactory = new DataCacheFactory(config);
-            cache = cacheFactory.GetCache(CACHE_NAME);
+            //var config = new DataCacheFactoryConfiguration();
+            //config.SerializationProperties = 
+            //    new DataCacheSerializationProperties(DataCacheObjectSerializerType.CustomSerializer, new UserInfoCacheSerializer());
+            //var cacheFactory = new DataCacheFactory(config);
+            //cache = cacheFactory.GetCache(CACHE_NAME);
             //this.cache = new AzureLocalCache(cache);
 
             //cache.AddCacheLevelBulkCallback(null);
@@ -42,47 +42,47 @@ namespace Weave.User.Service.Cache
 
         public async Task<UserInfo> Get(Guid userId)
         {
-            var key = userId.ToString();
+            //var key = userId.ToString();
 
-            object user;
+            //object user;
 
-            user = SafeCacheGet(key);
-            if (user != null && user is UserInfo)
-            {
-                return (UserInfo)user;
-            }
+            //user = SafeCacheGet(key);
+            //if (user != null && user is UserInfo)
+            //{
+            //    return (UserInfo)user;
+            //}
 
             // there was a cache miss if we get this far
 
             var x = await userInfoBlobClient.Get(userId);
 
-            cache.Put(key, x);
+            //cache.Put(key, x);
 
             return x;
         }
 
         public void Update(Guid userId, UserInfo user)
         {
-            var key = userId.ToString();
+            //var key = userId.ToString();
 
-            cache.Put(key, user);
+            //cache.Put(key, user);
             writeQueue.Add(user);
         }
 
-        object SafeCacheGet(string key)
-        {
-            object result = null;
+        //object SafeCacheGet(string key)
+        //{
+        //    object result = null;
 
-            try
-            {
-                result = cache.Get(key);
-            }
-            catch (Exception ex)
-            {
-                DebugEx.WriteLine(ex);
-            }
+        //    try
+        //    {
+        //        result = cache.Get(key);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        DebugEx.WriteLine(ex);
+        //    }
 
-            return result;
-        }
+        //    return result;
+        //}
     }
 }
