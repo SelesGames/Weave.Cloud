@@ -26,14 +26,14 @@ namespace Weave.Mobilizer.WorkerRole.Controllers
 
         public async Task<MobilizerResult> Get(string url, bool stripLeadImage = false)
         {
-            try
-            {
-                NewRelic.Api.Agent.NewRelic.AddCustomParameter("URL", url);
-            }
-            catch(Exception ex)
-            {
-                DebugEx.WriteLine(ex);
-            }
+            //try
+            //{
+            //    NewRelic.Api.Agent.NewRelic.AddCustomParameter("URL", url);
+            //}
+            //catch(Exception ex)
+            //{
+            //    DebugEx.WriteLine(ex);
+            //}
 
             var result = await cache.Get(UrlToFileName(url));
             return result;
