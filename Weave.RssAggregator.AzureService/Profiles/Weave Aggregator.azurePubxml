@@ -3,7 +3,7 @@
   <PropertyGroup>
     <AzureCredentials>{"ServiceManagementEndpoint":"https:\/\/management.core.windows.net\/","SubscriptionId":"b5d2112d-b481-4c78-a659-710a6df060c7"}</AzureCredentials>
     <AzureDeploymentLabel>Weave Aggregator</AzureDeploymentLabel>
-    <AzureSlot>Staging</AzureSlot>
+    <AzureSlot>Production</AzureSlot>
     <AzureEnableWebDeploy>False</AzureEnableWebDeploy>
     <AzureHostedServiceName>weave-aggregator</AzureHostedServiceName>
     <AzureHostedServiceLabel>weave-aggregator</AzureHostedServiceLabel>
@@ -11,8 +11,8 @@
     <AzureEnableProfiling>False</AzureEnableProfiling>
     <AzureServiceConfiguration>Cloud</AzureServiceConfiguration>
     <AzureSolutionConfiguration>Release</AzureSolutionConfiguration>
-    <AzureStorageAccountName>weave</AzureStorageAccountName>
-    <AzureStorageAccountLabel>weave</AzureStorageAccountLabel>
+    <AzureStorageAccountName>weaveuser2</AzureStorageAccountName>
+    <AzureStorageAccountLabel>weaveuser2</AzureStorageAccountLabel>
     <AzureAppendTimestampToDeploymentLabel>True</AzureAppendTimestampToDeploymentLabel>
     <AzureDeleteDeploymentOnFailure>False</AzureDeleteDeploymentOnFailure>
     <AzureDeploymentReplacementMethod>BlastUpgrade</AzureDeploymentReplacementMethod>
