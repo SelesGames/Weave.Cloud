@@ -58,12 +58,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceClients\NewsServer.cs" />
     <Compile Include="ServiceClients\ServiceClient.cs" />
+    <Compile Include="UserArticleIndex.cs" />
     <Compile Include="UserArticleStateExtendedMediator.cs" />
     <Compile Include="UserArticleStateMediator.cs" />
     <Compile Include="User\ArticleViewingType.cs" />
     <Compile Include="User\ExtendedFeed.cs" />
     <Compile Include="User\Feed.cs" />
     <Compile Include="User\FeedCollection.cs" />
+    <Compile Include="User\NewsItemIndex.cs" />
     <Compile Include="User\UserInfo.cs" />
   </ItemGroup>
   <ItemGroup>

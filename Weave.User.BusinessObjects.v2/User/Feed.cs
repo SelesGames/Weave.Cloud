@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Weave.User.BusinessObjects.v2
+namespace Weave.User.BusinessObjects.v2.User
 {
     public class Feed
     {
@@ -25,7 +25,7 @@ namespace Weave.User.BusinessObjects.v2
         public DateTime MostRecentEntrance { get; set; }
         public DateTime PreviousEntrance { get; set; }
 
-        public List<Guid> NewsItemIds { get; set; }
+        public List<NewsItemIndex> NewsItemIndices { get; set; }
 
         public void EnsureGuidIsSet()
         {
