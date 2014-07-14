@@ -15,6 +15,7 @@ namespace Common.Azure.Caching
         {
             this.cache = cache;
         }
+
         public Task<T> Get(string key)
         {
             var o = SafeCacheGet(key);
@@ -56,6 +57,16 @@ namespace Common.Azure.Caching
             catch { }
 
             return result;
+        }
+
+        object SafeCacheget(IEnumerable<string> keys)
+        {
+            object result = null;
+
+            try
+            {
+                result = cache.BulkGet()
+            }
         }
     }
 }

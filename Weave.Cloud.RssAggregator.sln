@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30324.0
+VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ninject.WebApi", "Ninject.WebApi\Ninject.WebApi.csproj", "{BE97F564-16F5-4D09-9218-CC65E89DF2AC}"
 EndProject
@@ -208,6 +208,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.User.BusinessObjects.v2.Repositories", "Weave.User.BusinessObjects.v2.Repositories\Weave.User.BusinessObjects.v2.Repositories.csproj", "{9013B4A8-81B5-4E15-A24C-02EA1D12BE75}"
 EndProject
 Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "Weave.User.Service.v2", "Weave.User.Service.v2\Weave.User.Service.v2.ccproj", "{06FE4EB1-A8D9-4029-AF22-2083AE9C59A7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Redis.Testing", "Redis.Testing\Redis.Testing.csproj", "{8DEC4293-98B8-49C2-BAC5-CEEA1AAF4D9E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.User.Service.Redis", "Weave.User.Service.Redis\Weave.User.Service.Redis.csproj", "{32C547A5-8C67-4886-95AB-DC73F9AF7673}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1379,6 +1383,34 @@ Global
 		{06FE4EB1-A8D9-4029-AF22-2083AE9C59A7}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{06FE4EB1-A8D9-4029-AF22-2083AE9C59A7}.Release|x64.ActiveCfg = Release|Any CPU
 		{06FE4EB1-A8D9-4029-AF22-2083AE9C59A7}.Release|x86.ActiveCfg = Release|Any CPU
+		{8DEC4293-98B8-49C2-BAC5-CEEA1AAF4D9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DEC4293-98B8-49C2-BAC5-CEEA1AAF4D9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DEC4293-98B8-49C2-BAC5-CEEA1AAF4D9E}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{8DEC4293-98B8-49C2-BAC5-CEEA1AAF4D9E}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{8DEC4293-98B8-49C2-BAC5-CEEA1AAF4D9E}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{8DEC4293-98B8-49C2-BAC5-CEEA1AAF4D9E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8DEC4293-98B8-49C2-BAC5-CEEA1AAF4D9E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8DEC4293-98B8-49C2-BAC5-CEEA1AAF4D9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DEC4293-98B8-49C2-BAC5-CEEA1AAF4D9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8DEC4293-98B8-49C2-BAC5-CEEA1AAF4D9E}.Release|ARM.ActiveCfg = Release|Any CPU
+		{8DEC4293-98B8-49C2-BAC5-CEEA1AAF4D9E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{8DEC4293-98B8-49C2-BAC5-CEEA1AAF4D9E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{8DEC4293-98B8-49C2-BAC5-CEEA1AAF4D9E}.Release|x64.ActiveCfg = Release|Any CPU
+		{8DEC4293-98B8-49C2-BAC5-CEEA1AAF4D9E}.Release|x86.ActiveCfg = Release|Any CPU
+		{32C547A5-8C67-4886-95AB-DC73F9AF7673}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32C547A5-8C67-4886-95AB-DC73F9AF7673}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32C547A5-8C67-4886-95AB-DC73F9AF7673}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{32C547A5-8C67-4886-95AB-DC73F9AF7673}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{32C547A5-8C67-4886-95AB-DC73F9AF7673}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{32C547A5-8C67-4886-95AB-DC73F9AF7673}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{32C547A5-8C67-4886-95AB-DC73F9AF7673}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{32C547A5-8C67-4886-95AB-DC73F9AF7673}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32C547A5-8C67-4886-95AB-DC73F9AF7673}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32C547A5-8C67-4886-95AB-DC73F9AF7673}.Release|ARM.ActiveCfg = Release|Any CPU
+		{32C547A5-8C67-4886-95AB-DC73F9AF7673}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{32C547A5-8C67-4886-95AB-DC73F9AF7673}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{32C547A5-8C67-4886-95AB-DC73F9AF7673}.Release|x64.ActiveCfg = Release|Any CPU
+		{32C547A5-8C67-4886-95AB-DC73F9AF7673}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1475,5 +1507,7 @@ Global
 		{88EBA72B-493B-4360-BA0C-8ACF9B201886} = {DF099DAE-E0FD-4999-851D-B6674A94FCFA}
 		{9013B4A8-81B5-4E15-A24C-02EA1D12BE75} = {DF099DAE-E0FD-4999-851D-B6674A94FCFA}
 		{06FE4EB1-A8D9-4029-AF22-2083AE9C59A7} = {DF099DAE-E0FD-4999-851D-B6674A94FCFA}
+		{8DEC4293-98B8-49C2-BAC5-CEEA1AAF4D9E} = {9F1321D3-15C6-4EF5-8E66-9020A4F0E000}
+		{32C547A5-8C67-4886-95AB-DC73F9AF7673} = {B3E30122-CA46-48C2-9A99-FFCE69AE7166}
 	EndGlobalSection
 EndGlobal

@@ -44,14 +44,20 @@
     <Compile Include="Extensions\DtoExtensions.cs" />
     <Compile Include="Extensions\FeedExtensions.cs" />
     <Compile Include="Feed.cs" />
+    <Compile Include="Mutable\Articles.cs" />
+    <Compile Include="Mutable\FeedIndices.cs" />
     <Compile Include="FeedsSubset.cs" />
     <Compile Include="Image.cs" />
+    <Compile Include="Mutable\FeedIndex.cs" />
+    <Compile Include="Mutable\NewsItemIndices.cs" />
     <Compile Include="NewsItem.cs" />
     <Compile Include="Comparers\NewsItemIdComparer.cs" />
     <Compile Include="Comparers\NewsItemTitleComparer.cs" />
+    <Compile Include="Mutable\NewsItemIndex.cs" />
     <Compile Include="ServiceClients\NewsServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceClients\ServiceClient.cs" />
+    <Compile Include="Mutable\UserIndex.cs" />
     <Compile Include="UserInfo.cs" />
   </ItemGroup>
   <ItemGroup>

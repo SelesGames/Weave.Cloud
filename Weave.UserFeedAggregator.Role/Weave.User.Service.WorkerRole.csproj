@@ -187,6 +187,10 @@
       <Project>{618fe33a-3784-4ed5-954b-86e4b4e0748b}</Project>
       <Name>Weave.User.Service.Converters</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Weave.User.Service.Redis\Weave.User.Service.Redis.csproj">
+      <Project>{32c547a5-8c67-4886-95ab-dc73f9af7673}</Project>
+      <Name>Weave.User.Service.Redis</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

@@ -9,15 +9,25 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Weave.Article.Service.Contracts;
 using Weave.User.BusinessObjects;
+using Weave.User.BusinessObjects.Mutable;
 using Weave.User.Service.Cache;
 using Weave.User.Service.Contracts;
 using Weave.User.Service.Converters;
 using Weave.User.Service.DTOs;
+using Weave.User.Service.Redis;
 using Incoming = Weave.User.Service.DTOs.ServerIncoming;
 using Outgoing = Weave.User.Service.DTOs.ServerOutgoing;
 
 namespace Weave.User.Service.Role.Controllers
 {
+    public interface IArticleQueueService
+    {
+        void QueueMarkRead(Guid userId, Guid newsItemId);
+        void QueueMarkUnread(Guid userId, Guid newsItemId);
+        void QueueAddFavorite(Guid userId, Guid newsItemId);
+        void QueueRemoveFavorite(Guid userId, Guid newsItemId);
+    }
+
     public class UserController : ApiController, IWeaveUserService
     {
         UserRepository userRepo;
@@ -26,11 +36,18 @@ namespace Weave.User.Service.Role.Controllers
         UserInfo userBO;
         TimeSpan readTime = TimeSpan.Zero, writeTime = TimeSpan.Zero;
 
+        UserIndex userIndex;
+        IArticleQueueService articleQueueService;
+        NewsItemCache newsItemCache;
 
-        public UserController(UserRepository cacheClient, IWeaveArticleService articleServiceClient)
+        public UserController(
+            UserRepository cacheClient, 
+            IWeaveArticleService articleServiceClient,
+            IArticleQueueService articleQueueService)
         {
             this.userRepo = cacheClient;
             this.articleServiceClient = articleServiceClient;
+            this.articleQueueService = articleQueueService;
         }
 
 
@@ -123,7 +140,7 @@ namespace Weave.User.Service.Role.Controllers
             }
 
             userBO.DeleteOldNews();
-            SaveUser();
+            SaveUserIndex();
 
             var outgoing = ConvertToOutgoing(userBO);
             outgoing.LatestNews = userBO.GetLatestArticles().Select(ConvertToOutgoing).ToList();
@@ -170,7 +187,7 @@ namespace Weave.User.Service.Role.Controllers
                 }
 
                 userBO.DeleteOldNews();
-                SaveUser();
+                SaveUserIndex();
             }
 
             var list = CreateNewsListFromSubset(userId, entry, skip, take, type, requireImage, subset);
@@ -200,7 +217,7 @@ namespace Weave.User.Service.Role.Controllers
                 }
 
                 userBO.DeleteOldNews();
-                SaveUser();
+                SaveUserIndex();
             }
 
             var list = CreateNewsListFromSubset(userId, entry, skip, take, type, requireImage, subset);
@@ -223,7 +240,7 @@ namespace Weave.User.Service.Role.Controllers
             if (refresh)
             {
                 await userBO.RefreshAllFeeds();
-                SaveUser();
+                SaveUserIndex();
             }
             return CreateOutgoingFeedsInfoList(userBO.Feeds, nested);
         }
@@ -238,7 +255,7 @@ namespace Weave.User.Service.Role.Controllers
             if (refresh)
             {
                 await subset.Refresh();
-                SaveUser();
+                SaveUserIndex();
             }
             return CreateOutgoingFeedsInfoList(subset, nested);
         }
@@ -253,7 +270,7 @@ namespace Weave.User.Service.Role.Controllers
             if (refresh)
             {
                 await subset.Refresh();
-                SaveUser();
+                SaveUserIndex();
             }
             return CreateOutgoingFeedsInfoList(subset, nested);
         }
@@ -267,7 +284,7 @@ namespace Weave.User.Service.Role.Controllers
             var feedBO = ConvertToBusinessObject(feed);
             if (userBO.AddFeed(feedBO))
             {
-                SaveUser();
+                SaveUserIndex();
                 return ConvertToOutgoing(feedBO);
             }
             else
@@ -283,7 +300,7 @@ namespace Weave.User.Service.Role.Controllers
             await VerifyUserId(userId);
 
             userBO.RemoveFeed(feedId);
-            SaveUser();
+            SaveUserIndex();
         }
 
         [HttpPost]
@@ -294,7 +311,7 @@ namespace Weave.User.Service.Role.Controllers
 
             var feedBO = ConvertToBusinessObject(feed);
             userBO.UpdateFeed(feedBO);
-            SaveUser();
+            SaveUserIndex();
         }
 
         [HttpPost]
@@ -336,7 +353,7 @@ namespace Weave.User.Service.Role.Controllers
                 }
             }
 
-            SaveUser();
+            SaveUserIndex();
         }
 
         #endregion
@@ -352,12 +369,10 @@ namespace Weave.User.Service.Role.Controllers
         {
             await VerifyUserId(userId);
 
-            var newsItem = userBO.FindNewsItem(newsItemId);
-            var saved = ConvertToArticleService(newsItem);
-            await articleServiceClient.MarkRead(userId, saved);
+            userIndex.Articles.MarkRead(newsItemId);
+            articleQueueService.QueueMarkRead(userId, newsItemId);
 
-            userBO.MarkNewsItemRead(newsItem);
-            SaveUser();
+            SaveUserIndex();
         }
 
         [HttpGet]
@@ -365,10 +380,11 @@ namespace Weave.User.Service.Role.Controllers
         public async Task MarkArticleUnread(Guid userId, Guid newsItemId)
         {
             await VerifyUserId(userId);
-            await articleServiceClient.RemoveRead(userId, newsItemId);
 
-            userBO.MarkNewsItemUnread(newsItemId);
-            SaveUser();
+            userIndex.Articles.MarkUnread(newsItemId);
+            articleQueueService.QueueMarkUnread(userId, newsItemId);
+
+            SaveUserIndex();
         }
 
         [HttpPost]
@@ -376,8 +392,10 @@ namespace Weave.User.Service.Role.Controllers
         public async Task MarkArticlesSoftRead(Guid userId, [FromBody] List<Guid> newsItemIds)
         {
             await VerifyUserId(userId);
-            userBO.MarkNewsItemsSoftRead(newsItemIds);
-            SaveUser();
+
+            userIndex.Articles.MarkRead(newsItemIds);
+
+            SaveUserIndex();
         }
 
         [HttpGet]
@@ -385,8 +403,10 @@ namespace Weave.User.Service.Role.Controllers
         public async Task MarkArticlesSoftRead(Guid userId, string category)
         {
             await VerifyUserId(userId);
-            userBO.MarkCategorySoftRead(category);
-            SaveUser();
+
+            userIndex.Articles.MarkCategoryRead(category);
+
+            SaveUserIndex();
         }
 
         [HttpGet]
@@ -394,8 +414,10 @@ namespace Weave.User.Service.Role.Controllers
         public async Task MarkArticlesSoftRead(Guid userId, Guid feedId)
         {
             await VerifyUserId(userId);
-            userBO.MarkFeedSoftRead(feedId);
-            SaveUser();
+
+            userIndex.Articles.MarkFeedRead(feedId);
+
+            SaveUserIndex();
         }
 
         [HttpGet]
@@ -404,12 +426,10 @@ namespace Weave.User.Service.Role.Controllers
         {
             await VerifyUserId(userId);
 
-            var newsItem = userBO.FindNewsItem(newsItemId);
-            var favorited = ConvertToArticleService(newsItem);
-            await articleServiceClient.AddFavorite(userId, favorited);
+            userIndex.Articles.AddFavorite(newsItemId);
+            articleQueueService.QueueAddFavorite(userId, newsItemId);
 
-            userBO.AddFavorite(newsItem);
-            SaveUser();
+            SaveUserIndex();
         }
 
         [HttpGet]
@@ -417,10 +437,11 @@ namespace Weave.User.Service.Role.Controllers
         public async Task RemoveFavorite(Guid userId, Guid newsItemId)
         {
             await VerifyUserId(userId);
-            await articleServiceClient.RemoveFavorite(userId, newsItemId);
 
-            userBO.RemoveFavorite(newsItemId);
-            SaveUser();
+            userIndex.Articles.RemoveFavorite(newsItemId);
+            articleQueueService.QueueRemoveFavorite(userId, newsItemId);
+
+            SaveUserIndex();
         }
 
         #endregion
@@ -436,9 +457,10 @@ namespace Weave.User.Service.Role.Controllers
         {
             await VerifyUserId(userId);
 
-            userBO.ArticleDeletionTimeForMarkedRead = articleDeleteTimes.ArticleDeletionTimeForMarkedRead;
-            userBO.ArticleDeletionTimeForUnread = articleDeleteTimes.ArticleDeletionTimeForUnread;
-            SaveUser();
+            userIndex.ArticleDeletionTimeForMarkedRead = articleDeleteTimes.ArticleDeletionTimeForMarkedRead;
+            userIndex.ArticleDeletionTimeForUnread = articleDeleteTimes.ArticleDeletionTimeForUnread;
+            
+            SaveUserIndex();
         }
 
         #endregion
@@ -476,34 +498,58 @@ namespace Weave.User.Service.Role.Controllers
             }
         }
 
-        Outgoing.NewsList CreateNewsListFromSubset(Guid userId, EntryType entry, int skip, int take, NewsItemType type, bool requireImage, FeedsSubset subset)
+
+
+        async Task<Outgoing.NewsList> CreateNewsListFromSubset(
+            Func<FeedIndex, bool> feedFilter, 
+            int skip, 
+            int take, 
+            NewsItemType type, 
+            EntryType entry,
+            bool requireImage)
         {
-            var orderedNews = subset.AllOrderedNews().ToList();
+            var feeds = userIndex
+                .FeedIndices
+                .Where(feedFilter)
+                .ToList();
 
-            IEnumerable<NewsItem> outgoingNews = orderedNews;
+            var indices = feeds.Ordered().ToArray();
 
-            if (type == NewsItemType.New)
-                outgoingNews = outgoingNews.Where(o => o.IsNew()).ToList();
+            IEnumerable<NewsItemIndex> filteredIndices = indices;
+
+            if (type == NewsItemType.New) ;
+            //    filteredIndices = filteredIndices.Where(o => o.IsNew()).ToList();
 
             else if (type == NewsItemType.Viewed)
-                outgoingNews = outgoingNews.Where(o => o.HasBeenViewed);
+                filteredIndices = filteredIndices.Where(o => o.HasBeenViewed);
 
             else if (type == NewsItemType.Unviewed)
-                outgoingNews = outgoingNews.Where(o => !o.HasBeenViewed);
+                filteredIndices = filteredIndices.Where(o => !o.HasBeenViewed);
 
             if (requireImage)
-                outgoingNews = outgoingNews.Where(o => o.HasImage);
+                filteredIndices = filteredIndices.Where(o => o.HasImage);
 
-            outgoingNews = outgoingNews.Skip(skip).Take(take);
+            filteredIndices = filteredIndices.Skip(skip).Take(take);
+
+            var newsItems = await newsItemCache.Get(indices.Select(o => o.Id));
+
+            var zipped = filteredIndices.Zip(newsItems, (index, ni) => new { index, ni });
+
+            var results =
+                from temp in zipped.Where(o => o.ni.Value != null)
+                let newsIndex = temp.index
+                let newsItem = temp.ni.Value
+                select Merge(newsIndex, newsItem);
 
             var outgoing = new Outgoing.NewsList
             {
-                UserId = userId,
-                FeedCount = subset.Count(),
-                Feeds = subset.Select(ConvertToOutgoing).ToList(),
-                News = outgoingNews.Select(ConvertToOutgoing).ToList(),
+                UserId = userIndex.Id,
+                FeedCount = feeds.Count,
+                Feeds = feeds.Select(ConvertToOutgoing).ToList(),
+                News = results.Select(ConvertToOutgoing).ToList(),
                 EntryType = entry.ToString(),
             };
+
             var page = new Outgoing.PageInfo
             {
                 Skip = skip,
@@ -522,7 +568,35 @@ namespace Weave.User.Service.Role.Controllers
             return outgoing;
         }
 
-        void SaveUser()
+        static NewsItem Merge(NewsItemIndex newsIndex, Weave.User.Service.Redis.DTOs.NewsItem newsItem)
+        {
+            return new NewsItem
+            {
+                Id = newsItem.Id,
+                Title = newsItem.Title,
+                Link = newsItem.Link,
+                ImageUrl = newsItem.ImageUrl,
+                YoutubeId = newsItem.YoutubeId,
+                VideoUri = newsItem.VideoUri,
+                PodcastUri = newsItem.PodcastUri,
+                ZuneAppId = newsItem.ZuneAppId,
+                IsFavorite = newsIndex.IsFavorite,
+                HasBeenViewed = newsIndex.HasBeenViewed,
+                OriginalDownloadDateTime = newsItem.OriginalDownloadDateTime,
+                UtcPublishDateTimeString = newsItem.UtcPublishDateTime,
+                Image = newsItem.Image == null ? null :
+                    new Image
+                    {
+                        Width = newsItem.Image.Width,
+                        Height = newsItem.Image.Height,
+                        OriginalUrl = newsItem.Image.OriginalUrl,
+                        BaseImageUrl = newsItem.Image.BaseImageUrl,
+                        SupportedFormats = newsItem.Image.SupportedFormats,
+                    }
+            };
+        }
+
+        void SaveUserIndex()
         {
             var sw = System.Diagnostics.Stopwatch.StartNew();
 
@@ -573,6 +647,26 @@ namespace Weave.User.Service.Role.Controllers
         Outgoing.Feed ConvertToOutgoing(Feed user)
         {
             return user.Convert<Feed, Outgoing.Feed>(BusinessObjectToServerOutgoing.Instance);
+        }
+
+        Outgoing.Feed ConvertToOutgoing(FeedIndex o)
+        {
+            return new Outgoing.Feed
+            {
+                Id = o.Id,
+                Uri = o.Uri,
+                Name = o.Name,
+                IconUri = o.IconUri,
+                Category = o.Category,
+                ArticleViewingType = (Weave.User.Service.DTOs.ArticleViewingType)o.ArticleViewingType,
+                NewArticleCount = o.NewArticleCount,
+                UnreadArticleCount = o.UnreadArticleCount,
+                TotalArticleCount = o.TotalArticleCount,
+                TeaserImageUrl = o.TeaserImageUrl,
+                LastRefreshedOn = o.LastRefreshedOn,
+                MostRecentEntrance = o.MostRecentEntrance,
+                PreviousEntrance = o.PreviousEntrance,
+            };
         }
 
         Outgoing.UserInfo ConvertToOutgoing(UserInfo user)
