@@ -9,7 +9,12 @@ namespace Redis.Testing
 {
     class Program
     {
-        static async void Main(string[] args)
+        static  void Main(string[] args)
+        {
+            DoStuff().Wait();
+        }
+
+        static async Task DoStuff()
         {
             var multiplexer = await ConnectionMultiplexer.ConnectAsync("serverUrl");
             var db = multiplexer.GetDatabase(0);
@@ -20,8 +25,6 @@ namespace Redis.Testing
                 new SortedSetEntry("hello hi", 99),
             };
             await db.SortedSetAddAsync("key", values);
-
-
         }
     }
 }

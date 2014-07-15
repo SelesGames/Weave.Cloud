@@ -58,15 +58,5 @@ namespace Common.Azure.Caching
 
             return result;
         }
-
-        object SafeCacheget(IEnumerable<string> keys)
-        {
-            object result = null;
-
-            try
-            {
-                result = cache.BulkGet()
-            }
-        }
     }
 }

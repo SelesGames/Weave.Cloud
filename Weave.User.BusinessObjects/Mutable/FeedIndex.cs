@@ -17,11 +17,11 @@ namespace Weave.User.BusinessObjects.Mutable
         public string TeaserImageUrl { get; set; }
         public ArticleViewingType ArticleViewingType { get; set; }
 
-        public int NewArticleCount { get; set; }
-        public int UnreadArticleCount { get; set; }
-        public int TotalArticleCount { get; set; }
-        
+        // record-keeping for feed updates
         public DateTime LastRefreshedOn { get; set; }
+        public string Etag { get; set; }
+        public string LastModified { get; set; }
+        public string MostRecentNewsItemPubDate { get; set; }
 
         // "New" determination and bookkeeping
         public DateTime MostRecentEntrance { get; set; }

@@ -30,23 +30,15 @@ namespace Weave.User.Service.Role.Controllers
 
     public class UserController : ApiController, IWeaveUserService
     {
-        UserRepository userRepo;
-        IWeaveArticleService articleServiceClient;
-
-        UserInfo userBO;
-        TimeSpan readTime = TimeSpan.Zero, writeTime = TimeSpan.Zero;
-
         UserIndex userIndex;
         IArticleQueueService articleQueueService;
         NewsItemCache newsItemCache;
 
+        TimeSpan readTime = TimeSpan.Zero, writeTime = TimeSpan.Zero;
+
         public UserController(
-            UserRepository cacheClient, 
-            IWeaveArticleService articleServiceClient,
             IArticleQueueService articleQueueService)
         {
-            this.userRepo = cacheClient;
-            this.articleServiceClient = articleServiceClient;
             this.articleQueueService = articleQueueService;
         }
 
@@ -171,27 +163,44 @@ namespace Weave.User.Service.Role.Controllers
         {
             await VerifyUserId(userId);
 
-            var subset = userBO.CreateSubsetFromCategory(category);
+            category = category ?? "all news";
+
+            var feeds = userIndex.FeedIndices.Where(o => MatchesCategory(o, category)).ToList();
 
             if (entry == EntryType.Mark || entry == EntryType.ExtendRefresh)
             {
                 if (entry == EntryType.Mark)
                 {
-                    subset.MarkEntry();
+                    feeds.MarkEntry();
                 }
 
                 else if (entry == EntryType.ExtendRefresh)
                 {
-                    subset.ExtendEntry();
-                    await subset.Refresh();
+                    feeds.ExtendEntry();
+                    //await subset.Refresh();
                 }
 
-                userBO.DeleteOldNews();
+                //userBO.DeleteOldNews();
                 SaveUserIndex();
             }
 
-            var list = CreateNewsListFromSubset(userId, entry, skip, take, type, requireImage, subset);
+            var list = await CreateNewsListFromSubset(
+                feeds: feeds,
+                skip: skip, 
+                take: take, 
+                type: type,
+                entry: entry,
+                requireImage: requireImage);
+
             return list;
+        }
+
+        bool MatchesCategory(FeedIndex feed, string category)
+        {
+            if ("all news".Equals(category, StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            return category.Equals(feed.Category, StringComparison.OrdinalIgnoreCase);
         }
 
         [HttpGet]
@@ -201,26 +210,33 @@ namespace Weave.User.Service.Role.Controllers
         {
             await VerifyUserId(userId);
 
-            var subset = userBO.CreateSubsetFromFeedIds(new[] { feedId });
+            var feeds = userIndex.FeedIndices.Where(o => o.Id == feedId).ToList();
 
             if (entry == EntryType.Mark || entry == EntryType.ExtendRefresh)
             {
                 if (entry == EntryType.Mark)
                 {
-                    subset.MarkEntry();
+                    feeds.MarkEntry();
                 }
 
                 else if (entry == EntryType.ExtendRefresh)
                 {
-                    subset.ExtendEntry();
-                    await subset.Refresh();
+                    feeds.ExtendEntry();
+                    //await subset.Refresh();
                 }
 
                 userBO.DeleteOldNews();
                 SaveUserIndex();
             }
 
-            var list = CreateNewsListFromSubset(userId, entry, skip, take, type, requireImage, subset);
+            var list = await CreateNewsListFromSubset(
+                feeds: feeds,
+                skip: skip,
+                take: take,
+                type: type,
+                entry: entry,
+                requireImage: requireImage);
+
             return list;
         }
 
@@ -229,7 +245,7 @@ namespace Weave.User.Service.Role.Controllers
 
 
 
-        #region Feed management
+        #region Feed information
 
         [HttpGet]
         [ActionName("feeds")]
@@ -274,6 +290,13 @@ namespace Weave.User.Service.Role.Controllers
             }
             return CreateOutgoingFeedsInfoList(subset, nested);
         }
+
+        #endregion
+
+
+
+
+        #region Feed management
 
         [HttpPost]
         [ActionName("add_feed")]
@@ -501,18 +524,13 @@ namespace Weave.User.Service.Role.Controllers
 
 
         async Task<Outgoing.NewsList> CreateNewsListFromSubset(
-            Func<FeedIndex, bool> feedFilter, 
+            IEnumerable<FeedIndex> feeds,
             int skip, 
             int take, 
             NewsItemType type, 
             EntryType entry,
             bool requireImage)
         {
-            var feeds = userIndex
-                .FeedIndices
-                .Where(feedFilter)
-                .ToList();
-
             var indices = feeds.Ordered().ToArray();
 
             IEnumerable<NewsItemIndex> filteredIndices = indices;
@@ -544,7 +562,7 @@ namespace Weave.User.Service.Role.Controllers
             var outgoing = new Outgoing.NewsList
             {
                 UserId = userIndex.Id,
-                FeedCount = feeds.Count,
+                FeedCount = feeds.Count(),
                 Feeds = feeds.Select(ConvertToOutgoing).ToList(),
                 News = results.Select(ConvertToOutgoing).ToList(),
                 EntryType = entry.ToString(),
@@ -659,9 +677,9 @@ namespace Weave.User.Service.Role.Controllers
                 IconUri = o.IconUri,
                 Category = o.Category,
                 ArticleViewingType = (Weave.User.Service.DTOs.ArticleViewingType)o.ArticleViewingType,
-                NewArticleCount = o.NewArticleCount,
-                UnreadArticleCount = o.UnreadArticleCount,
-                TotalArticleCount = o.TotalArticleCount,
+                //NewArticleCount = o.NewArticleCount,
+                //UnreadArticleCount = o.UnreadArticleCount,
+                //TotalArticleCount = o.TotalArticleCount,
                 TeaserImageUrl = o.TeaserImageUrl,
                 LastRefreshedOn = o.LastRefreshedOn,
                 MostRecentEntrance = o.MostRecentEntrance,

@@ -45,6 +45,7 @@
     <Compile Include="Extensions\FeedExtensions.cs" />
     <Compile Include="Feed.cs" />
     <Compile Include="Mutable\Articles.cs" />
+    <Compile Include="Mutable\FeedIndexExtensions.cs" />
     <Compile Include="Mutable\FeedIndices.cs" />
     <Compile Include="FeedsSubset.cs" />
     <Compile Include="Image.cs" />

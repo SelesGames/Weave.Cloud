@@ -15,7 +15,7 @@ namespace Weave.User.Service.Redis.Json
             DefaultValueHandling = DefaultValueHandling.Ignore,
         };
 
-        public T ReadObject<T>(this byte[] byteArray)
+        public T ReadObject<T>(byte[] byteArray)
         {
             T result = default(T);
             var serializer = JsonSerializer.Create(serializerSettings);
@@ -32,7 +32,7 @@ namespace Weave.User.Service.Redis.Json
             return result;
         }
 
-        public async Task WriteObject<T>(this Stream writeStream, T obj)
+        public async Task WriteObject<T>(Stream writeStream, T obj)
         {
             var serializer = JsonSerializer.Create(serializerSettings);
 

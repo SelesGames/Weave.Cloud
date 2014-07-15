@@ -33,13 +33,19 @@ namespace Weave.User.BusinessObjects
         public string Name { get; set; }
         public string IconUri { get; set; }
         public string Category { get; set; }
+        public string TeaserImageUrl { get; set; }
+        public ArticleViewingType ArticleViewingType { get; set; }
+
+        // record-keeping for feed updates
+        public DateTime LastRefreshedOn { get; set; }
         public string Etag { get; set; }
         public string LastModified { get; set; }
         public string MostRecentNewsItemPubDate { get; set; }
-        public DateTime LastRefreshedOn { get; set; }
+
+        // "New" determination and bookkeeping
         public DateTime MostRecentEntrance { get; set; }
         public DateTime PreviousEntrance { get; set; }
-        public ArticleViewingType ArticleViewingType { get; set; }
+        
         public IReadOnlyList<NewsItem> News
         {
             get { return news; }
@@ -52,7 +58,6 @@ namespace Weave.User.BusinessObjects
 
         // Read-only properties
         public Task CurrentRefresh { get; private set; }
-        public string TeaserImageUrl { get; private set; }
 
         #endregion
 
