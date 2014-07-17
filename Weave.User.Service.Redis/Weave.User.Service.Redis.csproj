@@ -58,6 +58,7 @@
     <Compile Include="NewsItemCache.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RedisCacheResult.cs" />
+    <Compile Include="UserIndexCache.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

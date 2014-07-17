@@ -2,7 +2,7 @@
 
 namespace Weave.User.BusinessObjects.Mutable
 {
-    public class FeedIndexUpdateExtensions
+    public static class UserUpdateExtensions
     {
         public static void UpdateFrom(this UserInfo o, UserIndex userIndex)
         {

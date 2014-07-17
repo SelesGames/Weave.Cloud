@@ -29,17 +29,21 @@ namespace Weave.User.Service.Role.Controllers
 
     public class UserController : ApiController, IWeaveUserService
     {
+        Guid userId;
         UserInfo userBO;
         UserRepository userRepo;
         UserIndex userIndex;
         IArticleQueueService articleQueueService;
+        UserIndexCache userIndexCache;
         NewsItemCache newsItemCache;
 
         TimeSpan readTime = TimeSpan.Zero, writeTime = TimeSpan.Zero;
 
         public UserController(
+            UserIndexCache userIndexCache,
             IArticleQueueService articleQueueService)
         {
+            this.userIndexCache = userIndexCache;
             this.articleQueueService = articleQueueService;
         }
 
@@ -122,7 +126,7 @@ namespace Weave.User.Service.Role.Controllers
         [ActionName("info")]
         public async Task<Outgoing.UserInfo> GetUserInfo(Guid userId, bool refresh = false)
         {
-            await VerifyUserId(userId);
+            await LoadUserIndex(userId);
 
             userBO.PreviousLoginTime = userBO.CurrentLoginTime;
             userBO.CurrentLoginTime = DateTime.UtcNow;
@@ -162,7 +166,7 @@ namespace Weave.User.Service.Role.Controllers
             NewsItemType type = NewsItemType.Any, 
             bool requireImage = false)
         {
-            await VerifyUserId(userId);
+            await LoadUserIndex(userId);
 
             category = category ?? "all news";
 
@@ -211,7 +215,7 @@ namespace Weave.User.Service.Role.Controllers
         public async Task<Outgoing.NewsList> GetNews(
             Guid userId, Guid feedId, EntryType entry = EntryType.Peek, int skip = 0, int take = 10, NewsItemType type = NewsItemType.Any, bool requireImage = false)
         {
-            await VerifyUserId(userId);
+            await LoadUserIndex(userId);
 
             var feeds = userIndex.FeedIndices.Where(o => o.Id == feedId).ToList();
 
@@ -254,21 +258,26 @@ namespace Weave.User.Service.Role.Controllers
         [ActionName("feeds")]
         public async Task<Outgoing.FeedsInfoList> GetFeeds(Guid userId, bool refresh = false, bool nested = false)
         {
-            await VerifyUserId(userId);
+            //await LoadUserIndex(userId);
 
             if (refresh)
             {
+                await LoadBoth(userId);
                 await userBO.RefreshAllFeeds();
-                SaveUserIndex();
+                //SaveUserIndex();
+                return CreateOutgoingFeedsInfoList(userBO.Feeds, nested);
             }
-            return CreateOutgoingFeedsInfoList(userBO.Feeds, nested);
+            else
+            {
+                await LoadIndexOnly(userId);
+            }
         }
 
         [HttpGet]
         [ActionName("feeds")]
         public async Task<Outgoing.FeedsInfoList> GetFeeds(Guid userId, string category, bool refresh = false, bool nested = false)
         {
-            await VerifyUserId(userId);
+            await LoadUserIndex(userId);
 
             var subset = userBO.CreateSubsetFromCategory(category);
             if (refresh)
@@ -283,7 +292,7 @@ namespace Weave.User.Service.Role.Controllers
         [ActionName("feeds")]
         public async Task<Outgoing.FeedsInfoList> GetFeeds(Guid userId, Guid feedId, bool refresh = false, bool nested = false)
         {
-            await VerifyUserId(userId);
+            await LoadUserIndex(userId);
 
             var subset = userBO.CreateSubsetFromFeedIds(new[] { feedId });
             if (refresh)
@@ -305,12 +314,12 @@ namespace Weave.User.Service.Role.Controllers
         [ActionName("add_feed")]
         public async Task<Outgoing.Feed> AddFeed(Guid userId, [FromBody] Incoming.NewFeed feed)
         {
-            await VerifyUserId(userId);
+            await LoadIndexOnly(userId);
 
             var feedIndex = ConvertToFeedIndex(feed);
             if (userIndex.FeedIndices.TryAdd(feedIndex))
             {
-                SaveUserIndex();
+                await SaveUserIndex();
                 return ConvertToOutgoing(feedIndex);
             }
             else
@@ -323,22 +332,22 @@ namespace Weave.User.Service.Role.Controllers
         [ActionName("remove_feed")]
         public async Task RemoveFeed(Guid userId, Guid feedId)
         {
-            await VerifyUserId(userId);
+            await LoadIndexOnly(userId);
 
             userIndex.FeedIndices.RemoveWithId(feedId);
-            SaveUserIndex();
+            await SaveUserIndex();
         }
 
         [HttpPost]
         [ActionName("update_feed")]
         public async Task UpdateFeed(Guid userId, [FromBody] Incoming.UpdatedFeed feed)
         {
-            await VerifyUserId(userId);
+            await LoadIndexOnly(userId);
 
             var feedIndex = ConvertToFeedIndex(feed);
             userIndex.FeedIndices.Update(feedIndex);
 
-            SaveUserIndex();
+            await SaveUserIndex();
         }
 
         [HttpPost]
@@ -348,7 +357,7 @@ namespace Weave.User.Service.Role.Controllers
             if (changeSet == null)
                 return;
 
-            await VerifyUserId(userId);
+            await LoadIndexOnly(userId);
 
             var added = changeSet.Added;
             var removed = changeSet.Removed;
@@ -380,7 +389,7 @@ namespace Weave.User.Service.Role.Controllers
                 }
             }
 
-            SaveUserIndex();
+            await SaveUserIndex();
         }
 
         #endregion
@@ -394,81 +403,81 @@ namespace Weave.User.Service.Role.Controllers
         [ActionName("mark_read")]
         public async Task MarkArticleRead(Guid userId, Guid newsItemId)
         {
-            await VerifyUserId(userId);
+            await LoadIndexOnly(userId);
 
             userIndex.Articles.MarkRead(newsItemId);
             articleQueueService.QueueMarkRead(userId, newsItemId);
 
-            SaveUserIndex();
+            await SaveUserIndex();
         }
 
         [HttpGet]
         [ActionName("mark_unread")]
         public async Task MarkArticleUnread(Guid userId, Guid newsItemId)
         {
-            await VerifyUserId(userId);
+            await LoadIndexOnly(userId);
 
             userIndex.Articles.MarkUnread(newsItemId);
             articleQueueService.QueueMarkUnread(userId, newsItemId);
 
-            SaveUserIndex();
+            await SaveUserIndex();
         }
 
         [HttpPost]
         [ActionName("soft_read")]
         public async Task MarkArticlesSoftRead(Guid userId, [FromBody] List<Guid> newsItemIds)
         {
-            await VerifyUserId(userId);
+            await LoadIndexOnly(userId);
 
             userIndex.Articles.MarkRead(newsItemIds);
 
-            SaveUserIndex();
+            await SaveUserIndex();
         }
 
         [HttpGet]
         [ActionName("soft_read")]
         public async Task MarkArticlesSoftRead(Guid userId, string category)
         {
-            await VerifyUserId(userId);
+            await LoadIndexOnly(userId);
 
             userIndex.Articles.MarkCategoryRead(category);
 
-            SaveUserIndex();
+            await SaveUserIndex();
         }
 
         [HttpGet]
         [ActionName("soft_read")]
         public async Task MarkArticlesSoftRead(Guid userId, Guid feedId)
         {
-            await VerifyUserId(userId);
+            await LoadIndexOnly(userId);
 
             userIndex.Articles.MarkFeedRead(feedId);
 
-            SaveUserIndex();
+            await SaveUserIndex();
         }
 
         [HttpGet]
         [ActionName("add_favorite")]
         public async Task AddFavorite(Guid userId, Guid newsItemId)
         {
-            await VerifyUserId(userId);
+            await LoadIndexOnly(userId);
 
             userIndex.Articles.AddFavorite(newsItemId);
             articleQueueService.QueueAddFavorite(userId, newsItemId);
 
-            SaveUserIndex();
+            await SaveUserIndex();
         }
 
         [HttpGet]
         [ActionName("remove_favorite")]
         public async Task RemoveFavorite(Guid userId, Guid newsItemId)
         {
-            await VerifyUserId(userId);
+            await LoadIndexOnly(userId);
 
             userIndex.Articles.RemoveFavorite(newsItemId);
             articleQueueService.QueueRemoveFavorite(userId, newsItemId);
 
-            SaveUserIndex();
+            await SaveUserIndex();
         }
 
         #endregion
@@ -482,12 +491,12 @@ namespace Weave.User.Service.Role.Controllers
         [ActionName("set_delete_times")]
         public async Task SetArticleDeleteTimes(Guid userId, Incoming.ArticleDeleteTimes articleDeleteTimes)
         {
-            await VerifyUserId(userId);
+            await LoadIndexOnly(userId);
 
             userIndex.ArticleDeletionTimeForMarkedRead = articleDeleteTimes.ArticleDeletionTimeForMarkedRead;
             userIndex.ArticleDeletionTimeForUnread = articleDeleteTimes.ArticleDeletionTimeForUnread;
-            
-            SaveUserIndex();
+
+            await SaveUserIndex();
         }
 
         #endregion
@@ -495,14 +504,78 @@ namespace Weave.User.Service.Role.Controllers
 
 
 
-        #region Helper methods
+        #region Load User graph and index functions
 
-        async Task VerifyUserId(Guid userId)
+        /// <summary>
+        /// Try to load the user index.  If that fails, try to load the full user graph
+        /// from blob storage, then rehydrate the user index
+        /// </summary>
+        async Task LoadIndexOnly(Guid userId)
+        {
+            this.userId = userId;
+            VerifyUserId();
+
+            bool wasIndexLoaded = false;
+
+            try
+            {
+                await LoadUserIndex();
+                wasIndexLoaded = true;
+            }
+            catch { }
+
+            if (!wasIndexLoaded)
+            {
+                await LoadUserInfoBusinessObject();
+                userIndex = await userIndexCache.Save(userBO);
+            }
+        }
+
+        /// <summary>
+        /// Load the user Index first.  If the full user graph was not loaded yet 
+        /// (which will be the majority case) then load it.  Finally, merge any changes 
+        /// from the current user index state into the user graph.
+        /// </summary>
+        async Task LoadBoth(Guid userId)
+        {
+            await LoadIndexOnly(userId);
+
+            if (userBO == null)
+            {
+                await LoadUserInfoBusinessObject();
+            }
+
+            userBO.UpdateFrom(userIndex);
+        }
+
+        void VerifyUserId()
         {
             if (userId == Guid.Empty)
                 throw ResponseHelper.CreateResponseException(HttpStatusCode.BadRequest,
                     "You must specify a valid userId as a GUID");
+        }
 
+        async Task LoadUserIndex()
+        {
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+
+            try
+            {
+                userIndex = await userIndexCache.Get(userId);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                sw.Stop();
+                readTime += sw.Elapsed;
+            }
+        }
+
+        async Task LoadUserInfoBusinessObject()
+        {
             var sw = System.Diagnostics.Stopwatch.StartNew();
 
             try
@@ -521,11 +594,65 @@ namespace Weave.User.Service.Role.Controllers
             finally
             {
                 sw.Stop();
-                readTime = sw.Elapsed;
+                readTime += sw.Elapsed;
             }
         }
 
+        #endregion
 
+
+
+
+        #region Save user graph and index functions
+
+        async Task SaveUserIndex()
+        {
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+
+            try
+            {
+                await userIndexCache.Save(userIndex);
+            }
+            catch (Exception e)
+            {
+                DebugEx.WriteLine(e);
+                throw;
+            }
+            finally
+            {
+                sw.Stop();
+                writeTime += sw.Elapsed;
+            }
+
+            // TODO: Add code here that notifies some process that the UserBO needs to now be updated
+        }
+
+        void SaveUserInfoBusinessObject()
+        {
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+
+            try
+            {
+                userRepo.Save(userBO.Id, userBO);
+            }
+            catch (Exception e)
+            {
+                DebugEx.WriteLine(e);
+                throw;
+            }
+            finally
+            {
+                sw.Stop();
+                writeTime += sw.Elapsed;
+            }
+        }
+
+        #endregion
+
+
+
+
+        #region Helper methods
 
         async Task<Outgoing.NewsList> CreateNewsListFromSubset(
             IEnumerable<FeedIndex> feeds,
@@ -616,28 +743,6 @@ namespace Weave.User.Service.Role.Controllers
                         SupportedFormats = newsItem.Image.SupportedFormats,
                     }
             };
-        }
-
-        void SaveUserIndex()
-        {
-            var sw = System.Diagnostics.Stopwatch.StartNew();
-
-            try
-            {
-                userRepo.Save(userBO.Id, userBO);
-            }
-            catch(Exception e)
-            {
-                DebugEx.WriteLine(e);
-                throw;
-            }
-            finally
-            {
-                sw.Stop();
-                writeTime = sw.Elapsed;
-            }
-
-// TODO: Add code here that notifies some process that the UserBO needs to now be updated
         }
 
         #endregion
