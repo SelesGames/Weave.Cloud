@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Weave.User.BusinessObjects.Mutable;
 
 namespace Weave.User.BusinessObjects
 {
@@ -18,17 +17,6 @@ namespace Weave.User.BusinessObjects
         {
             if (string.IsNullOrEmpty(categoryName))
                 return new List<Feed>();
-
-            if ("all news".Equals(categoryName, StringComparison.OrdinalIgnoreCase))
-                return feeds;
-
-            return feeds.Where(o => categoryName.Equals(o.Category, StringComparison.OrdinalIgnoreCase));
-        }
-
-        public static IEnumerable<FeedIndex> OfCategory(this IEnumerable<FeedIndex> feeds, string categoryName)
-        {
-            if (string.IsNullOrEmpty(categoryName))
-                return new List<FeedIndex>();
 
             if ("all news".Equals(categoryName, StringComparison.OrdinalIgnoreCase))
                 return feeds;

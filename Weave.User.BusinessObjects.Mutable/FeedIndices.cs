@@ -1,18 +1,26 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Weave.User.BusinessObjects.Mutable
 {
-    public class FeedIndices : List<FeedIndex>
+    public class FeedIndices : IEnumerable<FeedIndex>
     {
+        List<FeedIndex> feeds;
+
+        public FeedIndices()
+        {
+            this.feeds = new List<FeedIndex>();
+        }
+
         /// <summary>
         /// Adds a feed to the user's collection of feeds
         /// </summary>
         /// <param name="feed">The feed to be added</param>
         /// <param name="trustSource">Will skip checking to see if feed is already present and that Id is set - use for deserialization only</param>
         /// <returns>True if the feed was added, false if the feed was already present or invalid</returns>
-        public bool TryAdd(Feed feed, bool trustSource = false)
+        public bool TryAdd(FeedIndex feed, bool trustSource = false)
         {
             if (feed == null) return false;
             if (string.IsNullOrWhiteSpace(feed.Name) || string.IsNullOrWhiteSpace(feed.Uri))
@@ -28,11 +36,11 @@ namespace Weave.User.BusinessObjects.Mutable
                     return false;
             }
 
-            //base.Add(feed);
+            feeds.Add(feed);
             return true;
         }
 
-        public void Update(Feed feed)
+        public void Update(FeedIndex feed)
         {
             if (feed == null ||string.IsNullOrWhiteSpace(feed.Name)) 
                 return;
@@ -52,8 +60,25 @@ namespace Weave.User.BusinessObjects.Mutable
             var matching = this.FirstOrDefault(o => o.Id.Equals(feedId));
             if (matching != null)
             {
-                base.Remove(matching);
+                feeds.Remove(matching);
             }
         }
+
+
+
+
+        #region IEnumerable interface implementation
+
+        public IEnumerator<FeedIndex> GetEnumerator()
+        {
+            return feeds.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return feeds.GetEnumerator();
+        }
+
+        #endregion
     }
 }

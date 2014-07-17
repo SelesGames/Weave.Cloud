@@ -213,6 +213,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Redis.Testing", "Redis.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.User.Service.Redis", "Weave.User.Service.Redis\Weave.User.Service.Redis.csproj", "{32C547A5-8C67-4886-95AB-DC73F9AF7673}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weave.User.BusinessObjects.Mutable", "Weave.User.BusinessObjects.Mutable\Weave.User.BusinessObjects.Mutable.csproj", "{FC7C92EE-0AED-4859-B5EC-A770CE148497}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1411,6 +1413,20 @@ Global
 		{32C547A5-8C67-4886-95AB-DC73F9AF7673}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{32C547A5-8C67-4886-95AB-DC73F9AF7673}.Release|x64.ActiveCfg = Release|Any CPU
 		{32C547A5-8C67-4886-95AB-DC73F9AF7673}.Release|x86.ActiveCfg = Release|Any CPU
+		{FC7C92EE-0AED-4859-B5EC-A770CE148497}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC7C92EE-0AED-4859-B5EC-A770CE148497}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC7C92EE-0AED-4859-B5EC-A770CE148497}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{FC7C92EE-0AED-4859-B5EC-A770CE148497}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{FC7C92EE-0AED-4859-B5EC-A770CE148497}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{FC7C92EE-0AED-4859-B5EC-A770CE148497}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FC7C92EE-0AED-4859-B5EC-A770CE148497}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FC7C92EE-0AED-4859-B5EC-A770CE148497}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC7C92EE-0AED-4859-B5EC-A770CE148497}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC7C92EE-0AED-4859-B5EC-A770CE148497}.Release|ARM.ActiveCfg = Release|Any CPU
+		{FC7C92EE-0AED-4859-B5EC-A770CE148497}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{FC7C92EE-0AED-4859-B5EC-A770CE148497}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{FC7C92EE-0AED-4859-B5EC-A770CE148497}.Release|x64.ActiveCfg = Release|Any CPU
+		{FC7C92EE-0AED-4859-B5EC-A770CE148497}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1509,5 +1525,6 @@ Global
 		{06FE4EB1-A8D9-4029-AF22-2083AE9C59A7} = {DF099DAE-E0FD-4999-851D-B6674A94FCFA}
 		{8DEC4293-98B8-49C2-BAC5-CEEA1AAF4D9E} = {9F1321D3-15C6-4EF5-8E66-9020A4F0E000}
 		{32C547A5-8C67-4886-95AB-DC73F9AF7673} = {B3E30122-CA46-48C2-9A99-FFCE69AE7166}
+		{FC7C92EE-0AED-4859-B5EC-A770CE148497} = {B3E30122-CA46-48C2-9A99-FFCE69AE7166}
 	EndGlobalSection
 EndGlobal

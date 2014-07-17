@@ -175,6 +175,10 @@
       <Project>{985dc92f-7c89-4e51-9736-cf9a9c5722da}</Project>
       <Name>Weave.Article.Service.Client</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Weave.User.BusinessObjects.Mutable\Weave.User.BusinessObjects.Mutable.csproj">
+      <Project>{fc7c92ee-0aed-4859-b5ec-a770ce148497}</Project>
+      <Name>Weave.User.BusinessObjects.Mutable</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Weave.User.BusinessObjects\Weave.User.BusinessObjects.csproj">
       <Project>{db5274e6-15f6-4ec8-920a-842ea93a2601}</Project>
       <Name>Weave.User.BusinessObjects</Name>

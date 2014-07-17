@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5B792C4B-80D8-420D-9FA7-E567FAF1F7B1}</ProjectGuid>
+    <ProjectGuid>{FC7C92EE-0AED-4859-B5EC-A770CE148497}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SelesGames.Common</RootNamespace>
-    <AssemblyName>SelesGames.Common</AssemblyName>
+    <RootNamespace>Weave.User.BusinessObjects.Mutable</RootNamespace>
+    <AssemblyName>Weave.User.BusinessObjects.Mutable</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -32,26 +32,31 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DebugEx.cs" />
-    <Compile Include="DelegateProvider.cs" />
-    <Compile Include="EnumerableEx.cs" />
-    <Compile Include="Extensions\ConvertExtension.cs" />
-    <Compile Include="Extensions\IDictionaryExtensions.cs" />
-    <Compile Include="Extensions\IEnumerableExtensions.cs" />
-    <Compile Include="Extensions\LinqToXmlExtensions.cs" />
-    <Compile Include="Extensions\StreamExtensionMethods.cs" />
-    <Compile Include="Hashing\CryptoHelper.cs" />
-    <Compile Include="IConverter.cs" />
-    <Compile Include="IProvider.cs" />
-    <Compile Include="IStreamHandler.cs" />
-    <Compile Include="ModifiedTuple.cs" />
+    <Compile Include="Articles.cs" />
+    <Compile Include="Extensions\CopyExtensions.cs" />
+    <Compile Include="Extensions\FeedIndexUpdateHelper.cs" />
+    <Compile Include="Extensions\UserMergeHelper.cs" />
+    <Compile Include="FeedIndex.cs" />
+    <Compile Include="Extensions\FeedIndexExtensions.cs" />
+    <Compile Include="Extensions\FeedIndexUpdateExtensions.cs" />
+    <Compile Include="FeedIndices.cs" />
+    <Compile Include="NewsItemIndex.cs" />
+    <Compile Include="NewsItemIndices.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SetDifference.cs" />
+    <Compile Include="UserIndex.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SelesGames.Common\SelesGames.Common.csproj">
+      <Project>{5b792c4b-80d8-420d-9fa7-e567faf1f7b1}</Project>
+      <Name>SelesGames.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Weave.User.BusinessObjects\Weave.User.BusinessObjects.csproj">
+      <Project>{db5274e6-15f6-4ec8-920a-842ea93a2601}</Project>
+      <Name>Weave.User.BusinessObjects</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

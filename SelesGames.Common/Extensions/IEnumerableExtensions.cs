@@ -96,5 +96,86 @@ namespace System.Collections.Generic
                 !source.Except(target, comparer).Any() && 
                 !target.Except(source, comparer).Any();
         }
+
+        public static SetDifference<T> Diff<T>(this IEnumerable<T> original, IEnumerable<T> modified)
+        {
+            if (original == null) throw new ArgumentNullException("original");
+            if (modified == null) throw new ArgumentNullException("modified");
+
+            var modifiedContents = original
+                .Join(modified,
+                    o => o,
+                    o => o,
+                    (o, m) => new ModifiedTuple<T>(o, m))
+                .ToList();
+
+            var addedContents = modified.Except(original).ToList();
+            var removedContents = original.Except(modified).ToList();
+
+            return new SetDifference<T>
+            {
+                Added = addedContents,
+                Removed = removedContents,
+                Modified = modifiedContents,
+            };
+        }
+
+        public static SetDifference<T1, T2> Diff<T1, T2, TCompare>(
+            this IEnumerable<T1> original, 
+            IEnumerable<T2> modified,
+            Func<T1, TCompare> keySelector1,
+            Func<T2, TCompare> keySelector2
+            )
+        {
+            if (original == null) throw new ArgumentNullException("original");
+            if (modified == null) throw new ArgumentNullException("modified");
+
+            var modifiedContents = original
+                .Join(modified,
+                    o => keySelector1(o),
+                    o => keySelector2(o),
+                    (o, m) => Tuple.Create(o, m))
+                .ToList();
+
+            var originalTemp = original.Select(o => new KeyTemp<TCompare>(o, keySelector1(o))).ToList();
+            var modifiedTemp = modified.Select(o => new KeyTemp<TCompare>(o, keySelector2(o))).ToList();
+
+            var addedContents = modifiedTemp.Except(originalTemp).Select(o => (T2)o.ObjectRef).ToList();
+            var removedContents = originalTemp.Except(modifiedTemp).Select(o => (T1)o.ObjectRef).ToList();
+
+            return new SetDifference<T1, T2>
+            {
+                Added = addedContents,
+                Removed = removedContents,
+                Modified = modifiedContents,
+            };
+        }
+
+        class KeyTemp<T>
+        {
+            public object ObjectRef { get; private set; }
+            public T Key { get; private set; }
+
+            public KeyTemp(object o, T key)
+            {
+                this.ObjectRef = o;
+                this.Key = key;
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (!(obj is KeyTemp<T>))
+                    return false;
+
+                var key = ((KeyTemp<T>)obj).Key;
+
+                return Key.Equals(key);
+            }
+
+            public override int GetHashCode()
+            {
+                return Key.GetHashCode();
+            }
+        }
     }
 }

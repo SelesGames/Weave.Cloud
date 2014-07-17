@@ -7,7 +7,6 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
-using Weave.Article.Service.Contracts;
 using Weave.User.BusinessObjects;
 using Weave.User.BusinessObjects.Mutable;
 using Weave.User.Service.Cache;
@@ -30,6 +29,8 @@ namespace Weave.User.Service.Role.Controllers
 
     public class UserController : ApiController, IWeaveUserService
     {
+        UserInfo userBO;
+        UserRepository userRepo;
         UserIndex userIndex;
         IArticleQueueService articleQueueService;
         NewsItemCache newsItemCache;
@@ -177,6 +178,8 @@ namespace Weave.User.Service.Role.Controllers
                 else if (entry == EntryType.ExtendRefresh)
                 {
                     feeds.ExtendEntry();
+
+                    // compare new feeds on every fullFeed with feed, add new news items to the newsItemCache, as well as the FeedIndex
                     //await subset.Refresh();
                 }
 
@@ -304,11 +307,11 @@ namespace Weave.User.Service.Role.Controllers
         {
             await VerifyUserId(userId);
 
-            var feedBO = ConvertToBusinessObject(feed);
-            if (userBO.AddFeed(feedBO))
+            var feedIndex = ConvertToFeedIndex(feed);
+            if (userIndex.FeedIndices.TryAdd(feedIndex))
             {
                 SaveUserIndex();
-                return ConvertToOutgoing(feedBO);
+                return ConvertToOutgoing(feedIndex);
             }
             else
             {
@@ -322,7 +325,7 @@ namespace Weave.User.Service.Role.Controllers
         {
             await VerifyUserId(userId);
 
-            userBO.RemoveFeed(feedId);
+            userIndex.FeedIndices.RemoveWithId(feedId);
             SaveUserIndex();
         }
 
@@ -332,8 +335,9 @@ namespace Weave.User.Service.Role.Controllers
         {
             await VerifyUserId(userId);
 
-            var feedBO = ConvertToBusinessObject(feed);
-            userBO.UpdateFeed(feedBO);
+            var feedIndex = ConvertToFeedIndex(feed);
+            userIndex.FeedIndices.Update(feedIndex);
+
             SaveUserIndex();
         }
 
@@ -354,8 +358,8 @@ namespace Weave.User.Service.Role.Controllers
             {
                 foreach (var feed in added)
                 {
-                    var feedBO = ConvertToBusinessObject(feed);
-                    userBO.AddFeed(feedBO);
+                    var feedIndex = ConvertToFeedIndex(feed);
+                    userIndex.FeedIndices.TryAdd(feedIndex);
                 }
             }
 
@@ -363,7 +367,7 @@ namespace Weave.User.Service.Role.Controllers
             {
                 foreach (var feedId in removed)
                 {
-                    userBO.RemoveFeed(feedId);
+                    userIndex.FeedIndices.RemoveWithId(feedId);
                 }
             }
 
@@ -371,8 +375,8 @@ namespace Weave.User.Service.Role.Controllers
             {
                 foreach (var feed in updated)
                 {
-                    var feedBO = ConvertToBusinessObject(feed);
-                    userBO.UpdateFeed(feedBO);
+                    var feedIndex = ConvertToFeedIndex(feed);
+                    userIndex.FeedIndices.Update(feedIndex);
                 }
             }
 
@@ -632,6 +636,8 @@ namespace Weave.User.Service.Role.Controllers
                 sw.Stop();
                 writeTime = sw.Elapsed;
             }
+
+// TODO: Add code here that notifies some process that the UserBO needs to now be updated
         }
 
         #endregion
@@ -641,9 +647,39 @@ namespace Weave.User.Service.Role.Controllers
 
         #region Conversion Helpers
 
+        Feed Convert(FeedIndex feed)
+        {
+            return new Feed
+            {
+
+            };
+        }
+
         UserInfo ConvertToBusinessObject(Incoming.UserInfo user)
         {
             return user.Convert<Incoming.UserInfo, UserInfo>(ServerIncomingToBusinessObject.Instance);
+        }
+
+        FeedIndex ConvertToFeedIndex(Incoming.NewFeed o)
+        {
+            return new FeedIndex
+            {
+                Uri = o.Uri,
+                Name = o.Name,
+                Category = o.Category,
+                ArticleViewingType = (BusinessObjects.ArticleViewingType)o.ArticleViewingType,
+            };
+        }
+
+        FeedIndex ConvertToFeedIndex(Incoming.UpdatedFeed feed)
+        {
+            return new FeedIndex
+            {
+                Id = feed.Id,
+                Name = feed.Name,
+                Category = feed.Category
+                ArticleViewingType = (BusinessObjects.ArticleViewingType)feed.ArticleViewingType,
+            };
         }
 
         Feed ConvertToBusinessObject(Incoming.NewFeed user)
