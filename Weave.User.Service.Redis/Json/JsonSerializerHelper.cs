@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.IO;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Weave.User.Service.Redis.Json
 {
@@ -32,8 +31,10 @@ namespace Weave.User.Service.Redis.Json
             return result;
         }
 
-        public async Task WriteObject<T>(Stream writeStream, T obj)
+        public byte[] WriteObject<T>(T obj)
         {
+            byte[] result;
+
             var serializer = JsonSerializer.Create(serializerSettings);
 
             using (var ms = new MemoryStream())
@@ -43,13 +44,14 @@ namespace Weave.User.Service.Redis.Json
                 serializer.Serialize(jsonTextWriter, obj);
                 jsonTextWriter.Flush();
 
-                ms.Position = 0;
-                await ms.CopyToAsync(writeStream).ConfigureAwait(false);
+                result = ms.ToArray();
 
                 jsonTextWriter.Close();
                 streamWriter.Close();
                 ms.Close();
             }
+
+            return result;
         }
     }
 }

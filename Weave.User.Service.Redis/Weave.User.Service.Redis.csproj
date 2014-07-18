@@ -55,6 +55,7 @@
     <Compile Include="DTOs\Image.cs" />
     <Compile Include="DTOs\NewsItem.cs" />
     <Compile Include="Json\JsonSerializerHelper.cs" />
+    <Compile Include="Json\RedisValueToJsonExtensions.cs" />
     <Compile Include="NewsItemCache.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RedisCacheResult.cs" />

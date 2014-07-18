@@ -1,28 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using StackExchange.Redis;
+using System;
 using System.Threading.Tasks;
-using Weave.User.BusinessObjects;
 using Weave.User.BusinessObjects.Mutable;
+using Weave.User.Service.Redis.Json;
 
 namespace Weave.User.Service.Redis
 {
     public class UserIndexCache
     {
-        public Task<UserIndex> Get(Guid userId)
+        ConnectionMultiplexer connection;
+
+        public UserIndexCache(ConnectionMultiplexer connection)
         {
-            throw new NotImplementedException();
+            this.connection = connection;
         }
 
-        public Task<UserIndex> Save(UserInfo userBO)
+        public async Task<RedisCacheResult<UserIndex>> Get(Guid userId)
         {
-            throw new NotImplementedException();
+            var db = connection.GetDatabase(0);
+            var key = (RedisKey)userId.ToByteArray();
+
+            var value = await db.StringGetAsync(key, CommandFlags.None);
+            var result = value.ReadAs<UserIndex>();
+            return result;
         }
 
-        public Task Save(UserIndex userIndex)
+        public async Task Save(UserIndex userIndex)
         {
-            throw new NotImplementedException();
+            var db = connection.GetDatabase(0);
+            var key = (RedisKey)userIndex.Id.ToByteArray();
+            var val = userIndex.WriteAs();
+
+            await db.StringSetAsync(key, val, TimeSpan.FromDays(7), When.Always, CommandFlags.HighPriority);
         }
     }
 }

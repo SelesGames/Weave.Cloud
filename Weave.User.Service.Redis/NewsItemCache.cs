@@ -11,10 +11,12 @@ namespace Weave.User.Service.Redis
     public class NewsItemCache
     {
         ConnectionMultiplexer connection;
+        IDatabase db;
 
         public NewsItemCache(ConnectionMultiplexer connection)
         {
             this.connection = connection;
+            db = connection.GetDatabase(0);
         }
 
         public async Task<IEnumerable<RedisCacheResult<NewsItem>>> Get(IEnumerable<Guid> newsItemIds)
@@ -23,20 +25,39 @@ namespace Weave.User.Service.Redis
             var keys = newsItemIds.Select(o => (RedisKey)o.ToByteArray()).ToArray();
 
             var values = await db.StringGetAsync(keys, CommandFlags.None);
-            var results = values.Select(ReadNewsItem);
+            var results = values.Select(o => o.ReadAs<NewsItem>());
             return results;
         }
 
-        RedisCacheResult<NewsItem> ReadNewsItem(RedisValue val)
+        public async Task<IEnumerable<bool>> Set(IEnumerable<NewsItem> newsItems)
         {
-            if (val.IsNullOrEmpty || !val.HasValue)
-                return RedisCacheResult.Create<NewsItem>(null, val);
+            var requests = newsItems.Select(CreateSaveRequest);
+            var results = await Task.WhenAll(requests);
+            return results;
+        }
 
-            byte[] array = (byte[])val;
-            var serializer = new JsonSerializerHelper();
-            var newsItem = serializer.ReadObject<NewsItem>(array);
+        Task<bool> CreateSaveRequest(NewsItem newsItem)
+        {
+            if (newsItem == null)
+                return Task.FromResult(false);
 
-            return RedisCacheResult.Create(newsItem, val);
+            RedisKey key;
+            RedisValue value;
+
+            try
+            {
+                key = (RedisKey)newsItem.Id.ToByteArray();
+                value = newsItem.WriteAs();
+            }
+            catch
+            {
+                return Task.FromResult(false);
+            }
+
+            if (!value.HasValue)
+                return Task.FromResult(false);
+
+            return db.StringSetAsync(key, value, TimeSpan.FromDays(60), When.NotExists, CommandFlags.None);
         }
     }
 }
