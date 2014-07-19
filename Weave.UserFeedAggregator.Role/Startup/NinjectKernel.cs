@@ -1,7 +1,6 @@
 ﻿using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
 using Ninject;
-using Weave.Article.Service.Contracts;
 using Weave.User.Service.Cache;
 
 namespace Weave.User.Service.Role.Startup
@@ -23,7 +22,7 @@ namespace Weave.User.Service.Role.Startup
             var userRepo = new UserRepository(azureDataCacheClient);
             Bind<UserRepository>().ToConstant(userRepo).InSingletonScope();
 
-            Bind<IWeaveArticleService>().To<Article.Service.Client.ServiceClient>().InSingletonScope();
+            //Bind<IWeaveArticleService>().To<Article.Service.Client.ServiceClient>().InSingletonScope();
         }
     }
 }

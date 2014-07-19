@@ -4,7 +4,6 @@ using SelesGames.WebApi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -30,21 +29,28 @@ namespace Weave.User.Service.Role.Controllers
 
     public class UserController : ApiController, IWeaveUserService
     {
+        readonly UserRepository userRepo;
+        readonly UserIndexCache userIndexCache;
+        readonly NewsItemCache newsItemCache;
+        readonly IArticleQueueService articleQueueService;
+
         Guid userId;
         UserInfo userBO;
-        UserRepository userRepo;
         UserIndex userIndex;
-        IArticleQueueService articleQueueService;
-        UserIndexCache userIndexCache;
-        NewsItemCache newsItemCache;
 
-        TimeSpan readTime = TimeSpan.Zero, writeTime = TimeSpan.Zero;
+        TimeSpan 
+            readTime = TimeSpan.Zero, 
+            writeTime = TimeSpan.Zero;
 
         public UserController(
+            UserRepository userRepo,
             UserIndexCache userIndexCache,
+            NewsItemCache newsItemCache,
             IArticleQueueService articleQueueService)
         {
+            this.userRepo = userRepo;
             this.userIndexCache = userIndexCache;
+            this.newsItemCache = newsItemCache;
             this.articleQueueService = articleQueueService;
         }
 
@@ -127,7 +133,28 @@ namespace Weave.User.Service.Role.Controllers
         [ActionName("info")]
         public async Task<Outgoing.UserInfo> GetUserInfo(Guid userId, bool refresh = false)
         {
-            await LoadIndexOnly(userId);
+            //if (refresh)
+            //{
+            //    await LoadBoth(userId);
+
+            //    userBO.PreviousLoginTime = userBO.CurrentLoginTime;
+            //    userBO.CurrentLoginTime = DateTime.UtcNow;
+
+            //    var feeds = userBO.Feeds;
+            //    await PerformRefreshOnFeeds(feeds);
+            //}
+            //else
+            //{
+            //    await LoadIndexOnly(userId);
+
+            //    userIndex.PreviousLoginTime = userIndex.CurrentLoginTime;
+            //    userIndex.CurrentLoginTime = DateTime.UtcNow;
+            //}
+
+
+
+            ///************************************
+            await LoadBoth(userId);
 
             userBO.PreviousLoginTime = userBO.CurrentLoginTime;
             userBO.CurrentLoginTime = DateTime.UtcNow;
@@ -138,7 +165,9 @@ namespace Weave.User.Service.Role.Controllers
             }
 
             userBO.DeleteOldNews();
-            SaveUserIndex();
+
+            userIndex = userBO.CreateUserIndex();
+            await SaveUserIndex();
 
             var outgoing = ConvertToOutgoing(userBO);
             outgoing.LatestNews = userBO.GetLatestArticles().Select(ConvertToOutgoing).ToList();
@@ -171,7 +200,7 @@ namespace Weave.User.Service.Role.Controllers
 
             category = category ?? "all news";
 
-            var feeds = userIndex.FeedIndices.Where(o => MatchesCategory(o, category)).ToList();
+            var feeds = userIndex.FeedIndices.OfCategory(category).ToList();
 
             if (entry == EntryType.Mark || entry == EntryType.ExtendRefresh)
             {
@@ -189,7 +218,7 @@ namespace Weave.User.Service.Role.Controllers
                 }
 
                 //userBO.DeleteOldNews();
-                SaveUserIndex();
+                await SaveUserIndex();
             }
 
             var list = await CreateNewsListFromSubset(
@@ -201,14 +230,6 @@ namespace Weave.User.Service.Role.Controllers
                 requireImage: requireImage);
 
             return list;
-        }
-
-        bool MatchesCategory(FeedIndex feed, string category)
-        {
-            if ("all news".Equals(category, StringComparison.OrdinalIgnoreCase))
-                return true;
-
-            return category.Equals(feed.Category, StringComparison.OrdinalIgnoreCase);
         }
 
         [HttpGet]
@@ -234,7 +255,7 @@ namespace Weave.User.Service.Role.Controllers
                 }
 
                 userBO.DeleteOldNews();
-                SaveUserIndex();
+                await SaveUserIndex();
             }
 
             var list = await CreateNewsListFromSubset(
@@ -263,27 +284,11 @@ namespace Weave.User.Service.Role.Controllers
             {
                 await LoadBoth(userId);
 
-                // refresh news for relevant feeds
-                var subset = new FeedsSubset(userBO.Feeds);
-                await subset.Refresh();
-
-                // recreate the userIndex from the newly updated user graph
-                userIndex = userBO.CreateUserIndex();
-
-                // save the news articles from the refreshed feeds to Redis
-                var redisNews = subset.AllNews().Select(MapAsRedis);
-                var saveArticlesResults = await newsItemCache.Set(redisNews);
-                
-                // save the user index, which was recreated earlier
-                await SaveUserIndex();
-
-                // save the full user graph, which was updated via the refresh
-                SaveUserInfoBusinessObject();
+                var feeds = userBO.Feeds;
+                await PerformRefreshOnFeeds(feeds);
             }
             else
-            {
                 await LoadIndexOnly(userId);
-            }
 
             var indexSubset = userIndex.FeedIndices;
             return CreateOutgoingFeedsInfoList(indexSubset, nested);
@@ -299,28 +304,9 @@ namespace Weave.User.Service.Role.Controllers
 
                 var feeds = userBO.CreateSubsetFromCategory(category);
                 await PerformRefreshOnFeeds(feeds);
-
-                // refresh news for relevant feeds
-                var subset = userBO.CreateSubsetFromCategory(category);
-                await subset.Refresh();
-
-                // recreate the userIndex from the newly updated user graph
-                userIndex = userBO.CreateUserIndex();
-
-                // save the news articles from the refreshed feeds to Redis
-                var redisNews = subset.AllNews().Select(MapAsRedis);
-                var saveArticlesResults = await newsItemCache.Set(redisNews);
-
-                // save the user index, which was recreated earlier
-                await SaveUserIndex();
-
-                // save the full user graph, which was updated via the refresh
-                SaveUserInfoBusinessObject();
             }
             else
-            {
                 await LoadIndexOnly(userId);
-            }
 
             var indexSubset = userIndex.FeedIndices.OfCategory(category);
             return CreateOutgoingFeedsInfoList(indexSubset, nested);
@@ -334,27 +320,11 @@ namespace Weave.User.Service.Role.Controllers
             {
                 await LoadBoth(userId);
 
-                // refresh news for relevant feeds
-                var subset = userBO.CreateSubsetFromFeedIds(new[] { feedId });
-                await subset.Refresh();
-
-                // recreate the userIndex from the newly updated user graph
-                userIndex = userBO.CreateUserIndex();
-
-                // save the news articles from the refreshed feeds to Redis
-                var redisNews = subset.AllNews().Select(MapAsRedis);
-                var saveArticlesResults = await newsItemCache.Set(redisNews);
-
-                // save the user index, which was recreated earlier
-                await SaveUserIndex();
-
-                // save the full user graph, which was updated via the refresh
-                SaveUserInfoBusinessObject();
+                var feeds = userBO.CreateSubsetFromFeedIds(new[] { feedId });
+                await PerformRefreshOnFeeds(feeds);
             }
             else
-            {
                 await LoadIndexOnly(userId);
-            }
 
             var indexSubset = userIndex.FeedIndices.Where(o => o.Id == feedId);
             return CreateOutgoingFeedsInfoList(indexSubset, nested);
@@ -377,7 +347,7 @@ namespace Weave.User.Service.Role.Controllers
             if (userIndex.FeedIndices.TryAdd(feedIndex))
             {
                 await SaveUserIndex();
-                return ConvertToOutgoing(feedIndex);
+                return CreateOutgoingFeed(feedIndex);
             }
             else
             {
@@ -561,6 +531,13 @@ namespace Weave.User.Service.Role.Controllers
 
 
 
+        /// **************************************************************************
+        /// ******************* END SERVICE-RELATED FUNCTIONS ************************
+        /// **************************************************************************
+        
+
+
+
         #region Load User graph and index functions
 
         /// <summary>
@@ -589,7 +566,7 @@ namespace Weave.User.Service.Role.Controllers
                 // TODO: DETERMINE IF THIS SAVE IS SUPERFLUOUS, AND SHOULD BE DELAYED 
                 // UNTIL THE INDEX HAS BEEN MODIFIED VIA WHICHEVER CONTROLLER ACTION 
                 // WAS CALLED
-                await SaveUserIndex();
+                //await SaveUserIndex();
             }
         }
 
@@ -719,7 +696,7 @@ namespace Weave.User.Service.Role.Controllers
 
 
 
-        #region Feeds Refresh funcion
+        #region Feeds Refresh function
 
         async Task PerformRefreshOnFeeds(IEnumerable<Feed> feeds)
         {
@@ -746,7 +723,7 @@ namespace Weave.User.Service.Role.Controllers
 
 
 
-        #region Helper methods
+        #region Create "Get News" outgoing DTO
 
         async Task<Outgoing.NewsList> CreateNewsListFromSubset(
             IEnumerable<FeedIndex> feeds,
@@ -788,7 +765,7 @@ namespace Weave.User.Service.Role.Controllers
             {
                 UserId = userIndex.Id,
                 FeedCount = feeds.Count(),
-                Feeds = feeds.Select(ConvertToOutgoing).ToList(),
+                Feeds = feeds.Select(CreateOutgoingFeed).ToList(),
                 News = results.Select(ConvertToOutgoing).ToList(),
                 EntryType = entry.ToString(),
             };
@@ -811,7 +788,7 @@ namespace Weave.User.Service.Role.Controllers
             return outgoing;
         }
 
-        static NewsItem Merge(NewsItemIndex newsIndex, Weave.User.Service.Redis.DTOs.NewsItem newsItem)
+        static NewsItem Merge(NewsItemIndex newsIndex, Redis.DTOs.NewsItem newsItem)
         {
             return new NewsItem
             {
@@ -828,6 +805,89 @@ namespace Weave.User.Service.Role.Controllers
                 OriginalDownloadDateTime = newsIndex.OriginalDownloadDateTime,
                 UtcPublishDateTimeString = newsItem.UtcPublishDateTime.ToString(),
                 Image = newsItem.Image,
+            };
+        }
+
+        static Outgoing.NewsItem Merge2(NewsItemIndex newsIndex, Redis.DTOs.NewsItem newsItem)
+        {
+            return new Outgoing.NewsItem
+            {
+                Id = newsItem.Id,
+                Title = newsItem.Title,
+                Link = newsItem.Link,
+                ImageUrl = newsItem.ImageUrl,
+                YoutubeId = newsItem.YoutubeId,
+                VideoUri = newsItem.VideoUri,
+                PodcastUri = newsItem.PodcastUri,
+                ZuneAppId = newsItem.ZuneAppId,
+                IsFavorite = newsIndex.IsFavorite,
+                HasBeenViewed = newsIndex.HasBeenViewed,
+                OriginalDownloadDateTime = newsIndex.OriginalDownloadDateTime,
+                UtcPublishDateTime = newsItem.UtcPublishDateTime,
+                Image = newsItem.Image,
+            };
+        }
+
+        #endregion
+
+
+
+
+        #region Create "Feeds List" outgoing DTO
+
+        Outgoing.FeedsInfoList CreateOutgoingFeedsInfoList(IEnumerable<FeedIndex> feeds, bool returnNested)
+        {
+            Outgoing.FeedsInfoList outgoing = new Outgoing.FeedsInfoList
+            {
+                UserId = userIndex.Id,
+                TotalFeedCount = userIndex.FeedIndices == null ? 0 : userIndex.FeedIndices.Count(),
+            };
+
+            if (EnumerableEx.IsNullOrEmpty(feeds))
+            {
+                outgoing.NewArticleCount = 0;
+                outgoing.UnreadArticleCount = 0;
+                outgoing.TotalArticleCount = 0;
+                return outgoing;
+            }
+
+            var outgoingFeeds = feeds.Select(CreateOutgoingFeed).ToList();
+            outgoing.NewArticleCount = outgoingFeeds.Sum(o => o.NewArticleCount);
+            outgoing.UnreadArticleCount = outgoingFeeds.Sum(o => o.UnreadArticleCount);
+            outgoing.TotalArticleCount = outgoingFeeds.Sum(o => o.TotalArticleCount);
+
+            if (returnNested)
+            {
+                var grouped = outgoingFeeds.GroupBy(o => o.Category);
+                var categories = grouped.Where(o => !string.IsNullOrWhiteSpace(o.Key))
+                    .Select(o => CreateCategory(o.Key, o == null ? null : o.ToList()))
+                    .OrderBy(o => o.Category)
+                    .ToList();
+
+                outgoing.Categories = categories;
+                outgoing.Feeds = grouped.Where(o => string.IsNullOrWhiteSpace(o.Key)).SelectMany(o => o).ToList();
+            }
+            else
+            {
+                outgoing.Feeds = outgoingFeeds;
+            }
+
+            outgoing.DataStoreReadTime = readTime;
+            outgoing.DataStoreWriteTime = writeTime;
+
+            return outgoing;
+        }
+
+        static Outgoing.CategoryInfo CreateCategory(string categoryName, List<Outgoing.Feed> feeds)
+        {
+            return new Outgoing.CategoryInfo
+            {
+                Category = categoryName,
+                TotalFeedCount = feeds == null ? 0 : feeds.Count,
+                Feeds = feeds,
+                NewArticleCount = feeds == null ? 0 : feeds.Sum(o => o.NewArticleCount),
+                UnreadArticleCount = feeds == null ? 0 : feeds.Sum(o => o.UnreadArticleCount),
+                TotalArticleCount = feeds == null ? 0 : feeds.Sum(o => o.TotalArticleCount),
             };
         }
 
@@ -864,29 +924,13 @@ namespace Weave.User.Service.Role.Controllers
                 ArticleViewingType = (BusinessObjects.ArticleViewingType)feed.ArticleViewingType,
             };
         }
-
-        Feed ConvertToBusinessObject(Incoming.NewFeed user)
-        {
-            return user.Convert<Incoming.NewFeed, Feed>(ServerIncomingToBusinessObject.Instance);
-        }
-
-        Feed ConvertToBusinessObject(Incoming.UpdatedFeed user)
-        {
-            return user.Convert<Incoming.UpdatedFeed, Feed>(ServerIncomingToBusinessObject.Instance);
-        }
-        
-    
+           
         Outgoing.NewsItem ConvertToOutgoing(NewsItem user)
         {
             return user.Convert<NewsItem, Outgoing.NewsItem>(BusinessObjectToServerOutgoing.Instance);
         }
 
-        Outgoing.Feed ConvertToOutgoing(Feed user)
-        {
-            return user.Convert<Feed, Outgoing.Feed>(BusinessObjectToServerOutgoing.Instance);
-        }
-
-        Outgoing.Feed ConvertToOutgoing(FeedIndex o)
+        Outgoing.Feed CreateOutgoingFeed(FeedIndex o)
         {
             var feed = new Outgoing.Feed
             {
@@ -912,68 +956,6 @@ namespace Weave.User.Service.Role.Controllers
         Outgoing.UserInfo ConvertToOutgoing(UserInfo user)
         {
             return user.Convert<UserInfo, Outgoing.UserInfo>(BusinessObjectToServerOutgoing.Instance);
-        }
-
-
-        Outgoing.FeedsInfoList CreateOutgoingFeedsInfoList(IEnumerable<FeedIndex> feeds, bool returnNested)
-        {
-            Outgoing.FeedsInfoList outgoing = new Outgoing.FeedsInfoList
-            {
-                UserId = userIndex.Id,
-                TotalFeedCount = userIndex.FeedIndices == null ? 0 : userIndex.FeedIndices.Count(),
-            };
-
-            if (EnumerableEx.IsNullOrEmpty(feeds))
-            {
-                outgoing.NewArticleCount = 0;
-                outgoing.UnreadArticleCount = 0;
-                outgoing.TotalArticleCount = 0;
-                return outgoing;
-            }
-
-            var outgoingFeeds = feeds.Select(ConvertToOutgoing).ToList();
-            outgoing.NewArticleCount = outgoingFeeds.Sum(o => o.NewArticleCount);
-            outgoing.UnreadArticleCount = outgoingFeeds.Sum(o => o.UnreadArticleCount);
-            outgoing.TotalArticleCount = outgoingFeeds.Sum(o => o.TotalArticleCount);
-
-            if (returnNested)
-            {
-                var grouped = outgoingFeeds.GroupBy(o => o.Category);
-                var categories = grouped.Where(o => !string.IsNullOrWhiteSpace(o.Key))
-                    .Select(o => CreateCategory(o.Key, o == null ? null : o.ToList()))
-                    .OrderBy(o => o.Category)
-                    .ToList();
-
-                outgoing.Categories = categories;
-                outgoing.Feeds = grouped.Where(o => string.IsNullOrWhiteSpace(o.Key)).SelectMany(o => o).ToList();
-            }
-            else
-            {
-                outgoing.Feeds = outgoingFeeds;
-            }
-
-            outgoing.DataStoreReadTime = readTime;
-            outgoing.DataStoreWriteTime = writeTime;
-
-            return outgoing;
-        }
-
-        Outgoing.CategoryInfo CreateCategory(string categoryName, List<Outgoing.Feed> feeds)
-        {
-            return new Outgoing.CategoryInfo
-            {
-                Category = categoryName,
-                TotalFeedCount = feeds == null ? 0 : feeds.Count,
-                Feeds = feeds,
-                NewArticleCount = feeds == null ? 0 : feeds.Sum(o => o.NewArticleCount),
-                UnreadArticleCount = feeds == null ? 0 : feeds.Sum(o => o.UnreadArticleCount),
-                TotalArticleCount = feeds == null ? 0 : feeds.Sum(o => o.TotalArticleCount),
-            };
-        }
-
-        Weave.Article.Service.DTOs.ServerIncoming.SavedNewsItem ConvertToArticleService(NewsItem newsItem)
-        {
-            return newsItem.Convert<NewsItem, Weave.Article.Service.DTOs.ServerIncoming.SavedNewsItem>(Converters.Converters.Instance);
         }
 
         Redis.DTOs.NewsItem MapAsRedis(NewsItem o)
