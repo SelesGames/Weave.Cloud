@@ -19,6 +19,27 @@ using Outgoing = Weave.User.Service.DTOs.ServerOutgoing;
 
 namespace Weave.User.Service.Role.Controllers
 {
+    #region article queue service
+
+    public class MockArticleQueueService : IArticleQueueService
+    {
+        public void QueueMarkRead(Guid userId, Guid newsItemId)
+        {
+        }
+
+        public void QueueMarkUnread(Guid userId, Guid newsItemId)
+        {
+        }
+
+        public void QueueAddFavorite(Guid userId, Guid newsItemId)
+        {
+        }
+
+        public void QueueRemoveFavorite(Guid userId, Guid newsItemId)
+        {
+        }
+    }
+
     public interface IArticleQueueService
     {
         void QueueMarkRead(Guid userId, Guid newsItemId);
@@ -26,6 +47,11 @@ namespace Weave.User.Service.Role.Controllers
         void QueueAddFavorite(Guid userId, Guid newsItemId);
         void QueueRemoveFavorite(Guid userId, Guid newsItemId);
     }
+
+    #endregion
+
+
+
 
     public class UserController : ApiController, IWeaveUserService
     {
@@ -288,7 +314,7 @@ namespace Weave.User.Service.Role.Controllers
                 await PerformRefreshOnFeeds(feeds);
             }
             else
-                await LoadIndexOnly(userId);
+                await LoadIndexOnly(userId, saveOnFail: true);
 
             var indexSubset = userIndex.FeedIndices;
             return CreateOutgoingFeedsInfoList(indexSubset, nested);
@@ -306,7 +332,7 @@ namespace Weave.User.Service.Role.Controllers
                 await PerformRefreshOnFeeds(feeds);
             }
             else
-                await LoadIndexOnly(userId);
+                await LoadIndexOnly(userId, saveOnFail: true);
 
             var indexSubset = userIndex.FeedIndices.OfCategory(category);
             return CreateOutgoingFeedsInfoList(indexSubset, nested);
@@ -324,7 +350,7 @@ namespace Weave.User.Service.Role.Controllers
                 await PerformRefreshOnFeeds(feeds);
             }
             else
-                await LoadIndexOnly(userId);
+                await LoadIndexOnly(userId, saveOnFail: true);
 
             var indexSubset = userIndex.FeedIndices.Where(o => o.Id == feedId);
             return CreateOutgoingFeedsInfoList(indexSubset, nested);
@@ -344,7 +370,7 @@ namespace Weave.User.Service.Role.Controllers
             await LoadIndexOnly(userId);
 
             var feedIndex = ConvertToFeedIndex(feed);
-            if (userIndex.FeedIndices.TryAdd(feedIndex))
+            if (userIndex.FeedIndices.Add(feedIndex))
             {
                 await SaveUserIndex();
                 return CreateOutgoingFeed(feedIndex);
@@ -395,7 +421,7 @@ namespace Weave.User.Service.Role.Controllers
                 foreach (var feed in added)
                 {
                     var feedIndex = ConvertToFeedIndex(feed);
-                    userIndex.FeedIndices.TryAdd(feedIndex);
+                    userIndex.FeedIndices.Add(feedIndex);
                 }
             }
 
@@ -544,7 +570,7 @@ namespace Weave.User.Service.Role.Controllers
         /// Try to load the user index.  If that fails, try to load the full user graph
         /// from blob storage, then rehydrate the user index
         /// </summary>
-        async Task LoadIndexOnly(Guid userId)
+        async Task LoadIndexOnly(Guid userId, bool saveOnFail = false)
         {
             this.userId = userId;
             VerifyUserId();
@@ -562,11 +588,19 @@ namespace Weave.User.Service.Role.Controllers
             {
                 await LoadUserInfoBusinessObject();
                 userIndex = userBO.CreateUserIndex();
-                
+
+                // save the news articles from the refreshed feeds to Redis
+                var redisNews = userBO.Feeds.AllNews().Select(MapAsRedis);
+                var saveArticlesResults = await newsItemCache.Set(redisNews);
+                DebugEx.WriteLine(saveArticlesResults);
+
                 // TODO: DETERMINE IF THIS SAVE IS SUPERFLUOUS, AND SHOULD BE DELAYED 
                 // UNTIL THE INDEX HAS BEEN MODIFIED VIA WHICHEVER CONTROLLER ACTION 
                 // WAS CALLED
-                //await SaveUserIndex();
+                if (saveOnFail)
+                {
+                    await SaveUserIndex();
+                }
             }
         }
 
@@ -614,6 +648,7 @@ namespace Weave.User.Service.Role.Controllers
             finally
             {
                 sw.Stop();
+                DebugEx.WriteLine("took {0} ms to get user index from cache", sw.ElapsedMilliseconds);
                 readTime += sw.Elapsed;
             }
         }
@@ -655,7 +690,8 @@ namespace Weave.User.Service.Role.Controllers
 
             try
             {
-                await userIndexCache.Save(userIndex);
+                var saveResult = await userIndexCache.Save(userIndex);
+                DebugEx.WriteLine(saveResult);
             }
             catch (Exception e)
             {
@@ -725,6 +761,20 @@ namespace Weave.User.Service.Role.Controllers
 
         #region Create "Get News" outgoing DTO
 
+        class NewsItemIndexFeedIndexTuple
+        {
+            public NewsItemIndex NewsItemIndex { get; private set; }
+            public FeedIndex FeedIndex { get; private set; }
+            public bool IsNew { get; private set; }
+
+            public NewsItemIndexFeedIndexTuple(NewsItemIndex newsItemIndex, FeedIndex feedIndex)
+            {
+                NewsItemIndex = newsItemIndex;
+                FeedIndex = feedIndex;
+                IsNew = feedIndex.IsNewsItemNew(newsItemIndex);
+            }
+        }
+
         async Task<Outgoing.NewsList> CreateNewsListFromSubset(
             IEnumerable<FeedIndex> feeds,
             int skip, 
@@ -733,40 +783,60 @@ namespace Weave.User.Service.Role.Controllers
             EntryType entry,
             bool requireImage)
         {
-            var indices = feeds.Ordered().ToList();
+            IEnumerable<NewsItemIndexFeedIndexTuple> indices = feeds
+                .Where(o => o.NewsItemIndices != null)
+                .SelectMany(o => o.NewsItemIndices.Select(x => new NewsItemIndexFeedIndexTuple(x, o)));
 
-            IEnumerable<NewsItemIndex> filteredIndices = indices;
-
-            if (type == NewsItemType.New) ;
-            //    filteredIndices = filteredIndices.Where(o => o.IsNew()).ToList();
-
+            if (type == NewsItemType.New)
+                indices = indices.Where(o => o.IsNew);
             else if (type == NewsItemType.Viewed)
-                filteredIndices = filteredIndices.Where(o => o.HasBeenViewed);
-
+                indices = indices.Where(o => o.NewsItemIndex.HasBeenViewed);
             else if (type == NewsItemType.Unviewed)
-                filteredIndices = filteredIndices.Where(o => !o.HasBeenViewed);
+                indices = indices.Where(o => !o.NewsItemIndex.HasBeenViewed);
 
             if (requireImage)
-                filteredIndices = filteredIndices.Where(o => o.HasImage);
+                indices = indices.Where(o => o.NewsItemIndex.HasImage);
 
-            filteredIndices = filteredIndices.Skip(skip).Take(take);
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+            indices = indices
+                .OrderByDescending(o => o.IsNew)
+                .ThenByDescending(o => o.NewsItemIndex.UtcPublishDateTime)
+                .Skip(skip)
+                .Take(take)
+                .ToList();
+            sw.Stop();
+            DebugEx.WriteLine("creating ordered indices took {0} ms", sw.ElapsedMilliseconds);
 
-            var newsItems = await newsItemCache.Get(indices.Select(o => o.Id));
+            var newsIds = indices.Select(o => o.NewsItemIndex.Id);
 
-            var zipped = filteredIndices.Zip(newsItems, (index, ni) => new { index, ni });
+            sw.Restart();
+            var newsItems = await newsItemCache.Get(newsIds);
+            sw.Stop();
+            DebugEx.WriteLine("getting newsItems from cache took {0} ms", sw.ElapsedMilliseconds);
+            readTime += sw.Elapsed;
 
-            var results =
-                from temp in zipped.Where(o => o.ni.Value != null)
-                let newsIndex = temp.index
+            var zipped = indices.Zip(newsItems, (tuple, ni) => new { tuple, ni });
+
+            sw.Restart();
+            var outgoingNews =
+               (from temp in zipped.Where(o => o.ni.Value != null)
+                let tuple = temp.tuple
                 let newsItem = temp.ni.Value
-                select Merge(newsIndex, newsItem);
+                select Merge(tuple, newsItem)).ToList();
+            sw.Stop();
+            DebugEx.WriteLine("creating outgoing news took {0} ms", sw.ElapsedMilliseconds);
+
+            sw.Restart();
+            var outgoingFeeds = feeds.Select(CreateOutgoingFeed).ToList();
+            sw.Stop();
+            DebugEx.WriteLine("creating outgoing feeds took {0} ms", sw.ElapsedMilliseconds);
 
             var outgoing = new Outgoing.NewsList
             {
                 UserId = userIndex.Id,
-                FeedCount = feeds.Count(),
-                Feeds = feeds.Select(CreateOutgoingFeed).ToList(),
-                News = results.Select(ConvertToOutgoing).ToList(),
+                FeedCount = outgoingFeeds.Count,
+                Feeds = outgoingFeeds,
+                News = outgoingNews,
                 EntryType = entry.ToString(),
             };
 
@@ -788,43 +858,63 @@ namespace Weave.User.Service.Role.Controllers
             return outgoing;
         }
 
-        static NewsItem Merge(NewsItemIndex newsIndex, Redis.DTOs.NewsItem newsItem)
+        static Outgoing.Feed CreateOutgoingFeed(FeedIndex o)
         {
-            return new NewsItem
+            return new Outgoing.Feed
             {
-                Id = newsItem.Id,
-                Title = newsItem.Title,
-                Link = newsItem.Link,
-                ImageUrl = newsItem.ImageUrl,
-                YoutubeId = newsItem.YoutubeId,
-                VideoUri = newsItem.VideoUri,
-                PodcastUri = newsItem.PodcastUri,
-                ZuneAppId = newsItem.ZuneAppId,
-                IsFavorite = newsIndex.IsFavorite,
-                HasBeenViewed = newsIndex.HasBeenViewed,
-                OriginalDownloadDateTime = newsIndex.OriginalDownloadDateTime,
-                UtcPublishDateTimeString = newsItem.UtcPublishDateTime.ToString(),
-                Image = newsItem.Image,
+                Id = o.Id,
+                Uri = o.Uri,
+                Name = o.Name,
+                IconUri = o.IconUri,
+                Category = o.Category,
+                ArticleViewingType = (Weave.User.Service.DTOs.ArticleViewingType)o.ArticleViewingType,
+                TeaserImageUrl = o.TeaserImageUrl,
+                LastRefreshedOn = o.LastRefreshedOn,
+                MostRecentEntrance = o.MostRecentEntrance,
+                PreviousEntrance = o.PreviousEntrance,
+                NewArticleCount = o.NewsItemIndices.CountNew(),
+                UnreadArticleCount = o.NewsItemIndices.CountUnread(),
+                TotalArticleCount = o.NewsItemIndices.Total,
             };
         }
 
-        static Outgoing.NewsItem Merge2(NewsItemIndex newsIndex, Redis.DTOs.NewsItem newsItem)
+        static Outgoing.NewsItem Merge(NewsItemIndexFeedIndexTuple tuple, Redis.DTOs.NewsItem newsItem)
         {
+            var newsIndex = tuple.NewsItemIndex;
+            var feedIndex = tuple.FeedIndex;
+
             return new Outgoing.NewsItem
             {
+                FeedId = feedIndex.Id,
+                
                 Id = newsItem.Id,
                 Title = newsItem.Title,
                 Link = newsItem.Link,
+                UtcPublishDateTime = newsItem.UtcPublishDateTimeString,
                 ImageUrl = newsItem.ImageUrl,
                 YoutubeId = newsItem.YoutubeId,
                 VideoUri = newsItem.VideoUri,
                 PodcastUri = newsItem.PodcastUri,
                 ZuneAppId = newsItem.ZuneAppId,
+                Image = newsItem.Image == null ? null : MapToOutgoing(newsItem.Image),
+                
+                IsNew = tuple.IsNew,
+
                 IsFavorite = newsIndex.IsFavorite,
                 HasBeenViewed = newsIndex.HasBeenViewed,
                 OriginalDownloadDateTime = newsIndex.OriginalDownloadDateTime,
-                UtcPublishDateTime = newsItem.UtcPublishDateTime,
-                Image = newsItem.Image,
+            };
+        }
+
+        static Outgoing.Image MapToOutgoing(Image o)
+        {
+            return new Outgoing.Image
+            {
+                Width = o.Width,
+                Height = o.Height,
+                OriginalUrl = o.OriginalUrl,
+                BaseImageUrl = o.BaseImageUrl,
+                SupportedFormats = o.SupportedFormats,
             };
         }
 
@@ -930,29 +1020,6 @@ namespace Weave.User.Service.Role.Controllers
             return user.Convert<NewsItem, Outgoing.NewsItem>(BusinessObjectToServerOutgoing.Instance);
         }
 
-        Outgoing.Feed CreateOutgoingFeed(FeedIndex o)
-        {
-            var feed = new Outgoing.Feed
-            {
-                Id = o.Id,
-                Uri = o.Uri,
-                Name = o.Name,
-                IconUri = o.IconUri,
-                Category = o.Category,
-                ArticleViewingType = (Weave.User.Service.DTOs.ArticleViewingType)o.ArticleViewingType,
-                TeaserImageUrl = o.TeaserImageUrl,
-                LastRefreshedOn = o.LastRefreshedOn,
-                MostRecentEntrance = o.MostRecentEntrance,
-                PreviousEntrance = o.PreviousEntrance,
-            };
-
-            //feed.NewArticleCount = o.NewsItemIndices.Count(x => x.IsNew());
-            feed.UnreadArticleCount = o.NewsItemIndices.Count(x => !x.HasBeenViewed);
-            feed.TotalArticleCount = o.NewsItemIndices.Count();
-
-            return feed;
-        }
-
         Outgoing.UserInfo ConvertToOutgoing(UserInfo user)
         {
             return user.Convert<UserInfo, Outgoing.UserInfo>(BusinessObjectToServerOutgoing.Instance);
@@ -963,6 +1030,7 @@ namespace Weave.User.Service.Role.Controllers
             return new Redis.DTOs.NewsItem
             {
                 Id = o.Id,
+                UtcPublishDateTimeString = o.UtcPublishDateTimeString,
                 UtcPublishDateTime = o.UtcPublishDateTime,
                 Title = o.Title,
                 Link = o.Link,

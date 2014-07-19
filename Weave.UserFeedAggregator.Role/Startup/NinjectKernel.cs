@@ -1,7 +1,10 @@
 ﻿using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
 using Ninject;
+using StackExchange.Redis;
 using Weave.User.Service.Cache;
+using Weave.User.Service.Redis;
+using Weave.User.Service.Role.Controllers;
 
 namespace Weave.User.Service.Role.Startup
 {
@@ -22,7 +25,16 @@ namespace Weave.User.Service.Role.Startup
             var userRepo = new UserRepository(azureDataCacheClient);
             Bind<UserRepository>().ToConstant(userRepo).InSingletonScope();
 
-            //Bind<IWeaveArticleService>().To<Article.Service.Client.ServiceClient>().InSingletonScope();
+            var connectionMultiplexer = ConnectionMultiplexer.Connect(
+"weaveuser.redis.cache.windows.net,ssl=false,password=dM/xNBd9hB9Wgn3tPhkTsiwzIw4gImnS+eAN9sYuouY=");
+
+            var userIndexCache = new UserIndexCache(connectionMultiplexer);
+            var newsItemCache = new NewsItemCache(connectionMultiplexer);
+
+            Bind<UserIndexCache>().ToConstant(userIndexCache).InSingletonScope();
+            Bind<NewsItemCache>().ToConstant(newsItemCache).InSingletonScope();
+
+            Bind<IArticleQueueService>().To<MockArticleQueueService>();
         }
     }
 }

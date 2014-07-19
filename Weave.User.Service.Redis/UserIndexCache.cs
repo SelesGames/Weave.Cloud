@@ -3,6 +3,7 @@ using System;
 using System.Threading.Tasks;
 using Weave.User.BusinessObjects.Mutable;
 using Weave.User.Service.Redis.Json;
+using System.Linq;
 
 namespace Weave.User.Service.Redis
 {
@@ -20,18 +21,133 @@ namespace Weave.User.Service.Redis
             var db = connection.GetDatabase(0);
             var key = (RedisKey)userId.ToByteArray();
 
+            var sw = System.Diagnostics.Stopwatch.StartNew();
             var value = await db.StringGetAsync(key, CommandFlags.None);
-            var result = value.ReadAs<UserIndex>();
-            return result;
+            sw.Stop();
+            DebugEx.WriteLine("the actual getting of the user index took {0} ms", sw.ElapsedMilliseconds);
+
+            sw.Restart();
+            var cacheResult = value.ReadAs<DTOs.UserIndex>();
+            sw.Stop();
+            DebugEx.WriteLine("deserializing the user index took {0} ms", sw.ElapsedMilliseconds);
+
+            if (cacheResult.Value != null)
+            {
+                sw.Restart();
+                var store = Map(cacheResult.Value);
+                sw.Stop();
+                DebugEx.WriteLine("converting the user index took {0} ms", sw.ElapsedMilliseconds);
+
+                var result = RedisCacheResult.Create(store, cacheResult.RedisValue);
+                return result;
+            }
+            else
+            {
+                return RedisCacheResult.Create(default(UserIndex), cacheResult.RedisValue);
+            }
         }
 
-        public async Task Save(UserIndex userIndex)
+        public Task<bool> Save(UserIndex userIndex)
         {
             var db = connection.GetDatabase(0);
             var key = (RedisKey)userIndex.Id.ToByteArray();
-            var val = userIndex.WriteAs();
+            var store = Map(userIndex);
+            var val = store.WriteAs();
 
-            await db.StringSetAsync(key, val, TimeSpan.FromDays(7), When.Always, CommandFlags.HighPriority);
+            return db.StringSetAsync(key, val, TimeSpan.FromDays(7), When.Always, CommandFlags.HighPriority);
         }
+
+
+
+
+        #region Map functions
+
+        UserIndex Map(DTOs.UserIndex o)
+        {
+            var userIndex = new UserIndex
+            {
+                Id = o.Id,
+                PreviousLoginTime = o.PreviousLoginTime,
+                CurrentLoginTime = o.CurrentLoginTime,
+                ArticleDeletionTimeForMarkedRead = o.ArticleDeletionTimeForMarkedRead,
+                ArticleDeletionTimeForUnread = o.ArticleDeletionTimeForUnread,
+            };
+
+            if (o.FeedIndices != null)
+            {
+                foreach (var feedIndex in o.FeedIndices.Select(Map))
+                {
+                    userIndex.FeedIndices.Add(feedIndex);
+                }
+            }
+
+            return userIndex;
+        }
+
+        FeedIndex Map(DTOs.FeedIndex o)
+        {
+            var feedIndex = new FeedIndex
+            {
+                Id = o.Id,
+                Uri = o.Uri,
+                Name = o.Name,
+                IconUri = o.IconUri,
+                Category = o.Category,
+                TeaserImageUrl = o.TeaserImageUrl,
+                ArticleViewingType = o.ArticleViewingType,
+                LastRefreshedOn = o.LastRefreshedOn,
+                Etag = o.Etag,
+                LastModified = o.LastModified,
+                MostRecentNewsItemPubDate = o.MostRecentNewsItemPubDate,
+                MostRecentEntrance = o.MostRecentEntrance,
+                PreviousEntrance = o.PreviousEntrance,
+            };
+
+            if (o.NewsItemIndices != null)
+            {
+                foreach (var newsItemIndex in o.NewsItemIndices)
+                {
+                    feedIndex.NewsItemIndices.Add(newsItemIndex);
+                }
+            }
+
+            return feedIndex;
+        }
+
+        DTOs.UserIndex Map(UserIndex o)
+        {
+            return new DTOs.UserIndex
+            {
+                Id = o.Id,
+                PreviousLoginTime = o.PreviousLoginTime,
+                CurrentLoginTime = o.CurrentLoginTime,
+                ArticleDeletionTimeForMarkedRead = o.ArticleDeletionTimeForMarkedRead,
+                ArticleDeletionTimeForUnread = o.ArticleDeletionTimeForUnread,
+                FeedIndices = o.FeedIndices.Select(Map).ToList(),
+            };
+        }
+
+        DTOs.FeedIndex Map(FeedIndex o)
+        {
+            return new DTOs.FeedIndex
+            {
+                Id = o.Id,
+                Uri = o.Uri,
+                Name = o.Name, 
+                IconUri = o.IconUri,
+                Category = o.Category,
+                TeaserImageUrl = o.TeaserImageUrl,
+                ArticleViewingType = o.ArticleViewingType,
+                LastRefreshedOn = o.LastRefreshedOn,
+                Etag = o.Etag,
+                LastModified = o.LastModified,
+                MostRecentNewsItemPubDate = o.MostRecentNewsItemPubDate,
+                MostRecentEntrance = o.MostRecentEntrance,
+                PreviousEntrance = o.PreviousEntrance,
+                NewsItemIndices = o.NewsItemIndices.ToList(),
+            };
+        }
+
+        #endregion
     }
 }

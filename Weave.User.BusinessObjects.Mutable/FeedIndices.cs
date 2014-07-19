@@ -22,17 +22,13 @@ namespace Weave.User.BusinessObjects.Mutable
         /// <param name="feed">The feed to be added</param>
         /// <param name="trustSource">Will skip checking to see if feed is already present and that Id is set - use for deserialization only</param>
         /// <returns>True if the feed was added, false if the feed was already present or invalid</returns>
-        public bool TryAdd(FeedIndex feed, bool trustSource = false)
+        public bool Add(FeedIndex feed)
         {
             if (feed == null) return false;
             if (string.IsNullOrWhiteSpace(feed.Name) || string.IsNullOrWhiteSpace(feed.Uri))
                 return false;
 
-            // if we don't trust the Feed was created correctly, verify it's Id
-            if (!trustSource)
-            {
-                feed.EnsureGuidIsSet();
-            }
+            feed.EnsureGuidIsSet();
 
             if (ids.Add(feed.Id))
             {

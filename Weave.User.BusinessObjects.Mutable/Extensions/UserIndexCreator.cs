@@ -4,19 +4,27 @@ using System;
 namespace Weave.User.BusinessObjects.Mutable.Extensions
 {
     class UserIndexCreator
-    { 
+    {
         public static UserIndex Create(UserInfo u)
         {
             var userIndex = CreateUserIndex(u);
 
-            foreach (var f in u.Feeds)
+            if (u.Feeds != null)
             {
-                var feedIndex = CreateFeedIndex(f);
-
-                foreach (var n in f.News)
+                foreach (var f in u.Feeds)
                 {
-                    var newsItemIndex = CreateNewsItemIndex(n);
-                    feedIndex.NewsItemIndices.TryAdd(newsItemIndex);
+                    var feedIndex = CreateFeedIndex(f);
+
+                    if (f.News != null)
+                    {
+                        foreach (var n in f.News)
+                        {
+                            var newsItemIndex = CreateNewsItemIndex(n);
+                            feedIndex.NewsItemIndices.Add(newsItemIndex);
+                        }
+                    }
+
+                    userIndex.FeedIndices.Add(feedIndex);
                 }
             }
 
@@ -48,7 +56,7 @@ namespace Weave.User.BusinessObjects.Mutable.Extensions
                 TeaserImageUrl = o.TeaserImageUrl,
                 ArticleViewingType = o.ArticleViewingType,
                 LastRefreshedOn = o.LastRefreshedOn,
-                Etag = o.Etag,  
+                Etag = o.Etag,
                 LastModified = o.LastModified,
                 MostRecentNewsItemPubDate = o.MostRecentNewsItemPubDate,
                 MostRecentEntrance = o.MostRecentEntrance,

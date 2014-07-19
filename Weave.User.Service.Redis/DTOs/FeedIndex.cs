@@ -1,9 +1,11 @@
-﻿using SelesGames.Common.Hashing;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using Weave.User.BusinessObjects;
+using Weave.User.BusinessObjects.Mutable;
 
-namespace Weave.User.BusinessObjects.Mutable
+namespace Weave.User.Service.Redis.DTOs
 {
-    public class FeedIndex
+    class FeedIndex
     {
         public Guid Id { get; set; }
         public string Uri { get; set; }
@@ -23,23 +25,6 @@ namespace Weave.User.BusinessObjects.Mutable
         public DateTime MostRecentEntrance { get; set; }
         public DateTime PreviousEntrance { get; set; }
 
-        public NewsItemIndices NewsItemIndices { get; private set; }
-
-        public FeedIndex()
-        {
-            NewsItemIndices = new NewsItemIndices(this);
-        }
-
-        public void EnsureGuidIsSet()
-        {
-            if (Guid.Empty.Equals(Id))
-                Id = CryptoHelper.ComputeHashUsedByMobilizer(Uri);
-        }
-
-        public bool IsNewsItemNew(NewsItemIndex newsIndex)
-        {
-            return !newsIndex.HasBeenViewed &&
-                newsIndex.OriginalDownloadDateTime > PreviousEntrance;
-        }
+        public List<NewsItemIndex> NewsItemIndices { get; set; }
     }
 }
