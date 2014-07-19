@@ -155,6 +155,10 @@
       <Project>{edb6b676-e4fd-4b51-8c5b-98c7d1837ef6}</Project>
       <Name>Weave.User.Service.Cache</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Weave.User.Service.Redis\Weave.User.Service.Redis.csproj">
+      <Project>{32c547a5-8c67-4886-95ab-dc73f9af7673}</Project>
+      <Name>Weave.User.Service.Redis</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Weave.UserFeedAggregator.Role\Weave.User.Service.WorkerRole.csproj">
       <Project>{a8e71851-2046-4176-b9ce-6d6cc659e567}</Project>
       <Name>Weave.User.Service.WorkerRole</Name>

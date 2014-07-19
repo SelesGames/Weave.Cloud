@@ -65,7 +65,6 @@ namespace Weave.User.Service.Redis
                 ZuneAppId = newsItem.ZuneAppId,
                 IsFavorite = newsIndex.IsFavorite,
                 HasBeenViewed = newsIndex.HasBeenViewed,
-                OriginalDownloadDateTime = newsItem.OriginalDownloadDateTime,
                 UtcPublishDateTimeString = newsItem.UtcPublishDateTime,
                 Image = newsItem.Image == null ? null :
                     new Image
@@ -77,17 +76,6 @@ namespace Weave.User.Service.Redis
                         SupportedFormats = newsItem.Image.SupportedFormats,
                     }
             };
-        }
-    }
-
-    public static class CombinerExtensions
-    {
-        public static IEnumerable<NewsItemIndex> Ordered(this IEnumerable<FeedIndex> feeds)
-        {
-            return feeds
-                .Where(o => o.NewsItemIndices != null)
-                .SelectMany(o => o.NewsItemIndices)
-                .OrderByDescending(o => o.UtcPublishDateTime);
         }
     }
 }

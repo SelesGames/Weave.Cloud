@@ -51,8 +51,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Combiner.cs" />
-    <Compile Include="DTOs\Image.cs" />
     <Compile Include="DTOs\NewsItem.cs" />
     <Compile Include="Json\JsonSerializerHelper.cs" />
     <Compile Include="Json\RedisValueToJsonExtensions.cs" />

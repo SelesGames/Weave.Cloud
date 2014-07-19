@@ -9,5 +9,10 @@ namespace Weave.User.BusinessObjects.Mutable
             var helper = new UserMergeHelper(o, userIndex);
             helper.Merge();
         }
+
+        public static UserIndex CreateUserIndex(this UserInfo user)
+        {
+            return UserIndexCreator.Create(user);
+        }
     }
 }

@@ -5,6 +5,7 @@ namespace Weave.User.BusinessObjects.Mutable.Extensions
     {
         public static void CopyTo(this UserIndex o, UserInfo user)
         {
+            user.Id = o.Id;
             user.PreviousLoginTime = o.PreviousLoginTime;
             user.CurrentLoginTime = o.CurrentLoginTime;
             user.ArticleDeletionTimeForMarkedRead = o.ArticleDeletionTimeForMarkedRead;
@@ -33,6 +34,7 @@ namespace Weave.User.BusinessObjects.Mutable.Extensions
             newsItem.Id = o.Id;
             newsItem.IsFavorite = o.IsFavorite;
             newsItem.HasBeenViewed = o.HasBeenViewed;
+            newsItem.OriginalDownloadDateTime = o.OriginalDownloadDateTime;
         }
     }
 }

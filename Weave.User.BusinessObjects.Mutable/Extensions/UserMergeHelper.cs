@@ -25,7 +25,8 @@ namespace Weave.User.BusinessObjects.Mutable.Extensions
 
             foreach (var item in diff.Added)
             {
-                var feed = Map(item);
+                var feed = new Feed();
+                item.CopyTo(feed);
                 user.AddFeed(feed);
             }
 
@@ -61,13 +62,6 @@ namespace Weave.User.BusinessObjects.Mutable.Extensions
         static void Merge(NewsItem newsItem, NewsItemIndex newsItemIndex)
         {
             newsItemIndex.CopyTo(newsItem);
-        }
-
-        static Feed Map(FeedIndex feedIndex)
-        {
-            var feed = new Feed();
-            feedIndex.CopyTo(feed);
-            return feed;
         }
     }
 }

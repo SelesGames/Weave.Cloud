@@ -8,6 +8,7 @@ namespace Weave.User.BusinessObjects.Mutable
         public long UrlHash { get; set; }
         public long TitleHash { get; set; }
         public DateTime UtcPublishDateTime { get; set; }
+        public DateTime OriginalDownloadDateTime { get; set; }
         public bool IsFavorite { get; set; }
         public bool HasBeenViewed { get; set; }
         public bool HasImage { get; set; }

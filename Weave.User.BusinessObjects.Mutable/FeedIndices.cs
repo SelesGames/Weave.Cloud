@@ -7,11 +7,13 @@ namespace Weave.User.BusinessObjects.Mutable
 {
     public class FeedIndices : IEnumerable<FeedIndex>
     {
-        List<FeedIndex> feeds;
+        List<FeedIndex> innerList;
+        HashSet<Guid> ids;
 
         public FeedIndices()
         {
-            this.feeds = new List<FeedIndex>();
+            innerList = new List<FeedIndex>();
+            ids = new HashSet<Guid>();
         }
 
         /// <summary>
@@ -26,18 +28,19 @@ namespace Weave.User.BusinessObjects.Mutable
             if (string.IsNullOrWhiteSpace(feed.Name) || string.IsNullOrWhiteSpace(feed.Uri))
                 return false;
 
-            // if we don't trust the Feed was created correctly, verify it's Id and that no existing Feed matches
+            // if we don't trust the Feed was created correctly, verify it's Id
             if (!trustSource)
             {
                 feed.EnsureGuidIsSet();
-
-                // if any existing feed has a matching Id, don't add it
-                if (this.Any(o => o.Id.Equals(feed.Id)))
-                    return false;
             }
 
-            feeds.Add(feed);
-            return true;
+            if (ids.Add(feed.Id))
+            {
+                innerList.Add(feed);
+                return true;
+            }
+
+            return false;
         }
 
         public void Update(FeedIndex feed)
@@ -60,7 +63,8 @@ namespace Weave.User.BusinessObjects.Mutable
             var matching = this.FirstOrDefault(o => o.Id.Equals(feedId));
             if (matching != null)
             {
-                feeds.Remove(matching);
+                ids.Remove(feedId);
+                innerList.Remove(matching);
             }
         }
 
@@ -69,14 +73,14 @@ namespace Weave.User.BusinessObjects.Mutable
 
         #region IEnumerable interface implementation
 
-        public IEnumerator<FeedIndex> GetEnumerator()
+        IEnumerator<FeedIndex> IEnumerable<FeedIndex>.GetEnumerator()
         {
-            return feeds.GetEnumerator();
+            return innerList.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return feeds.GetEnumerator();
+            return innerList.GetEnumerator();
         }
 
         #endregion
