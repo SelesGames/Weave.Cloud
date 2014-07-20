@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using Weave.User.Service.Redis.DTOs;
 
 namespace Weave.User.Service.Redis.Serializers.Binary
@@ -14,7 +15,7 @@ namespace Weave.User.Service.Redis.Serializers.Binary
         {
             this.user = user;
             ms = new MemoryStream();
-            bw = new BinaryWriter(ms);
+            bw = new BinaryWriter(ms, Encoding.UTF8);
         }
 
         internal byte[] GetBytes()
@@ -27,8 +28,10 @@ namespace Weave.User.Service.Redis.Serializers.Binary
             bw.Write(user.Id.ToByteArray());
             bw.Write(user.PreviousLoginTime.ToBinary());
             bw.Write(user.CurrentLoginTime.ToBinary());
-            bw.Write(user.ArticleDeletionTimeForMarkedRead);
-            bw.Write(user.ArticleDeletionTimeForUnread);
+
+            // write string values
+            bw.Write(user.ArticleDeletionTimeForMarkedRead ?? "");
+            bw.Write(user.ArticleDeletionTimeForUnread ?? "");
 
             if (user.FeedIndices != null)
             {
@@ -48,14 +51,14 @@ namespace Weave.User.Service.Redis.Serializers.Binary
             bw.Write(feed.Id.ToByteArray());
 
             // write string values
-            bw.Write(feed.Uri);
-            bw.Write(feed.Name);
-            bw.Write(feed.IconUri);
-            bw.Write(feed.Category);
-            bw.Write(feed.TeaserImageUrl);
-            bw.Write(feed.Etag);
-            bw.Write(feed.LastModified);
-            bw.Write(feed.MostRecentNewsItemPubDate);
+            bw.Write(feed.Uri ?? "");
+            bw.Write(feed.Name ?? "");
+            bw.Write(feed.IconUri ?? "");
+            bw.Write(feed.Category ?? "");
+            bw.Write(feed.TeaserImageUrl ?? "");
+            bw.Write(feed.Etag ?? "");
+            bw.Write(feed.LastModified ?? "");
+            bw.Write(feed.MostRecentNewsItemPubDate ?? "");
 
             // write DateTime values
             bw.Write(feed.LastRefreshedOn.ToBinary());

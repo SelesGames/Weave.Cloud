@@ -39,9 +39,6 @@
     <Reference Include="protobuf-net">
       <HintPath>..\packages\protobuf-net.2.0.0.668\lib\net40\protobuf-net.dll</HintPath>
     </Reference>
-    <Reference Include="SBE">
-      <HintPath>..\packages\Adaptive.SBE.1.0.0.93\lib\net40\SBE.dll</HintPath>
-    </Reference>
     <Reference Include="StackExchange.Redis">
       <HintPath>..\packages\StackExchange.Redis.1.0.322\lib\net45\StackExchange.Redis.dll</HintPath>
     </Reference>
@@ -60,6 +57,7 @@
     <Compile Include="DTOs\UserIndex.cs" />
     <Compile Include="RedisValueSerializer.cs" />
     <Compile Include="Serializers\Binary\UserIndexBinarySerializer.cs" />
+    <Compile Include="Serializers\Binary\UserIndexReader.cs" />
     <Compile Include="Serializers\Binary\UserIndexWriter.cs" />
     <Compile Include="Serializers\IByteSerializer.cs" />
     <Compile Include="Serializers\Json\JsonSerializerHelper.cs" />

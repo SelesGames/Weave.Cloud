@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Weave.User.BusinessObjects.Mutable;
+using Weave.User.Service.Redis.Serializers.Binary;
 using Weave.User.Service.Redis.Serializers.ProtoBuf;
 
 namespace Weave.User.Service.Redis
@@ -15,7 +16,8 @@ namespace Weave.User.Service.Redis
         public UserIndexCache(ConnectionMultiplexer connection)
         {
             this.connection = connection;
-            serializer = new RedisValueSerializer(new ProtobufSerializerHelper());
+            //serializer = new RedisValueSerializer(new ProtobufSerializerHelper());
+            serializer = new RedisValueSerializer(new UserIndexBinarySerializer());
         }
 
         public async Task<RedisCacheResult<UserIndex>> Get(Guid userId)

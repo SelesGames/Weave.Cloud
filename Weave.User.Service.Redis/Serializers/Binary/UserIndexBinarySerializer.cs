@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Weave.User.Service.Redis.DTOs;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Weave.User.Service.Redis.DTOs;
+using System;
 
 namespace Weave.User.Service.Redis.Serializers.Binary
 {
     class UserIndexBinarySerializer : IByteSerializer
     {
-        public byte[] WriteObject(UserIndex userIndex)
+        public byte[] WriterUserIndex(UserIndex userIndex)
         {
             using (var helper = new UserIndexWriter(userIndex))
             {
@@ -18,14 +15,24 @@ namespace Weave.User.Service.Redis.Serializers.Binary
             }
         }
 
+        public UserIndex ReadUserIndex(byte[] byteArray)
+        {
+            using (var helper = new UserIndexReader(byteArray))
+            {
+                helper.Read();
+                return helper.GetUserIndex();
+            }
+        }
+
         public T ReadObject<T>(byte[] byteArray)
         {
-            throw new NotImplementedException();
+            return new[] { ReadUserIndex(byteArray) }.Cast<T>().First();
         }
 
         public byte[] WriteObject<T>(T obj)
         {
-            throw new NotImplementedException();
+            return WriterUserIndex(new[] { obj }.Cast<UserIndex>().First());
+            //throw new NotImplementedException();
         }
     }
 }
