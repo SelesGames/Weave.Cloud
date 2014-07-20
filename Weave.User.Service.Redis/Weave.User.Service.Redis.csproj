@@ -55,9 +55,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DTOs\FeedIndex.cs" />
+    <Compile Include="DTOs\Image.cs" />
     <Compile Include="DTOs\NewsItem.cs" />
     <Compile Include="DTOs\UserIndex.cs" />
     <Compile Include="RedisValueSerializer.cs" />
+    <Compile Include="Serializers\Binary\UserIndexBinarySerializer.cs" />
+    <Compile Include="Serializers\Binary\UserIndexWriter.cs" />
     <Compile Include="Serializers\IByteSerializer.cs" />
     <Compile Include="Serializers\Json\JsonSerializerHelper.cs" />
     <Compile Include="NewsItemCache.cs" />

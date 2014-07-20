@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 namespace Weave.User.Service.Redis.DTOs
-{
+{ 
     class UserIndex
     {
         public Guid Id { get; set; }

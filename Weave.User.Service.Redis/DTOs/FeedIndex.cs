@@ -5,7 +5,7 @@ using Weave.User.BusinessObjects.Mutable;
 
 namespace Weave.User.Service.Redis.DTOs
 {
-    class FeedIndex
+    public class FeedIndex
     {
         public Guid Id { get; set; }
         public string Uri { get; set; }

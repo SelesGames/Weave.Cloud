@@ -597,10 +597,10 @@ namespace Weave.User.Service.Role.Controllers
                 // TODO: DETERMINE IF THIS SAVE IS SUPERFLUOUS, AND SHOULD BE DELAYED 
                 // UNTIL THE INDEX HAS BEEN MODIFIED VIA WHICHEVER CONTROLLER ACTION 
                 // WAS CALLED
-                if (saveOnFail)
-                {
+                //if (saveOnFail)
+                //{
                     await SaveUserIndex();
-                }
+                //}
             }
         }
 
@@ -906,7 +906,7 @@ namespace Weave.User.Service.Role.Controllers
             };
         }
 
-        static Outgoing.Image MapToOutgoing(Image o)
+        static Outgoing.Image MapToOutgoing(Redis.DTOs.Image o)
         {
             return new Outgoing.Image
             {
@@ -1039,7 +1039,19 @@ namespace Weave.User.Service.Role.Controllers
                 VideoUri = o.VideoUri,
                 PodcastUri = o.PodcastUri,
                 ZuneAppId = o.ZuneAppId,
-                Image = o.Image,
+                Image = o.Image == null ? null : MapAsRedis(o.Image),
+            };
+        }
+
+        Redis.DTOs.Image MapAsRedis(Image o)
+        {
+            return new Redis.DTOs.Image
+            {
+                Width = o.Width,
+                Height = o.Height,
+                OriginalUrl = o.OriginalUrl,
+                BaseImageUrl = o.BaseImageUrl,
+                SupportedFormats = o.SupportedFormats,
             };
         }
 

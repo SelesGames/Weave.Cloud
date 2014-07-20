@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.Serialization;
-using Weave.User.BusinessObjects;
 
 namespace Weave.User.Service.Redis.DTOs
 {
