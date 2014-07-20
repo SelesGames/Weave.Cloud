@@ -1,19 +1,21 @@
 ﻿using StackExchange.Redis;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Weave.User.BusinessObjects.Mutable;
-using Weave.User.Service.Redis.Json;
-using System.Linq;
+using Weave.User.Service.Redis.Serializers.ProtoBuf;
 
 namespace Weave.User.Service.Redis
 {
     public class UserIndexCache
     {
-        ConnectionMultiplexer connection;
+        readonly ConnectionMultiplexer connection;
+        readonly RedisValueSerializer serializer;
 
         public UserIndexCache(ConnectionMultiplexer connection)
         {
             this.connection = connection;
+            serializer = new RedisValueSerializer(new ProtobufSerializerHelper());
         }
 
         public async Task<RedisCacheResult<UserIndex>> Get(Guid userId)
@@ -27,7 +29,7 @@ namespace Weave.User.Service.Redis
             DebugEx.WriteLine("the actual getting of the user index took {0} ms", sw.ElapsedMilliseconds);
 
             sw.Restart();
-            var cacheResult = value.ReadAs<DTOs.UserIndex>();
+            var cacheResult = serializer.ReadAs<DTOs.UserIndex>(value);
             sw.Stop();
             DebugEx.WriteLine("deserializing the user index took {0} ms", sw.ElapsedMilliseconds);
 
@@ -52,7 +54,7 @@ namespace Weave.User.Service.Redis
             var db = connection.GetDatabase(0);
             var key = (RedisKey)userIndex.Id.ToByteArray();
             var store = Map(userIndex);
-            var val = store.WriteAs();
+            var val = serializer.WriteAs(store);
 
             return db.StringSetAsync(key, val, TimeSpan.FromDays(7), When.Always, CommandFlags.HighPriority);
         }
