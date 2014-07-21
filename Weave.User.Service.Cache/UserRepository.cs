@@ -9,24 +9,26 @@ namespace Weave.User.Service.Cache
 {
     public class UserRepository
     {
-        UserInfoAzureCacheClient cacheClient;
+        UserInfoBlobWriteQueue writeQueue;
+        UserInfoBlobClient userInfoBlobClient;
 
-        public UserRepository(UserInfoAzureCacheClient cacheClient)
+        public UserRepository(UserInfoBlobClient userInfoBlobClient)
         {
-            this.cacheClient = cacheClient;
+            this.userInfoBlobClient = userInfoBlobClient;
+            writeQueue = new UserInfoBlobWriteQueue(userInfoBlobClient);
         }
 
         public async Task<UserInfo> Get(Guid userId)
         {
-            var cached = await cacheClient.Get(userId);
-            var user = cached.Convert<Store.UserInfo, UserInfo>(DataStoreToBusinessObject.Instance);
+            var store = await userInfoBlobClient.Get(userId);
+            var user = store.Convert<Store.UserInfo, UserInfo>(DataStoreToBusinessObject.Instance);
             return user;
         }
 
         public void Save(Guid userId, UserInfo user)
         {
-            var cached = user.Convert<UserInfo, Store.UserInfo>(BusinessObjectToDataStore.Instance);
-            cacheClient.Update(userId, cached);
+            var store = user.Convert<UserInfo, Store.UserInfo>(BusinessObjectToDataStore.Instance);
+            writeQueue.Add(store);
         }
     }
 }

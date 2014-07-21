@@ -1,7 +1,6 @@
 ﻿using StackExchange.Redis;
-using Weave.User.Service.Redis.Serializers;
 
-namespace Weave.User.Service.Redis
+namespace Weave.User.Service.Redis.Serializers
 {
     class RedisValueSerializer
     {

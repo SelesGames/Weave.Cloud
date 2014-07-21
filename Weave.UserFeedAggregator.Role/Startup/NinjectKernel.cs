@@ -21,8 +21,7 @@ namespace Weave.User.Service.Role.Startup
             var csa = new CloudStorageAccount(cred, useHttps: false);
 
             var userInfoBlobClient = new UserInfoBlobClient(csa, containerName: "user");
-            var azureDataCacheClient = new UserInfoAzureCacheClient(userInfoBlobClient);
-            var userRepo = new UserRepository(azureDataCacheClient);
+            var userRepo = new UserRepository(userInfoBlobClient);
             Bind<UserRepository>().ToConstant(userRepo).InSingletonScope();
 
             //var redisClientConfig = new ConfigurationOptions

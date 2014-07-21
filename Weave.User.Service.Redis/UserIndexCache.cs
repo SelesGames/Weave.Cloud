@@ -2,6 +2,7 @@
 using System;
 using System.Threading.Tasks;
 using Weave.User.BusinessObjects.Mutable;
+using Weave.User.Service.Redis.Serializers;
 using Weave.User.Service.Redis.Serializers.Binary;
 
 namespace Weave.User.Service.Redis

@@ -1,6 +1,4 @@
-﻿using System;
-using Weave.User.DataStore;
-using Weave.User.Service.Cache.Extensions;
+﻿using Weave.User.DataStore;
 
 namespace Weave.User.Service.Cache
 {

@@ -53,7 +53,7 @@
   <ItemGroup>
     <Compile Include="DTOs\Image.cs" />
     <Compile Include="DTOs\NewsItem.cs" />
-    <Compile Include="RedisValueSerializer.cs" />
+    <Compile Include="Serializers\RedisValueSerializer.cs" />
     <Compile Include="Serializers\Binary\UserIndexBinarySerializer.cs" />
     <Compile Include="Serializers\Binary\UserIndexReader.cs" />
     <Compile Include="Serializers\Binary\UserIndexWriter.cs" />

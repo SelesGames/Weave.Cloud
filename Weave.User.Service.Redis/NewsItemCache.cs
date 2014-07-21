@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Weave.User.Service.Redis.DTOs;
+using Weave.User.Service.Redis.Serializers;
 using Weave.User.Service.Redis.Serializers.ProtoBuf;
 
 namespace Weave.User.Service.Redis
