@@ -13,6 +13,11 @@ namespace Weave.User.BusinessObjects
             return categories;
         }
 
+        public static IEnumerable<Feed> WithId(this IEnumerable<Feed> feeds, Guid feedId)
+        {
+            return feeds.Where(o => o.Id == feedId);
+        }
+
         public static IEnumerable<Feed> OfCategory(this IEnumerable<Feed> feeds, string categoryName)
         {
             if (string.IsNullOrEmpty(categoryName))

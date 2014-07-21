@@ -6,6 +6,11 @@ namespace Weave.User.BusinessObjects.Mutable
 {
     public static class FeedIndexExtensions
     {
+        public static IEnumerable<FeedIndex> WithId(this IEnumerable<FeedIndex> feeds, Guid feedId)
+        {
+            return feeds.Where(o => o.Id == feedId);
+        }
+
         public static IEnumerable<FeedIndex> OfCategory(this IEnumerable<FeedIndex> feeds, string categoryName)
         {
             if (string.IsNullOrEmpty(categoryName))
