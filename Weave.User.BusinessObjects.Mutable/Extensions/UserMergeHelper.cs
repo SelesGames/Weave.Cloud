@@ -27,12 +27,12 @@ namespace Weave.User.BusinessObjects.Mutable.Extensions
             {
                 var feed = new Feed();
                 item.CopyTo(feed);
-                user.AddFeed(feed);
+                user.Feeds.Add(feed);
             }
 
             foreach (var item in diff.Removed)
             {
-                user.RemoveFeed(item.Id);
+                user.Feeds.RemoveWithId(item.Id);
             }
 
             foreach (var item in diff.Modified)
@@ -48,7 +48,8 @@ namespace Weave.User.BusinessObjects.Mutable.Extensions
         {
             feedIndex.CopyTo(feed);
 
-            var diff = feed.News.Diff(feedIndex.NewsItemIndices, o => o.Id, o => o.Id);
+            var diff = (feed.News ?? new List<NewsItem>())
+                .Diff(feedIndex.NewsItemIndices, o => o.Id, o => o.Id);
 
             foreach (var item in diff.Modified)
             {

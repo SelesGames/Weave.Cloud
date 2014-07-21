@@ -165,49 +165,56 @@ namespace Weave.User.Service.Role.Controllers
         [ActionName("info")]
         public async Task<Outgoing.UserInfo> GetUserInfo(Guid userId, bool refresh = false)
         {
-            //if (refresh)
-            //{
-            //    await LoadBoth(userId);
-
-            //    userBO.PreviousLoginTime = userBO.CurrentLoginTime;
-            //    userBO.CurrentLoginTime = DateTime.UtcNow;
-
-            //    var feeds = userBO.Feeds;
-            //    await PerformRefreshOnFeeds(feeds);
-            //}
-            //else
-            //{
-            //    await LoadIndexOnly(userId);
-
-            //    userIndex.PreviousLoginTime = userIndex.CurrentLoginTime;
-            //    userIndex.CurrentLoginTime = DateTime.UtcNow;
-            //}
-
-
-
-            ///************************************
-            await LoadBoth(userId);
-
-            userBO.PreviousLoginTime = userBO.CurrentLoginTime;
-            userBO.CurrentLoginTime = DateTime.UtcNow;
-
             if (refresh)
             {
-                await userBO.RefreshAllFeeds();
+                await LoadBoth(userId);
+
+                userBO.PreviousLoginTime = userBO.CurrentLoginTime;
+                userBO.CurrentLoginTime = DateTime.UtcNow;
+
+                var feeds = userBO.Feeds;
+                await PerformRefreshOnFeeds(feeds);
+            }
+            else
+            {
+                await LoadIndexOnly(userId);
+
+                userIndex.PreviousLoginTime = userIndex.CurrentLoginTime;
+                userIndex.CurrentLoginTime = DateTime.UtcNow;
             }
 
-            userBO.DeleteOldNews();
-
-            userIndex = userBO.CreateUserIndex();
-            await SaveUserIndex();
-
-            var outgoing = ConvertToOutgoing(userBO);
-            outgoing.LatestNews = userBO.GetLatestArticles().Select(ConvertToOutgoing).ToList();
+            var outgoing = ConvertToOutgoing(userIndex);
+            //outgoing.LatestNews = userBO.GetLatestArticles().Select(ConvertToOutgoing).ToList();
 
             outgoing.DataStoreReadTime = readTime;
             outgoing.DataStoreWriteTime = writeTime;
 
             return outgoing;
+
+
+            ///************************************
+            //await LoadBoth(userId);
+
+            //userBO.PreviousLoginTime = userBO.CurrentLoginTime;
+            //userBO.CurrentLoginTime = DateTime.UtcNow;
+
+            //if (refresh)
+            //{
+            //    await userBO.RefreshAllFeeds();
+            //}
+
+            //userBO.DeleteOldNews();
+
+            //userIndex = userBO.CreateUserIndex();
+            //await SaveUserIndex();
+
+            //var outgoing = ConvertToOutgoing(userBO);
+            //outgoing.LatestNews = userBO.GetLatestArticles().Select(ConvertToOutgoing).ToList();
+
+            //outgoing.DataStoreReadTime = readTime;
+            //outgoing.DataStoreWriteTime = writeTime;
+
+            //return outgoing;
         }
 
         #endregion
@@ -1038,10 +1045,10 @@ namespace Weave.User.Service.Role.Controllers
             };
         }
            
-        Outgoing.NewsItem ConvertToOutgoing(NewsItem user)
-        {
-            return user.Convert<NewsItem, Outgoing.NewsItem>(BusinessObjectToServerOutgoing.Instance);
-        }
+        //Outgoing.NewsItem ConvertToOutgoing(NewsItem user)
+        //{
+        //    return user.Convert<NewsItem, Outgoing.NewsItem>(BusinessObjectToServerOutgoing.Instance);
+        //}
 
         Outgoing.UserInfo ConvertToOutgoing(UserIndex user)
         {

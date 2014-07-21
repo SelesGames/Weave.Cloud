@@ -28,7 +28,7 @@ namespace Weave.User.Service.Converters
             if (o.Feeds != null)
             {
                 foreach (var feed in o.Feeds.OfType<Store.Feed>().Select(Convert))
-                    user.AddFeed(feed, trustSource: true);
+                    user.Feeds.Add(feed);
             }
 
             return user;

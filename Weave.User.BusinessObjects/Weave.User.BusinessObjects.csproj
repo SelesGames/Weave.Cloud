@@ -39,11 +39,13 @@
     <Compile Include="ArticleDeletionTimes\ArticleDeleteTime.cs" />
     <Compile Include="ArticleDeletionTimes\ArticleDeleteTimesForMarkedRead.cs" />
     <Compile Include="ArticleDeletionTimes\ArticleDeleteTimesForUnread.cs" />
+    <Compile Include="Articles.cs" />
     <Compile Include="ArticleViewingType.cs" />
     <Compile Include="Converters\Converters.cs" />
     <Compile Include="Extensions\DtoExtensions.cs" />
     <Compile Include="Extensions\FeedExtensions.cs" />
     <Compile Include="Feed.cs" />
+    <Compile Include="Feeds.cs" />
     <Compile Include="FeedsSubset.cs" />
     <Compile Include="Image.cs" />
     <Compile Include="NewsItem.cs" />

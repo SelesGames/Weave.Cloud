@@ -41,7 +41,7 @@ namespace Weave.User.Service.Converters
             if (o.Feeds != null)
             {
                 foreach (var feed in o.Feeds.OfType<Incoming.NewFeed>().Select(x => x.Convert<Incoming.NewFeed, Feed>(Instance)))
-                    user.AddFeed(feed, trustSource: false);
+                    user.Feeds.Add(feed);
             }
 
             return user;

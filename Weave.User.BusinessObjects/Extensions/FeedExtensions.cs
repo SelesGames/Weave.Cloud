@@ -31,7 +31,7 @@ namespace Weave.User.BusinessObjects
     
         public static IEnumerable<NewsItem> AllNews(this IEnumerable<Feed> feeds)
         {
-            return feeds.Where(o => o.News != null).SelectMany(o => o.News);
+            return feeds.Where(o => o.News != null).SelectMany(o => o.News).OfType<NewsItem>();
         }
 
         public static IEnumerable<NewsItem> LatestNewsFirst(this IEnumerable<NewsItem> news)

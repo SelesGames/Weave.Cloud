@@ -42,7 +42,7 @@
     <Folder Include="Weave.User.Service.WorkerRoleContent" />
   </ItemGroup>
   <ItemGroup>
-    <PublishProfile Include="Profiles\Weave User Feed Aggregator.azurePubxml" />
+    <PublishProfile Include="Profiles\Weave User Service.azurePubxml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Weave.User.Service.WorkerRoleContent\diagnostics.wadcfg">

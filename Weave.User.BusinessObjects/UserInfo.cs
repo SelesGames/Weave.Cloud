@@ -9,11 +9,11 @@ namespace Weave.User.BusinessObjects
 {
     public class UserInfo
     {
-        List<Feed> feedsList = new List<Feed>();
         string articleDeletionTimeForMarkedRead, articleDeletionTimeForUnread;
 
         public Guid Id { get; set; }
-        public IReadOnlyCollection<Feed> Feeds { get { return feedsList; } }
+        public Feeds Feeds { get; private set; }
+        public Articles Articles { get; private set; }
         public DateTime PreviousLoginTime { get; set; }
         public DateTime CurrentLoginTime { get; set; }
 
@@ -41,9 +41,15 @@ namespace Weave.User.BusinessObjects
             }
         }
 
+        public UserInfo()
+        {
+            Feeds = new Feeds(this);
+            Articles = new Articles(this);
+        }
+
         public Task RefreshAllFeeds()
         {
-            return new FeedsSubset(feedsList).Refresh();
+            return new FeedsSubset(Feeds).Refresh();
         }
 
         public IEnumerable<NewsItem> GetLatestArticles()
@@ -63,7 +69,7 @@ namespace Weave.User.BusinessObjects
             if (string.IsNullOrEmpty(category))
                 throw new Exception("No category specified");
 
-            feeds = feedsList.OfCategory(category);
+            feeds = Feeds.OfCategory(category);
 
             if (EnumerableEx.IsNullOrEmpty(feeds))
                 throw new Exception(string.Format("No feeds match category: {0}", category));
@@ -76,7 +82,7 @@ namespace Weave.User.BusinessObjects
             if (EnumerableEx.IsNullOrEmpty(feedIds))
                 throw new Exception("No feedIds specified");
 
-            var feeds = from f in feedsList
+            var feeds = from f in Feeds
                         join id in feedIds on f.Id equals id
                         select f;
 
@@ -87,157 +93,6 @@ namespace Weave.User.BusinessObjects
                     ));
 
             return new FeedsSubset(feeds);
-        }
-
-        #endregion
-
-
-
-
-        #region Add/Remove/Update a feed
-
-        /// <summary>
-        /// Adds a feed to the user's collection of feeds
-        /// </summary>
-        /// <param name="feed">The feed to be added</param>
-        /// <param name="trustSource">Will skip checking to see if feed is already present and that Id is set - use for deserialization only</param>
-        /// <returns>True if the feed was added, false if the feed was already present or invalid</returns>
-        public bool AddFeed(Feed feed, bool trustSource = false)
-        {
-            if (feed == null) return false;
-            if (string.IsNullOrWhiteSpace(feed.Name) || string.IsNullOrWhiteSpace(feed.Uri))
-                return false;
-
-            if (feedsList == null) feedsList = new List<Feed>();
-
-            // if we don't trust the Feed was created correctly, verify it's Id and that no existing Feed matches
-            if (!trustSource)
-            {
-                feed.EnsureGuidIsSet();
-
-                // if any existing feed has a matching Id, don't add it
-                if (feedsList.Any(o => o.Id.Equals(feed.Id)))
-                    return false;
-            }
-
-            feedsList.Add(feed);
-            feed.User = this;
-            return true;
-        }
-
-        public void RemoveFeed(Guid feedId)
-        {
-            if (EnumerableEx.IsNullOrEmpty(feedsList))
-                return;
-
-            var matching = feedsList.FirstOrDefault(o => o.Id.Equals(feedId));
-            if (matching != null)
-            {
-                feedsList.Remove(matching);
-            }
-        }
-
-        public void UpdateFeed(Feed feed)
-        {
-            if (EnumerableEx.IsNullOrEmpty(feedsList) || feed == null)
-                return;
-            if (string.IsNullOrWhiteSpace(feed.Name))
-                return;
-
-            var matching = feedsList.FirstOrDefault(o => o.Id.Equals(feed.Id));
-            if (matching != null)
-            {
-                // the only 3 fields the user can change are category, feed name, and article viewing type
-                matching.Category = feed.Category;
-                matching.Name = feed.Name;
-                matching.ArticleViewingType = feed.ArticleViewingType;
-            }
-        }
-
-        #endregion
-
-
-
-
-        #region Mark NewsItem read/unread
-
-        public void MarkNewsItemRead(Guid newsItemId)
-        {
-            MarkNewsItemRead(FindNewsItem(newsItemId));
-        }
-
-        public void MarkNewsItemRead(NewsItem newsItem)
-        {
-            if (newsItem == null)
-                return;
-
-            newsItem.HasBeenViewed = true;
-        }
-
-        public void MarkNewsItemUnread(Guid newsItemId)
-        {
-            var newsItem = FindNewsItem(newsItemId);
-            if (newsItem == null)
-                return;
-
-            newsItem.HasBeenViewed = false;
-        }
-
-        public void MarkNewsItemsSoftRead(IEnumerable<Guid> newsItemIds)
-        {
-            if (newsItemIds == null || feedsList == null)
-                return;
-
-            var lookup = feedsList.AllNews().ToLookup(o => o.Id);
-
-            var newsItems = newsItemIds.Where(o => lookup.Contains(o)).SelectMany(o => lookup[o]).OfType<NewsItem>();
-
-            foreach (var newsItem in newsItems)
-                newsItem.HasBeenViewed = true;
-        }
-
-        public void MarkCategorySoftRead(string category)
-        {
-            if (feedsList == null)
-                return;
-
-            foreach (var newsItem in feedsList.OfCategory(category).AllNews())
-            {
-                newsItem.HasBeenViewed = true;
-            }
-        }
-
-        public void MarkFeedSoftRead(Guid feedId)
-        {
-            if (feedsList == null)
-                return;
-
-            foreach (var newsItem in feedsList.Where(o => o.Id == feedId).AllNews())
-            {
-                newsItem.HasBeenViewed = true;
-            }
-        }
-
-        public void AddFavorite(Guid newsItemId)
-        {
-            AddFavorite(FindNewsItem(newsItemId));
-        }
-
-        public void AddFavorite(NewsItem newsItem)
-        {
-            if (newsItem == null)
-                return;
-
-            newsItem.IsFavorite = true;
-        }
-
-        public void RemoveFavorite(Guid newsItemId)
-        {
-            var newsItem = FindNewsItem(newsItemId);
-            if (newsItem == null)
-                return;
-
-            newsItem.IsFavorite = false;
         }
 
         #endregion
@@ -279,25 +134,6 @@ namespace Weave.User.BusinessObjects
                 newsItem.IsNew() ||
                 (!newsItem.HasBeenViewed && (age < unreadExpiry)) ||
                 (newsItem.HasBeenViewed && (age < markedReadExpiry));
-        }
-
-        #endregion
-
-
-
-
-        #region helper methods
-
-        public NewsItem FindNewsItem(Guid newsItemId)
-        {
-            if (EnumerableEx.IsNullOrEmpty(feedsList))
-                return null;
-
-            var newsItem = feedsList
-                .AllNews()
-                .FirstOrDefault(o => o.Id.Equals(newsItemId));
-
-            return newsItem;
         }
 
         #endregion
