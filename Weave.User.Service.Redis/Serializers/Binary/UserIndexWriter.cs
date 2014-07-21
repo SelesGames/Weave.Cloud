@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using Weave.User.Service.Redis.DTOs;
+using Weave.User.BusinessObjects.Mutable;
 
 namespace Weave.User.Service.Redis.Serializers.Binary
 {
@@ -80,7 +80,7 @@ namespace Weave.User.Service.Redis.Serializers.Binary
             }
         }
 
-        void WriteNewsItemIndex(Weave.User.BusinessObjects.Mutable.NewsItemIndex newsItem)
+        void WriteNewsItemIndex(NewsItemIndex newsItem)
         {
             bw.Write(newsItem.Id.ToByteArray());
 

@@ -1,6 +1,5 @@
-﻿using Weave.User.Service.Redis.DTOs;
-using System.Linq;
-using System;
+﻿using System.Linq;
+using Weave.User.BusinessObjects.Mutable;
 
 namespace Weave.User.Service.Redis.Serializers.Binary
 {

@@ -37,7 +37,7 @@ namespace Weave.User.BusinessObjects.Mutable
             return false;
         }
 
-        public int Total { get { return innerList.Count; } }
+        public int Count { get { return innerList.Count; } }
 
         public int CountUnread()
         {

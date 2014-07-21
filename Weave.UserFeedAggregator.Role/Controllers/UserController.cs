@@ -874,7 +874,7 @@ namespace Weave.User.Service.Role.Controllers
                 PreviousEntrance = o.PreviousEntrance,
                 NewArticleCount = o.NewsItemIndices.CountNew(),
                 UnreadArticleCount = o.NewsItemIndices.CountUnread(),
-                TotalArticleCount = o.NewsItemIndices.Total,
+                TotalArticleCount = o.NewsItemIndices.Count,
             };
         }
 

@@ -64,6 +64,8 @@ namespace Weave.User.BusinessObjects.Mutable
             }
         }
 
+        public int Count { get { return innerList.Count; } }
+
 
 
 
