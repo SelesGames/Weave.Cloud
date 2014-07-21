@@ -55,6 +55,8 @@ namespace Weave.User.Service.Role.Controllers
 
     public class UserController : ApiController, IWeaveUserService
     {
+        #region Private member variables + constructor
+
         readonly UserRepository userRepo;
         readonly UserIndexCache userIndexCache;
         readonly NewsItemCache newsItemCache;
@@ -79,6 +81,8 @@ namespace Weave.User.Service.Role.Controllers
             this.newsItemCache = newsItemCache;
             this.articleQueueService = articleQueueService;
         }
+
+        #endregion
 
 
 
@@ -138,9 +142,11 @@ namespace Weave.User.Service.Role.Controllers
             }
 
             userBO = ConvertToBusinessObject(incomingUser);
-            await userBO.RefreshAllFeeds();
-            userRepo.Save(userBO.Id, userBO);
-            var outgoing = ConvertToOutgoing(userBO);
+            this.userId = userBO.Id;
+            await PerformRefreshOnFeeds(userBO.Feeds);
+
+
+            var outgoing = ConvertToOutgoing(userIndex);
 
             outgoing.DataStoreReadTime = readTime;
             outgoing.DataStoreWriteTime = writeTime;
@@ -635,6 +641,9 @@ namespace Weave.User.Service.Role.Controllers
 
         async Task LoadUserIndex()
         {
+            if (userId == Guid.Empty)
+                throw new Exception("The user Id is set to the empty GUID, which should never be the case");
+
             var sw = System.Diagnostics.Stopwatch.StartNew();
 
             try
@@ -660,6 +669,9 @@ namespace Weave.User.Service.Role.Controllers
 
         async Task LoadUserInfoBusinessObject()
         {
+            if (userId == Guid.Empty)
+                throw new Exception("The user Id is set to the empty GUID, which should never be the case");
+
             var sw = System.Diagnostics.Stopwatch.StartNew();
 
             try
@@ -691,6 +703,9 @@ namespace Weave.User.Service.Role.Controllers
 
         async Task SaveUserIndex()
         {
+            if (userIndex == null)
+                throw new Exception("User Index needs to be loaded/hydrated before you can save it");
+
             var sw = System.Diagnostics.Stopwatch.StartNew();
 
             try
@@ -714,11 +729,14 @@ namespace Weave.User.Service.Role.Controllers
 
         void SaveUserInfoBusinessObject()
         {
+            if (userBO == null)
+                throw new Exception("User Business Object needs to be loaded/hydrated before you can save it");
+
             var sw = System.Diagnostics.Stopwatch.StartNew();
 
             try
             {
-                userRepo.Save(userBO.Id, userBO);
+                userRepo.Save(userId, userBO);
             }
             catch (Exception e)
             {
@@ -750,7 +768,7 @@ namespace Weave.User.Service.Role.Controllers
 
             // save the news articles from the refreshed feeds to Redis
             var redisNews = subset.AllNews().Select(MapAsRedis);
-            var saveArticlesResults = await newsItemCache.Set(redisNews);
+            var saveToRedisResults = await newsItemCache.Set(redisNews);
 
             // save the user index, which was recreated earlier
             await SaveUserIndex();
@@ -838,7 +856,7 @@ namespace Weave.User.Service.Role.Controllers
 
             var outgoing = new Outgoing.NewsList
             {
-                UserId = userIndex.Id,
+                UserId = userId,
                 FeedCount = outgoingFeeds.Count,
                 Feeds = outgoingFeeds,
                 News = outgoingNews,
@@ -934,7 +952,7 @@ namespace Weave.User.Service.Role.Controllers
         {
             Outgoing.FeedsInfoList outgoing = new Outgoing.FeedsInfoList
             {
-                UserId = userIndex.Id,
+                UserId = userId,
                 TotalFeedCount = userIndex.FeedIndices == null ? 0 : userIndex.FeedIndices.Count(),
             };
 
@@ -1025,9 +1043,9 @@ namespace Weave.User.Service.Role.Controllers
             return user.Convert<NewsItem, Outgoing.NewsItem>(BusinessObjectToServerOutgoing.Instance);
         }
 
-        Outgoing.UserInfo ConvertToOutgoing(UserInfo user)
+        Outgoing.UserInfo ConvertToOutgoing(UserIndex user)
         {
-            return user.Convert<UserInfo, Outgoing.UserInfo>(BusinessObjectToServerOutgoing.Instance);
+            return user.Convert<UserIndex, Outgoing.UserInfo>(BusinessObjectToServerOutgoing.Instance);
         }
 
         Redis.DTOs.NewsItem MapAsRedis(NewsItem o)

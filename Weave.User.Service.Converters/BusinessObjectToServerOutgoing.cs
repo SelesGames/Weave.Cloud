@@ -1,15 +1,16 @@
 ﻿using SelesGames.Common;
 using System.Linq;
 using Weave.User.BusinessObjects;
+using Weave.User.BusinessObjects.Mutable;
 using Outgoing = Weave.User.Service.DTOs.ServerOutgoing;
 
 
 namespace Weave.User.Service.Converters
 {
     public class BusinessObjectToServerOutgoing :
-        IConverter<UserInfo, Outgoing.UserInfo>,
-        IConverter<Feed, Outgoing.Feed>,
-        IConverter<NewsItem, Outgoing.NewsItem>,
+        IConverter<UserIndex, Outgoing.UserInfo>,
+        IConverter<FeedIndex, Outgoing.Feed>,
+       // IConverter<NewsItemIndex, Outgoing.NewsItem>,
         IConverter<Image, Outgoing.Image>
     {
         public static readonly BusinessObjectToServerOutgoing Instance = new BusinessObjectToServerOutgoing();
@@ -48,7 +49,7 @@ namespace Weave.User.Service.Converters
             };
         }
 
-        public Outgoing.Feed Convert(Feed o)
+        public Outgoing.Feed Convert(FeedIndex o)
         {
             return new Outgoing.Feed
             {
@@ -58,9 +59,9 @@ namespace Weave.User.Service.Converters
                 IconUri = o.IconUri,
                 Category = o.Category,
                 ArticleViewingType = (Weave.User.Service.DTOs.ArticleViewingType)o.ArticleViewingType,
-                TotalArticleCount = o.News == null ? 0 : o.News.Count,
-                NewArticleCount = o.News == null ? 0 : o.News.Count(x => x.IsCountedAsNew()),
-                UnreadArticleCount = o.News == null ? 0 : o.News.Count(x => !x.HasBeenViewed),
+                TotalArticleCount = o.NewsItemIndices.Count,
+                NewArticleCount = o.NewsItemIndices.CountNew(),
+                UnreadArticleCount = o.NewsItemIndices.CountUnread(),
                 TeaserImageUrl = o.TeaserImageUrl,
                 LastRefreshedOn = o.LastRefreshedOn,
                 MostRecentEntrance = o.MostRecentEntrance,
@@ -68,13 +69,13 @@ namespace Weave.User.Service.Converters
             };
         }
 
-        public Outgoing.UserInfo Convert(UserInfo o)
+        public Outgoing.UserInfo Convert(UserIndex o)
         {
             return new Outgoing.UserInfo
             {
                 Id = o.Id,
-                FeedCount = o.Feeds == null ? 0 : o.Feeds.Count,
-                Feeds = o.Feeds == null ? null : o.Feeds.OfType<Feed>().Select(Convert).ToList(),
+                FeedCount = o.FeedIndices.Count,
+                Feeds = o.FeedIndices.Select(Convert).ToList(),
                 PreviousLoginTime = o.PreviousLoginTime,
                 CurrentLoginTime = o.CurrentLoginTime,
                 ArticleDeletionTimeForMarkedRead = o.ArticleDeletionTimeForMarkedRead,
