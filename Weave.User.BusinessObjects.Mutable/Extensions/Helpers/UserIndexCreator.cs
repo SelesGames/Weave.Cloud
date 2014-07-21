@@ -1,9 +1,9 @@
 ﻿using SelesGames.Common.Hashing;
 using System;
 
-namespace Weave.User.BusinessObjects.Mutable.Extensions
+namespace Weave.User.BusinessObjects.Mutable.Extensions.Helpers
 {
-    class UserIndexCreator
+    static class UserIndexCreator
     {
         public static UserIndex Create(UserInfo u)
         {
@@ -42,7 +42,6 @@ namespace Weave.User.BusinessObjects.Mutable.Extensions
                 ArticleDeletionTimeForUnread = o.ArticleDeletionTimeForUnread,
             };
         }
-
 
         static FeedIndex CreateFeedIndex(Feed o)
         {

@@ -37,11 +37,12 @@
   <ItemGroup>
     <Compile Include="Articles.cs" />
     <Compile Include="Extensions\CopyExtensions.cs" />
-    <Compile Include="Extensions\UserIndexCreator.cs" />
-    <Compile Include="Extensions\UserMergeHelper.cs" />
+    <Compile Include="Extensions\Helpers\LatestNewsHelper.cs" />
+    <Compile Include="Extensions\Helpers\UserIndexCreator.cs" />
+    <Compile Include="Extensions\Helpers\UserMergeHelper.cs" />
     <Compile Include="FeedIndex.cs" />
     <Compile Include="Extensions\FeedIndexExtensions.cs" />
-    <Compile Include="Extensions\UserUpdateExtensions.cs" />
+    <Compile Include="Extensions\UserExtensions.cs" />
     <Compile Include="FeedIndices.cs" />
     <Compile Include="NewsItemIndex.cs" />
     <Compile Include="NewsItemIndices.cs" />

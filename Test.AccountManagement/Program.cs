@@ -53,8 +53,7 @@ namespace Test.AccountManagement
             var csa = new CloudStorageAccount(cred, useHttps: false);
 
             var userInfoBlobClient = new UserInfoBlobClient(csa, containerName: "user");
-            var cacheClient = new UserInfoAzureCacheClient(userInfoBlobClient);
-            var userRepo = new UserRepository(cacheClient);
+            var userRepo = new UserRepository(userInfoBlobClient);
             var controller = new UserController(null, null, null, null);
             return controller;
         }

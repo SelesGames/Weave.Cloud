@@ -1,20 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Weave.User.BusinessObjects.Mutable.Extensions
+namespace Weave.User.BusinessObjects.Mutable.Extensions.Helpers
 {
-    class UserMergeHelper
+    static class UserMergeHelper
     {
-        UserInfo user;
-        UserIndex userIndex;
-
-        public UserMergeHelper(UserInfo user, UserIndex userIndex)
-        {
-            this.user = user;
-            this.userIndex = userIndex;
-        }
-
-        public void Merge()
+        public static void Merge(UserInfo user, UserIndex userIndex)
         {
             if (user.Id != userIndex.Id)
                 throw new Exception("Cannot merge user info that are not equivalent via their IDs!");

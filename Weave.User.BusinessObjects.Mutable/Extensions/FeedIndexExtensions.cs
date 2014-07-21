@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Weave.User.BusinessObjects.Mutable.Extensions.Helpers;
 
 namespace Weave.User.BusinessObjects.Mutable
 {
@@ -27,6 +28,7 @@ namespace Weave.User.BusinessObjects.Mutable
             return feeds
                 .Where(o => o.NewsItemIndices != null)
                 .SelectMany(o => o.NewsItemIndices)
+                .OfType<NewsItemIndex>()
                 .OrderByDescending(o => o.UtcPublishDateTime);
         }
 
@@ -53,6 +55,11 @@ namespace Weave.User.BusinessObjects.Mutable
             {
                 feed.MostRecentEntrance = now;
             }
+        }
+
+        public static IEnumerable<NewsItemIndex> GetLatestNews(this IEnumerable<FeedIndex> feeds)
+        {
+            return LatestNewsHelper.GetTopNewsItems(feeds);
         }
     }
 }
