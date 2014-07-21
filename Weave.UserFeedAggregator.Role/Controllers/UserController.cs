@@ -184,7 +184,8 @@ namespace Weave.User.Service.Role.Controllers
             }
 
             var outgoing = ConvertToOutgoing(userIndex);
-            //outgoing.LatestNews = userBO.GetLatestArticles().Select(ConvertToOutgoing).ToList();
+            var latestNewsIndices = userBO.GetLatestArticles();
+            outgoing.LatestNews = userBO.GetLatestArticles().Select(ConvertToOutgoing).ToList();
 
             outgoing.DataStoreReadTime = readTime;
             outgoing.DataStoreWriteTime = writeTime;
@@ -805,6 +806,30 @@ namespace Weave.User.Service.Role.Controllers
             }
         }
 
+        async Task<List<Outgoing.NewsItem>> CreateOutgoingNews(IEnumerable<NewsItemIndexFeedIndexTuple> indices)
+        {
+            var newsIds = indices.Select(o => o.NewsItemIndex.Id);
+
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+            var newsItems = await newsItemCache.Get(newsIds);
+            sw.Stop();
+            DebugEx.WriteLine("getting newsItems from cache took {0} ms", sw.ElapsedMilliseconds);
+            readTime += sw.Elapsed;
+
+            var zipped = indices.Zip(newsItems, (tuple, ni) => new { tuple, ni });
+
+            sw.Restart();
+            var outgoingNews =
+               (from temp in zipped.Where(o => o.ni.Value != null)
+                let tuple = temp.tuple
+                let newsItem = temp.ni.Value
+                select Merge(tuple, newsItem)).ToList();
+            sw.Stop();
+            DebugEx.WriteLine("creating outgoing news took {0} ms", sw.ElapsedMilliseconds);
+
+            return outgoingNews;
+        }
+
         async Task<Outgoing.NewsList> CreateNewsListFromSubset(
             IEnumerable<FeedIndex> feeds,
             int skip, 
@@ -837,25 +862,8 @@ namespace Weave.User.Service.Role.Controllers
             sw.Stop();
             DebugEx.WriteLine("creating ordered indices took {0} ms", sw.ElapsedMilliseconds);
 
-            var newsIds = indices.Select(o => o.NewsItemIndex.Id);
-
-            sw.Restart();
-            var newsItems = await newsItemCache.Get(newsIds);
-            sw.Stop();
-            DebugEx.WriteLine("getting newsItems from cache took {0} ms", sw.ElapsedMilliseconds);
-            readTime += sw.Elapsed;
-
-            var zipped = indices.Zip(newsItems, (tuple, ni) => new { tuple, ni });
-
-            sw.Restart();
-            var outgoingNews =
-               (from temp in zipped.Where(o => o.ni.Value != null)
-                let tuple = temp.tuple
-                let newsItem = temp.ni.Value
-                select Merge(tuple, newsItem)).ToList();
-            sw.Stop();
-            DebugEx.WriteLine("creating outgoing news took {0} ms", sw.ElapsedMilliseconds);
-
+            var outgoingNews = await CreateOutgoingNews(indices);
+            
             sw.Restart();
             var outgoingFeeds = feeds.Select(CreateOutgoingFeed).ToList();
             sw.Stop();
