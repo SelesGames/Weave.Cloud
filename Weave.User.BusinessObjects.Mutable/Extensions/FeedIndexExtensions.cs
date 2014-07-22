@@ -23,13 +23,19 @@ namespace Weave.User.BusinessObjects.Mutable
             return feeds.Where(o => categoryName.Equals(o.Category, StringComparison.OrdinalIgnoreCase));
         }
 
-        public static IEnumerable<NewsItemIndex> Ordered(this IEnumerable<FeedIndex> feeds)
+        public static IEnumerable<NewsItemIndexFeedIndexTuple> AllIndices(this IEnumerable<FeedIndex> feeds)
         {
             return feeds
                 .Where(o => o.NewsItemIndices != null)
-                .SelectMany(o => o.NewsItemIndices)
-                .OfType<NewsItemIndex>()
-                .OrderByDescending(o => o.UtcPublishDateTime);
+                .SelectMany(o => o.NewsItemIndices
+                    .Select(x => new NewsItemIndexFeedIndexTuple(x, o)));
+        }
+
+        public static IEnumerable<NewsItemIndexFeedIndexTuple> Ordered(this IEnumerable<NewsItemIndexFeedIndexTuple> indices)
+        {
+            return indices
+                .OrderByDescending(o => o.IsNew)
+                .ThenByDescending(o => o.NewsItemIndex.UtcPublishDateTime);
         }
 
         public static void MarkEntry(this IEnumerable<FeedIndex> feeds)
@@ -57,7 +63,7 @@ namespace Weave.User.BusinessObjects.Mutable
             }
         }
 
-        public static IEnumerable<NewsItemIndex> GetLatestNews(this IEnumerable<FeedIndex> feeds)
+        public static IEnumerable<NewsItemIndexFeedIndexTuple> GetLatestNews(this IEnumerable<FeedIndex> feeds)
         {
             return LatestNewsHelper.GetTopNewsItems(feeds);
         }

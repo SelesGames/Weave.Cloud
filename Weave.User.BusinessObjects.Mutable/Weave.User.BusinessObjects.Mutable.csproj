@@ -40,6 +40,7 @@
     <Compile Include="Extensions\Helpers\LatestNewsHelper.cs" />
     <Compile Include="Extensions\Helpers\UserIndexCreator.cs" />
     <Compile Include="Extensions\Helpers\UserMergeHelper.cs" />
+    <Compile Include="Extensions\NewsItemIndexFeedIndexTuple.cs" />
     <Compile Include="FeedIndex.cs" />
     <Compile Include="Extensions\FeedIndexExtensions.cs" />
     <Compile Include="Extensions\UserExtensions.cs" />

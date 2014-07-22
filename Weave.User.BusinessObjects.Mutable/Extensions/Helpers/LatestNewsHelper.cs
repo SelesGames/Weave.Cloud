@@ -6,13 +6,14 @@ namespace Weave.User.BusinessObjects.Mutable.Extensions.Helpers
 {
     static class LatestNewsHelper
     {
-        const int pageSize = 8;
+        const int pageSize = 20;
 
-        public static IEnumerable<NewsItemIndex> GetTopNewsItems(IEnumerable<FeedIndex> feeds)
+        public static IEnumerable<NewsItemIndexFeedIndexTuple> GetTopNewsItems(IEnumerable<FeedIndex> feeds)
         {
-            IEnumerable<NewsItemIndex> pool = feeds
+            IEnumerable<NewsItemIndexFeedIndexTuple> pool = feeds
+                .AllIndices()
                 .Ordered()
-                .Where(news => !news.HasBeenViewed)
+                .Where(o => !o.NewsItemIndex.HasBeenViewed)
                 //.Distinct(NewsItemComparer.Instance)
                 .Take(20)
                 .ToList();
@@ -22,7 +23,7 @@ namespace Weave.User.BusinessObjects.Mutable.Extensions.Helpers
             return topNewsItems;
         }
 
-        static IEnumerable<NewsItemIndex> CreatePool(IEnumerable<NewsItemIndex> allNewsItems)
+        static IEnumerable<NewsItemIndexFeedIndexTuple> CreatePool(IEnumerable<NewsItemIndexFeedIndexTuple> allNewsItems)
         {
             return allNewsItems
                 .Select(i => new
@@ -30,26 +31,20 @@ namespace Weave.User.BusinessObjects.Mutable.Extensions.Helpers
                     NewsItem = i,
                     AdjustedSortRating = GetAdjustedForImagePresenceSortRating(i),
                 })
-                .Select(i =>
-                new
-                {
-                    NewsItem = i.NewsItem,
-                    FinalAdjustedSortRating = GetAdjustedForRepetitiveFeedSortRating(i.AdjustedSortRating)
-                })
-                .OrderByDescending(i => i.FinalAdjustedSortRating)
+                .OrderByDescending(i => i.AdjustedSortRating)
                 .Select(i => i.NewsItem);
         }
 
-        static double GetAdjustedForImagePresenceSortRating(NewsItemIndex i)
+        static double GetAdjustedForImagePresenceSortRating(NewsItemIndexFeedIndexTuple i)
         {
-            var sortRating = CalculateSortRating(i.UtcPublishDateTime);
-            return i.HasImage ? 100d * sortRating : sortRating;
+            var sortRating = CalculateSortRating(i.NewsItemIndex.UtcPublishDateTime);
+            return i.NewsItemIndex.HasImage ? 100d * sortRating : sortRating;
         }
 
-        static double GetAdjustedForRepetitiveFeedSortRating(double i)
-        {
-            return i;
-        }
+        //static double GetAdjustedForRepetitiveFeedSortRating(double i)
+        //{
+        //    return i;
+        //}
 
         static double CalculateSortRating(DateTime dateTime)
         {

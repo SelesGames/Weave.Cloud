@@ -184,8 +184,9 @@ namespace Weave.User.Service.Role.Controllers
             }
 
             var outgoing = ConvertToOutgoing(userIndex);
-            var latestNewsIndices = userBO.GetLatestArticles();
-            outgoing.LatestNews = userBO.GetLatestArticles().Select(ConvertToOutgoing).ToList();
+            var latestNewsIndices = userIndex.FeedIndices.GetLatestNews();
+            var latestNews = await CreateOutgoingNews(latestNewsIndices);
+            outgoing.LatestNews = latestNews;
 
             outgoing.DataStoreReadTime = readTime;
             outgoing.DataStoreWriteTime = writeTime;
@@ -792,44 +793,6 @@ namespace Weave.User.Service.Role.Controllers
 
         #region Create "Get News" outgoing DTO
 
-        class NewsItemIndexFeedIndexTuple
-        {
-            public NewsItemIndex NewsItemIndex { get; private set; }
-            public FeedIndex FeedIndex { get; private set; }
-            public bool IsNew { get; private set; }
-
-            public NewsItemIndexFeedIndexTuple(NewsItemIndex newsItemIndex, FeedIndex feedIndex)
-            {
-                NewsItemIndex = newsItemIndex;
-                FeedIndex = feedIndex;
-                IsNew = feedIndex.IsNewsItemNew(newsItemIndex);
-            }
-        }
-
-        async Task<List<Outgoing.NewsItem>> CreateOutgoingNews(IEnumerable<NewsItemIndexFeedIndexTuple> indices)
-        {
-            var newsIds = indices.Select(o => o.NewsItemIndex.Id);
-
-            var sw = System.Diagnostics.Stopwatch.StartNew();
-            var newsItems = await newsItemCache.Get(newsIds);
-            sw.Stop();
-            DebugEx.WriteLine("getting newsItems from cache took {0} ms", sw.ElapsedMilliseconds);
-            readTime += sw.Elapsed;
-
-            var zipped = indices.Zip(newsItems, (tuple, ni) => new { tuple, ni });
-
-            sw.Restart();
-            var outgoingNews =
-               (from temp in zipped.Where(o => o.ni.Value != null)
-                let tuple = temp.tuple
-                let newsItem = temp.ni.Value
-                select Merge(tuple, newsItem)).ToList();
-            sw.Stop();
-            DebugEx.WriteLine("creating outgoing news took {0} ms", sw.ElapsedMilliseconds);
-
-            return outgoingNews;
-        }
-
         async Task<Outgoing.NewsList> CreateNewsListFromSubset(
             IEnumerable<FeedIndex> feeds,
             int skip, 
@@ -838,9 +801,7 @@ namespace Weave.User.Service.Role.Controllers
             EntryType entry,
             bool requireImage)
         {
-            IEnumerable<NewsItemIndexFeedIndexTuple> indices = feeds
-                .Where(o => o.NewsItemIndices != null)
-                .SelectMany(o => o.NewsItemIndices.Select(x => new NewsItemIndexFeedIndexTuple(x, o)));
+            var indices = feeds.AllIndices();
 
             if (type == NewsItemType.New)
                 indices = indices.Where(o => o.IsNew);
@@ -854,8 +815,7 @@ namespace Weave.User.Service.Role.Controllers
 
             var sw = System.Diagnostics.Stopwatch.StartNew();
             indices = indices
-                .OrderByDescending(o => o.IsNew)
-                .ThenByDescending(o => o.NewsItemIndex.UtcPublishDateTime)
+                .Ordered()
                 .Skip(skip)
                 .Take(take)
                 .ToList();
@@ -914,6 +874,30 @@ namespace Weave.User.Service.Role.Controllers
                 UnreadArticleCount = o.NewsItemIndices.CountUnread(),
                 TotalArticleCount = o.NewsItemIndices.Count,
             };
+        }
+
+        async Task<List<Outgoing.NewsItem>> CreateOutgoingNews(IEnumerable<NewsItemIndexFeedIndexTuple> indices)
+        {
+            var newsIds = indices.Select(o => o.NewsItemIndex.Id);
+
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+            var newsItems = await newsItemCache.Get(newsIds);
+            sw.Stop();
+            DebugEx.WriteLine("getting newsItems from cache took {0} ms", sw.ElapsedMilliseconds);
+            readTime += sw.Elapsed;
+
+            var zipped = indices.Zip(newsItems, (tuple, ni) => new { tuple, ni });
+
+            sw.Restart();
+            var outgoingNews =
+               (from temp in zipped.Where(o => o.ni.Value != null)
+                let tuple = temp.tuple
+                let newsItem = temp.ni.Value
+                select Merge(tuple, newsItem)).ToList();
+            sw.Stop();
+            DebugEx.WriteLine("creating outgoing news took {0} ms", sw.ElapsedMilliseconds);
+
+            return outgoingNews;
         }
 
         static Outgoing.NewsItem Merge(NewsItemIndexFeedIndexTuple tuple, Redis.DTOs.NewsItem newsItem)
