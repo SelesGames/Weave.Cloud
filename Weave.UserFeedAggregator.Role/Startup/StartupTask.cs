@@ -4,11 +4,10 @@ using Ninject;
 using Ninject.WebApi;
 using SelesGames.WebApi.SelfHost;
 using System.Diagnostics;
-using System.Web.Http.Dependencies;
-using System.Web.Http.SelfHost;
 using System.Web.Http;
 using System.Web.Http.Cors;
-using System.Threading.Tasks;
+using System.Web.Http.Dependencies;
+using System.Web.Http.SelfHost;
 
 namespace Weave.User.Service.Role.Startup
 {
