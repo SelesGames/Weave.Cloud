@@ -5,12 +5,12 @@
     <AzureDeleteDeploymentOnFailure>False</AzureDeleteDeploymentOnFailure>
     <AzureDeploymentLabel>Weave User Service</AzureDeploymentLabel>
     <AzureDeploymentReplacementMethod>BlastUpgrade</AzureDeploymentReplacementMethod>
-    <AzureSlot>Staging</AzureSlot>
+    <AzureSlot>Production</AzureSlot>
     <AzureEnableRemoteDesktop>True</AzureEnableRemoteDesktop>
     <AzureEnableWebDeploy>False</AzureEnableWebDeploy>
     <AzureFallbackToDeleteAndRecreateIfUpgradeFails>True</AzureFallbackToDeleteAndRecreateIfUpgradeFails>
-    <AzureHostedServiceLabel>weave-user</AzureHostedServiceLabel>
-    <AzureHostedServiceName>weave-user</AzureHostedServiceName>
+    <AzureHostedServiceLabel>weave-user-v2</AzureHostedServiceLabel>
+    <AzureHostedServiceName>weave-user-v2</AzureHostedServiceName>
     <AzureEnableIntelliTrace>False</AzureEnableIntelliTrace>
     <AzureEnableProfiling>False</AzureEnableProfiling>
     <AzureServiceConfiguration>Cloud</AzureServiceConfiguration>
