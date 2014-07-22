@@ -56,10 +56,6 @@
       <Project>{db5274e6-15f6-4ec8-920a-842ea93a2601}</Project>
       <Name>Weave.User.BusinessObjects</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Weave.User.DataStore\Weave.User.DataStore.csproj">
-      <Project>{458cbdea-f41c-4209-9dec-b2f285c217ab}</Project>
-      <Name>Weave.User.DataStore</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
