@@ -35,9 +35,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BusinessObjectToDataStore.cs" />
     <Compile Include="BusinessObjectToServerOutgoing.cs" />
-    <Compile Include="DataStoreToBusinessObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerIncomingToBusinessObject.cs" />
   </ItemGroup>

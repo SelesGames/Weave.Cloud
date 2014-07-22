@@ -41,6 +41,8 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Map\BusinessObjectToDataStore.cs" />
+    <Compile Include="Map\DataStoreToBusinessObject.cs" />
     <Compile Include="UserInfoBlobWriteQueue.cs" />
     <Compile Include="Extensions\TaskEx.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -51,10 +53,6 @@
     <ProjectReference Include="..\Common.Azure.Blob\Common.Azure.Blob.csproj">
       <Project>{9259074d-90ae-4a44-a211-db3e122bf34e}</Project>
       <Name>Common.Azure.Blob</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SelesGames.Common\SelesGames.Common.csproj">
-      <Project>{5b792c4b-80d8-420d-9fa7-e567faf1f7b1}</Project>
-      <Name>SelesGames.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\SelesGames.SmartBlobClient\Common.Azure.SmartBlobClient.csproj">
       <Project>{d115cf60-990a-4138-8496-538a6ce74541}</Project>
@@ -67,10 +65,6 @@
     <ProjectReference Include="..\Weave.User.DataStore\Weave.User.DataStore.csproj">
       <Project>{458cbdea-f41c-4209-9dec-b2f285c217ab}</Project>
       <Name>Weave.User.DataStore</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Weave.User.Service.Converters\Weave.User.Service.Converters.csproj">
-      <Project>{618fe33a-3784-4ed5-954b-86e4b4e0748b}</Project>
-      <Name>Weave.User.Service.Converters</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -1,9 +1,7 @@
-﻿using SelesGames.Common;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using Weave.User.BusinessObjects;
-using Weave.User.Service.Converters;
-using Store = Weave.User.DataStore;
+using Weave.User.Service.Cache.Map;
 
 namespace Weave.User.Service.Cache
 {
@@ -21,13 +19,13 @@ namespace Weave.User.Service.Cache
         public async Task<UserInfo> Get(Guid userId)
         {
             var store = await userInfoBlobClient.Get(userId);
-            var user = store.Convert<Store.UserInfo, UserInfo>(DataStoreToBusinessObject.Instance);
+            var user = DataStoreToBusinessObject.Convert(store);
             return user;
         }
 
         public void Save(Guid userId, UserInfo user)
         {
-            var store = user.Convert<UserInfo, Store.UserInfo>(BusinessObjectToDataStore.Instance);
+            var store = BusinessObjectToDataStore.Convert(user);
             writeQueue.Add(store);
         }
     }
