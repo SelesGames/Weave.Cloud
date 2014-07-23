@@ -68,6 +68,7 @@
     <Compile Include="SelfHost.cs" />
     <Compile Include="StandardHttpSelfHostConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Weave.Portable\Common.Compression\Common.Compression.csproj">
@@ -78,9 +79,9 @@
       <Project>{8162e82c-c141-4a69-90ef-4a2593a374df}</Project>
       <Name>Common.Net.Http.Compression</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Weave.Windows8\Weave\Common.Windows.Compression\Common.Windows.Compression.csproj">
-      <Project>{2aada961-3a53-4f1d-ac3d-d3cb75dd5e80}</Project>
-      <Name>Common.Windows.Compression</Name>
+    <ProjectReference Include="..\Common.Compression.Windows\Common.Compression.Windows.csproj">
+      <Project>{7e6d6e4c-4ea7-431c-ac57-234fefa406ad}</Project>
+      <Name>Common.Compression.Windows</Name>
     </ProjectReference>
     <ProjectReference Include="..\SelesGames.WebApi.Protobuf\SelesGames.WebApi.Protobuf.csproj">
       <Project>{c829e120-9b78-4640-bf91-fefcf060e2b8}</Project>

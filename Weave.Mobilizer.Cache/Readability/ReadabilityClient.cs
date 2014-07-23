@@ -21,7 +21,7 @@ namespace Weave.Mobilizer.Cache.Readability
 #if DEBUG
             System.Diagnostics.Debug.WriteLine(string.Format("calling {0}", url), "READABILITY");
 #endif
-            return new SmartHttpClient(ContentEncoderSettings.Json, CompressionSettings.OnContent | CompressionSettings.OnRequest)
+            return new SmartHttpClient(ContentEncoderSettings.Json, CompressionSettings.ContentEncoding | CompressionSettings.AcceptEncoding)
                 .GetAsync<MobilizerResult>(fullUrl, CancellationToken.None);
         }
     }
