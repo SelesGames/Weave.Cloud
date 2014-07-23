@@ -1,5 +1,4 @@
 ﻿using SelesGames.HttpClient;
-using SelesGames.HttpClient.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -30,7 +29,8 @@ namespace Weave.RssAggregator.LibraryClient
             if (Uri.IsWellFormedUriString(libraryUrl, UriKind.Absolute))
             {
                 var client = new SmartHttpClient();
-                using (var stream = await client.GetStreamAsync(libraryUrl))
+                var response = await client.GetAsync(libraryUrl);
+                using (var stream = await response.ReadStream())
                 {
                     OnStreamRead(stream);
                 }
@@ -46,7 +46,7 @@ namespace Weave.RssAggregator.LibraryClient
         public void ListenForChangesToFeeds()
         {
             CreateObservable()
-                .Select(o => o.Content.ReadAsStreamAsync().ToObservable())
+                .Select(o => o.ReadStream().ToObservable())
                 .Merge()
                 .Subscribe(OnStreamRead);
         }
@@ -111,11 +111,11 @@ namespace Weave.RssAggregator.LibraryClient
 
         #region Auto-Detection of Changed Feeds
 
-        IObservable<HttpResponseMessage> CreateObservable()
+        IObservable<HttpResponse> CreateObservable()
         {
             var client = new SmartHttpClient();
 
-            return Observable.Create<HttpResponseMessage>(observer =>
+            return Observable.Create<HttpResponse>(observer =>
             {
                 return client.PollChangesToResource(libraryUrl, TimeSpan.FromMinutes(15), observer);
             });

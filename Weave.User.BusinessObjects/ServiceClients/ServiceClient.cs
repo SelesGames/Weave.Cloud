@@ -13,7 +13,7 @@ namespace Weave.User.BusinessObjects.ServiceClients
 
         public async Task<List<FeedResult>> GetFeedResultsAsync(List<FeedRequest> outgoingFeedRequests)
         {
-            var client = new SmartHttpClient(ContentEncoderSettings.Protobuf, CompressionSettings.None);
+            var client = new SmartHttpClient(ContentEncoderSettings.Json, CompressionSettings.OnContent | CompressionSettings.OnRequest);
             var results = await client.PostAsync<List<FeedRequest>, List<FeedResult>>(SERVICE_URL, outgoingFeedRequests, CancellationToken.None);
             return results;
         }

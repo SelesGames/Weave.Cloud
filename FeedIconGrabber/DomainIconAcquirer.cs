@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FeedIconGrabber
@@ -24,7 +25,8 @@ namespace FeedIconGrabber
         public async Task<string> GetIconUrl()
         {
             var client = new SmartHttpClient();
-            using (var stream = await client.GetStreamAsync(domainUrl))
+            var response = await client.GetAsync(domainUrl);
+            using (var stream = await response.ReadStream())
             {
                 var htmlDoc = new HtmlDocument();
                 htmlDoc.Load(stream);
@@ -179,10 +181,11 @@ namespace FeedIconGrabber
         async Task<bool> TestLinkValidity(string link)
         {
             var client = new SmartHttpClient();
-            var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Head, link));
+            var request = new HttpRequestMessage(HttpMethod.Head, link);
+            var response = await client.SendAsync(request, CancellationToken.None);
             return 
-                response.IsSuccessStatusCode && 
-                IsImageType(response.Content.Headers.ContentType.MediaType);
+                response.HttpResponseMessage.IsSuccessStatusCode && 
+                IsImageType(response.HttpResponseMessage.Content.Headers.ContentType.MediaType);
         }
 
         bool IsImageType(string mediaType)

@@ -95,6 +95,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Weave.Portable\SelesGames.HttpClient\SelesGames.HttpClient.csproj">
+      <Project>{e93c1441-a175-4d76-9e97-092e9c621e55}</Project>
+      <Name>SelesGames.HttpClient</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Weave.Portable\Weave.Article.Service.Contracts\Weave.Article.Service.Contracts.csproj">
       <Project>{d727f239-ee96-4b05-8f17-65871b52b260}</Project>
       <Name>Weave.Article.Service.Contracts</Name>

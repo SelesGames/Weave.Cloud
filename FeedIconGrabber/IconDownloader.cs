@@ -61,7 +61,7 @@ namespace FeedIconGrabber
                 var response = await client.GetAsync(iconUrl);
                 if (string.IsNullOrEmpty(extension))
                 {
-                    var mimeType = response.Content.Headers.ContentType.MediaType;
+                    var mimeType = response.HttpResponseMessage.Content.Headers.ContentType.MediaType;
                     extension = GetImageExtensionFromMimeType(mimeType);
                 }
 
@@ -69,7 +69,7 @@ namespace FeedIconGrabber
 
                 using (var fs = new FileStream(fileName, FileMode.Create))
                 {
-                    await response.Content.CopyToAsync(fs);
+                    await response.HttpResponseMessage.Content.CopyToAsync(fs);
                     fs.Flush();
                     fs.Close();
                 }

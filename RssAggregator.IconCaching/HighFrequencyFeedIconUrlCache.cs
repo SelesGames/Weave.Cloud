@@ -1,11 +1,9 @@
 ﻿using Common.Caching;
 using FeedIconGrabber;
 using SelesGames.HttpClient;
-using SelesGames.HttpClient.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace RssAggregator.IconCaching
@@ -38,9 +36,9 @@ namespace RssAggregator.IconCaching
                 OnResourceUpdated);
         }
 
-        async void OnResourceUpdated(HttpResponseMessage response)
+        async void OnResourceUpdated(HttpResponse response)
         {
-            var iconMappings = await client.ReadResponseContentAsync<FeedUrlIconMappings>(response);
+            var iconMappings = await response.Read<FeedUrlIconMappings>();
             feedIconLookup = iconMappings.ToDictionary(o => o.Url, o => o.IconUrl);
             isCacheLoaded = true;
         }
