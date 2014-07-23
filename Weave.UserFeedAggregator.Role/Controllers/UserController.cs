@@ -1,5 +1,4 @@
 ﻿using Microsoft.WindowsAzure.Storage;
-using SelesGames.Common;
 using SelesGames.WebApi;
 using System;
 using System.Collections.Generic;
@@ -11,9 +10,9 @@ using Weave.User.BusinessObjects;
 using Weave.User.BusinessObjects.Mutable;
 using Weave.User.Service.Cache;
 using Weave.User.Service.Contracts;
-using Weave.User.Service.Converters;
 using Weave.User.Service.DTOs;
 using Weave.User.Service.Redis;
+using Weave.User.Service.Role.Map;
 using Incoming = Weave.User.Service.DTOs.ServerIncoming;
 using Outgoing = Weave.User.Service.DTOs.ServerOutgoing;
 
@@ -141,7 +140,7 @@ namespace Weave.User.Service.Role.Controllers
                 throw ResponseHelper.CreateResponseException(HttpStatusCode.BadRequest, "A user with that Id already exists");
             }
 
-            userBO = ConvertToBusinessObject(incomingUser);
+            userBO = ServerIncomingToBusinessObject.Convert(incomingUser);
             this.userId = userBO.Id;
             await PerformRefreshOnFeeds(userBO.Feeds);
 
@@ -878,6 +877,10 @@ namespace Weave.User.Service.Role.Controllers
 
         async Task<List<Outgoing.NewsItem>> CreateOutgoingNews(IEnumerable<NewsItemIndexFeedIndexTuple> indices)
         {
+            // no point in doing the work if no indices were passed in
+            if (!indices.Any())
+                return new List<Outgoing.NewsItem>();
+
             var newsIds = indices.Select(o => o.NewsItemIndex.Id);
 
             var sw = System.Diagnostics.Stopwatch.StartNew();
@@ -1010,11 +1013,6 @@ namespace Weave.User.Service.Role.Controllers
 
         #region Conversion Helpers
 
-        UserInfo ConvertToBusinessObject(Incoming.UserInfo user)
-        {
-            return user.Convert<Incoming.UserInfo, UserInfo>(ServerIncomingToBusinessObject.Instance);
-        }
-
         FeedIndex ConvertToFeedIndex(Incoming.NewFeed o)
         {
             return new FeedIndex
@@ -1036,15 +1034,10 @@ namespace Weave.User.Service.Role.Controllers
                 ArticleViewingType = (BusinessObjects.ArticleViewingType)feed.ArticleViewingType,
             };
         }
-           
-        //Outgoing.NewsItem ConvertToOutgoing(NewsItem user)
-        //{
-        //    return user.Convert<NewsItem, Outgoing.NewsItem>(BusinessObjectToServerOutgoing.Instance);
-        //}
 
         Outgoing.UserInfo ConvertToOutgoing(UserIndex user)
         {
-            return user.Convert<UserIndex, Outgoing.UserInfo>(BusinessObjectToServerOutgoing.Instance);
+            return BusinessObjectToServerOutgoing.Convert(user);
         }
 
         Redis.DTOs.NewsItem MapAsRedis(NewsItem o)
