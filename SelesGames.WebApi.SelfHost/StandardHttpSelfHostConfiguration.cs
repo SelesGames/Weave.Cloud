@@ -1,17 +1,14 @@
 ﻿using Common.Net.Http.Compression;
-//using SelesGames.WebApi.MediaTypeFormatters;
 using SelesGames.WebApi.Protobuf;
 using System.Linq;
 using System.Net.Http.Formatting;
 using System.Web.Http;
-using System.Web.Http.SelfHost;
 
 namespace SelesGames.WebApi.SelfHost
 {
-    public class StandardHttpSelfHostConfiguration : HttpSelfHostConfiguration
+    public class StandardHttpSelfHostConfiguration : HttpConfiguration
     {
-        public StandardHttpSelfHostConfiguration(string url)
-            : base(url)
+        public StandardHttpSelfHostConfiguration()
         {
             Routes.MapHttpRoute(
                 name: "defaultRouting",

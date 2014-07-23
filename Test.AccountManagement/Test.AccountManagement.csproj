@@ -127,10 +127,6 @@
       <Project>{5b792c4b-80d8-420d-9fa7-e567faf1f7b1}</Project>
       <Name>SelesGames.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SelesGames.HttpClient\SelesGames.HttpClient.csproj">
-      <Project>{bf0dc853-b353-4a92-b718-0a0ad067bfdf}</Project>
-      <Name>SelesGames.HttpClient</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SelesGames.SmartBlobClient\Common.Azure.SmartBlobClient.csproj">
       <Project>{d115cf60-990a-4138-8496-538a6ce74541}</Project>
       <Name>Common.Azure.SmartBlobClient</Name>

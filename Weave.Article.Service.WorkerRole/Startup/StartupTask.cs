@@ -27,8 +27,9 @@ namespace Weave.Article.Service.WorkerRole.Startup
             var ipString = string.Format("http://{0}", ip.ToString());
             Trace.WriteLine(string.Format("**** IP ADDRESS: {0}", ipString));
 
-            var config = new StandardHttpSelfHostConfiguration(ipString) { DependencyResolver = resolver };
-            new HttpSelfHostServer(config).OpenAsync().Wait();
+            var host = new SelfHost();
+            host.Config.DependencyResolver = resolver;
+            host.StartServer(ipString);
 
             Trace.WriteLine("^&*^&*^&*^*&^  SERVER IS UP AND RUNNING!!!");
         }

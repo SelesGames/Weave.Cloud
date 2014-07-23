@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using System.Web.Http.Dependencies;
-using System.Web.Http.SelfHost;
 
 namespace Weave.User.Service.Role.Startup
 {
@@ -30,14 +29,17 @@ namespace Weave.User.Service.Role.Startup
             var ipString = string.Format("http://{0}", ip.ToString());
             Trace.WriteLine(string.Format("**** IP ADDRESS: {0}", ipString));
 
-            var config = new StandardHttpSelfHostConfiguration(ipString) { DependencyResolver = resolver };
+            var host = new SelfHost();
+            var config = host.Config;
+            config.DependencyResolver = resolver;
+
             //config.MessageHandlers.Add(new InjectAcceptEncodingHandler("gzip"));
             config.MessageHandlers.Add(new InjectContentTypeHandler("application/json"));
 
             var cors = new EnableCorsAttribute(origins: "*", headers: "*", methods: "*");
             config.EnableCors(cors);
 
-            new HttpSelfHostServer(config).OpenAsync().Wait();
+            host.StartServer(ipString);
 
             Trace.WriteLine("^&*^&*^&*^*&^  SERVER IS UP AND RUNNING!!!");
         }

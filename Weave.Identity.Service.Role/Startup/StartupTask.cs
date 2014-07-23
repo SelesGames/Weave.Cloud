@@ -5,7 +5,6 @@ using SelesGames.WebApi.SelfHost;
 using System.Diagnostics;
 using System.Web.Http;
 using System.Web.Http.Dependencies;
-using System.Web.Http.SelfHost;
 using Weave.Identity.Service.WorkerRole.Controllers;
 
 namespace Weave.Identity.Service.WorkerRole.Startup
@@ -29,7 +28,9 @@ namespace Weave.Identity.Service.WorkerRole.Startup
             var ipString = string.Format("http://{0}", ip.ToString());
             Trace.WriteLine(string.Format("**** IP ADDRESS: {0}", ipString));
 
-            var config = new StandardHttpSelfHostConfiguration(ipString) { DependencyResolver = resolver };
+            var host = new SelfHost();
+            var config = host.Config;
+            config.DependencyResolver = resolver;
 
             config.Routes.Clear();
 
@@ -47,7 +48,7 @@ namespace Weave.Identity.Service.WorkerRole.Startup
                 }
             );
 
-            new HttpSelfHostServer(config).OpenAsync().Wait();
+            host.StartServer(ipString);
 
             Trace.WriteLine("^&*^&*^&*^*&^  SERVER IS UP AND RUNNING!!!");
         }

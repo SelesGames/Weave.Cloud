@@ -86,6 +86,10 @@
       <Project>{06219cad-e85e-48e2-a216-2539805a9ee8}</Project>
       <Name>ReadSharp</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Weave.Portable\SelesGames.HttpClient\SelesGames.HttpClient.csproj">
+      <Project>{e93c1441-a175-4d76-9e97-092e9c621e55}</Project>
+      <Name>SelesGames.HttpClient</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Weave.Portable\Weave.Mobilizer.DTOs\Weave.Mobilizer.DTOs.csproj">
       <Project>{0a9019e4-e76f-4fac-a5c7-70f32cf5e2c1}</Project>
       <Name>Weave.Mobilizer.DTOs</Name>
@@ -97,10 +101,6 @@
     <ProjectReference Include="..\Common.Caching\Common.Caching.csproj">
       <Project>{c83ab657-c7a6-4cf8-b4f5-d4e01bf2e562}</Project>
       <Name>Common.Caching</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SelesGames.HttpClient\SelesGames.HttpClient.csproj">
-      <Project>{bf0dc853-b353-4a92-b718-0a0ad067bfdf}</Project>
-      <Name>SelesGames.HttpClient</Name>
     </ProjectReference>
     <ProjectReference Include="..\SelesGames.SmartBlobClient\Common.Azure.SmartBlobClient.csproj">
       <Project>{d115cf60-990a-4138-8496-538a6ce74541}</Project>

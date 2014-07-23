@@ -61,6 +61,14 @@
     <Compile Include="XmlIconUrlSetter.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Weave.Portable\Common.Net.Http.Compression\Common.Net.Http.Compression.csproj">
+      <Project>{8162e82c-c141-4a69-90ef-4a2593a374df}</Project>
+      <Name>Common.Net.Http.Compression</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Weave.Portable\SelesGames.HttpClient\SelesGames.HttpClient.csproj">
+      <Project>{e93c1441-a175-4d76-9e97-092e9c621e55}</Project>
+      <Name>SelesGames.HttpClient</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common.JsonDotNet\Common.JsonDotNet.csproj">
       <Project>{2ccbe75f-e805-4b8c-a017-6f26c328b4ec}</Project>
       <Name>Common.JsonDotNet</Name>
@@ -68,10 +76,6 @@
     <ProjectReference Include="..\RssAggregator.LibraryClient\RssAggregator.LibraryClient.csproj">
       <Project>{2db284eb-5b81-425a-957e-77eeb704ebdc}</Project>
       <Name>RssAggregator.LibraryClient</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SelesGames.HttpClient\SelesGames.HttpClient.csproj">
-      <Project>{bf0dc853-b353-4a92-b718-0a0ad067bfdf}</Project>
-      <Name>SelesGames.HttpClient</Name>
     </ProjectReference>
     <ProjectReference Include="..\Weave.Parsing\Weave.Parsing.csproj">
       <Project>{a9731e9c-72fc-4171-ba99-9a6f97cd379f}</Project>

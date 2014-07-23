@@ -63,21 +63,21 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Weave.Portable\Common.Net.Http.Compression\Common.Net.Http.Compression.csproj">
+      <Project>{8162e82c-c141-4a69-90ef-4a2593a374df}</Project>
+      <Name>Common.Net.Http.Compression</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Weave.Portable\SelesGames.HttpClient\SelesGames.HttpClient.csproj">
+      <Project>{e93c1441-a175-4d76-9e97-092e9c621e55}</Project>
+      <Name>SelesGames.HttpClient</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common.DateTime\Common.TimeFormatting.csproj">
       <Project>{86060d7e-3115-4f54-8008-384b3d7c598e}</Project>
       <Name>Common.TimeFormatting</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Common.Net.Http.Compression\Common.Net.Http.Compression.csproj">
-      <Project>{c3e23ea5-8542-464a-9598-d4d126e1eb97}</Project>
-      <Name>Common.Net.Http.Compression</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SelesGames.Common\SelesGames.Common.csproj">
       <Project>{5b792c4b-80d8-420d-9fa7-e567faf1f7b1}</Project>
       <Name>SelesGames.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SelesGames.HttpClient\SelesGames.HttpClient.csproj">
-      <Project>{bf0dc853-b353-4a92-b718-0a0ad067bfdf}</Project>
-      <Name>SelesGames.HttpClient</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

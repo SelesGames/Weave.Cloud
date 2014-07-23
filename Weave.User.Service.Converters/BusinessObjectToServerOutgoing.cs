@@ -10,7 +10,6 @@ namespace Weave.User.Service.Converters
     public class BusinessObjectToServerOutgoing :
         IConverter<UserIndex, Outgoing.UserInfo>,
         IConverter<FeedIndex, Outgoing.Feed>,
-       // IConverter<NewsItemIndex, Outgoing.NewsItem>,
         IConverter<Image, Outgoing.Image>
     {
         public static readonly BusinessObjectToServerOutgoing Instance = new BusinessObjectToServerOutgoing();

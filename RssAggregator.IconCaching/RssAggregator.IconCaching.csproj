@@ -49,6 +49,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Weave.Portable\SelesGames.HttpClient\SelesGames.HttpClient.csproj">
+      <Project>{e93c1441-a175-4d76-9e97-092e9c621e55}</Project>
+      <Name>SelesGames.HttpClient</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common.Azure.Caching\Common.Azure.Caching.csproj">
       <Project>{b91ec96a-c4ea-4788-bc6c-dfa7f85bcb3a}</Project>
       <Name>Common.Azure.Caching</Name>
@@ -60,10 +64,6 @@
     <ProjectReference Include="..\FeedIconGrabber\FeedIconGrabber.csproj">
       <Project>{374669da-dabc-48a0-b7b8-599d26be0156}</Project>
       <Name>FeedIconGrabber</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SelesGames.HttpClient\SelesGames.HttpClient.csproj">
-      <Project>{bf0dc853-b353-4a92-b718-0a0ad067bfdf}</Project>
-      <Name>SelesGames.HttpClient</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

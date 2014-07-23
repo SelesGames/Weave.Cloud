@@ -1,17 +1,14 @@
-﻿using Common.WebApi.Handlers;
-using Microsoft.WindowsAzure.ServiceRuntime;
+﻿using Microsoft.WindowsAzure.ServiceRuntime;
 using Ninject;
 using Ninject.WebApi;
 using SelesGames.WebApi.SelfHost;
-using System.Diagnostics;
-using System.Web.Http.Dependencies;
-using System.Web.Http.SelfHost;
-using System.Web.Http;
-using System.Threading.Tasks;
-using Weave.Mobilizer.Cache;
 using System;
-using Weave.Mobilizer.WorkerRole.Controllers;
+using System.Diagnostics;
+using System.Web.Http;
 using System.Web.Http.Cors;
+using System.Web.Http.Dependencies;
+using Weave.Mobilizer.Cache;
+using Weave.Mobilizer.WorkerRole.Controllers;
 
 namespace Weave.Mobilizer.WorkerRole.Startup
 {
@@ -56,7 +53,9 @@ namespace Weave.Mobilizer.WorkerRole.Startup
             var ipString = string.Format("http://{0}", ip.ToString());
             Trace.WriteLine(string.Format("**** IP ADDRESS: {0}", ipString));
 
-            var config = new StandardHttpSelfHostConfiguration(ipString) { DependencyResolver = resolver };
+            var host = new SelfHost();
+            var config = host.Config;
+            config.DependencyResolver = resolver;
 
             config.Routes.MapHttpRoute(
                 name: "InstapaperFormatterRouting",
@@ -71,7 +70,7 @@ namespace Weave.Mobilizer.WorkerRole.Startup
             var cors = new EnableCorsAttribute(origins: "*", headers: "*", methods: "*");
             config.EnableCors(cors);
 
-            new HttpSelfHostServer(config).OpenAsync().Wait();
+            host.StartServer(ipString);
 
             Trace.WriteLine("^&*^&*^&*^*&^  SERVER IS UP AND RUNNING!!!");
         }

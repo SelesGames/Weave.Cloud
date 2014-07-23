@@ -40,6 +40,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Weave.Portable\SelesGames.HttpClient\SelesGames.HttpClient.csproj">
+      <Project>{e93c1441-a175-4d76-9e97-092e9c621e55}</Project>
+      <Name>SelesGames.HttpClient</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Weave.Portable\Weave.Article.Service.Contracts\Weave.Article.Service.Contracts.csproj">
       <Project>{d727f239-ee96-4b05-8f17-65871b52b260}</Project>
       <Name>Weave.Article.Service.Contracts</Name>
@@ -47,10 +51,6 @@
     <ProjectReference Include="..\..\Weave.Portable\Weave.Article.Service.DTOs\Weave.Article.Service.DTOs.csproj">
       <Project>{2b4d1af0-8c77-475d-8d14-db7b506f9450}</Project>
       <Name>Weave.Article.Service.DTOs</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SelesGames.HttpClient\SelesGames.HttpClient.csproj">
-      <Project>{bf0dc853-b353-4a92-b718-0a0ad067bfdf}</Project>
-      <Name>SelesGames.HttpClient</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

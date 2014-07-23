@@ -54,10 +54,12 @@ namespace Weave.RssAggregator.WorkerRole.Startup
             var ipString = string.Format("http://{0}", ip.ToString());
             Trace.WriteLine(string.Format("**** IP ADDRESS: {0}", ipString));
 
-            var config = new StandardHttpSelfHostConfiguration(ipString) { DependencyResolver = resolver };
+            var host = new SelfHost();
+            var config = host.Config;
+            config.DependencyResolver = resolver;
             config.MessageHandlers.Add(new InjectAcceptHandler("application/protobuf"));
             config.MessageHandlers.Add(new InjectAcceptEncodingHandler("gzip"));
-            new HttpSelfHostServer(config).OpenAsync().Wait();
+            host.StartServer(ipString);
 
             Trace.WriteLine("^&*^&*^&*^*&^  SERVER IS UP AND RUNNING!!!");
         }
