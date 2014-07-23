@@ -1,23 +1,23 @@
-﻿using Common.Windows.Compression;
+﻿using Common.Compression.Windows;
 using Microsoft.Owin.Hosting;
 using System;
 using System.Web.Http;
 
 namespace SelesGames.WebApi.SelfHost
 {
-    public class SelfHost
+    public static class SelfHost
     {
-        public HttpConfiguration Config { get; private set; }
+        public static HttpConfiguration Config { get; private set; }
 
-        public SelfHost()
+        static SelfHost()
         {
             Config = new StandardHttpSelfHostConfiguration();
             Common.Compression.Settings.CompressionHandlers = new CompressionHandlerCollection();
         }
 
-        public IDisposable StartServer(string url)
+        public static IDisposable StartServer(string url)
         {
-            return WebApp.Start(url, appBuilder => appBuilder.Use(Config));
+            return WebApp.Start<Startup>(url);
         }
     }
 }

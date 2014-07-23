@@ -29,8 +29,8 @@ namespace Weave.User.Service.Role.Startup
             var ipString = string.Format("http://{0}", ip.ToString());
             Trace.WriteLine(string.Format("**** IP ADDRESS: {0}", ipString));
 
-            var host = new SelfHost();
-            var config = host.Config;
+            //var host = new SelfHost();
+            var config = SelfHost.Config;// host.Config;
             config.DependencyResolver = resolver;
 
             //config.MessageHandlers.Add(new InjectAcceptEncodingHandler("gzip"));
@@ -39,7 +39,7 @@ namespace Weave.User.Service.Role.Startup
             var cors = new EnableCorsAttribute(origins: "*", headers: "*", methods: "*");
             config.EnableCors(cors);
 
-            host.StartServer(ipString);
+            SelfHost.StartServer(ipString);// host.StartServer(ipString);
 
             Trace.WriteLine("^&*^&*^&*^*&^  SERVER IS UP AND RUNNING!!!");
         }
