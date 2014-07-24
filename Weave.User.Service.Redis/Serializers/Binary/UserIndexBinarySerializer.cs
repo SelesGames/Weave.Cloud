@@ -31,7 +31,6 @@ namespace Weave.User.Service.Redis.Serializers.Binary
         public byte[] WriteObject<T>(T obj)
         {
             return WriterUserIndex(new[] { obj }.Cast<UserIndex>().First());
-            //throw new NotImplementedException();
         }
     }
 }

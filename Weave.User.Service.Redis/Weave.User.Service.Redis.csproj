@@ -32,10 +32,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="StackExchange.Redis">
       <HintPath>..\packages\StackExchange.Redis.1.0.322\lib\net45\StackExchange.Redis.dll</HintPath>
     </Reference>
@@ -47,12 +43,14 @@
   <ItemGroup>
     <Compile Include="DTOs\Image.cs" />
     <Compile Include="DTOs\NewsItem.cs" />
+    <Compile Include="Serializers\Binary\NewsItemBinarySerializer.cs" />
+    <Compile Include="Serializers\Binary\NewsItemReader.cs" />
+    <Compile Include="Serializers\Binary\NewsItemWriter.cs" />
     <Compile Include="Serializers\RedisValueSerializer.cs" />
     <Compile Include="Serializers\Binary\UserIndexBinarySerializer.cs" />
     <Compile Include="Serializers\Binary\UserIndexReader.cs" />
     <Compile Include="Serializers\Binary\UserIndexWriter.cs" />
     <Compile Include="Serializers\IByteSerializer.cs" />
-    <Compile Include="Serializers\Json\JsonSerializerHelper.cs" />
     <Compile Include="NewsItemCache.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RedisCacheResult.cs" />

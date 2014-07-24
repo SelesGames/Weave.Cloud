@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Weave.User.Service.Redis.DTOs;
 using Weave.User.Service.Redis.Serializers;
-using Weave.User.Service.Redis.Serializers.Json;
+using Weave.User.Service.Redis.Serializers.Binary;
 
 namespace Weave.User.Service.Redis
 {
@@ -19,7 +19,7 @@ namespace Weave.User.Service.Redis
         {
             this.connection = connection;
             db = connection.GetDatabase(0);
-            serializer = new RedisValueSerializer(new JsonSerializerHelper());
+            serializer = new RedisValueSerializer(new NewsItemBinarySerializer());
         }
 
         public async Task<IEnumerable<RedisCacheResult<NewsItem>>> Get(IEnumerable<Guid> newsItemIds)
