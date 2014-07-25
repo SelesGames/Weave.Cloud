@@ -13,12 +13,12 @@ namespace Common.Compression.Windows
 
         public override Stream Compress(Stream inputStream)
         {
-            return new GZipStream(inputStream, CompressionMode.Compress, leaveOpen: false);
+            return new GZipStream(inputStream, CompressionMode.Compress, leaveOpen: true);
         }
 
         public override Stream Decompress(Stream inputStream)
         {
-            return new GZipStream(inputStream, CompressionMode.Decompress, leaveOpen: false);
+            return new GZipStream(inputStream, CompressionMode.Decompress, leaveOpen: true);
         }
     }
 }
