@@ -23,7 +23,7 @@ namespace SelesGames.WebApi.SelfHost
             var jsonFormatter = (JsonMediaTypeFormatter)Formatters.First();
             jsonFormatter.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
 
-            MessageHandlers.Add(new EncodingDelegateHandler());
+            MessageHandlers.Add(new WebApiCompressionHandler());
             Formatters.Add(new ProtobufFormatter());
         }
     }
