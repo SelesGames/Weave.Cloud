@@ -18,7 +18,7 @@ namespace Common.Compression.Windows
 
         public override Stream Decompress(Stream inputStream)
         {
-            return new DeflateStream(inputStream, CompressionMode.Decompress, leaveOpen: false);
+            return new DeflateStream(inputStream, CompressionMode.Decompress, leaveOpen: true);
         }
     }
 }

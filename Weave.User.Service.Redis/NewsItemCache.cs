@@ -9,6 +9,9 @@ using Weave.User.Service.Redis.Serializers.Binary;
 
 namespace Weave.User.Service.Redis
 {
+    /// <summary>
+    /// The cache for retrieving the actual article/news item content
+    /// </summary>
     public class NewsItemCache
     {
         readonly ConnectionMultiplexer connection;
