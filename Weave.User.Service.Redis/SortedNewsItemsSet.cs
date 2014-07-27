@@ -48,6 +48,10 @@ namespace Weave.User.Service.Redis
         // SET OF FEEDS (I.E. in a category, all news, etc.).  So it needs to be deleted
         // because it takes up space, and because the data will be invalid on the next refresh
         // Consider storing this value somewhere on the User
+        /// <summary>
+        /// In Redis, create a sorted set that represents the Union of sorted articles of multiple Feed Ids
+        /// </summary>
+        /// <returns>The Guid, as a byte array, of the key for the newly created set</returns>
         public async Task<byte[]> CreateUnionSet(IEnumerable<Guid> feedIds)
         {
             var destinationKey = Guid.NewGuid().ToByteArray();
@@ -59,6 +63,12 @@ namespace Weave.User.Service.Redis
             return destinationKey;
         }
 
+        /// <summary>
+        /// Get the News Item Ids for a particular sorted list (either an 
+        /// individual feed or a temporarily list representing the union of 
+        /// multiple feeds), denoting at what index you want to start and how 
+        /// many ids you want to take
+        /// </summary>
         public async Task<IEnumerable<Guid>> GetNewsItemIds(byte[] key, int skip, int take)
         {
             var vals = await db.SortedSetRangeByRankAsync(key, 
@@ -68,6 +78,11 @@ namespace Weave.User.Service.Redis
                 flags: CommandFlags.None);
 
             return vals.Select(o => new Guid((byte[])o));
+        }
+
+        public async Task TrimList(byte[] key, int trimTo)
+        {
+            var numRemoved = await db.SortedSetRemoveRangeByRankAsync(key, trimTo, -1, flags: CommandFlags.None);
         }
     }
 
