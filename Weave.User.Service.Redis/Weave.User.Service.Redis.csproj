@@ -44,6 +44,8 @@
     <Compile Include="DatabaseNumbers.cs" />
     <Compile Include="DTOs\Image.cs" />
     <Compile Include="DTOs\NewsItem.cs" />
+    <Compile Include="Synchronization\IDatabaseLockExtensions.cs" />
+    <Compile Include="Synchronization\RedisLockException.cs" />
     <Compile Include="Synchronization\UserIndex\UserLockCache.cs" />
     <Compile Include="NewsItemCacheAdder.cs" />
     <Compile Include="Serializers\Binary\NewsItemBinarySerializer.cs" />
