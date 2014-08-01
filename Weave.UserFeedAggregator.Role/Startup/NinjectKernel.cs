@@ -24,30 +24,17 @@ namespace Weave.User.Service.Role.Startup
             var userRepo = new UserRepository(userInfoBlobClient);
             Bind<UserRepository>().ToConstant(userRepo).InSingletonScope();
 
-            //var redisClientConfig = new ConfigurationOptions
-            //{
-            //    AllowAdmin = true,
-            //    Password = "dM/xNBd9hB9Wgn3tPhkTsiwzIw4gImnS+eAN9sYuouY=",
-            //    Ssl = false,
-            //    a
-            //}
-
             var redisClientConfig = ConfigurationOptions.Parse(
 "weaveuser.redis.cache.windows.net,ssl=false,password=dM/xNBd9hB9Wgn3tPhkTsiwzIw4gImnS+eAN9sYuouY=");
 
             redisClientConfig.AllowAdmin = true;
             var connectionMultiplexer = ConnectionMultiplexer.Connect(redisClientConfig);
-//"weaveuser.redis.cache.windows.net,ssl=false,password=dM/xNBd9hB9Wgn3tPhkTsiwzIw4gImnS+eAN9sYuouY=");
 
-            var userIndexCache = new UserIndexCache(connectionMultiplexer);
-            var newsItemCache = new NewsItemCache(connectionMultiplexer);
+            Bind<ConnectionMultiplexer>().ToConstant(connectionMultiplexer).InSingletonScope();
 
             var server = connectionMultiplexer.GetServer(
 "weaveuser.redis.cache.windows.net", 6379);
             server.FlushDatabase(0);
-
-            Bind<UserIndexCache>().ToConstant(userIndexCache).InSingletonScope();
-            Bind<NewsItemCache>().ToConstant(newsItemCache).InSingletonScope();
 
             Bind<IArticleQueueService>().To<MockArticleQueueService>();
         }

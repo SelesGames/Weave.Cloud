@@ -21,13 +21,12 @@ namespace Weave.User.Service.Redis
         public NewsItemCache(ConnectionMultiplexer connection)
         {
             this.connection = connection;
-            db = connection.GetDatabase(0);
+            db = connection.GetDatabase(DatabaseNumbers.INDICES_AND_NEWSCACHE);
             serializer = new RedisValueSerializer(new NewsItemBinarySerializer());
         }
 
         public async Task<IEnumerable<RedisCacheResult<NewsItem>>> Get(IEnumerable<Guid> newsItemIds)
         {
-            var db = connection.GetDatabase(0);
             var keys = newsItemIds.Select(o => (RedisKey)o.ToByteArray()).ToArray();
 
             var values = await db.StringGetAsync(keys, CommandFlags.None);

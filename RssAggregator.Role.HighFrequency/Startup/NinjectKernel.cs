@@ -2,7 +2,9 @@
 using Common.Data;
 using Ninject;
 using SelesGames.Common;
+using StackExchange.Redis;
 using Weave.RssAggregator.HighFrequency;
+using Weave.User.Service.Redis;
 
 namespace RssAggregator.Role.HighFrequency
 {
@@ -29,6 +31,15 @@ namespace RssAggregator.Role.HighFrequency
                 .WhenInjectedExactlyInto<ServiceBusUpdater>()
                 .InSingletonScope();
 
+            var redisClientConfig = ConfigurationOptions.Parse(
+"weaveuser.redis.cache.windows.net,ssl=false,password=dM/xNBd9hB9Wgn3tPhkTsiwzIw4gImnS+eAN9sYuouY=");
+
+            //redisClientConfig.AllowAdmin = true;
+            var connectionMultiplexer = ConnectionMultiplexer.Connect(redisClientConfig);
+
+            var newsItemCache = new NewsItemCache(connectionMultiplexer);
+            var sortedNewsCache = new SortedNewsItemsSetCache(connectionMultiplexer);
+
             Bind<SequentialProcessor>().ToMethod(_ => new SequentialProcessor(
                 new IProvider<ISequentialAsyncProcessor<HighFrequencyFeedUpdateDto>>[]
                 {
@@ -38,6 +49,7 @@ namespace RssAggregator.Role.HighFrequency
                     DelegateProvider.Create(() => this.Get<ImageScalerUpdater>()),
                     DelegateProvider.Create(() => this.Get<EntryToBinaryUpdater>()),
                     DelegateProvider.Create(() => this.Get<SqlUpdater>()),
+                    DelegateProvider.Create(() => this.Get<RedisArticleCacheProcessor>()),
                     DelegateProvider.Create(() => this.Get<MobilizerOverride>()),
                     DelegateProvider.Create(() => this.Get<ServiceBusUpdater>()),
                 }))

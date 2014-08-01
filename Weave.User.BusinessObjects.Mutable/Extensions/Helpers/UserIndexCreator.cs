@@ -68,13 +68,13 @@ namespace Weave.User.BusinessObjects.Mutable.Extensions.Helpers
             return new NewsItemIndex
             {
                 Id = o.Id,
-                IsFavorite = o.IsFavorite,
-                HasBeenViewed = o.HasBeenViewed,
-                UtcPublishDateTime = o.UtcPublishDateTime,
-                OriginalDownloadDateTime = o.OriginalDownloadDateTime,
-                HasImage = o.HasImage,
                 UrlHash = ComputeHash(o.Link),
                 TitleHash = ComputeHash(o.Title),
+                UtcPublishDateTime = o.UtcPublishDateTime,
+                OriginalDownloadDateTime = o.OriginalDownloadDateTime,
+                IsFavorite = o.IsFavorite,
+                HasBeenViewed = o.HasBeenViewed,
+                HasImage = o.HasImage,
             };
         }
 

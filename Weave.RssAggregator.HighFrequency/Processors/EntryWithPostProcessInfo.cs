@@ -40,20 +40,5 @@ namespace Weave.RssAggregator.HighFrequency
         {
             return Title;
         }
-
-        //static Core.DTOs.Outgoing.Aspect ConvertToAspect(string aspectString)
-        //{
-        //    if ("portrait".Equals(aspectString, StringComparison.OrdinalIgnoreCase))
-        //        return Core.DTOs.Outgoing.Aspect.Portrait;
-
-        //    if ("landscape".Equals(aspectString, StringComparison.OrdinalIgnoreCase))
-        //        return Core.DTOs.Outgoing.Aspect.Landscape;
-
-        //    if ("square".Equals(aspectString, StringComparison.OrdinalIgnoreCase))
-        //        return Core.DTOs.Outgoing.Aspect.Square;
-
-        //    // by default, return landscape aspect
-        //    return Core.DTOs.Outgoing.Aspect.Landscape;
-        //}
     }
 }

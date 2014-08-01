@@ -89,6 +89,7 @@
     <Compile Include="Processors\ISequentialAsyncProcessor.cs" />
     <Compile Include="Processors\Mobilizer\MobilizerOverride.cs" />
     <Compile Include="Processors\Redirect\RedirectResolver.cs" />
+    <Compile Include="Processors\Redis\RedisArticleCacheProcessor.cs" />
     <Compile Include="Processors\Sql\SqlSelectOnlyLatestNews.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Processors\SequentialProcessor.cs" />
@@ -146,6 +147,10 @@
     <ProjectReference Include="..\Weave.RssAggregator.Core\RssAggregator.DTOs.csproj">
       <Project>{2f1a280d-ee75-4dc1-a36c-f8e5488e3260}</Project>
       <Name>RssAggregator.DTOs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Weave.User.Service.Redis\Weave.User.Service.Redis.csproj">
+      <Project>{32c547a5-8c67-4886-95ab-dc73f9af7673}</Project>
+      <Name>Weave.User.Service.Redis</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

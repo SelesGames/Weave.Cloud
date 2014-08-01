@@ -3,17 +3,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Weave.User.BusinessObjects;
+using Weave.User.Service.Redis.DTOs;
 
 namespace Weave.User.Service.Redis
 {
-    class NewsItemScore
+    public class NewsItemScore
     {
         public Guid Id { get; set; }
         public double Score { get; set; }
     }
 
-    public static class NewsItemScoringExtensions
+    public static class NewsItemScoringHelper
     {
         public static NewsItemScore CreateScore(NewsItem o)
         {
