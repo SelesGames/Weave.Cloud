@@ -47,7 +47,7 @@
     <Compile Include="Articles\ArticleQueueService.cs" />
     <Compile Include="Articles\ArticleStateChange.cs" />
     <Compile Include="Articles\ArticleStateChangeNotification.cs" />
-    <Compile Include="Articles\ArticleStateChangeQueue.cs" />
+    <Compile Include="Articles\ArticleStateChangeMessageQueue.cs" />
     <Compile Include="Articles\IArticleQueueService.cs" />
     <Compile Include="Articles\MockArticleQueueService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

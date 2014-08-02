@@ -5,11 +5,11 @@ namespace Weave.User.Service.InterRoleMessaging.Articles
 {
     public class ArticleQueueService : IArticleQueueService
     {
-        readonly ArticleStateChangeQueue innerQueue;
+        readonly ArticleStateChangeMessageQueue innerQueue;
 
         public ArticleQueueService(ConnectionMultiplexer multiplexer)
         {
-            this.innerQueue = new ArticleStateChangeQueue(multiplexer);
+            this.innerQueue = new ArticleStateChangeMessageQueue(multiplexer);
         }
 
         public void QueueMarkRead(Guid userId, Guid newsItemId)

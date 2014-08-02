@@ -5,9 +5,9 @@ using Weave.User.Service.Redis.Communication.Generic;
 
 namespace Weave.User.Service.InterRoleMessaging.Articles
 {
-    public class ArticleStateChangeQueue : MessageQueue<ArticleStateChangeNotification>
+    public class ArticleStateChangeMessageQueue : MessageQueue<ArticleStateChangeNotification>
     {
-        public ArticleStateChangeQueue(ConnectionMultiplexer multiplexer)
+        public ArticleStateChangeMessageQueue(ConnectionMultiplexer multiplexer)
             : base(multiplexer.GetDatabase(9), "articleMQ", "articlePL") { }
     
         protected override ArticleStateChangeNotification Map(RedisValue value)
