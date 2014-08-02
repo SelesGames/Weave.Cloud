@@ -11,6 +11,7 @@ using Weave.User.BusinessObjects.Mutable;
 using Weave.User.Service.Cache;
 using Weave.User.Service.Contracts;
 using Weave.User.Service.DTOs;
+using Weave.User.Service.InterRoleMessaging.Articles;
 using Weave.User.Service.Redis;
 using Weave.User.Service.Redis.Synchronization.UserIndex;
 using Weave.User.Service.Role.Map;
@@ -19,40 +20,6 @@ using Outgoing = Weave.User.Service.DTOs.ServerOutgoing;
 
 namespace Weave.User.Service.Role.Controllers
 {
-    #region article queue service
-
-    public class MockArticleQueueService : IArticleQueueService
-    {
-        public void QueueMarkRead(Guid userId, Guid newsItemId)
-        {
-        }
-
-        public void QueueMarkUnread(Guid userId, Guid newsItemId)
-        {
-        }
-
-        public void QueueAddFavorite(Guid userId, Guid newsItemId)
-        {
-        }
-
-        public void QueueRemoveFavorite(Guid userId, Guid newsItemId)
-        {
-        }
-    }
-
-    public interface IArticleQueueService
-    {
-        void QueueMarkRead(Guid userId, Guid newsItemId);
-        void QueueMarkUnread(Guid userId, Guid newsItemId);
-        void QueueAddFavorite(Guid userId, Guid newsItemId);
-        void QueueRemoveFavorite(Guid userId, Guid newsItemId);
-    }
-
-    #endregion
-
-
-    
-
     public class UserController : ApiController, IWeaveUserService
     {
         #region Private member variables + constructor

@@ -41,9 +41,13 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Communication\Generic\Message.cs" />
+    <Compile Include="Communication\Generic\MessageQueue.cs" />
+    <Compile Include="Communication\Message.cs" />
     <Compile Include="DatabaseNumbers.cs" />
     <Compile Include="DTOs\Image.cs" />
     <Compile Include="DTOs\NewsItem.cs" />
+    <Compile Include="Communication\MessageQueue.cs" />
     <Compile Include="Synchronization\IDatabaseLockExtensions.cs" />
     <Compile Include="Synchronization\RedisLockException.cs" />
     <Compile Include="Synchronization\UserIndex\UserLockCache.cs" />

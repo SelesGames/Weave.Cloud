@@ -156,6 +156,10 @@
       <Project>{edb6b676-e4fd-4b51-8c5b-98c7d1837ef6}</Project>
       <Name>Weave.User.Service.Cache</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Weave.User.Service.InterRoleMessaging\Weave.User.Service.InterRoleMessaging.csproj">
+      <Project>{83f82b51-2a9c-4d55-bf4c-8a61de8d9428}</Project>
+      <Name>Weave.User.Service.InterRoleMessaging</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Weave.User.Service.Redis\Weave.User.Service.Redis.csproj">
       <Project>{32c547a5-8c67-4886-95ab-dc73f9af7673}</Project>
       <Name>Weave.User.Service.Redis</Name>

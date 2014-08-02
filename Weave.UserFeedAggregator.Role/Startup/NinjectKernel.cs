@@ -3,6 +3,7 @@ using Microsoft.WindowsAzure.Storage.Auth;
 using Ninject;
 using StackExchange.Redis;
 using Weave.User.Service.Cache;
+using Weave.User.Service.InterRoleMessaging.Articles;
 using Weave.User.Service.Redis;
 using Weave.User.Service.Role.Controllers;
 
@@ -32,11 +33,11 @@ namespace Weave.User.Service.Role.Startup
 
             Bind<ConnectionMultiplexer>().ToConstant(connectionMultiplexer).InSingletonScope();
 
-            var server = connectionMultiplexer.GetServer(
-"weaveuser.redis.cache.windows.net", 6379);
-            server.FlushDatabase(0);
+//            var server = connectionMultiplexer.GetServer(
+//"weaveuser.redis.cache.windows.net", 6379);
+//            server.FlushDatabase(0);
 
-            Bind<IArticleQueueService>().To<MockArticleQueueService>();
+            Bind<IArticleQueueService>().To<ArticleQueueService>();
         }
     }
 }
