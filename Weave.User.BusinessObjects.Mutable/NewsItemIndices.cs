@@ -31,6 +31,7 @@ namespace Weave.User.BusinessObjects.Mutable
             if (ids.Add(newsItem.Id))
             {
                 innerList.Add(newsItem);
+                newsItem.FeedIndex = feedIndex;
                 return true;
             }
 

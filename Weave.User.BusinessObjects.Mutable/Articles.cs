@@ -18,38 +18,42 @@ namespace Weave.User.BusinessObjects.Mutable
 
         #region Article State Management
 
-        public void MarkRead(Guid newsItemId)
+        public NewsItemIndex MarkRead(Guid newsItemId)
         {
             var newsItem = FindNewsItem(newsItemId);
             if (newsItem == null)
-                return;
+                return null;
 
             newsItem.HasBeenViewed = true;
+            return newsItem;
         }
 
-        public void MarkUnread(Guid newsItemId)
+        public NewsItemIndex MarkUnread(Guid newsItemId)
         {
             var newsItem = FindNewsItem(newsItemId);
             if (newsItem == null)
-                return;
+                return null;
 
             newsItem.HasBeenViewed = false;
+            return newsItem;
         }
 
-        public void MarkRead(IEnumerable<Guid> newsItemIds)
+        public IEnumerable<NewsItemIndex> MarkRead(IEnumerable<Guid> newsItemIds)
         {
             if (newsItemIds == null)
-                return;
+                return new List<NewsItemIndex>(0);
 
-            var newsItems = newsItemIds
+            var indices = newsItemIds
                 .Select(FindNewsItem)
                 .OfType<NewsItemIndex>();
 
-            foreach (var newsItem in newsItems)
+            foreach (var newsItem in indices)
                 newsItem.HasBeenViewed = true;
+
+            return indices;
         }
 
-        public void MarkCategoryRead(string category)
+        public IEnumerable<NewsItemIndex> MarkCategoryRead(string category)
         {
             var indices = user.FeedIndices
                 .OfCategory(category)
@@ -58,9 +62,11 @@ namespace Weave.User.BusinessObjects.Mutable
 
             foreach (var newsItem in indices)
                 newsItem.HasBeenViewed = true;
+
+            return indices;
         }
 
-        public void MarkFeedRead(Guid feedId)
+        public IEnumerable<NewsItemIndex> MarkFeedRead(Guid feedId)
         {
             var indices = user.FeedIndices
                 .Where(o => o.Id == feedId)
@@ -69,24 +75,28 @@ namespace Weave.User.BusinessObjects.Mutable
 
             foreach (var newsItem in indices)
                 newsItem.HasBeenViewed = true;
+
+            return indices;
         }
 
-        public void AddFavorite(Guid newsItemId)
+        public NewsItemIndex AddFavorite(Guid newsItemId)
         {
             var newsItem = FindNewsItem(newsItemId);
             if (newsItem == null)
-                return;
+                return null;
 
             newsItem.IsFavorite = true;
+            return newsItem;
         }
 
-        public void RemoveFavorite(Guid newsItemId)
+        public NewsItemIndex RemoveFavorite(Guid newsItemId)
         {
             var newsItem = FindNewsItem(newsItemId);
             if (newsItem == null)
-                return;
+                return null;
 
             newsItem.IsFavorite = false;
+            return newsItem;
         }
 
         NewsItemIndex FindNewsItem(Guid newsItemId)

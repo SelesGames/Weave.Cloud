@@ -453,10 +453,12 @@ namespace Weave.User.Service.Role.Controllers
             {
                 await LoadIndexOnly(userId);
 
-                userIndex.Articles.MarkRead(newsItemId);
-                articleQueueService.QueueMarkRead(userId, newsItemId);
-
-                await SaveUserIndex();
+                var article = userIndex.Articles.MarkRead(newsItemId);
+                if (article != null)
+                {
+                    articleQueueService.QueueMarkRead(userId, newsItemId, article.FeedIndex.Name);
+                    await SaveUserIndex();
+                }
             });
         }
 
@@ -468,10 +470,12 @@ namespace Weave.User.Service.Role.Controllers
             {
                 await LoadIndexOnly(userId);
 
-                userIndex.Articles.MarkUnread(newsItemId);
-                articleQueueService.QueueMarkUnread(userId, newsItemId);
-
-                await SaveUserIndex();
+                var article = userIndex.Articles.MarkUnread(newsItemId);
+                if (article != null)
+                {
+                    articleQueueService.QueueMarkUnread(userId, newsItemId, article.FeedIndex.Name);
+                    await SaveUserIndex();
+                }
             });
         }
 
@@ -483,9 +487,11 @@ namespace Weave.User.Service.Role.Controllers
             {
                 await LoadIndexOnly(userId);
 
-                userIndex.Articles.MarkRead(newsItemIds);
-
-                await SaveUserIndex();
+                var articles = userIndex.Articles.MarkRead(newsItemIds);
+                if (articles.Any())
+                {
+                    await SaveUserIndex();
+                }
             });
         }
 
@@ -497,9 +503,11 @@ namespace Weave.User.Service.Role.Controllers
             {
                 await LoadIndexOnly(userId);
 
-                userIndex.Articles.MarkCategoryRead(category);
-
-                await SaveUserIndex();
+                var articles = userIndex.Articles.MarkCategoryRead(category);
+                if (articles.Any())
+                {
+                    await SaveUserIndex();
+                }
             });
         }
 
@@ -511,9 +519,11 @@ namespace Weave.User.Service.Role.Controllers
             {
                 await LoadIndexOnly(userId);
 
-                userIndex.Articles.MarkFeedRead(feedId);
-
-                await SaveUserIndex();
+                var articles = userIndex.Articles.MarkFeedRead(feedId);
+                if (articles.Any())
+                {
+                    await SaveUserIndex();
+                }
             });
         }
 
@@ -525,10 +535,12 @@ namespace Weave.User.Service.Role.Controllers
             {
                 await LoadIndexOnly(userId);
 
-                userIndex.Articles.AddFavorite(newsItemId);
-                articleQueueService.QueueAddFavorite(userId, newsItemId);
-
-                await SaveUserIndex();
+                var article = userIndex.Articles.AddFavorite(newsItemId);
+                if (article != null)
+                {
+                    articleQueueService.QueueAddFavorite(userId, newsItemId, article.FeedIndex.Name);
+                    await SaveUserIndex();
+                }
             });
         }
 
@@ -540,10 +552,12 @@ namespace Weave.User.Service.Role.Controllers
             {
                 await LoadIndexOnly(userId);
 
-                userIndex.Articles.RemoveFavorite(newsItemId);
-                articleQueueService.QueueRemoveFavorite(userId, newsItemId);
-
-                await SaveUserIndex();
+                var article = userIndex.Articles.RemoveFavorite(newsItemId);
+                if (article != null)
+                {
+                    articleQueueService.QueueRemoveFavorite(userId, newsItemId, article.FeedIndex.Name);
+                    await SaveUserIndex();
+                }
             });
         }
 
