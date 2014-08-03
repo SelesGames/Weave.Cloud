@@ -1,4 +1,5 @@
-﻿using StackExchange.Redis;
+﻿using Common.Compression;
+using StackExchange.Redis;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,7 +8,7 @@ using Weave.Article.Service.DTOs.ServerIncoming;
 using Weave.User.Service.InterRoleMessaging.Articles;
 using Weave.User.Service.Redis;
 
-namespace Weave.User.Service.Role.Startup
+namespace Weave.ArticleQueueProcessor.Service.Azure.Role.Startup
 {
     internal class StartupTask
     {
@@ -21,6 +22,7 @@ namespace Weave.User.Service.Role.Startup
 
         public StartupTask()
         {
+            Settings.CompressionHandlers = new Common.Compression.Windows.CompressionHandlerCollection();
             articleService = new Article.Service.Client.ServiceClient();
 
             var redisClientConfig = ConfigurationOptions.Parse(REDIS_CONN);
@@ -65,6 +67,12 @@ namespace Weave.User.Service.Role.Startup
 
             else if (change == ArticleStateChange.Unfavorite)
                 await Unfavorite(userId, articleId);
+
+            var isMessageRemoved = await message.Complete();
+
+            if (isMessageRemoved)
+                System.Diagnostics.Debug.WriteLine(string.Format(
+                "{0} removed from process queue", articleId));
         }
 
 
@@ -96,7 +104,7 @@ namespace Weave.User.Service.Role.Startup
 
         #region Map functions
 
-        SavedNewsItem Map(Redis.DTOs.NewsItem o)
+        SavedNewsItem Map(Weave.User.Service.Redis.DTOs.NewsItem o)
         {
             return new SavedNewsItem
             {
@@ -115,7 +123,7 @@ namespace Weave.User.Service.Role.Startup
             };
         }
 
-        Image Map(Redis.DTOs.Image image)
+        Image Map(Weave.User.Service.Redis.DTOs.Image image)
         {
             return null;
         }

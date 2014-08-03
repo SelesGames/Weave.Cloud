@@ -127,8 +127,8 @@ namespace Weave.Article.Service.Client
 
         SmartHttpClient CreateClient()
         {
-            //return new SmartHttpClient(ContentEncoderSettings.Json, CompressionSettings.None);
-            return new SmartHttpClient(ContentEncoderSettings.Protobuf, CompressionSettings.None);
+            return new SmartHttpClient(ContentEncoderSettings.Json, CompressionSettings.None);
+            //return new SmartHttpClient(ContentEncoderSettings.Protobuf, CompressionSettings.None);
         }
     }
 }
