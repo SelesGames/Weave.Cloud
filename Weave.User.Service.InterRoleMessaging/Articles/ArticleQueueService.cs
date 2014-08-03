@@ -14,6 +14,8 @@ namespace Weave.User.Service.InterRoleMessaging.Articles
 
         public void QueueMarkRead(Guid userId, Guid newsItemId, string source)
         {
+            Validate(userId, newsItemId);
+
             innerQueue.Push(
                 new ArticleStateChangeNotification
                 {
@@ -26,6 +28,8 @@ namespace Weave.User.Service.InterRoleMessaging.Articles
 
         public void QueueMarkUnread(Guid userId, Guid newsItemId, string source)
         {
+            Validate(userId, newsItemId);
+
             innerQueue.Push(
                 new ArticleStateChangeNotification
                 {
@@ -38,6 +42,8 @@ namespace Weave.User.Service.InterRoleMessaging.Articles
 
         public void QueueAddFavorite(Guid userId, Guid newsItemId, string source)
         {
+            Validate(userId, newsItemId);
+
             innerQueue.Push(
                 new ArticleStateChangeNotification
                 {
@@ -50,6 +56,8 @@ namespace Weave.User.Service.InterRoleMessaging.Articles
 
         public void QueueRemoveFavorite(Guid userId, Guid newsItemId, string source)
         {
+            Validate(userId, newsItemId);
+
             innerQueue.Push(
                 new ArticleStateChangeNotification
                 {
@@ -58,6 +66,15 @@ namespace Weave.User.Service.InterRoleMessaging.Articles
                     Change = ArticleStateChange.Unfavorite,
                     Source = source,
                 });
+        }
+
+        void Validate(Guid userId, Guid newsItemId)
+        {
+            if (userId == Guid.Empty)
+                throw new ArgumentException("userId should not be empty");
+
+            if (newsItemId == Guid.Empty)
+                throw new ArgumentException("newsItemId should not be empty");
         }
     }
 }

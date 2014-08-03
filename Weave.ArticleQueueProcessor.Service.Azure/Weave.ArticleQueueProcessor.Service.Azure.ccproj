@@ -47,12 +47,16 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Profiles" />
     <Folder Include="Weave.ArticleQueueProcessor.Service.Azure.RoleContent\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Weave.ArticleQueueProcessor.Service.Azure.RoleContent\diagnostics.wadcfg">
       <SubType>Content</SubType>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PublishProfile Include="Profiles\articleQueueProcessorProduction.azurePubxml" />
   </ItemGroup>
   <!-- Import the target files for this project template -->
   <PropertyGroup>

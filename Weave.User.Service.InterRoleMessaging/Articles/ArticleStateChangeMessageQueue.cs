@@ -34,7 +34,7 @@ namespace Weave.User.Service.InterRoleMessaging.Articles
                 bw.Write(o.UserId.ToByteArray());
                 bw.Write(o.ArticleId.ToByteArray());
                 bw.Write((byte)o.Change);
-                bw.Write(o.Source);
+                bw.Write(o.Source ?? "");
 
                 return ms.ToArray();
             }

@@ -54,7 +54,7 @@ namespace Test.AccountManagement
 
             var userInfoBlobClient = new UserInfoBlobClient(csa, containerName: "user");
             var userRepo = new UserRepository(userInfoBlobClient);
-            var controller = new UserController(null, null, null, null);
+            var controller = new UserController(null, null, null, null, null);
             return controller;
         }
 
