@@ -41,17 +41,29 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Profiles" />
+    <Folder Include="Weave.ArticleQueueProcessor.Service.Azure.RoleContent\" />
     <Folder Include="Weave.User.Service.WorkerRoleContent" />
   </ItemGroup>
   <ItemGroup>
     <PublishProfile Include="Profiles\Weave User Service.azurePubxml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Weave.ArticleQueueProcessor.Service.Azure.RoleContent\diagnostics.wadcfg">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Weave.User.Service.WorkerRoleContent\diagnostics.wadcfg">
       <SubType>Content</SubType>
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Weave.ArticleQueueProcessor.Service.Azure.Role\Weave.ArticleQueueProcessor.Service.Azure.Role.csproj">
+      <Name>Weave.ArticleQueueProcessor.Service.Azure.Role</Name>
+      <Project>{8984eff9-b053-42fe-b687-742f170e4ea4}</Project>
+      <Private>True</Private>
+      <RoleType>Worker</RoleType>
+      <RoleName>Weave.ArticleQueueProcessor.Service.Azure.Role</RoleName>
+      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
+    </ProjectReference>
     <ProjectReference Include="..\Weave.UserFeedAggregator.Role\Weave.User.Service.WorkerRole.csproj">
       <Name>Weave.User.Service.WorkerRole</Name>
       <Project>{a8e71851-2046-4176-b9ce-6d6cc659e567}</Project>

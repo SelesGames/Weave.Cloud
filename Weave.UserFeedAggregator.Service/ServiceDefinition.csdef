@@ -9,4 +9,9 @@
       <InputEndpoint name="Endpoint1" protocol="http" port="80" />
     </Endpoints>
   </WorkerRole>
+  <WorkerRole name="Weave.ArticleQueueProcessor.Service.Azure.Role" vmsize="ExtraSmall">
+    <Imports>
+      <Import moduleName="Diagnostics" />
+    </Imports>
+  </WorkerRole>
 </ServiceDefinition>
