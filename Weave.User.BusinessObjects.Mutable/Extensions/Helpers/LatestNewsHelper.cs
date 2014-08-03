@@ -14,7 +14,6 @@ namespace Weave.User.BusinessObjects.Mutable.Extensions.Helpers
                 .AllIndices()
                 .Ordered()
                 .Where(o => !o.NewsItemIndex.HasBeenViewed)
-                //.Distinct(NewsItemComparer.Instance)
                 .Take(20)
                 .ToList();
 

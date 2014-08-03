@@ -31,11 +31,14 @@ namespace Weave.User.BusinessObjects.Mutable
                     .Select(x => new NewsItemIndexFeedIndexTuple(x, o)));
         }
 
+        static NewsItemIndexFeedIndexTupleComparer orderedComparer = new NewsItemIndexFeedIndexTupleComparer();
+
         public static IEnumerable<NewsItemIndexFeedIndexTuple> Ordered(this IEnumerable<NewsItemIndexFeedIndexTuple> indices)
         {
             return indices
                 .OrderByDescending(o => o.IsNew)
-                .ThenByDescending(o => o.NewsItemIndex.UtcPublishDateTime);
+                .ThenByDescending(o => o.NewsItemIndex.UtcPublishDateTime)
+                .Distinct(orderedComparer);
         }
 
         public static void MarkEntry(this IEnumerable<FeedIndex> feeds)
@@ -67,5 +70,34 @@ namespace Weave.User.BusinessObjects.Mutable
         {
             return LatestNewsHelper.GetTopNewsItems(feeds);
         }
+
+
+
+
+        #region Helper class for the Ordered function
+
+        class NewsItemIndexFeedIndexTupleComparer : IEqualityComparer<NewsItemIndexFeedIndexTuple>
+        {
+            public bool Equals(NewsItemIndexFeedIndexTuple x, NewsItemIndexFeedIndexTuple y)
+            {
+                if (x == y)
+                    return true;
+
+                var xNews = x.NewsItemIndex;
+                var yNews = y.NewsItemIndex;
+
+                return
+                    (xNews.Id == yNews.Id) ||
+                    (xNews.TitleHash == yNews.TitleHash) ||
+                    (xNews.UrlHash == yNews.UrlHash);
+            }
+
+            public int GetHashCode(NewsItemIndexFeedIndexTuple obj)
+            {
+                return obj.NewsItemIndex.Id.GetHashCode();
+            }
+        }
+
+        #endregion
     }
 }
