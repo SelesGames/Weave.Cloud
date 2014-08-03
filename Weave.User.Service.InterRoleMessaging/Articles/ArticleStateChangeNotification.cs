@@ -7,5 +7,6 @@ namespace Weave.User.Service.InterRoleMessaging.Articles
         public Guid UserId { get; set; }
         public Guid ArticleId { get; set; }
         public ArticleStateChange Change { get; set; }
+        public string Source { get; set; }
     }
 }

@@ -12,47 +12,51 @@ namespace Weave.User.Service.InterRoleMessaging.Articles
             this.innerQueue = new ArticleStateChangeMessageQueue(multiplexer);
         }
 
-        public void QueueMarkRead(Guid userId, Guid newsItemId)
+        public void QueueMarkRead(Guid userId, Guid newsItemId, string source)
         {
             innerQueue.Push(
                 new ArticleStateChangeNotification
                 {
                     UserId = userId,
                     ArticleId = newsItemId,
-                    Change = ArticleStateChange.Read
+                    Change = ArticleStateChange.Read,
+                    Source = source,
                 });
         }
 
-        public void QueueMarkUnread(Guid userId, Guid newsItemId)
+        public void QueueMarkUnread(Guid userId, Guid newsItemId, string source)
         {
             innerQueue.Push(
                 new ArticleStateChangeNotification
                 {
                     UserId = userId,
                     ArticleId = newsItemId,
-                    Change = ArticleStateChange.Unread
+                    Change = ArticleStateChange.Unread,
+                    Source = source,
                 });
         }
 
-        public void QueueAddFavorite(Guid userId, Guid newsItemId)
+        public void QueueAddFavorite(Guid userId, Guid newsItemId, string source)
         {
             innerQueue.Push(
                 new ArticleStateChangeNotification
                 {
                     UserId = userId,
                     ArticleId = newsItemId,
-                    Change = ArticleStateChange.Favorite
+                    Change = ArticleStateChange.Favorite,
+                    Source = source,
                 });
         }
 
-        public void QueueRemoveFavorite(Guid userId, Guid newsItemId)
+        public void QueueRemoveFavorite(Guid userId, Guid newsItemId, string source)
         {
             innerQueue.Push(
                 new ArticleStateChangeNotification
                 {
                     UserId = userId,
                     ArticleId = newsItemId,
-                    Change = ArticleStateChange.Unfavorite
+                    Change = ArticleStateChange.Unfavorite,
+                    Source = source,
                 });
         }
     }

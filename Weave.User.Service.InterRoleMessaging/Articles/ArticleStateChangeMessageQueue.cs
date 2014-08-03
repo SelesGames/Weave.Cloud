@@ -20,6 +20,7 @@ namespace Weave.User.Service.InterRoleMessaging.Articles
                 o.UserId = new Guid(br.ReadBytes(16));
                 o.ArticleId = new Guid(br.ReadBytes(16));
                 o.Change = (ArticleStateChange)br.ReadByte();
+                o.Source = br.ReadString();
             }
 
             return o;
@@ -33,6 +34,7 @@ namespace Weave.User.Service.InterRoleMessaging.Articles
                 bw.Write(o.UserId.ToByteArray());
                 bw.Write(o.ArticleId.ToByteArray());
                 bw.Write((byte)o.Change);
+                bw.Write(o.Source);
 
                 return ms.ToArray();
             }
