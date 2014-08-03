@@ -55,15 +55,16 @@ namespace Weave.ArticleQueueProcessor.Service.Azure.Role.Startup
             var change = message.Value.Change;
             var userId = message.Value.UserId;
             var articleId = message.Value.ArticleId;
+            var source = message.Value.Source;
 
             if (change == ArticleStateChange.Read)
-                await MarkRead(userId, articleId);
+                await MarkRead(userId, articleId, source);
 
             else if (change == ArticleStateChange.Unread)
                 await MarkUnread(userId, articleId);
 
             else if (change == ArticleStateChange.Favorite)
-                await Favorite(userId, articleId);
+                await Favorite(userId, articleId, source);
 
             else if (change == ArticleStateChange.Unfavorite)
                 await Unfavorite(userId, articleId);
@@ -108,7 +109,7 @@ namespace Weave.ArticleQueueProcessor.Service.Azure.Role.Startup
         {
             return new SavedNewsItem
             {
-                SourceName = "temp",
+                //SourceName = "temp",
                 Title = o.Title,
                 Link = o.Link,
                 UtcPublishDateTime = o.UtcPublishDateTimeString,
@@ -123,9 +124,16 @@ namespace Weave.ArticleQueueProcessor.Service.Azure.Role.Startup
             };
         }
 
-        Image Map(Weave.User.Service.Redis.DTOs.Image image)
+        Image Map(Weave.User.Service.Redis.DTOs.Image o)
         {
-            return null;
+            return new Image
+            {
+                Width = o.Width,
+                Height = o.Height,
+                BaseImageUrl = o.BaseImageUrl,
+                OriginalUrl = o.OriginalUrl,
+                SupportedFormats = o.SupportedFormats,
+            };
         }
 
         #endregion
@@ -135,11 +143,13 @@ namespace Weave.ArticleQueueProcessor.Service.Azure.Role.Startup
 
         #region Calls to the inner article service client
 
-        async Task MarkRead(Guid userId, Guid articleId)
+        async Task MarkRead(Guid userId, Guid articleId, string source)
         {
             var article = await FindNewsItem(userId, articleId);
             if (article == null)
                 return;
+
+            article.SourceName = source;
 
             await articleService.MarkRead(userId, article);
         }
@@ -149,11 +159,13 @@ namespace Weave.ArticleQueueProcessor.Service.Azure.Role.Startup
             return articleService.RemoveRead(userId, articleId);
         }
 
-        async Task Favorite(Guid userId, Guid articleId)
+        async Task Favorite(Guid userId, Guid articleId, string source)
         {
             var article = await FindNewsItem(userId, articleId);
             if (article == null)
                 return;
+
+            article.SourceName = source;
 
             await articleService.AddFavorite(userId, article);
         }
