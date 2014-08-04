@@ -68,14 +68,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Common.Azure.ServiceBus.Reactive\Common.Azure.ServiceBus.Reactive.csproj">
-      <Project>{682a3907-afdd-4f98-ba04-3886cdbb520c}</Project>
-      <Name>Common.Azure.ServiceBus.Reactive</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Common.Azure.ServiceBus\Common.Azure.ServiceBus.csproj">
-      <Project>{84165f70-4beb-46e2-a122-01ada235950f}</Project>
-      <Name>Common.Azure.ServiceBus</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Common.Data\Common.Data.csproj">
       <Project>{cad7cc28-36e9-4b39-ba90-df99815904eb}</Project>
       <Name>Common.Data</Name>
