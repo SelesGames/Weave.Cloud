@@ -1,13 +1,12 @@
-﻿using Common.Azure.ServiceBus;
-using Common.WebApi.Handlers;
+﻿using Common.WebApi.Handlers;
 using Microsoft.WindowsAzure.ServiceRuntime;
 using Ninject;
 using Ninject.WebApi;
 using SelesGames.WebApi.SelfHost;
 using System.Diagnostics;
 using System.Web.Http.Dependencies;
-using System.Web.Http.SelfHost;
 using Weave.RssAggregator.LowFrequency;
+using Weave.User.Service.Redis.PubSub;
 
 namespace Weave.RssAggregator.WorkerRole.Startup
 {
@@ -43,7 +42,7 @@ namespace Weave.RssAggregator.WorkerRole.Startup
             hfCache = new FeedCache(
                 feedLibraryUrl,
                 kernel.Get<DbClient>(), 
-                kernel.Get<SubscriptionConnector>());
+                kernel.Get<PubSubHelper>());
 
             kernel.Bind<FeedCache>().ToConstant(hfCache);
         }

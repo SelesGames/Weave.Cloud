@@ -1,8 +1,5 @@
-﻿using Microsoft.ServiceBus.Messaging;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
 
 namespace Weave.RssAggregator.LowFrequency
@@ -71,10 +68,6 @@ namespace Weave.RssAggregator.LowFrequency
                     {
                         await LoadLatestNews();
                     }
-
-                    DebugEx.WriteLine("completing message id: {0}", notice.MessageId);
-                    await notice.MarkNoticeAsRead();
-                    DebugEx.WriteLine("COMPLETED message id: {0}", notice.MessageId);
                 }
             }
 #if DEBUG

@@ -1,5 +1,4 @@
-﻿using Common.Azure.ServiceBus;
-using Common.Data;
+﻿using Common.Data;
 using Ninject;
 using SelesGames.Common;
 using StackExchange.Redis;
@@ -9,30 +8,26 @@ namespace RssAggregator.Role.HighFrequency
 {
     public class NinjectKernel : StandardKernel
     {
+        #region connection strings
+
+        const string SQL_CONN =
+"Server=tcp:ykgd4qav8g.database.windows.net,1433;Database=weave;User ID=aemami99@ykgd4qav8g;Password=rzarecta99!;Trusted_Connection=False;Encrypt=True;Connection Timeout=30;";
+
+        const string REDIS_CONN =
+"weaveuser.redis.cache.windows.net,ssl=false,password=dM/xNBd9hB9Wgn3tPhkTsiwzIw4gImnS+eAN9sYuouY=";
+
+        #endregion
+
+
+
+
         protected override void AddComponents()
         {
             base.AddComponents();
 
+            Bind<SqlStoredProcClient>().ToMethod(_ => new SqlStoredProcClient(SQL_CONN));
 
-            var connectionString =
-"Server=tcp:ykgd4qav8g.database.windows.net,1433;Database=weave;User ID=aemami99@ykgd4qav8g;Password=rzarecta99!;Trusted_Connection=False;Encrypt=True;Connection Timeout=30;";
-
-            Bind<SqlStoredProcClient>().ToMethod(_ => new SqlStoredProcClient(connectionString));
-
-            Bind<ServiceBusCredentials>().ToConstant(new ServiceBusCredentials
-                {
-                    Namespace = "weave-interop",
-                    IssuerName = "owner",
-                    IssuerKey = "R92FFdAujgEDEPnjLhxMfP06fH+qhmMwwuXetdyAEZM=",
-                });
-
-            Bind<TopicConnector>().ToMethod(_ => new TopicConnector(this.Get<ServiceBusCredentials>(), "FeedUpdatedTopic"))
-                .WhenInjectedExactlyInto<ServiceBusUpdater>()
-                .InSingletonScope();
-
-            var redisClientConfig = ConfigurationOptions.Parse(
-"weaveuser.redis.cache.windows.net,ssl=false,password=dM/xNBd9hB9Wgn3tPhkTsiwzIw4gImnS+eAN9sYuouY=");
-
+            var redisClientConfig = ConfigurationOptions.Parse(REDIS_CONN);
             var connectionMultiplexer = ConnectionMultiplexer.Connect(redisClientConfig);
             Bind<ConnectionMultiplexer>().ToConstant(connectionMultiplexer).InSingletonScope();
 
@@ -48,7 +43,7 @@ namespace RssAggregator.Role.HighFrequency
                     //DelegateProvider.Create(() => this.Get<RedisArticleCacheProcessor>()),
                     DelegateProvider.Create(() => this.Get<MobilizerOverride>()),
                     DelegateProvider.Create(() => this.Get<PubSubUpdater>()),
-                    DelegateProvider.Create(() => this.Get<ServiceBusUpdater>()),
+                    //DelegateProvider.Create(() => this.Get<ServiceBusUpdater>()),
                 }))
                 .InSingletonScope();
         }

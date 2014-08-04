@@ -1,42 +1,41 @@
-﻿using Common.Azure.ServiceBus;
-using Common.Azure.ServiceBus.Reactive;
-using Microsoft.ServiceBus.Messaging;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Weave.RssAggregator.LibraryClient;
+using Weave.User.Service.Redis.PubSub;
 
 namespace Weave.RssAggregator.LowFrequency
 {
-    public class FeedCache : IDisposable
+    public class FeedCache
     {
+        const string CHANNEL = "feedUpdate";
+
         Dictionary<string, CachedFeed> feeds = new Dictionary<string, CachedFeed>();
         List<HFeedDbMediator> mediators = new List<HFeedDbMediator>();
 
-        CompositeDisposable disposables = new CompositeDisposable();
         object syncObject = new object();
 
         string feedLibraryUrl;
         DbClient dbClient;
-        SubscriptionConnector subscriptionConnector;
+        PubSubHelper ps;
 
 
 
 
         #region Constructor
 
-        public FeedCache(string feedLibraryUrl, DbClient dbClient, SubscriptionConnector subscriptionConnector)
+        public FeedCache(string feedLibraryUrl, DbClient dbClient, PubSubHelper ps)
         {
             if (string.IsNullOrEmpty(feedLibraryUrl)) throw new ArgumentException("feedLibraryUrl cannot be null: FeedCache ctor");
             if (dbClient == null) throw new ArgumentNullException("dbClient cannot be null: FeedCache ctor");
-            if (subscriptionConnector == null) throw new ArgumentNullException("subscriptionConnector cannot be null: FeedCache ctor");
+            if (ps == null) throw new ArgumentNullException("ps cannot be null: FeedCache ctor");
 
             this.feedLibraryUrl = feedLibraryUrl;
             this.dbClient = dbClient;
-            this.subscriptionConnector = subscriptionConnector;
+            this.ps = ps;
         }
 
         #endregion
@@ -91,10 +90,8 @@ namespace Weave.RssAggregator.LowFrequency
                 await mediator.LoadLatestNews();
             }
 
-            var client = await subscriptionConnector.CreateClient();
-
-            client
-                .AsObservable()
+            var observable = await ps.AsObservable(CHANNEL);
+            observable
                 .Select(Parse)
                 .OfType<FeedUpdateNotice>()
                 .Subscribe(OnFeedUpdateReceived, OnError);
@@ -118,45 +115,31 @@ namespace Weave.RssAggregator.LowFrequency
 
         #region private helper methods
 
-        FeedUpdateNotice Parse(BrokeredMessage message)
+        FeedUpdateNotice Parse(RedisPubSubTuple o)
         {
-            FeedUpdateNotice notice = null;
-
             try
             {
-                var properties = message.Properties;
-                var id = message.MessageId;
+                if (!o.Message.HasValue)
+                    return null;
 
-                if (!EnumerableEx.IsNullOrEmpty(properties) &&
-                    properties.ContainsKey("FeedId") &&
-                    properties.ContainsKey("RefreshTime"))
+                var bytes = (byte[])o.Message;
+                using (var ms = new MemoryStream(bytes))
+                using (var br = new BinaryReader(ms))
                 {
-                    var feedId = (Guid)properties["FeedId"];
-                    var refreshTime = (DateTime)properties["RefreshTime"];
-                    var feedUri = (string)properties["FeedUri"];
+                    var notice = new FeedUpdateNotice();
 
-                    notice = new FeedUpdateNotice(message)
-                    {
-                        MessageId = message.MessageId,
-                        FeedId = feedId,
-                        FeedUri = feedUri,
-                        RefreshTime = refreshTime,
-                    };
+                    notice.FeedId = new Guid(br.ReadBytes(16));
+                    notice.RefreshTime = DateTime.FromBinary(br.ReadInt64());
+                    notice.FeedUri = br.ReadString();
+
+                    return notice;
                 }
             }
             catch { }
 
-            return notice;
+            return null;
         }
 
         #endregion
-
-
-
-
-        public void Dispose()
-        {
-            disposables.Dispose();
-        }
     }
 }

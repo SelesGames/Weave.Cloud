@@ -50,8 +50,7 @@ namespace Weave.Mobilizer.Client
 
         SmartHttpClient CreateClient()
         {
-            return new SmartHttpClient(ContentEncoderSettings.Json, CompressionSettings.AcceptEncoding | CompressionSettings.ContentEncoding);
-            //return new SmartHttpClient(ContentEncoderSettings.Protobuf, CompressionSettings.None);
+            return new SmartHttpClient(ContentEncoderSettings.Json, CompressionSettings.AcceptEncoding);// | CompressionSettings.ContentEncoding);
         }
     }
 }
