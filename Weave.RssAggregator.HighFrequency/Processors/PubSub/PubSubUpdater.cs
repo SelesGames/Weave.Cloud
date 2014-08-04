@@ -1,6 +1,6 @@
-﻿using System.IO;
+﻿using StackExchange.Redis;
+using System.IO;
 using System.Threading.Tasks;
-using Weave.User.Service.Redis.PubSub;
 
 namespace Weave.RssAggregator.HighFrequency
 {
@@ -8,11 +8,11 @@ namespace Weave.RssAggregator.HighFrequency
     {
         const string CHANNEL = "feedUpdate";
 
-        PubSubHelper ps;
+        ConnectionMultiplexer cm;
 
-        public PubSubUpdater(PubSubHelper ps)
+        public PubSubUpdater(ConnectionMultiplexer cm)
         {
-            this.ps = ps;
+            this.cm = cm;
         }
 
         public bool IsHandledFully { get; private set; }
@@ -31,9 +31,10 @@ namespace Weave.RssAggregator.HighFrequency
                 bytes = ms.ToArray();
             }
 
-            await ps.Publish(CHANNEL, bytes);
+            var sub = cm.GetSubscriber();
+            var received = await sub.PublishAsync(CHANNEL, bytes);
 
-            DebugEx.WriteLine("** REDIS PUBSUB ** processed: {0}", update.FeedUri);
+            DebugEx.WriteLine("** REDIS PUBSUB ** processed: {0}, {1} clients received", update.FeedUri, received);
         }
     }
 }

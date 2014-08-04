@@ -4,33 +4,12 @@ using System.Threading.Tasks;
 
 namespace Weave.User.Service.Redis.PubSub
 {
-    public class PubSubHelper
+    public static class PubSubExtensions
     {
-        ConnectionMultiplexer multiplexer;
-
-        public async Task Publish(RedisChannel channel, RedisValue message)
-        {
-            var sb = multiplexer.GetSubscriber();
-            var numClientsReceived = await sb.PublishAsync(
-                channel: channel, 
-                message: message, 
-                flags: CommandFlags.None);
-        }
-
-        public Task Subscribe(RedisChannel channel, Action<RedisChannel, RedisValue> handler)
-        {
-            var sb = multiplexer.GetSubscriber();
-            return sb.SubscribeAsync(
-                channel: channel,
-                handler: handler,
-                flags: CommandFlags.None);
-        }
-
-        public async Task<IObservable<RedisPubSubTuple>> AsObservable(RedisChannel channel)
+        public static async Task<IObservable<RedisPubSubTuple>> AsObservable(this ISubscriber sb, RedisChannel channel)
         {
             var observable = new ObservableRV();
 
-            var sb = multiplexer.GetSubscriber();
             await sb.SubscribeAsync(
                 channel: channel,
                 handler: observable.Handler,
@@ -39,6 +18,47 @@ namespace Weave.User.Service.Redis.PubSub
             return observable;
         }
     }
+
+    //public class PubSubHelper
+    //{
+    //    ConnectionMultiplexer multiplexer;
+
+    //    public PubSubHelper(ConnectionMultiplexer multiplexer)
+    //    {
+    //        this.multiplexer = multiplexer;
+    //    }
+
+    //    public async Task Publish(RedisChannel channel, RedisValue message)
+    //    {
+    //        var sb = multiplexer.GetSubscriber();
+    //        var numClientsReceived = await sb.PublishAsync(
+    //            channel: channel, 
+    //            message: message, 
+    //            flags: CommandFlags.None);
+    //    }
+
+    //    public Task Subscribe(RedisChannel channel, Action<RedisChannel, RedisValue> handler)
+    //    {
+    //        var sb = multiplexer.GetSubscriber();
+    //        return sb.SubscribeAsync(
+    //            channel: channel,
+    //            handler: handler,
+    //            flags: CommandFlags.None);
+    //    }
+
+    //    public async Task<IObservable<RedisPubSubTuple>> AsObservable(RedisChannel channel)
+    //    {
+    //        var observable = new ObservableRV();
+
+    //        var sb = multiplexer.GetSubscriber();
+    //        await sb.SubscribeAsync(
+    //            channel: channel,
+    //            handler: observable.Handler,
+    //            flags: CommandFlags.None);
+
+    //        return observable;
+    //    }
+    //}
 
     public class RedisPubSubTuple
     {
