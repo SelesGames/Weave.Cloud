@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StackExchange.Redis;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -20,22 +21,22 @@ namespace Weave.RssAggregator.LowFrequency
 
         string feedLibraryUrl;
         DbClient dbClient;
-        PubSubHelper ps;
+        ConnectionMultiplexer cm;
 
 
 
 
         #region Constructor
 
-        public FeedCache(string feedLibraryUrl, DbClient dbClient, PubSubHelper ps)
+        public FeedCache(string feedLibraryUrl, DbClient dbClient, ConnectionMultiplexer cm)
         {
             if (string.IsNullOrEmpty(feedLibraryUrl)) throw new ArgumentException("feedLibraryUrl cannot be null: FeedCache ctor");
             if (dbClient == null) throw new ArgumentNullException("dbClient cannot be null: FeedCache ctor");
-            if (ps == null) throw new ArgumentNullException("ps cannot be null: FeedCache ctor");
+            if (cm == null) throw new ArgumentNullException("cm cannot be null: FeedCache ctor");
 
             this.feedLibraryUrl = feedLibraryUrl;
             this.dbClient = dbClient;
-            this.ps = ps;
+            this.cm = cm;
         }
 
         #endregion
@@ -65,7 +66,9 @@ namespace Weave.RssAggregator.LowFrequency
             await feedClient.LoadFeedsAsync();
 
             var libraryFeeds = feedClient.Feeds
+                .Where(o => !string.IsNullOrWhiteSpace(o.FeedName) && !string.IsNullOrWhiteSpace(o.FeedUri))
                 .Distinct()
+                //.Take(3)  // for debugging only
                 .ToList();
 
             var cachedFeeds = new List<CachedFeed>();
@@ -90,7 +93,8 @@ namespace Weave.RssAggregator.LowFrequency
                 await mediator.LoadLatestNews();
             }
 
-            var observable = await ps.AsObservable(CHANNEL);
+            var sub = cm.GetSubscriber();
+            var observable = await sub.AsObservable(CHANNEL);
             observable
                 .Select(Parse)
                 .OfType<FeedUpdateNotice>()
