@@ -48,6 +48,7 @@
     <Compile Include="DTOs\Image.cs" />
     <Compile Include="DTOs\NewsItem.cs" />
     <Compile Include="Communication\MessageQueue.cs" />
+    <Compile Include="PubSub\PubSubHelper.cs" />
     <Compile Include="Synchronization\IDatabaseLockExtensions.cs" />
     <Compile Include="Synchronization\RedisLockException.cs" />
     <Compile Include="Synchronization\UserIndex\UserLockCache.cs" />
