@@ -12,6 +12,8 @@ namespace RssAggregator.Role.HighFrequency
 
         public void OnStart()
         {
+            Common.Compression.Settings.CompressionHandlers = new Common.Compression.Windows.CompressionHandlerCollection();
+
             kernel = new NinjectKernel();
             
             SetHighFrequencyValues();

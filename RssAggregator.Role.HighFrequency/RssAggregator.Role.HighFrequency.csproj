@@ -67,6 +67,14 @@
     <Compile Include="WorkerRole.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Weave.Portable\Common.Compression\Common.Compression.csproj">
+      <Project>{00617b68-c1f0-4ad8-8307-25c0608d745d}</Project>
+      <Name>Common.Compression</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common.Compression.Windows\Common.Compression.Windows.csproj">
+      <Project>{7e6d6e4c-4ea7-431c-ac57-234fefa406ad}</Project>
+      <Name>Common.Compression.Windows</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common.Data.Linq\Common.Data.Linq.csproj">
       <Project>{f741017d-fd83-4f35-98a4-57af366c1b53}</Project>
       <Name>Common.Data.Linq</Name>

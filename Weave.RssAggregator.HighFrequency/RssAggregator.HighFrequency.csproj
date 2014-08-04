@@ -87,7 +87,6 @@
     <Compile Include="Processors\Mobilizer\MobilizerOverride.cs" />
     <Compile Include="Processors\PubSub\PubSubUpdater.cs" />
     <Compile Include="Processors\Redirect\RedirectResolver.cs" />
-    <Compile Include="Processors\Redis\RedisArticleCacheProcessor.cs" />
     <Compile Include="Processors\Sql\SqlSelectOnlyLatestNews.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Processors\SequentialProcessor.cs" />

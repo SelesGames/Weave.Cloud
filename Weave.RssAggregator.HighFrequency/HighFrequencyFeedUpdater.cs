@@ -61,6 +61,7 @@ namespace Weave.RssAggregator.HighFrequency
                 //.Where(o => !string.IsNullOrWhiteSpace(o.CorrectedUri))
                 //.Where(o => o.FeedUri == "http://feeds.feedburner.com/Destructoid")
                 .Select(CreateHighFrequencyFeed)
+                .OfType<HighFrequencyFeed>()
                 .ToList();
 
             foreach (var feed in highFrequencyFeeds)
@@ -74,19 +75,28 @@ namespace Weave.RssAggregator.HighFrequency
 
         HighFrequencyFeed CreateHighFrequencyFeed(FeedSource o)
         {
-            string originalUri = null, feedUri = null;
-
-            if (!string.IsNullOrWhiteSpace(o.CorrectedUri))
+            try
             {
-                originalUri = o.FeedUri;
-                feedUri = o.CorrectedUri;
-            }
-            else
-            {
-                feedUri = o.FeedUri;
-            }
+                string originalUri = null, feedUri = null;
 
-            return new HighFrequencyFeed(o.FeedName, feedUri, originalUri, o.Instructions);
+                if (!string.IsNullOrWhiteSpace(o.CorrectedUri))
+                {
+                    originalUri = o.FeedUri;
+                    feedUri = o.CorrectedUri;
+                }
+                else
+                {
+                    feedUri = o.FeedUri;
+                }
+
+                return new HighFrequencyFeed(o.FeedName, feedUri, originalUri, o.Instructions);
+
+            }
+            catch(Exception ex)
+            {
+                DebugEx.WriteLine(ex);
+                return null;
+            }
         }
 
 

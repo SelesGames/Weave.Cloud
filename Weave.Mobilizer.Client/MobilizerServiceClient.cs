@@ -12,8 +12,6 @@ namespace Weave.Mobilizer.Client
         string token;
         const string SERVICE_URL = "http://mobilizer.cloudapp.net/";
 
-        //http://mobilizer.cloudapp.net/ipf?url=
-
         public MobilizerServiceClient(string token)
         {
             this.token = token;
