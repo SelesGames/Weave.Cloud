@@ -20,7 +20,7 @@ using Outgoing = Weave.User.Service.DTOs.ServerOutgoing;
 
 namespace Weave.User.Service.Role.Controllers
 {
-    public class UserController : ApiController, IWeaveUserService
+    public class UserController : ApiController//, IWeaveUserService
     {
         #region Private member variables + constructor
 
@@ -30,13 +30,11 @@ namespace Weave.User.Service.Role.Controllers
         readonly UserLockHelper userLockHelper;
         readonly IArticleQueueService articleQueueService;
 
+        dynamic timings;
+
         Guid userId;
         UserInfo userBO;
         UserIndex userIndex;
-
-        TimeSpan 
-            readTime = TimeSpan.Zero, 
-            writeTime = TimeSpan.Zero;
 
         public UserController(
             UserRepository userRepo,
@@ -50,6 +48,8 @@ namespace Weave.User.Service.Role.Controllers
             this.newsItemCache = newsItemCache;
             this.userLockHelper = userLockHelper;
             this.articleQueueService = articleQueueService;
+
+            timings = new System.Dynamic.ExpandoObject();
         }
 
         #endregion
@@ -102,7 +102,7 @@ namespace Weave.User.Service.Role.Controllers
                 finally
                 {
                     sw.Stop();
-                    readTime = sw.Elapsed;
+                    timings.AddUserAndReturnUserInfo_TryGetUser = sw.Elapsed.Dump();
                 }
             }
 
@@ -122,8 +122,7 @@ namespace Weave.User.Service.Role.Controllers
 
             var outgoing = ConvertToOutgoing(userIndex);
 
-            outgoing.DataStoreReadTime = readTime;
-            outgoing.DataStoreWriteTime = writeTime;
+            outgoing.Timings = timings;
 
             return outgoing;
         }
@@ -167,8 +166,7 @@ namespace Weave.User.Service.Role.Controllers
             var latestNews = await CreateOutgoingNews(latestNewsIndices);
             outgoing.LatestNews = latestNews;
 
-            outgoing.DataStoreReadTime = readTime;
-            outgoing.DataStoreWriteTime = writeTime;
+            outgoing.Timings = timings;
 
             return outgoing;
         }
@@ -679,7 +677,7 @@ namespace Weave.User.Service.Role.Controllers
             {
                 sw.Stop();
                 DebugEx.WriteLine("took {0} ms to get user index from cache", sw.ElapsedMilliseconds);
-                readTime += sw.Elapsed;
+                timings.LoadUserIndex = sw.Elapsed.Dump();
             }
         }
 
@@ -706,7 +704,7 @@ namespace Weave.User.Service.Role.Controllers
             finally
             {
                 sw.Stop();
-                readTime += sw.Elapsed;
+                timings.LoadUserInfoBusinessObject = sw.Elapsed.Dump();
             }
         }
 
@@ -737,7 +735,7 @@ namespace Weave.User.Service.Role.Controllers
             finally
             {
                 sw.Stop();
-                writeTime += sw.Elapsed;
+                timings.SaveUserIndex = sw.Elapsed.Dump();
             }
 
             // TODO: Add code here that notifies some process that the UserBO needs to now be updated
@@ -762,7 +760,7 @@ namespace Weave.User.Service.Role.Controllers
             finally
             {
                 sw.Stop();
-                writeTime += sw.Elapsed;
+                timings.SaveUserInfoBusinessObject = sw.Elapsed.Dump();
             }
         }
 
@@ -777,7 +775,11 @@ namespace Weave.User.Service.Role.Controllers
         {
             // refresh news for relevant feeds
             var subset = new FeedsSubset(feeds);
+
+            var sw = System.Diagnostics.Stopwatch.StartNew();
             await subset.Refresh();
+            sw.Stop();
+            timings.Refresh = sw.Elapsed.Dump();
 
             // 1. Lock the userIndex first, because we will be modifying/recreating it
             // 2. Grab the latest user index, which may be different from the previous one
@@ -798,7 +800,11 @@ namespace Weave.User.Service.Role.Controllers
 
             // save the news articles from the refreshed feeds to Redis
             var redisNews = subset.AllNews().Select(MapAsRedis);
+
+            sw.Restart();
             var saveToRedisResults = await newsItemCache.Set(redisNews);
+            sw.Stop();
+            timings.SaveToNewsCache = sw.Elapsed.Dump();
         }
 
         #endregion
@@ -837,14 +843,16 @@ namespace Weave.User.Service.Role.Controllers
                 .Take(take)
                 .ToList();
             sw.Stop();
-            DebugEx.WriteLine("creating ordered indices took {0} ms", sw.ElapsedMilliseconds);
+            timings.CreateOrderedIndices = sw.Elapsed.Dump();
+            //DebugEx.WriteLine("creating ordered indices took {0} ms", sw.ElapsedMilliseconds);
 
             var outgoingNews = await CreateOutgoingNews(indices);
             
             sw.Restart();
             var outgoingFeeds = feeds.Select(CreateOutgoingFeed).ToList();
             sw.Stop();
-            DebugEx.WriteLine("creating outgoing feeds took {0} ms", sw.ElapsedMilliseconds);
+            timings.CreateOutgoingFeeds = sw.Elapsed.Dump();
+            //DebugEx.WriteLine("creating outgoing feeds took {0} ms", sw.ElapsedMilliseconds);
 
             var outgoing = new Outgoing.NewsList
             {
@@ -867,8 +875,7 @@ namespace Weave.User.Service.Role.Controllers
             outgoing.UnreadArticleCount = outgoing.Feeds == null ? 0 : outgoing.Feeds.Sum(o => o.UnreadArticleCount);
             outgoing.TotalArticleCount = outgoing.Feeds == null ? 0 : outgoing.Feeds.Sum(o => o.TotalArticleCount);
 
-            outgoing.DataStoreReadTime = readTime;
-            outgoing.DataStoreWriteTime = writeTime;
+            outgoing.Timings = timings;
 
             return outgoing;
         }
@@ -904,8 +911,7 @@ namespace Weave.User.Service.Role.Controllers
             var sw = System.Diagnostics.Stopwatch.StartNew();
             var newsItems = await newsItemCache.Get(newsIds);
             sw.Stop();
-            DebugEx.WriteLine("getting newsItems from cache took {0} ms", sw.ElapsedMilliseconds);
-            readTime += sw.Elapsed;
+            timings.GetNewsItemsFromCache = sw.Elapsed.Dump();
 
             var zipped = indices.Zip(newsItems, (tuple, ni) => new { tuple, ni });
 
@@ -916,7 +922,7 @@ namespace Weave.User.Service.Role.Controllers
                 let newsItem = temp.ni.Value
                 select Merge(tuple, newsItem)).ToList();
             sw.Stop();
-            DebugEx.WriteLine("creating outgoing news took {0} ms", sw.ElapsedMilliseconds);
+            timings.CreateOutgoingNews = sw.Elapsed.Dump();
 
             return outgoingNews;
         }
@@ -1004,9 +1010,6 @@ namespace Weave.User.Service.Role.Controllers
             {
                 outgoing.Feeds = outgoingFeeds;
             }
-
-            outgoing.DataStoreReadTime = readTime;
-            outgoing.DataStoreWriteTime = writeTime;
 
             return outgoing;
         }
@@ -1106,5 +1109,13 @@ namespace Weave.User.Service.Role.Controllers
         }
 
         #endregion
+    }
+
+    static class TimeSpanFormattingExtensions
+    {
+        public static string Dump(this TimeSpan t)
+        {
+            return t.TotalMilliseconds + " ms";
+        }
     }
 }
