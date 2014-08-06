@@ -36,7 +36,12 @@ namespace Weave.RssAggregator.HighFrequency
             catch { }
         }
 
-        NewsItem Map(EntryWithPostProcessInfo o)
+
+
+
+        #region Map functions
+
+        static NewsItem Map(EntryWithPostProcessInfo o)
         {
             return new NewsItem
             {
@@ -45,20 +50,27 @@ namespace Weave.RssAggregator.HighFrequency
                 UtcPublishDateTimeString = o.UtcPublishDateTimeString,
                 Title = o.Title,
                 Link = o.Link,
-                ImageUrl = o.OriginalImageUrl,
+                ImageUrl = o.Image.OriginalUrl,
                 YoutubeId = o.YoutubeId,
                 VideoUri = o.VideoUri,
                 PodcastUri = o.PodcastUri,
                 ZuneAppId = o.ZuneAppId,
-                Image = !o.ShouldIncludeImage ? null : new Image
-                {
-                    Width = o.ImageWidth,
-                    Height = o.ImageHeight,
-                    BaseImageUrl = o.BaseResizedImageUrl,
-                    OriginalUrl = o.OriginalImageUrl,
-                    SupportedFormats = o.SupportedFormats,
-                },
+                Image = !o.Image.ShouldIncludeImage ? null : Map(o.Image),
             };
         }
+
+        static Image Map(EntryImage o)
+        {
+            return new Image
+            {
+                Width = o.Width,
+                Height = o.Height,
+                BaseImageUrl = o.BaseResizedUrl,
+                OriginalUrl = o.OriginalUrl,
+                SupportedFormats = o.SupportedFormats,
+            };
+        }
+
+        #endregion
     }
 }

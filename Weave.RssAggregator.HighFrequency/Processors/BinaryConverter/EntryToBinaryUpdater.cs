@@ -1,5 +1,4 @@
 ﻿using ProtoBuf;
-using SelesGames.Common;
 using System.IO;
 using System.Threading.Tasks;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
@@ -27,7 +26,7 @@ namespace Weave.RssAggregator.HighFrequency
 
             foreach (var entry in update.Entries)
             {
-                var newsItem = entry.Convert(EntryWithPostProcessInfoToNewsItemConverter.Instance);
+                var newsItem = Map(entry);
 
                 using (var ms = new MemoryStream())
                 {
@@ -42,5 +41,43 @@ namespace Weave.RssAggregator.HighFrequency
 
             return Task.FromResult<object>(null);
         }
+
+
+
+
+        #region Map functions
+
+        static NewsItem Map(EntryWithPostProcessInfo e)
+        {
+            return new Weave.RssAggregator.Core.DTOs.Outgoing.NewsItem
+            {
+                Title = e.Title,
+                Link = e.Link,
+                ImageUrl = !e.Image.ShouldIncludeImage ? null : e.Image.PreferredUrl,
+                PublishDateTime = e.UtcPublishDateTimeString,
+                Description = null,
+                VideoUri = e.VideoUri,
+                YoutubeId = e.YoutubeId,
+                PodcastUri = e.PodcastUri,
+                ZuneAppId = e.ZuneAppId,
+                Id = e.Id,
+                FeedId = e.FeedId,
+                Image = !e.Image.ShouldIncludeImage ? null : Map(e.Image),
+            };
+        }
+
+        static Image Map(EntryImage o)
+        {
+            return new Image
+            {
+                Width = o.Width,
+                Height = o.Height,
+                BaseImageUrl = o.BaseResizedUrl,
+                OriginalUrl = o.OriginalUrl,
+                SupportedFormats = o.SupportedFormats,
+            };
+        }
+
+        #endregion
     }
 }

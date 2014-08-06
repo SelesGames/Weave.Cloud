@@ -30,9 +30,9 @@ namespace Weave.RssAggregator.HighFrequency.Processors.BestImageSelector
             if (bestImage == null)
                 return;
 
-            entry.OriginalImageUrl = bestImage.ImageUrl;
-            entry.ImageWidth = bestImage.ImageWidth;
-            entry.ImageHeight = bestImage.ImageHeight;
+            entry.Image.OriginalUrl = bestImage.ImageUrl;
+            entry.Image.Width = bestImage.ImageWidth;
+            entry.Image.Height = bestImage.ImageHeight;
         }
 
         async Task<ImageInfo> SelectBestImage()
@@ -57,7 +57,7 @@ namespace Weave.RssAggregator.HighFrequency.Processors.BestImageSelector
         {
             ImageInfo imageInfo = null;
 
-            var imageUrl = entry.OriginalImageUrl;
+            var imageUrl = entry.Image.OriginalUrl;
 
             if (string.IsNullOrWhiteSpace(imageUrl))
                 return null;

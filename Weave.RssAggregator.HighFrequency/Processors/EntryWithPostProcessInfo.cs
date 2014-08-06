@@ -2,43 +2,25 @@
 
 namespace Weave.RssAggregator.HighFrequency
 {
-    public class EntryWithPostProcessInfo
+    public class EntryWithPostProcessInfo : Weave.Parsing.Entry
     {
-        public Guid Id { get; set; }
-        public Guid FeedId { get; set; }
-        public DateTime UtcPublishDateTime { get; set; }
-
-        public string Title { get; set; }
-        public string OriginalPublishDateTimeString { get; set; }
-        public string Link { get; set; }
-        public string Description { get; set; }
-        public string YoutubeId { get; set; }
-        public string VideoUri { get; set; }
-        public string PodcastUri { get; set; }
-        public string ZuneAppId { get; set; }
-        public string OriginalRssXml { get; set; }
-
+        public EntryImage Image { get; private set; }
         public byte[] NewsItemBlob { get; set; }
 
+        public EntryWithPostProcessInfo()
+        {
+            Image = new EntryImage();
+        }
+    }
+
+    public class EntryImage
+    {
         public bool ShouldIncludeImage { get; set; }
-        public int ImageWidth { get; set; }
-        public int ImageHeight { get; set; }
-        public string OriginalImageUrl { get; set; }
-        public string BaseResizedImageUrl { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
+        public string OriginalUrl { get; set; }
+        public string BaseResizedUrl { get; set; }
+        public string PreferredUrl { get; set; }
         public string SupportedFormats { get; set; }
-        public string PreferredImageUrl { get; set; }
-
-
-        // display in Universal Sortable format
-        // more info http://msdn.microsoft.com/en-us/library/az4se3k1.aspx#UniversalSortable
-        public string UtcPublishDateTimeString
-        {
-            get { return UtcPublishDateTime.ToString("u"); }
-        }
-
-        public override string ToString()
-        {
-            return Title;
-        }
     }
 }

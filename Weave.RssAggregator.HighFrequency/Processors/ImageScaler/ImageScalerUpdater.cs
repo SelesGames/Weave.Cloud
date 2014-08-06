@@ -32,8 +32,8 @@ namespace Weave.RssAggregator.HighFrequency
         {
             try
             {
-                var imageUrl = e.OriginalImageUrl;
-                e.PreferredImageUrl = imageUrl;
+                var imageUrl = e.Image.OriginalUrl;
+                e.Image.PreferredUrl = imageUrl;
 
                 if (string.IsNullOrWhiteSpace(imageUrl))
                     return;
@@ -48,10 +48,10 @@ namespace Weave.RssAggregator.HighFrequency
                     return;
 
 
-                e.ImageWidth = result.ImageWidth;
-                e.ImageHeight = result.ImageHeight;
-                e.BaseResizedImageUrl = result.BaseImageUrl;
-                e.SupportedFormats = result.SupportedFormats;
+                e.Image.Width = result.ImageWidth;
+                e.Image.Height = result.ImageHeight;
+                e.Image.BaseResizedUrl = result.BaseImageUrl;
+                e.Image.SupportedFormats = result.SupportedFormats;
                 
                 if (!string.IsNullOrWhiteSpace(result.BaseImageUrl) &&
                     (result.ImageWidth * result.ImageHeight > 100) &&
@@ -59,10 +59,10 @@ namespace Weave.RssAggregator.HighFrequency
                     result.SupportedFormatsList.Any(o => "sd".Equals(o, StringComparison.OrdinalIgnoreCase)))
                 {
                     var resizeUrl = string.Format("{0}-sd.jpg", result.BaseImageUrl);
-                    e.PreferredImageUrl = resizeUrl;
+                    e.Image.PreferredUrl = resizeUrl;
                 }
 
-                e.ShouldIncludeImage = true;
+                e.Image.ShouldIncludeImage = true;
             }
             catch { }
         }

@@ -39,7 +39,7 @@ namespace Weave.RssAggregator.HighFrequency
                     content = e.Description,
                     author = null,
                     word_count = "not available",
-                    lead_image_url = e.OriginalImageUrl,
+                    lead_image_url = e.Image.OriginalUrl,
                 };
 
                 var parser = new Parser();

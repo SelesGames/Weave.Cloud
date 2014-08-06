@@ -49,6 +49,8 @@
     <Compile Include="DTOs\NewsItem.cs" />
     <Compile Include="Communication\MessageQueue.cs" />
     <Compile Include="PubSub\PubSubHelper.cs" />
+    <Compile Include="Serializers\Binary\CanonicalFeedIndexReader.cs" />
+    <Compile Include="Serializers\Binary\CanonicalFeedIndexWriter.cs" />
     <Compile Include="Synchronization\IDatabaseLockExtensions.cs" />
     <Compile Include="Synchronization\RedisLockException.cs" />
     <Compile Include="Synchronization\UserIndex\UserLockCache.cs" />

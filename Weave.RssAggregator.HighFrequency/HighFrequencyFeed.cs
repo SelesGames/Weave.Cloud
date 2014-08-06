@@ -1,5 +1,4 @@
-﻿using SelesGames.Common;
-using SelesGames.Common.Hashing;
+﻿using SelesGames.Common.Hashing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -95,7 +94,7 @@ namespace Weave.RssAggregator.HighFrequency
                                 FeedUri = FeedUri,
                                 RefreshTime = refreshTime,
                                 Instructions = instructions,
-                                Entries = news.Select(o => o.Convert(EntryToEntryWithPostProcessInfoConverter.Instance)).ToList(),
+                                Entries = news.Select(Map).ToList(),
                             };
                             feedUpdate.OnNext(update);
                         }
@@ -155,6 +154,35 @@ namespace Weave.RssAggregator.HighFrequency
             }
 
             return false;
+        }
+
+        #endregion
+
+
+
+
+        #region Map functions
+
+        static EntryWithPostProcessInfo Map(Entry o)
+        {
+            var result = new EntryWithPostProcessInfo
+            {
+                Id = o.Id,
+                FeedId = o.FeedId,
+                UtcPublishDateTime = o.UtcPublishDateTime,
+                Title = o.Title,
+                OriginalPublishDateTimeString = o.OriginalPublishDateTimeString,
+                Link = o.Link,
+                Description = o.Description,
+                YoutubeId = o.YoutubeId,
+                VideoUri = o.VideoUri,
+                PodcastUri = o.PodcastUri,
+                ZuneAppId = o.ZuneAppId,
+                OriginalRssXml = o.OriginalRssXml,
+            };
+
+            result.Image.OriginalUrl = o.GetImageUrl();
+            return result;
         }
 
         #endregion
