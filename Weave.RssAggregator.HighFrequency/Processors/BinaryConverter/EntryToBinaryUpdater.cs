@@ -51,6 +51,7 @@ namespace Weave.RssAggregator.HighFrequency
         {
             return new Weave.RssAggregator.Core.DTOs.Outgoing.NewsItem
             {
+                Id = e.Id,
                 Title = e.Title,
                 Link = e.Link,
                 ImageUrl = !e.Image.ShouldIncludeImage ? null : e.Image.PreferredUrl,
@@ -60,7 +61,6 @@ namespace Weave.RssAggregator.HighFrequency
                 YoutubeId = e.YoutubeId,
                 PodcastUri = e.PodcastUri,
                 ZuneAppId = e.ZuneAppId,
-                Id = e.Id,
                 FeedId = e.FeedId,
                 Image = !e.Image.ShouldIncludeImage ? null : Map(e.Image),
             };

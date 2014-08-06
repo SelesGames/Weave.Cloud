@@ -70,6 +70,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HFFNews.cs" />
     <Compile Include="HighFrequencyFeed.cs" />
     <Compile Include="HighFrequencyFeedUpdater.cs" />
     <Compile Include="HighFrequencyFeedUpdateDto.cs" />

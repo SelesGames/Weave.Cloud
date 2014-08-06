@@ -5,6 +5,7 @@ namespace Weave.RssAggregator.HighFrequency
 {
     public class HighFrequencyFeedUpdateDto
     {
+        public HighFrequencyFeed Feed { get; set; }
         public Guid FeedId { get; set; }
         public string Name { get; set; }
         public string FeedUri { get; set; }

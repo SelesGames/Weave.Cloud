@@ -12,8 +12,9 @@ namespace Weave.RssAggregator.HighFrequency
 {
     public class HighFrequencyFeed
     {
+        const int NUMBER_OF_NEWSITEMS_TO_HOLD = 200;
+
         Subject<HighFrequencyFeedUpdateDto> feedUpdate = new Subject<HighFrequencyFeedUpdateDto>();
-        List<Guid> lastNewsIds;
         IReadOnlyList<string> instructions;
 
 
@@ -24,9 +25,9 @@ namespace Weave.RssAggregator.HighFrequency
         public string LastModified { get; private set; }
         public TimeSpan RefreshTimeout { get; set; }
         public FeedState LastFeedState { get; private set; }
+        public HFFNews News { get; private set; }
 
         public IObservable<HighFrequencyFeedUpdateDto> FeedUpdate { get; private set; }
-
 
         public enum FeedState
         {
@@ -35,11 +36,10 @@ namespace Weave.RssAggregator.HighFrequency
             OK
         }
 
-
         public HighFrequencyFeed(string name, string feedUri, string originalUri, string instructions)
         {
             if (string.IsNullOrWhiteSpace(name))        throw new ArgumentException("name in HighFrequencyFeed ctor");
-            if (string.IsNullOrWhiteSpace(feedUri))     throw new ArgumentException("name in HighFrequencyFeed ctor");
+            if (string.IsNullOrWhiteSpace(feedUri)) throw new ArgumentException("feedUri in HighFrequencyFeed ctor");
 
             Name = name;
             FeedUri = feedUri;
@@ -47,6 +47,8 @@ namespace Weave.RssAggregator.HighFrequency
             LastFeedState = FeedState.Uninitialized;
             FeedUpdate = feedUpdate.AsObservable();
             RefreshTimeout = TimeSpan.FromMinutes(1);
+
+            News = new HFFNews();
 
             if (!string.IsNullOrWhiteSpace(instructions))
             {
@@ -79,22 +81,29 @@ namespace Weave.RssAggregator.HighFrequency
                     this.Etag = requester.Etag;
                     this.LastModified = requester.LastModified;
 
-                    var news = requester.News;
-
-                    if (news != null && news.Any())
+                    if (requester.News != null && requester.News.Any())
                     {
-                        if (IsNewsNew(news))
-                        {
-                            lastNewsIds = news.Select(o => o.Id).ToList();
+                        var addedNews = new List<Entry>();
 
+                        foreach (var o in requester.News)
+                        {
+                            if (News.Add(o))
+                                addedNews.Add(o);
+                        }
+
+                        News.TrimTo(NUMBER_OF_NEWSITEMS_TO_HOLD);
+
+                        if (addedNews.Any())
+                        {
                             var update = new HighFrequencyFeedUpdateDto
                             {
+                                Feed = this,
                                 FeedId = FeedId,
                                 Name = Name,
                                 FeedUri = FeedUri,
                                 RefreshTime = refreshTime,
                                 Instructions = instructions,
-                                Entries = news.Select(Map).ToList(),
+                                Entries = addedNews.Select(Map).ToList(),
                             };
                             feedUpdate.OnNext(update);
                         }
@@ -137,23 +146,6 @@ namespace Weave.RssAggregator.HighFrequency
         void InitializeId(string uri)
         {
             FeedId = CryptoHelper.ComputeHashUsedByMobilizer(uri);
-        }
-
-        bool IsNewsNew(List<Entry> news)
-        {
-            if (lastNewsIds == null)
-                return true;
-
-            if (news.Count != lastNewsIds.Count)
-                return true;
-
-            foreach (var idTuple in lastNewsIds.Zip(news, (i, j) => new { Id1 = i, Id2 = j.Id }))
-            {
-                if (!idTuple.Id1.Equals(idTuple.Id2))
-                    return true;
-            }
-
-            return false;
         }
 
         #endregion

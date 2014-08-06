@@ -20,7 +20,6 @@ namespace Weave.User.BusinessObjects.Mutable
         /// Adds a feed to the user's collection of feeds
         /// </summary>
         /// <param name="feed">The feed to be added</param>
-        /// <param name="trustSource">Will skip checking to see if feed is already present and that Id is set - use for deserialization only</param>
         /// <returns>True if the feed was added, false if the feed was already present or invalid</returns>
         public bool Add(FeedIndex feed)
         {
