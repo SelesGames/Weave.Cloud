@@ -1,7 +1,7 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Weave.Mobilizer.Client;
-using Weave.Mobilizer.DTOs;
 
 namespace Weave.RssAggregator.HighFrequency.Processors.BestImageSelector
 {
@@ -21,64 +21,53 @@ namespace Weave.RssAggregator.HighFrequency.Processors.BestImageSelector
 
         public async Task Process()
         {
-            var bestImage = await SelectBestImage();
-            Apply(bestImage);
+            var images = await GetImages();
+            foreach (var image in images)
+                entry.Images.Add(image);
+
+            var bestImage = SelectBestImage(images);
+            entry.Image.OriginalUrl = bestImage.Url;
+            entry.Image.Width = bestImage.Width;
+            entry.Image.Height = bestImage.Height;
         }
 
-        void Apply(ImageInfo bestImage)
+        async Task<IEnumerable<Image>> GetImages()
         {
-            if (bestImage == null)
-                return;
+            var imageTasks = entry.ImageUrls
+                .Select(GetFromUrl)
+                .Union(new Task<ImageInfo>[]{ GetFromMobilizedRep() });
 
-            entry.Image.OriginalUrl = bestImage.ImageUrl;
-            entry.Image.Width = bestImage.ImageWidth;
-            entry.Image.Height = bestImage.ImageHeight;
+            var imagesWithInfo = await Task.WhenAll(imageTasks);
+
+            var images = imagesWithInfo.OfType<ImageInfo>().Select(Map).ToList();
+            return images;
         }
 
-        async Task<ImageInfo> SelectBestImage()
-        {
-            var original = TryGetImageInfoFromEntry();
-            var mobilized = TryGetImageInfoFromMobilized();
-            await Task.WhenAll(original, mobilized);
-
-            var imageInfoOriginal = original.Result;
-            var imageInfoMobilized = mobilized.Result;
-
-            return SelectBestImage(imageInfoOriginal, imageInfoMobilized);
-        }
-
-        // We use the criteria of largest image (in bytes) as being the best image available
-        ImageInfo SelectBestImage(params ImageInfo[] imageInfo)
-        {
-            return imageInfo.OfType<ImageInfo>().OrderByDescending(o => o.ContentLength).FirstOrDefault();
-        }
-
-        async Task<ImageInfo> TryGetImageInfoFromEntry()
+        /// <summary>
+        /// Call the image info weave service to get image info (height, width, etc.)
+        /// </summary>
+        async Task<ImageInfo> GetFromUrl(string url)
         {
             ImageInfo imageInfo = null;
 
-            var imageUrl = entry.Image.OriginalUrl;
-
-            if (string.IsNullOrWhiteSpace(imageUrl))
-                return null;
-
             try
             {
-                imageInfo = await imageInfoClient.Get(imageUrl);
-                imageInfo.ImageUrl = imageUrl;
+                imageInfo = await imageInfoClient.Get(url);
+                imageInfo.ImageUrl = url;
             }
             catch { }
             return imageInfo;
         }
 
-        async Task<ImageInfo> TryGetImageInfoFromMobilized()
+        async Task<ImageInfo> GetFromMobilizedRep()
         {
             ImageInfo imageInfo = null;
 
             try
             {
-                var mobilizedResult = await GetMobilizedRepresentation();
-                var imageUrl = mobilizedResult.lead_image_url;
+                var url = entry.Link;
+                var mobilized = await mobilizerClient.Get(url);
+                var imageUrl = mobilized.lead_image_url;
 
                 if (string.IsNullOrWhiteSpace(imageUrl))
                     return null;
@@ -90,11 +79,22 @@ namespace Weave.RssAggregator.HighFrequency.Processors.BestImageSelector
             return imageInfo;
         }
 
-        async Task<MobilizerResult> GetMobilizedRepresentation()
+        static Image Map(ImageInfo o)
         {
-            var url = entry.Link;
-            var mobilized = await mobilizerClient.Get(url);
-            return mobilized;
+            return new Image
+            {
+                Url = o.ImageUrl,
+                Width = o.ImageWidth,
+                Height = o.ImageHeight,
+                ContentLength = o.ContentLength,
+                ContentType = o.ContentType,
+            };
+        }
+
+        // We use the criteria of largest image (in bytes) as being the best image available
+        static Image SelectBestImage(IEnumerable<Image> images)
+        {
+            return images.OrderByDescending(o => o.ContentLength).FirstOrDefault();
         }
     }
 }

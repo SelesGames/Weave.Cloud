@@ -70,7 +70,7 @@ namespace Weave.RssAggregator.HighFrequency
                     processor.Register(feed);
             }
 
-            feeds = highFrequencyFeeds.ToDictionary(o => o.FeedUri);
+            feeds = highFrequencyFeeds.ToDictionary(o => o.Uri);
         }
 
         HighFrequencyFeed CreateHighFrequencyFeed(FeedSource o)

@@ -20,7 +20,7 @@ namespace Weave.RssAggregator.HighFrequency
 
         public void Register(HighFrequencyFeed feed)
         {
-            sub.AddSubscription(feed.FeedId, feed.FeedUpdate);
+            sub.AddSubscription(feed.Id, feed.FeedUpdate);
         }
 
         void InitializeSubscription()

@@ -74,6 +74,7 @@
     <Compile Include="HighFrequencyFeed.cs" />
     <Compile Include="HighFrequencyFeedUpdater.cs" />
     <Compile Include="HighFrequencyFeedUpdateDto.cs" />
+    <Compile Include="Images.cs" />
     <Compile Include="Processors\BestImageSelector\BestImageSelectorHelper.cs" />
     <Compile Include="Processors\BestImageSelector\BestImageSelectorProcessor.cs" />
     <Compile Include="Processors\BestImageSelector\ImageInfo.cs" />
@@ -87,6 +88,7 @@
     <Compile Include="Processors\PubSub\PubSubUpdater.cs" />
     <Compile Include="Processors\Redirect\RedirectResolver.cs" />
     <Compile Include="Processors\Redis\RedisArticleCacheProcessor.cs" />
+    <Compile Include="Processors\Redis\RedisCanonicalFeedIndexProcessor.cs" />
     <Compile Include="Processors\Sql\SqlSelectOnlyLatestNews.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Processors\SequentialProcessor.cs" />
@@ -138,6 +140,10 @@
     <ProjectReference Include="..\Weave.RssAggregator.Core\RssAggregator.DTOs.csproj">
       <Project>{2f1a280d-ee75-4dc1-a36c-f8e5488e3260}</Project>
       <Name>RssAggregator.DTOs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Weave.User.BusinessObjects.Mutable\Weave.User.BusinessObjects.Mutable.csproj">
+      <Project>{fc7c92ee-0aed-4859-b5ec-a770ce148497}</Project>
+      <Name>Weave.User.BusinessObjects.Mutable</Name>
     </ProjectReference>
     <ProjectReference Include="..\Weave.User.Service.Redis\Weave.User.Service.Redis.csproj">
       <Project>{32c547a5-8c67-4886-95ab-dc73f9af7673}</Project>

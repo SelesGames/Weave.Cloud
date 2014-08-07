@@ -2,19 +2,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Weave.Parsing;
 
 namespace Weave.RssAggregator.HighFrequency
 {
-    public class HFFNews : IEnumerable<Entry>
+    public class HFFNews : IEnumerable<EntryWithPostProcessInfo>
     {
         static readonly EntryComparer entryComparer = new EntryComparer();
 
-        SortedSet<Entry> set;
+        SortedSet<EntryWithPostProcessInfo> set;
 
         public HFFNews()
         {
-            set = new SortedSet<Entry>(entryComparer);
+            set = new SortedSet<EntryWithPostProcessInfo>(entryComparer);
         }
 
         /// <summary>
@@ -22,7 +21,7 @@ namespace Weave.RssAggregator.HighFrequency
         /// </summary>
         /// <param name="feed">The Entry to be added</param>
         /// <returns>True if the entry was added, false if the entry was already present or invalid</returns>
-        public bool Add(Entry entry)
+        public bool Add(EntryWithPostProcessInfo entry)
         {
             if (entry == null) return false;
             if (string.IsNullOrWhiteSpace(entry.Link) ||
@@ -37,17 +36,17 @@ namespace Weave.RssAggregator.HighFrequency
 
         public void TrimTo(int target)
         {
-            set = new SortedSet<Entry>(set.Take(target), entryComparer);
+            set = new SortedSet<EntryWithPostProcessInfo>(set.Take(target), entryComparer);
         }
 
 
 
 
-        #region helper class for doing the Entry comparisons
+        #region helper class for doing the EntryWithPostProcessInfo comparisons
 
-        class EntryComparer : IComparer<Entry>
+        class EntryComparer : IComparer<EntryWithPostProcessInfo>
         {
-            public int Compare(Entry x, Entry y)
+            public int Compare(EntryWithPostProcessInfo x, EntryWithPostProcessInfo y)
             {
                 if (x.Id == y.Id)
                     return 0;
@@ -72,7 +71,7 @@ namespace Weave.RssAggregator.HighFrequency
 
         #region IEnumerable interface implementation
 
-        public IEnumerator<Entry> GetEnumerator()
+        public IEnumerator<EntryWithPostProcessInfo> GetEnumerator()
         {
             return set.GetEnumerator();
         }

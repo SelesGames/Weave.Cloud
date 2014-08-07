@@ -1,16 +1,29 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Weave.RssAggregator.HighFrequency
 {
+
     public class EntryWithPostProcessInfo : Weave.Parsing.Entry
     {
         public EntryImage Image { get; private set; }
+        public Images Images { get; private set; }
         public byte[] NewsItemBlob { get; set; }
 
         public EntryWithPostProcessInfo()
         {
             Image = new EntryImage();
+            Images = new Images();
         }
+
+        //public bool HasImage
+        //{
+        //    get
+        //    {
+        //        return !string.IsNullOrEmpty(ImageUrl) &&
+        //            Uri.IsWellFormedUriString(ImageUrl, UriKind.Absolute);
+        //    }
+        //}
     }
 
     public class EntryImage
@@ -22,5 +35,15 @@ namespace Weave.RssAggregator.HighFrequency
         public string BaseResizedUrl { get; set; }
         public string PreferredUrl { get; set; }
         public string SupportedFormats { get; set; }
+    }
+
+    public class Image
+    {
+        public string Url { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
+        public string Format { get; set; }
+        public string ContentType { get; set; }
+        public long ContentLength { get; set; }
     }
 }

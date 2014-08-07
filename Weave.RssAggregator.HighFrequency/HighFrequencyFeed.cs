@@ -18,11 +18,17 @@ namespace Weave.RssAggregator.HighFrequency
         IReadOnlyList<string> instructions;
 
 
-        public Guid FeedId { get; private set; }
+        public Guid Id { get; private set; }
+        public string Uri { get; private set; }
         public string Name { get; private set; }
-        public string FeedUri { get; private set; }
-        public string Etag { get; private set; }
-        public string LastModified { get; private set; }
+        public string TeaserImageUrl { get; set; }
+
+        // record-keeping for feed updates
+        public DateTime LastRefreshedOn { get; set; }
+        public string Etag { get; set; }
+        public string LastModified { get; set; }
+        public string MostRecentNewsItemPubDate { get; set; }
+
         public TimeSpan RefreshTimeout { get; set; }
         public FeedState LastFeedState { get; private set; }
         public HFFNews News { get; private set; }
@@ -42,7 +48,7 @@ namespace Weave.RssAggregator.HighFrequency
             if (string.IsNullOrWhiteSpace(feedUri)) throw new ArgumentException("feedUri in HighFrequencyFeed ctor");
 
             Name = name;
-            FeedUri = feedUri;
+            Uri = feedUri;
             InitializeId(string.IsNullOrWhiteSpace(originalUri) ? feedUri : originalUri);
             LastFeedState = FeedState.Uninitialized;
             FeedUpdate = feedUpdate.AsObservable();
@@ -68,11 +74,11 @@ namespace Weave.RssAggregator.HighFrequency
 
                 var requester = new Feed
                 {
-                    FeedId = this.FeedId,
-                    FeedUri = this.FeedUri,
+                    FeedId = this.Id,
+                    FeedUri = this.Uri,
                     Etag = this.Etag,
                     LastModified = this.LastModified,
-                    UpdateTimeOut = this.RefreshTimeout,
+                    UpdateTimeOut = this.RefreshTimeout, 
                 };
                 var result = await requester.Update();
 
@@ -83,9 +89,10 @@ namespace Weave.RssAggregator.HighFrequency
 
                     if (requester.News != null && requester.News.Any())
                     {
-                        var addedNews = new List<Entry>();
+                        var resultNews = requester.News.Select(Map).ToList();
+                        var addedNews = new List<EntryWithPostProcessInfo>();
 
-                        foreach (var o in requester.News)
+                        foreach (var o in resultNews)
                         {
                             if (News.Add(o))
                                 addedNews.Add(o);
@@ -98,42 +105,42 @@ namespace Weave.RssAggregator.HighFrequency
                             var update = new HighFrequencyFeedUpdateDto
                             {
                                 Feed = this,
-                                FeedId = FeedId,
+                                FeedId = Id,
                                 Name = Name,
-                                FeedUri = FeedUri,
+                                FeedUri = Uri,
                                 RefreshTime = refreshTime,
                                 Instructions = instructions,
-                                Entries = addedNews.Select(Map).ToList(),
+                                Entries = addedNews,
                             };
                             feedUpdate.OnNext(update);
                         }
                     }
 
-                    DebugEx.WriteLine("REFRESHED {0}  ({1})", Name, FeedUri);
+                    DebugEx.WriteLine("REFRESHED {0}  ({1})", Name, Uri);
                 }
                 else if (result == Feed.RequestStatus.Unmodified)
                 {
-                    DebugEx.WriteLine("UNMODIFIED {0}  ({1})", Name, FeedUri);
+                    DebugEx.WriteLine("UNMODIFIED {0}  ({1})", Name, Uri);
                 }
                 this.LastFeedState = FeedState.OK;
             }
             catch (TaskCanceledException ex)
             {
-                DebugEx.WriteLine("!!!!!! TIMED OUT {0}  ({1}): {2}", Name, FeedUri, ex.Message);
+                DebugEx.WriteLine("!!!!!! TIMED OUT {0}  ({1}): {2}", Name, Uri, ex.Message);
                 this.LastFeedState = FeedState.Failed;
             }
             catch (HttpRequestException ex)
             {
                 if (ex.InnerException != null)
-                    DebugEx.WriteLine("!!!!!! FAILED {0}  ({1}): {2}: {3}", Name, FeedUri, ex.Message, ex.InnerException.Message);
+                    DebugEx.WriteLine("!!!!!! FAILED {0}  ({1}): {2}: {3}", Name, Uri, ex.Message, ex.InnerException.Message);
                 else
-                    DebugEx.WriteLine("!!!!!! FAILED {0}  ({1}): {2}", Name, FeedUri, ex.Message);
+                    DebugEx.WriteLine("!!!!!! FAILED {0}  ({1}): {2}", Name, Uri, ex.Message);
 
                 this.LastFeedState = FeedState.Failed;
             }
             catch (Exception ex)
             {
-                DebugEx.WriteLine("!!!!!! FAILED {0}  ({1}): {2}", Name, FeedUri, ex.Message);
+                DebugEx.WriteLine("!!!!!! FAILED {0}  ({1}): {2}", Name, Uri, ex.Message);
                 this.LastFeedState = FeedState.Failed;
             }
         }
@@ -145,7 +152,7 @@ namespace Weave.RssAggregator.HighFrequency
 
         void InitializeId(string uri)
         {
-            FeedId = CryptoHelper.ComputeHashUsedByMobilizer(uri);
+            Id = CryptoHelper.ComputeHashUsedByMobilizer(uri);
         }
 
         #endregion
@@ -182,9 +189,17 @@ namespace Weave.RssAggregator.HighFrequency
 
 
 
+        void UpdateTeaserImage()
+        {
+            TeaserImageUrl = News
+                .Where(o => o.HasImage)
+                .Select(o => o.GetBestImageUrl())
+                .FirstOrDefault();
+        }
+
         public override string ToString()
         {
-            return Name + ": " + FeedUri;
+            return Name + ": " + Uri;
         }
     }
 }
