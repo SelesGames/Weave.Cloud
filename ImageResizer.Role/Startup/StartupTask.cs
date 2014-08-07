@@ -1,9 +1,11 @@
-﻿using Microsoft.WindowsAzure.ServiceRuntime;
+﻿using ImageResizer.Role.Controllers;
+using Microsoft.WindowsAzure.ServiceRuntime;
 using Ninject;
 using Ninject.WebApi;
+using SelesGames.WebApi.SelfHost;
 using System.Diagnostics;
+using System.Web.Http;
 using System.Web.Http.Dependencies;
-using System.Web.Http.SelfHost;
 
 namespace ImageResizer.Role.Startup
 {
@@ -26,8 +28,19 @@ namespace ImageResizer.Role.Startup
             var ipString = string.Format("http://{0}", ip.ToString());
             Trace.WriteLine(string.Format("**** IP ADDRESS: {0}", ipString));
 
-            var config = new HttpConfig(ipString) { DependencyResolver = resolver };
-            new HttpSelfHostServer(config).OpenAsync().Wait();
+            var config = SelfHost.Config;
+
+            config.Routes.MapHttpRoute(
+                name: "customRouting",
+                routeTemplate: "api/{controller}",
+                defaults: new
+                {
+                    controller = typeof(ImageController),
+                });
+
+            config.DependencyResolver = resolver;
+
+            SelfHost.StartServer(ipString);
 
             Trace.WriteLine("^&*^&*^&*^*&^  SERVER IS UP AND RUNNING!!!");
         }

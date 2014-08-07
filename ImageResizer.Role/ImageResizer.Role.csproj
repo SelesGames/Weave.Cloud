@@ -112,7 +112,6 @@
     <Compile Include="Controllers\ResizeController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="Startup\HttpConfig.cs" />
     <Compile Include="Startup\NinjectKernel.cs" />
     <Compile Include="Startup\StartupTask.cs" />
     <Compile Include="WorkerRole.cs" />
@@ -129,6 +128,10 @@
     <ProjectReference Include="..\SelesGames.Drawing\SelesGames.Drawing.csproj">
       <Project>{f77804a0-3822-40ee-b81c-6b08703841e8}</Project>
       <Name>SelesGames.Drawing</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SelesGames.WebApi.SelfHost\SelesGames.WebApi.SelfHost.csproj">
+      <Project>{42044387-f2a2-4a39-93bc-93e06ffae618}</Project>
+      <Name>SelesGames.WebApi.SelfHost</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
