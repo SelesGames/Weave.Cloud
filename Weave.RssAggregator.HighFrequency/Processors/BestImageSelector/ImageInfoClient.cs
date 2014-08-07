@@ -1,4 +1,5 @@
 ﻿using SelesGames.HttpClient;
+using System;
 using System.Threading.Tasks;
 
 namespace Weave.RssAggregator.HighFrequency.Processors.BestImageSelector
@@ -13,8 +14,25 @@ namespace Weave.RssAggregator.HighFrequency.Processors.BestImageSelector
 
             var client = new SmartHttpClient(CompressionSettings.None);
 
-            var info = await client.GetAsync<ImageInfo>(fullUrl);
+            var response = await client.GetAsync(fullUrl);
+            var responseMessage = response.HttpResponseMessage;
+
+            if (responseMessage.IsSuccessStatusCode && 
+                responseMessage.Content.Headers.ContentLength.HasValue && 
+                responseMessage.Content.Headers.ContentLength.Value < 10)
+            {
+                var stringResponse = await responseMessage.Content.ReadAsStringAsync();
+                if (stringResponse == "null")
+                    throw new InvalidImageException();
+            }
+
+            var info = await response.Read<ImageInfo>();
             return info;
         }
+    }
+
+    public class InvalidImageException : Exception
+    {
+
     }
 }

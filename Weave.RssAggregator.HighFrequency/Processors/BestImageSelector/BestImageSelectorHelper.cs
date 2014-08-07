@@ -60,6 +60,10 @@ namespace Weave.RssAggregator.HighFrequency.Processors.BestImageSelector
                 imageInfo = await imageInfoClient.Get(url);
                 imageInfo.ImageUrl = url;
             }
+            catch(InvalidImageException)
+            {
+                return null;
+            }
             catch 
             {
                 imageInfo = new ImageInfo { ImageUrl = url };

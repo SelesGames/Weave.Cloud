@@ -55,18 +55,20 @@ namespace Weave.RssAggregator.HighFrequenc
                 var newsItemIndex = Map(entry);
                 feedIndex.NewsItemIndices.Add(newsItemIndex);
             }
+
+            return feedIndex;
         }
 
-        static NewsItemIndex Map(Entry o)
+        static NewsItemIndex Map(EntryWithPostProcessInfo o)
         {
             return new NewsItemIndex
             {
                 Id = o.Id,
-                UrlHash = z,
-                TitleHash = z,
+                //UrlHash = z,
+                //TitleHash = z,
                 UtcPublishDateTime = o.UtcPublishDateTime,
-                OriginalDownloadDateTime = o.o,
-                HasImage = o.GetImageUrl(),
+                OriginalDownloadDateTime = o.OriginalDownloadDateTime,
+                HasImage = o.HasImage,
             };
         }
 

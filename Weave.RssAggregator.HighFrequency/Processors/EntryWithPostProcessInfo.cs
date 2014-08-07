@@ -1,14 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 
 namespace Weave.RssAggregator.HighFrequency
 {
-
     public class EntryWithPostProcessInfo : Weave.Parsing.Entry
     {
         public EntryImage Image { get; private set; }
         public Images Images { get; private set; }
         public byte[] NewsItemBlob { get; set; }
+        public DateTime OriginalDownloadDateTime { get; set; }
 
         public EntryWithPostProcessInfo()
         {
@@ -16,14 +16,10 @@ namespace Weave.RssAggregator.HighFrequency
             Images = new Images();
         }
 
-        //public bool HasImage
-        //{
-        //    get
-        //    {
-        //        return !string.IsNullOrEmpty(ImageUrl) &&
-        //            Uri.IsWellFormedUriString(ImageUrl, UriKind.Absolute);
-        //    }
-        //}
+        public bool HasImage
+        {
+            get { return Images.Any(); }
+        }
     }
 
     public class EntryImage
