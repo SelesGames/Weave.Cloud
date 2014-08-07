@@ -24,7 +24,7 @@ namespace Weave.User.Service.Redis.Serializers.Binary
             return feedIndex;
         }
 
-        void Read()
+        public void Read()
         {
             feedIndex = new FeedIndex();
 

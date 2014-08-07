@@ -7,40 +7,32 @@ using Weave.User.Service.Redis.Serializers.Binary;
 
 namespace Weave.User.Service.Redis
 {
-    public class UserIndexCache
+    public class CanonicalFeedIndexCache
     {
         readonly ConnectionMultiplexer connection;
-        readonly RedisValueSerializer serializer;
+        RedisValueSerializer2<FeedIndex> serializer;
 
-        public UserIndexCache(ConnectionMultiplexer connection)
+        public CanonicalFeedIndexCache(ConnectionMultiplexer connection)
         {
             this.connection = connection;
-            serializer = new RedisValueSerializer(new UserIndexBinarySerializer());
+            this.serializer = new CanonicalFeedIndexBinarySerializer();
         }
 
-        public async Task<RedisCacheResult<UserIndex>> Get(Guid userId)
+        public async Task<RedisCacheResult<FeedIndex>> Get(Guid feedId)
         {
             var db = connection.GetDatabase(DatabaseNumbers.INDICES_AND_NEWSCACHE);
-            var key = (RedisKey)userId.ToByteArray();
+            var key = (RedisKey)feedId.ToByteArray();
 
-            var sw = System.Diagnostics.Stopwatch.StartNew();
             var value = await db.StringGetAsync(key, CommandFlags.None);
-            sw.Stop();
-            DebugEx.WriteLine("the actual getting of the user index took {0} ms", sw.ElapsedMilliseconds);
-
-            sw.Restart();
-            var cacheResult = serializer.ReadAs<UserIndex>(value);
-            sw.Stop();
-            DebugEx.WriteLine("deserializing the user index took {0} ms", sw.ElapsedMilliseconds);
-
+            var cacheResult = serializer.Read(value);
             return cacheResult;
         }
 
-        public Task<bool> Save(UserIndex userIndex)
+        public Task<bool> Save(FeedIndex feedIndex)
         {
             var db = connection.GetDatabase(DatabaseNumbers.INDICES_AND_NEWSCACHE);
-            var key = (RedisKey)userIndex.Id.ToByteArray();
-            var val = serializer.WriteAs(userIndex);
+            var key = (RedisKey)feedIndex.Id.ToByteArray();
+            var val = serializer.Write(feedIndex);
 
             return db.StringSetAsync(
                 key: key, 

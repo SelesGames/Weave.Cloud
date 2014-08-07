@@ -41,6 +41,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CanonicalFeedIndexCache.cs" />
     <Compile Include="Communication\Generic\Message.cs" />
     <Compile Include="Communication\Generic\MessageQueue.cs" />
     <Compile Include="Communication\Message.cs" />
@@ -49,7 +50,9 @@
     <Compile Include="DTOs\NewsItem.cs" />
     <Compile Include="Communication\MessageQueue.cs" />
     <Compile Include="PubSub\PubSubHelper.cs" />
+    <Compile Include="RedisValueMap.cs" />
     <Compile Include="Serializers\Binary\CanonicalFeedIndexReader.cs" />
+    <Compile Include="Serializers\Binary\CanonicalFeedIndexBinarySerializer.cs" />
     <Compile Include="Serializers\Binary\CanonicalFeedIndexWriter.cs" />
     <Compile Include="Synchronization\IDatabaseLockExtensions.cs" />
     <Compile Include="Synchronization\RedisLockException.cs" />

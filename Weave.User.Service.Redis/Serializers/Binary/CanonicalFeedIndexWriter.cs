@@ -23,7 +23,7 @@ namespace Weave.User.Service.Redis.Serializers.Binary
             return ms.ToArray();
         }
 
-        internal void Write(FeedIndex feed)
+        public void Write()
         {
             bw.Write(feed.Id.ToByteArray());
 
