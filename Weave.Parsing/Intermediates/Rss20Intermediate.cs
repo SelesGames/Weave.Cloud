@@ -103,7 +103,7 @@ namespace Weave.Parsing.Intermediates
             if (mediaContent.IsWellFormed())
             {
                 if (mediaContent.IsImageUrl())
-                    e.AddImage(mediaContent);
+                    e.Images.Add(mediaContent);
 
                 else if (string.IsNullOrEmpty(e.PodcastUri) && mediaContent.IsAudioFileUrl())
                     e.PodcastUri = mediaContent;
@@ -118,7 +118,7 @@ namespace Weave.Parsing.Intermediates
             if (enclosure.IsWellFormed())
             {
                 if (enclosure.IsImageUrl())
-                    e.AddImage(enclosure);
+                    e.Images.Add(enclosure);
 
                 else if (string.IsNullOrEmpty(e.PodcastUri) && enclosure.IsAudioFileUrl())
                     e.PodcastUri = enclosure;
@@ -127,7 +127,7 @@ namespace Weave.Parsing.Intermediates
                     e.VideoUri = enclosure;
             }
 
-            e.AddImage(description.ParseImageUrlFromHtml());
+            e.Images.Add(description.ParseImageUrlFromHtml());
 
             e.OriginalPublishDateTimeString = PublicationDateString;
             e.UtcPublishDateTime = PublicationDate;

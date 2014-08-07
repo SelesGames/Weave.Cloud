@@ -56,6 +56,7 @@
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\XElementExtensions.cs" />
     <Compile Include="Feed.cs" />
+    <Compile Include="Images.cs" />
     <Compile Include="Intermediates\AtomIntermediate.cs" />
     <Compile Include="Intermediates\IEntryIntermediate.cs" />
     <Compile Include="Intermediates\Rss20Intermediate.cs" />
