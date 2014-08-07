@@ -17,7 +17,7 @@ namespace Weave.Parsing
         public string PodcastUri { get; set; }
         public string ZuneAppId { get; set; }
         public string OriginalRssXml { get; set; }
-        public Images Images { get; set; }
+        public Images ImageUrls { get; set; }
 
         // display in Universal Sortable format
         // more info http://msdn.microsoft.com/en-us/library/az4se3k1.aspx#UniversalSortable

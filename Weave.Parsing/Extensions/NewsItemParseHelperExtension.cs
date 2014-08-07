@@ -27,7 +27,7 @@ namespace Weave.Parsing
 
             var potentialImages = matches.Where(o => o.IsImageUrl());
             foreach (var image in potentialImages)
-                e.Images.Add(image);
+                e.ImageUrls.Add(image);
 
 
             var potentialYoutube = matches
