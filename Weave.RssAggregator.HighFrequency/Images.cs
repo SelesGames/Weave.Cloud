@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Weave.RssAggregator.HighFrequency
 {
@@ -19,6 +20,12 @@ namespace Weave.RssAggregator.HighFrequency
 
             innerList.Add(image);
             return true;
+        }
+
+        // We use the criteria of largest image (in bytes) as being the best image available
+        public Image GetBest()
+        {
+            return innerList.OrderByDescending(o => o.ContentLength).FirstOrDefault();
         }
 
 

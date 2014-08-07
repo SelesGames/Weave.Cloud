@@ -1,7 +1,9 @@
 ﻿using ProtoBuf;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Outgoing = Weave.RssAggregator.Core.DTOs.Outgoing;
+using System.Linq;
 
 namespace Weave.RssAggregator.HighFrequency
 {
@@ -49,12 +51,14 @@ namespace Weave.RssAggregator.HighFrequency
 
         static Outgoing.NewsItem Map(EntryWithPostProcessInfo e)
         {
+            var bestImage = e.Images.GetBest();
+
             return new Outgoing.NewsItem
             {
                 Id = e.Id,
                 Title = e.Title,
                 Link = e.Link,
-                ImageUrl = !e.HasImage ? null : e.Image.PreferredUrl,
+                ImageUrl = bestImage == null ? null : bestImage.Url,
                 PublishDateTime = e.UtcPublishDateTimeString,
                 Description = null,
                 VideoUri = e.VideoUri,
@@ -62,19 +66,19 @@ namespace Weave.RssAggregator.HighFrequency
                 PodcastUri = e.PodcastUri,
                 ZuneAppId = e.ZuneAppId,
                 FeedId = e.FeedId,
-                Image = !e.HasImage ? null : Map(e.Image),
+                Image = bestImage == null ? null : Map(bestImage),
             };
         }
 
-        static Outgoing.Image Map(EntryImage o)
+        static Outgoing.Image Map(Image o)
         {
             return new Outgoing.Image
             {
                 Width = o.Width,
                 Height = o.Height,
-                BaseImageUrl = o.BaseResizedUrl,
-                OriginalUrl = o.OriginalUrl,
-                SupportedFormats = o.SupportedFormats,
+                OriginalUrl = o.Url,
+                BaseImageUrl = null,
+                SupportedFormats = null,
             };
         }
 

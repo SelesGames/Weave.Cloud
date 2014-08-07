@@ -43,6 +43,8 @@ namespace Weave.RssAggregator.HighFrequency
 
         static NewsItem Map(EntryWithPostProcessInfo o)
         {
+            var bestImage = o.Images.GetBest();
+
             return new NewsItem
             {
                 Id = o.Id,
@@ -50,24 +52,24 @@ namespace Weave.RssAggregator.HighFrequency
                 UtcPublishDateTimeString = o.UtcPublishDateTimeString,
                 Title = o.Title,
                 Link = o.Link,
-                ImageUrl = o.Image.OriginalUrl,
+                ImageUrl = bestImage == null ? null : bestImage.Url,
                 YoutubeId = o.YoutubeId,
                 VideoUri = o.VideoUri,
                 PodcastUri = o.PodcastUri,
                 ZuneAppId = o.ZuneAppId,
-                Image = !o.Image.ShouldIncludeImage ? null : Map(o.Image),
+                Image = bestImage == null ? null : Map(bestImage),
             };
         }
 
-        static Weave.User.Service.Redis.DTOs.Image Map(EntryImage o)
+        static Weave.User.Service.Redis.DTOs.Image Map(Image o)
         {
             return new Weave.User.Service.Redis.DTOs.Image
             {
                 Width = o.Width,
                 Height = o.Height,
-                BaseImageUrl = o.BaseResizedUrl,
-                OriginalUrl = o.OriginalUrl,
-                SupportedFormats = o.SupportedFormats,
+                OriginalUrl = o.Url,
+                BaseImageUrl = null,
+                SupportedFormats = null,
             };
         }
 

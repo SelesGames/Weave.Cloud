@@ -68,7 +68,7 @@ namespace Weave.RssAggregator.HighFrequenc
                 //TitleHash = z,
                 UtcPublishDateTime = o.UtcPublishDateTime,
                 OriginalDownloadDateTime = o.OriginalDownloadDateTime,
-                HasImage = o.HasImage,
+                HasImage = o.Images.GetBest() != null,
             };
         }
 

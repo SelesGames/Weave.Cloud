@@ -30,6 +30,8 @@ namespace Weave.RssAggregator.HighFrequency
         {
             try
             {
+                var bestImage = e.Images.GetBest();
+
                 var readabilityResult = new MobilizerResult
                 {
                     title = e.Title,
@@ -39,7 +41,7 @@ namespace Weave.RssAggregator.HighFrequency
                     content = e.Description,
                     author = null,
                     word_count = "not available",
-                    lead_image_url = e.Image.OriginalUrl,
+                    lead_image_url = bestImage == null ? null : bestImage.Url,
                 };
 
                 var parser = new Parser();

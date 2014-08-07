@@ -24,16 +24,6 @@ namespace Weave.RssAggregator.HighFrequency.Processors.BestImageSelector
             var images = await GetImages();
             foreach (var image in images)
                 entry.Images.Add(image);
-
-            var bestImage = SelectBestImage(images);
-            if (bestImage != null)
-            {
-                entry.Image.ShouldIncludeImage = true;
-                entry.Image.OriginalUrl = bestImage.Url;
-                entry.Image.PreferredUrl = bestImage.Url;
-                entry.Image.Width = bestImage.Width;
-                entry.Image.Height = bestImage.Height;
-            }
         }
 
         async Task<IEnumerable<Image>> GetImages()
@@ -101,12 +91,6 @@ namespace Weave.RssAggregator.HighFrequency.Processors.BestImageSelector
                 ContentLength = o.ContentLength,
                 ContentType = o.ContentType,
             };
-        }
-
-        // We use the criteria of largest image (in bytes) as being the best image available
-        static Image SelectBestImage(IEnumerable<Image> images)
-        {
-            return images.OrderByDescending(o => o.ContentLength).FirstOrDefault();
         }
     }
 }

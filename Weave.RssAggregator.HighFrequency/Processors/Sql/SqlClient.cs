@@ -43,6 +43,13 @@ namespace Weave.RssAggregator.HighFrequency
         {
             var storedProcName = "InsertNewsItemIfNotExists";
 
+            var bestImage = entry.Images.GetBest();
+
+            var temp = bestImage == null ?
+                new { Url = default(string), Width = 0, Height = 0 }
+                :
+                new { bestImage.Url, bestImage.Width, bestImage.Height };
+
             var rows = await storedProcClient.GetAsync<bool>(
                 storedProcName,
                 o => o.GetFieldValueAsync<bool>(0),
@@ -55,17 +62,17 @@ namespace Weave.RssAggregator.HighFrequency
                 new SqlParameter("p7", entry.OriginalPublishDateTimeString) { SqlDbType = SqlDbType.NVarChar },
                 new SqlParameter("p8", entry.UtcPublishDateTimeString) { SqlDbType = SqlDbType.NVarChar },
 
-                new SqlParameter("p9", (object)entry.Image.OriginalUrl ?? DBNull.Value) { SqlDbType = SqlDbType.NVarChar, IsNullable = true },
+                new SqlParameter("p9", (object)temp.Url ?? DBNull.Value) { SqlDbType = SqlDbType.NVarChar, IsNullable = true },
                 new SqlParameter("p10", (object)entry.VideoUri ?? DBNull.Value) { SqlDbType = SqlDbType.NVarChar, IsNullable = true },
                 new SqlParameter("p11", (object)entry.YoutubeId ?? DBNull.Value) { SqlDbType = SqlDbType.NVarChar, IsNullable = true },
                 new SqlParameter("p12", (object)entry.PodcastUri ?? DBNull.Value) { SqlDbType = SqlDbType.NVarChar, IsNullable = true },
                 new SqlParameter("p13", (object)entry.ZuneAppId ?? DBNull.Value) { SqlDbType = SqlDbType.NVarChar, IsNullable = true },
                 new SqlParameter("p14", (object)entry.OriginalRssXml ?? DBNull.Value) { SqlDbType = SqlDbType.NVarChar, IsNullable = true },
                 new SqlParameter("p15", entry.NewsItemBlob) { SqlDbType = SqlDbType.VarBinary },
-                new SqlParameter("p16", (object)entry.Image.Width ?? DBNull.Value) { SqlDbType = SqlDbType.Int, IsNullable = true },
-                new SqlParameter("p17", (object)entry.Image.Height ?? DBNull.Value) { SqlDbType = SqlDbType.Int, IsNullable = true },
-                new SqlParameter("p18", (object)entry.Image.BaseResizedUrl ?? DBNull.Value) { SqlDbType = SqlDbType.VarChar, IsNullable = true },
-                new SqlParameter("p19", (object)entry.Image.SupportedFormats ?? DBNull.Value) { SqlDbType = SqlDbType.VarChar, IsNullable = true }
+                new SqlParameter("p16", (object)temp.Width ?? DBNull.Value) { SqlDbType = SqlDbType.Int, IsNullable = true },
+                new SqlParameter("p17", (object)temp.Height ?? DBNull.Value) { SqlDbType = SqlDbType.Int, IsNullable = true },
+                new SqlParameter("p18", /*(object)entry.Image.BaseResizedUrl ??*/ DBNull.Value) { SqlDbType = SqlDbType.VarChar, IsNullable = true },
+                new SqlParameter("p19", /*(object)entry.Image.SupportedFormats ??*/ DBNull.Value) { SqlDbType = SqlDbType.VarChar, IsNullable = true }
             );
 
             return rows.FirstOrDefault();
