@@ -17,13 +17,18 @@ namespace Weave.Parsing
         public string PodcastUri { get; set; }
         public string ZuneAppId { get; set; }
         public string OriginalRssXml { get; set; }
-        public Images ImageUrls { get; set; }
+        public Images ImageUrls { get; private set; }
 
         // display in Universal Sortable format
         // more info http://msdn.microsoft.com/en-us/library/az4se3k1.aspx#UniversalSortable
         public string UtcPublishDateTimeString
         {
             get { return UtcPublishDateTime.ToString("u"); }
+        }
+
+        public Entry()
+        {
+            ImageUrls = new Images();
         }
 
         public override string ToString()

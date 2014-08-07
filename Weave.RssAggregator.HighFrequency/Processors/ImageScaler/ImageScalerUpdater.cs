@@ -47,7 +47,6 @@ namespace Weave.RssAggregator.HighFrequency
                 if (result == null)
                     return;
 
-
                 e.Image.Width = result.ImageWidth;
                 e.Image.Height = result.ImageHeight;
                 e.Image.BaseResizedUrl = result.BaseImageUrl;

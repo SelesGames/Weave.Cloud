@@ -92,8 +92,10 @@ namespace Weave.RssAggregator.HighFrequency
                         var resultNews = requester.News.Select(Map).ToList();
                         var addedNews = new List<EntryWithPostProcessInfo>();
 
+                        var now = DateTime.UtcNow;
                         foreach (var o in resultNews)
                         {
+                            o.OriginalDownloadDateTime = now;
                             if (News.Add(o))
                                 addedNews.Add(o);
                         }
@@ -162,25 +164,32 @@ namespace Weave.RssAggregator.HighFrequency
 
         #region Map functions
 
+        static void Copy(Entry source, Entry destination)
+        {
+            var x = source;
+            var y = destination;
+
+            y.Id = x.Id;
+            y.FeedId = x.FeedId;
+            y.UtcPublishDateTime = x.UtcPublishDateTime;
+            y.Title = x.Title;
+            y.OriginalPublishDateTimeString = x.OriginalPublishDateTimeString;
+            y.Link = x.Link;
+            y.Description = x.Description;
+            y.YoutubeId = x.YoutubeId;
+            y.VideoUri = x.VideoUri;
+            y.PodcastUri = x.PodcastUri;
+            y.ZuneAppId = x.ZuneAppId;
+            y.OriginalRssXml = x.OriginalRssXml;
+
+            foreach (var imageUrl in x.ImageUrls)
+                y.ImageUrls.Add(imageUrl);
+        }
+
         static EntryWithPostProcessInfo Map(Entry o)
         {
-            var result = new EntryWithPostProcessInfo
-            {
-                Id = o.Id,
-                FeedId = o.FeedId,
-                UtcPublishDateTime = o.UtcPublishDateTime,
-                Title = o.Title,
-                OriginalPublishDateTimeString = o.OriginalPublishDateTimeString,
-                Link = o.Link,
-                Description = o.Description,
-                YoutubeId = o.YoutubeId,
-                VideoUri = o.VideoUri,
-                PodcastUri = o.PodcastUri,
-                ZuneAppId = o.ZuneAppId,
-                OriginalRssXml = o.OriginalRssXml,
-            };
-
-            result.Image.OriginalUrl = o.GetImageUrl();
+            var result = new EntryWithPostProcessInfo();
+            Copy(o, result);
             return result;
         }
 
@@ -189,13 +198,13 @@ namespace Weave.RssAggregator.HighFrequency
 
 
 
-        void UpdateTeaserImage()
-        {
-            TeaserImageUrl = News
-                .Where(o => o.HasImage)
-                .Select(o => o.GetBestImageUrl())
-                .FirstOrDefault();
-        }
+        //void UpdateTeaserImage()
+        //{
+        //    TeaserImageUrl = News
+        //        .Where(o => o.HasImage)
+        //        .Select(o => o.GetBestImageUrl())
+        //        .FirstOrDefault();
+        //}
 
         public override string ToString()
         {

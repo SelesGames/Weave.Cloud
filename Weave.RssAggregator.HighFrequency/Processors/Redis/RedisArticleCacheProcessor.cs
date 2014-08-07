@@ -59,9 +59,9 @@ namespace Weave.RssAggregator.HighFrequency
             };
         }
 
-        static Image Map(EntryImage o)
+        static Weave.User.Service.Redis.DTOs.Image Map(EntryImage o)
         {
-            return new Image
+            return new Weave.User.Service.Redis.DTOs.Image
             {
                 Width = o.Width,
                 Height = o.Height,

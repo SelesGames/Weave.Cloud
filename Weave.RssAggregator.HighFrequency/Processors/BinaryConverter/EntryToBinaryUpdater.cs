@@ -1,7 +1,7 @@
 ﻿using ProtoBuf;
 using System.IO;
 using System.Threading.Tasks;
-using Weave.RssAggregator.Core.DTOs.Outgoing;
+using Outgoing = Weave.RssAggregator.Core.DTOs.Outgoing;
 
 namespace Weave.RssAggregator.HighFrequency
 {
@@ -9,7 +9,7 @@ namespace Weave.RssAggregator.HighFrequency
     {
         static EntryToBinaryUpdater()
         {
-            Serializer.PrepareSerializer<NewsItem>();
+            Serializer.PrepareSerializer<Outgoing.NewsItem>();
         }
 
         public EntryToBinaryUpdater()
@@ -47,14 +47,14 @@ namespace Weave.RssAggregator.HighFrequency
 
         #region Map functions
 
-        static NewsItem Map(EntryWithPostProcessInfo e)
+        static Outgoing.NewsItem Map(EntryWithPostProcessInfo e)
         {
-            return new Weave.RssAggregator.Core.DTOs.Outgoing.NewsItem
+            return new Outgoing.NewsItem
             {
                 Id = e.Id,
                 Title = e.Title,
                 Link = e.Link,
-                ImageUrl = !e.Image.ShouldIncludeImage ? null : e.Image.PreferredUrl,
+                ImageUrl = !e.HasImage ? null : e.Image.PreferredUrl,
                 PublishDateTime = e.UtcPublishDateTimeString,
                 Description = null,
                 VideoUri = e.VideoUri,
@@ -62,13 +62,13 @@ namespace Weave.RssAggregator.HighFrequency
                 PodcastUri = e.PodcastUri,
                 ZuneAppId = e.ZuneAppId,
                 FeedId = e.FeedId,
-                Image = !e.Image.ShouldIncludeImage ? null : Map(e.Image),
+                Image = !e.HasImage ? null : Map(e.Image),
             };
         }
 
-        static Image Map(EntryImage o)
+        static Outgoing.Image Map(EntryImage o)
         {
-            return new Image
+            return new Outgoing.Image
             {
                 Width = o.Width,
                 Height = o.Height,

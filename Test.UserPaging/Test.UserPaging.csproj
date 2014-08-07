@@ -78,12 +78,6 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Weave.User.Paging.AzureCloudService.WorkerRole\Weave.User.Paging.AzureCloudService.WorkerRole.csproj">
-      <Project>{e254399c-9ab3-41e8-be78-5179085eb226}</Project>
-      <Name>Weave.User.Paging.AzureCloudService.WorkerRole</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

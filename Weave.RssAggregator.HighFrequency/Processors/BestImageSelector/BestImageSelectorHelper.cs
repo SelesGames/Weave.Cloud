@@ -26,9 +26,14 @@ namespace Weave.RssAggregator.HighFrequency.Processors.BestImageSelector
                 entry.Images.Add(image);
 
             var bestImage = SelectBestImage(images);
-            entry.Image.OriginalUrl = bestImage.Url;
-            entry.Image.Width = bestImage.Width;
-            entry.Image.Height = bestImage.Height;
+            if (bestImage != null)
+            {
+                entry.Image.ShouldIncludeImage = true;
+                entry.Image.OriginalUrl = bestImage.Url;
+                entry.Image.PreferredUrl = bestImage.Url;
+                entry.Image.Width = bestImage.Width;
+                entry.Image.Height = bestImage.Height;
+            }
         }
 
         async Task<IEnumerable<Image>> GetImages()
@@ -55,7 +60,10 @@ namespace Weave.RssAggregator.HighFrequency.Processors.BestImageSelector
                 imageInfo = await imageInfoClient.Get(url);
                 imageInfo.ImageUrl = url;
             }
-            catch { }
+            catch 
+            {
+                imageInfo = new ImageInfo { ImageUrl = url };
+            }
             return imageInfo;
         }
 

@@ -26,12 +26,8 @@ namespace Weave.RssAggregator.HighFrequency
         {
             try
             {
-                var originalImage = e.Image.OriginalUrl;
                 var helper = new BestImageSelectorHelper(e);
                 await helper.Process();
-                var newImage = e.Image.OriginalUrl;
-                DebugEx.WriteLine("Chose the best image for {0}", e.Link);
-                DebugEx.WriteLine("Old image: {0}\r\nNew image: {1}\r\n", originalImage, newImage);
             }
             catch (Exception ex)
             {

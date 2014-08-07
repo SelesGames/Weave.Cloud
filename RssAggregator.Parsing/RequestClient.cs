@@ -1,6 +1,4 @@
-﻿using RssAggregator.Client.Converters;
-using SelesGames.Common;
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Weave.Parsing;
@@ -47,7 +45,7 @@ namespace Weave.RssAggregator.Core.DTOs.Incoming
                         LastModified = feed.LastModified,
                         MostRecentNewsItemPubDate = feed.MostRecentNewsItemPubDate,
                         OldestNewsItemPubDate = feed.OldestNewsItemPubDate,
-                        News = feed.News.Select(o => o.Convert(EntryToNewsItemConverter.Instance)).ToList(),
+                        News = feed.News.Select(Map).ToList(),
                     };
                 }
             }
@@ -57,5 +55,30 @@ namespace Weave.RssAggregator.Core.DTOs.Incoming
             }
             return result;
         }
+
+
+
+
+        #region Map functions
+
+        static NewsItem Map(Entry e)
+        {
+            return new NewsItem
+            {
+                Title = e.Title,
+                Link = e.Link,
+                ImageUrl = e.ImageUrls.FirstOrDefault(),
+                PublishDateTime = e.UtcPublishDateTimeString,
+                Description = null,//entry.Description,
+                VideoUri = e.VideoUri,
+                YoutubeId = e.YoutubeId,
+                PodcastUri = e.PodcastUri,
+                ZuneAppId = e.ZuneAppId,
+                Id = e.Id,
+                FeedId = e.FeedId,
+            };
+        }
+
+        #endregion
     }
 }
