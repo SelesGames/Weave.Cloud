@@ -58,9 +58,9 @@ namespace Weave.RssAggregator.HighFrequency
                     return 0;
 
                 if (x.UtcPublishDateTime <= y.UtcPublishDateTime)
-                    return -1;
-                else
                     return 1;
+                else
+                    return -1;
             }
         }
 

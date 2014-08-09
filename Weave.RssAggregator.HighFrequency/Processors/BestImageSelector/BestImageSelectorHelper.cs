@@ -90,6 +90,7 @@ namespace Weave.RssAggregator.HighFrequency.Processors.BestImageSelector
                 Height = o.ImageHeight,
                 ContentLength = o.ContentLength,
                 ContentType = o.ContentType,
+                Format = o.ImageFormat,
             };
         }
     }
