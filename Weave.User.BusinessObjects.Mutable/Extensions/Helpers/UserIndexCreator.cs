@@ -68,8 +68,8 @@ namespace Weave.User.BusinessObjects.Mutable.Extensions.Helpers
             return new NewsItemIndex
             {
                 Id = o.Id,
-                UrlHash = ComputeHash(o.Link),
-                TitleHash = ComputeHash(o.Title),
+                //UrlHash = ComputeHash(o.Link),
+                //TitleHash = ComputeHash(o.Title),
                 UtcPublishDateTime = o.UtcPublishDateTime,
                 OriginalDownloadDateTime = o.OriginalDownloadDateTime,
                 IsFavorite = o.IsFavorite,
@@ -78,12 +78,12 @@ namespace Weave.User.BusinessObjects.Mutable.Extensions.Helpers
             };
         }
 
-        static long ComputeHash(string val)
-        {
-            var guid = CryptoHelper.ComputeHashUsedByMobilizer(val);
-            var byteArray = guid.ToByteArray();
-            var result = BitConverter.ToInt64(byteArray, 0);
-            return result;
-        }
+        //static long ComputeHash(string val)
+        //{
+        //    var guid = CryptoHelper.ComputeHashUsedByMobilizer(val);
+        //    var byteArray = guid.ToByteArray();
+        //    var result = BitConverter.ToInt64(byteArray, 0);
+        //    return result;
+        //}
     }
 }

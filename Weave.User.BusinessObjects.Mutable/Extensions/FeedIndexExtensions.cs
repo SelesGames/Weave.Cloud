@@ -87,9 +87,9 @@ namespace Weave.User.BusinessObjects.Mutable
                 var yNews = y.NewsItemIndex;
 
                 return
-                    (xNews.Id == yNews.Id) ||
+                    (xNews.Id == yNews.Id); /*||
                     (xNews.TitleHash == yNews.TitleHash) ||
-                    (xNews.UrlHash == yNews.UrlHash);
+                    (xNews.UrlHash == yNews.UrlHash);*/
             }
 
             public int GetHashCode(NewsItemIndexFeedIndexTuple obj)
