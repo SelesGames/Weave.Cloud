@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Weave.Updater.BusinessObjects;
 using Weave.User.Service.Redis;
-using Weave.User.Service.Redis.DTOs;
 
 namespace Weave.RssAggregator.HighFrequency
 {
@@ -11,7 +11,7 @@ namespace Weave.RssAggregator.HighFrequency
     /// and will also add the news item Ids/Score tuple to the sorted news item
     /// index for a particular feed
     /// </summary>
-    public class RedisArticleCacheProcessor : ISequentialAsyncProcessor<HighFrequencyFeedUpdateDto>
+    public class RedisArticleCacheProcessor : ISequentialAsyncProcessor<FeedUpdate>
     {
         NewsItemCacheAdder adder;
 
@@ -22,14 +22,14 @@ namespace Weave.RssAggregator.HighFrequency
 
         public bool IsHandledFully { get { return false; } }
 
-        public async Task ProcessAsync(HighFrequencyFeedUpdateDto update)
+        public async Task ProcessAsync(FeedUpdate update)
         {
             try
             {
-                var entries = update.Entries ?? new List<EntryWithPostProcessInfo>();
+                var entries = update.Entries ?? new List<ExpandedEntry>();
                 var news = entries.Select(Map).ToList();
 
-                var feedId = update.FeedId;
+                var feedId = update.Feed.Id;
 
                 await adder.AddNews(feedId, news);
             }
@@ -41,11 +41,11 @@ namespace Weave.RssAggregator.HighFrequency
 
         #region Map functions
 
-        static NewsItem Map(EntryWithPostProcessInfo o)
+        static Weave.User.Service.Redis.DTOs.NewsItem Map(ExpandedEntry o)
         {
             var bestImage = o.Images.GetBest();
 
-            return new NewsItem
+            return new Weave.User.Service.Redis.DTOs.NewsItem
             {
                 Id = o.Id,
                 UtcPublishDateTime = o.UtcPublishDateTime,

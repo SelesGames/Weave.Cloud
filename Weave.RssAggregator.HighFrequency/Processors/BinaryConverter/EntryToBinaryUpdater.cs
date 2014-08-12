@@ -4,10 +4,11 @@ using System.IO;
 using System.Threading.Tasks;
 using Outgoing = Weave.RssAggregator.Core.DTOs.Outgoing;
 using System.Linq;
+using Weave.Updater.BusinessObjects;
 
 namespace Weave.RssAggregator.HighFrequency
 {
-    public class EntryToBinaryUpdater : ISequentialAsyncProcessor<HighFrequencyFeedUpdateDto>
+    public class EntryToBinaryUpdater : ISequentialAsyncProcessor<FeedUpdate>
     {
         static EntryToBinaryUpdater()
         {
@@ -21,7 +22,7 @@ namespace Weave.RssAggregator.HighFrequency
 
         public bool IsHandledFully { get; private set; }
 
-        public Task ProcessAsync(HighFrequencyFeedUpdateDto update)
+        public Task ProcessAsync(FeedUpdate update)
         {
             if (update.Entries == null)
                 return Task.FromResult<object>(null);
@@ -39,7 +40,7 @@ namespace Weave.RssAggregator.HighFrequency
                 }
             }
 
-            DebugEx.WriteLine("EntryToBinaryUpdater processed: {0}", update.FeedUri);
+            DebugEx.WriteLine("EntryToBinaryUpdater processed: {0}", update.Feed.Uri);
 
             return Task.FromResult<object>(null);
         }
@@ -49,7 +50,7 @@ namespace Weave.RssAggregator.HighFrequency
 
         #region Map functions
 
-        static Outgoing.NewsItem Map(EntryWithPostProcessInfo e)
+        static Outgoing.NewsItem Map(ExpandedEntry e)
         {
             var bestImage = e.Images.GetBest();
 

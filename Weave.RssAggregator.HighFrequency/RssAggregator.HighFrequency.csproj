@@ -70,18 +70,13 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="HFFNews.cs" />
     <Compile Include="HighFrequencyFeed.cs" />
     <Compile Include="HighFrequencyFeedUpdater.cs" />
-    <Compile Include="HighFrequencyFeedUpdateDto.cs" />
-    <Compile Include="Image.cs" />
-    <Compile Include="Images.cs" />
     <Compile Include="Processors\BestImageSelector\BestImageSelectorHelper.cs" />
     <Compile Include="Processors\BestImageSelector\BestImageSelectorProcessor.cs" />
     <Compile Include="Processors\BestImageSelector\ImageInfo.cs" />
     <Compile Include="Processors\BestImageSelector\ImageInfoClient.cs" />
     <Compile Include="Processors\BinaryConverter\EntryToBinaryUpdater.cs" />
-    <Compile Include="EntryWithPostProcessInfo.cs" />
     <Compile Include="Processors\ISequentialAsyncProcessor.cs" />
     <Compile Include="Processors\Mobilizer\MobilizerOverride.cs" />
     <Compile Include="Processors\PubSub\PubSubUpdater.cs" />
@@ -139,6 +134,10 @@
     <ProjectReference Include="..\Weave.RssAggregator.Core\RssAggregator.DTOs.csproj">
       <Project>{2f1a280d-ee75-4dc1-a36c-f8e5488e3260}</Project>
       <Name>RssAggregator.DTOs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Weave.Updater.BusinessObjects\Weave.Updater.BusinessObjects.csproj">
+      <Project>{95fa1246-08c5-4ce4-a78d-e0f3a254aa7c}</Project>
+      <Name>Weave.Updater.BusinessObjects</Name>
     </ProjectReference>
     <ProjectReference Include="..\Weave.User.BusinessObjects.Mutable\Weave.User.BusinessObjects.Mutable.csproj">
       <Project>{fc7c92ee-0aed-4859-b5ec-a770ce148497}</Project>

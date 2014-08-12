@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using Weave.Updater.BusinessObjects;
 
 namespace Weave.RssAggregator.HighFrequency
 {
@@ -39,7 +40,7 @@ namespace Weave.RssAggregator.HighFrequency
         /// </summary>
         /// <param name="entry">The Entry to be added</param>
         /// <returns>True if the Entry was added to the database, False if the Entry already existed.</returns>
-        public async Task<bool> InsertNewsItemIfNotExists(EntryWithPostProcessInfo entry)
+        public async Task<bool> InsertNewsItemIfNotExists(ExpandedEntry entry)
         {
             var storedProcName = "InsertNewsItemIfNotExists";
 

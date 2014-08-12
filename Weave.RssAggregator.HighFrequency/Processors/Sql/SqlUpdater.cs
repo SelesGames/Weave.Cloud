@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Weave.Updater.BusinessObjects;
 
 namespace Weave.RssAggregator.HighFrequency
 {
-    public class SqlUpdater : ISequentialAsyncProcessor<HighFrequencyFeedUpdateDto>
+    public class SqlUpdater : ISequentialAsyncProcessor<FeedUpdate>
     {
         SqlClient dbClient;
 
@@ -15,7 +16,7 @@ namespace Weave.RssAggregator.HighFrequency
 
         public bool IsHandledFully { get { return false; } }
 
-        public async Task ProcessAsync(HighFrequencyFeedUpdateDto update)
+        public async Task ProcessAsync(FeedUpdate update)
         {
             int successCount = 0;
             foreach (var newsItem in Enumerable.Reverse(update.Entries))
@@ -23,7 +24,7 @@ namespace Weave.RssAggregator.HighFrequency
                 if (await TryInsertAsync(newsItem))
                     successCount++;
             }
-            DebugEx.WriteLine("SqlUpdater processed: {0}, {1} inserted into database", update.FeedUri, successCount);
+            DebugEx.WriteLine("SqlUpdater processed: {0}, {1} inserted into database", update.Feed.Uri, successCount);
         }
 
 
@@ -31,7 +32,7 @@ namespace Weave.RssAggregator.HighFrequency
 
         #region private helper functions
 
-        async Task<bool> TryInsertAsync(EntryWithPostProcessInfo entry)
+        async Task<bool> TryInsertAsync(ExpandedEntry entry)
         {
             try
             {

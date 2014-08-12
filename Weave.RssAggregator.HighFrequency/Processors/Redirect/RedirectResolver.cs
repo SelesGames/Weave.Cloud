@@ -4,14 +4,15 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Weave.Updater.BusinessObjects;
 
 namespace Weave.RssAggregator.HighFrequency
 {
-    public class RedirectResolver : ISequentialAsyncProcessor<HighFrequencyFeedUpdateDto>
+    public class RedirectResolver : ISequentialAsyncProcessor<FeedUpdate>
     {
         public bool IsHandledFully { get { return false; } }
 
-        public async Task ProcessAsync(HighFrequencyFeedUpdateDto o)
+        public async Task ProcessAsync(FeedUpdate o)
         {
             //return Task.WhenAll(o.Entries.Select(ProcessEntry));
             if (o == null || EnumerableEx.IsNullOrEmpty(o.Entries))
@@ -24,7 +25,7 @@ namespace Weave.RssAggregator.HighFrequency
             catch { }
         }
 
-        async Task ProcessEntry(EntryWithPostProcessInfo e)
+        async Task ProcessEntry(ExpandedEntry e)
         {
             try
             {

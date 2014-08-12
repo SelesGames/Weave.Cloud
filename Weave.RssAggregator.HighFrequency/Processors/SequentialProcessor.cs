@@ -3,16 +3,17 @@ using System;
 using System.Collections.Generic;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
+using Weave.Updater.BusinessObjects;
 
 namespace Weave.RssAggregator.HighFrequency
 {
     public class SequentialProcessor : IDisposable
     {
-        IEnumerable<IProvider<ISequentialAsyncProcessor<HighFrequencyFeedUpdateDto>>> processorProviders;
-        SubscriptionAggregator<Guid, HighFrequencyFeedUpdateDto> sub;
+        IEnumerable<IProvider<ISequentialAsyncProcessor<FeedUpdate>>> processorProviders;
+        SubscriptionAggregator<Guid, FeedUpdate> sub;
         IDisposable subHandle;
 
-        public SequentialProcessor(IEnumerable<IProvider<ISequentialAsyncProcessor<HighFrequencyFeedUpdateDto>>> processorProviders)
+        public SequentialProcessor(IEnumerable<IProvider<ISequentialAsyncProcessor<FeedUpdate>>> processorProviders)
         {
             this.processorProviders = processorProviders;
             InitializeSubscription();
@@ -25,7 +26,7 @@ namespace Weave.RssAggregator.HighFrequency
 
         void InitializeSubscription()
         {
-            sub = new SubscriptionAggregator<Guid, HighFrequencyFeedUpdateDto>();
+            sub = new SubscriptionAggregator<Guid, FeedUpdate>();
 
             subHandle = sub
                 .SubscribeOn(TaskPoolScheduler.Default)
@@ -38,7 +39,7 @@ namespace Weave.RssAggregator.HighFrequency
                     });
         }
 
-        async void SafeOnHfFeedUpdate(HighFrequencyFeedUpdateDto update)
+        async void SafeOnHfFeedUpdate(FeedUpdate update)
         {
             foreach (var provider in processorProviders)
             {

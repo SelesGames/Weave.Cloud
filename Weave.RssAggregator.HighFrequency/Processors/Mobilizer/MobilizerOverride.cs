@@ -3,10 +3,11 @@ using System.Threading.Tasks;
 using Weave.Mobilizer.Client;
 using Weave.Mobilizer.DTOs;
 using Weave.Mobilizer.HtmlParser;
+using Weave.Updater.BusinessObjects;
 
 namespace Weave.RssAggregator.HighFrequency
 {
-    public class MobilizerOverride : ISequentialAsyncProcessor<HighFrequencyFeedUpdateDto>
+    public class MobilizerOverride : ISequentialAsyncProcessor<FeedUpdate>
     {
         readonly static string token = "hxyuiplkx78!ksdfl";
         readonly MobilizerServiceClient client;
@@ -18,7 +19,7 @@ namespace Weave.RssAggregator.HighFrequency
 
         public bool IsHandledFully { get { return false; } }
 
-        public async Task ProcessAsync(HighFrequencyFeedUpdateDto o)
+        public async Task ProcessAsync(FeedUpdate o)
         {
             if (o.RequiresMobilizerUpload())
             {
@@ -26,7 +27,7 @@ namespace Weave.RssAggregator.HighFrequency
             }
         }
 
-        async Task ProcessEntry(EntryWithPostProcessInfo e, HighFrequencyFeedUpdateDto feed)
+        async Task ProcessEntry(ExpandedEntry e, FeedUpdate feed)
         {
             try
             {
@@ -37,7 +38,7 @@ namespace Weave.RssAggregator.HighFrequency
                     title = e.Title,
                     url = e.Link,
                     date_published = e.UtcPublishDateTimeString,
-                    domain = feed.FeedUri,
+                    domain = feed.Feed.Uri,
                     content = e.Description,
                     author = null,
                     word_count = "not available",
@@ -53,13 +54,13 @@ namespace Weave.RssAggregator.HighFrequency
         }
     }
 
-    internal static class HighFrequencyFeedUpdateDtoExtensions
+    internal static class FeedUpdateExtensions
     {
         readonly static string MOBILIZER_UPLOAD = "mu";
 
-        internal static bool RequiresMobilizerUpload(this HighFrequencyFeedUpdateDto o)
+        internal static bool RequiresMobilizerUpload(this FeedUpdate o)
         {
-            return o.Instructions == null ? false : o.Instructions.Contains(MOBILIZER_UPLOAD);
+            return o.Feed.Instructions == null ? false : o.Feed.Instructions.Contains(MOBILIZER_UPLOAD);
         }
     }
 }

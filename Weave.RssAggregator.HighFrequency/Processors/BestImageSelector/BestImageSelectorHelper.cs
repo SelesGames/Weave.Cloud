@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Weave.Mobilizer.Client;
+using Weave.Updater.BusinessObjects;
 
 namespace Weave.RssAggregator.HighFrequency.Processors.BestImageSelector
 {
@@ -9,10 +10,10 @@ namespace Weave.RssAggregator.HighFrequency.Processors.BestImageSelector
     {
         readonly static string token = "hxyuiplkx78!ksdfl";
         readonly MobilizerServiceClient mobilizerClient;
-        readonly EntryWithPostProcessInfo entry;
+        readonly ExpandedEntry entry;
         readonly ImageInfoClient imageInfoClient;
 
-        public BestImageSelectorHelper(EntryWithPostProcessInfo entry)
+        public BestImageSelectorHelper(ExpandedEntry entry)
         {
             this.entry = entry;
             mobilizerClient = new MobilizerServiceClient(token);

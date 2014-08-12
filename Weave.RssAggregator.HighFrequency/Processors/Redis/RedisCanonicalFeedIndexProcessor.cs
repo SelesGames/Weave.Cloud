@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Weave.Parsing;
-using Weave.RssAggregator.HighFrequency;
+using Weave.Updater.BusinessObjects;
 using Weave.User.BusinessObjects.Mutable;
 using Weave.User.Service.Redis;
 
-namespace Weave.RssAggregator.HighFrequenc
+namespace Weave.RssAggregator.HighFrequency
 {
-    public class RedisCanonicalFeedIndexProcessor : ISequentialAsyncProcessor<HighFrequencyFeedUpdateDto>
+    public class RedisCanonicalFeedIndexProcessor : ISequentialAsyncProcessor<FeedUpdate>
     {
         CanonicalFeedIndexCache cache;
 
@@ -18,7 +17,7 @@ namespace Weave.RssAggregator.HighFrequenc
 
         public bool IsHandledFully { get { return false; } }
 
-        public async Task ProcessAsync(HighFrequencyFeedUpdateDto update)
+        public async Task ProcessAsync(FeedUpdate update)
         {
             try
             {
@@ -33,7 +32,7 @@ namespace Weave.RssAggregator.HighFrequenc
 
         #region Map functions
 
-        static FeedIndex Map(HighFrequencyFeed o)
+        static FeedIndex Map(Feed o)
         {
             if (o == null)
                 throw new ArgumentNullException("o in CreateCanonicalIndex should never be null");
@@ -59,13 +58,11 @@ namespace Weave.RssAggregator.HighFrequenc
             return feedIndex;
         }
 
-        static NewsItemIndex Map(EntryWithPostProcessInfo o)
+        static NewsItemIndex Map(ExpandedEntry o)
         {
             return new NewsItemIndex
             {
                 Id = o.Id,
-                //UrlHash = z,
-                //TitleHash = z,
                 UtcPublishDateTime = o.UtcPublishDateTime,
                 OriginalDownloadDateTime = o.OriginalDownloadDateTime,
                 HasImage = o.Images.GetBest() != null,

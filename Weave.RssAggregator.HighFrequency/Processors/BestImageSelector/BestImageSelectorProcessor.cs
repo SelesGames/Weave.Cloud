@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Weave.RssAggregator.HighFrequency.Processors.BestImageSelector;
+using Weave.Updater.BusinessObjects;
 
 namespace Weave.RssAggregator.HighFrequency
 {
-    public class BestImageSelectorProcessor : ISequentialAsyncProcessor<HighFrequencyFeedUpdateDto>
+    public class BestImageSelectorProcessor : ISequentialAsyncProcessor<FeedUpdate>
     {
         public bool IsHandledFully { get { return false; } }
 
-        public async Task ProcessAsync(HighFrequencyFeedUpdateDto o)
+        public async Task ProcessAsync(FeedUpdate o)
         {
             if (o == null || EnumerableEx.IsNullOrEmpty(o.Entries))
                 return;
@@ -22,7 +23,7 @@ namespace Weave.RssAggregator.HighFrequency
             catch { }
         }
 
-        async Task ProcessEntry(EntryWithPostProcessInfo e)
+        async Task ProcessEntry(ExpandedEntry e)
         {
             try
             {
