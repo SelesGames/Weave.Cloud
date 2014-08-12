@@ -71,8 +71,6 @@ namespace Weave.User.Service.Redis.Serializers.Binary
             //newsItemIndex.IsFavorite = br.ReadBoolean();
             //newsItemIndex.HasBeenViewed = br.ReadBoolean();
 
-            newsItemIndex.UrlHash = br.ReadInt64();
-            newsItemIndex.TitleHash = br.ReadInt64();
             newsItemIndex.UtcPublishDateTime = ReadDateTime();
             newsItemIndex.OriginalDownloadDateTime = ReadDateTime();
             newsItemIndex.HasImage = br.ReadBoolean();

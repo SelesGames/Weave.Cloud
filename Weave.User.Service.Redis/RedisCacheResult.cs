@@ -5,7 +5,7 @@ namespace Weave.User.Service.Redis
     public class RedisCacheResult<T>
     {
         public RedisValue RedisValue { get; internal set; }
-        public bool HasValue { get { return RedisValue.HasValue; } }
+        public bool HasValue { get { return RedisValue.HasValue && Value is T; } }
         public T Value { get; internal set; }
     }
 

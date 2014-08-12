@@ -70,8 +70,6 @@ namespace Weave.User.Service.Redis.Serializers.Binary
             //bw.Write(newsItem.IsFavorite);
             //bw.Write(newsItem.HasBeenViewed);
 
-            bw.Write(newsItem.UrlHash);
-            bw.Write(newsItem.TitleHash);
             bw.Write(newsItem.UtcPublishDateTime.ToBinary());
             bw.Write(newsItem.OriginalDownloadDateTime.ToBinary());
             bw.Write(newsItem.HasImage);

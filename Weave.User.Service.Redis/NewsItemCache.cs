@@ -36,12 +36,18 @@ namespace Weave.User.Service.Redis
 
         public async Task<IEnumerable<bool>> Set(IEnumerable<NewsItem> newsItems)
         {
-            var requests = newsItems.Select(CreateSaveRequest);
-            var results = await Task.WhenAll(requests);
+            var batch = db.CreateBatch();
+            var requests = newsItems.Select(o => CreateSaveRequest(o, batch));
+            //var results = await Task.WhenAll(requests);
+            //return results;
+
+            var resultsTask = Task.WhenAll(requests);
+            batch.Execute();
+            var results = await resultsTask;
             return results;
         }
 
-        Task<bool> CreateSaveRequest(NewsItem newsItem)
+        Task<bool> CreateSaveRequest(NewsItem newsItem, IBatch batch)
         {
             if (newsItem == null)
                 return Task.FromResult(false);
@@ -62,7 +68,8 @@ namespace Weave.User.Service.Redis
             if (!value.HasValue)
                 return Task.FromResult(false);
 
-            return db.StringSetAsync(key, value, TimeSpan.FromDays(60), When.NotExists, CommandFlags.None);
+            //return db.StringSetAsync(key, value, TimeSpan.FromDays(60), When.NotExists, CommandFlags.None);
+            return batch.StringSetAsync(key, value, TimeSpan.FromDays(60), When.NotExists, CommandFlags.None);
         }
     }
 }

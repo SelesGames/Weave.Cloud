@@ -84,8 +84,6 @@ namespace Weave.User.Service.Redis.Serializers.Binary
         {
             bw.Write(newsItem.Id.ToByteArray());
 
-            bw.Write(newsItem.UrlHash);
-            bw.Write(newsItem.TitleHash);
             bw.Write(newsItem.UtcPublishDateTime.ToBinary());
             bw.Write(newsItem.OriginalDownloadDateTime.ToBinary());
             bw.Write(newsItem.IsFavorite);

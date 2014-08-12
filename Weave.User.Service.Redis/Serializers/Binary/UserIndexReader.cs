@@ -86,8 +86,6 @@ namespace Weave.User.Service.Redis.Serializers.Binary
 
             newsItemIndex.Id = ReadGuid();
 
-            newsItemIndex.UrlHash = br.ReadInt64();
-            newsItemIndex.TitleHash = br.ReadInt64();
             newsItemIndex.UtcPublishDateTime = ReadDateTime();
             newsItemIndex.OriginalDownloadDateTime = ReadDateTime();
             newsItemIndex.IsFavorite = br.ReadBoolean();
