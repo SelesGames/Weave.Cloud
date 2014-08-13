@@ -20,7 +20,7 @@ namespace Weave.User.Service.Redis
 
         public async Task<RedisCacheResult<UserIndex>> Get(Guid userId)
         {
-            var db = connection.GetDatabase(DatabaseNumbers.INDICES_AND_NEWSCACHE);
+            var db = connection.GetDatabase(DatabaseNumbers.USER_INDICES);
             var key = (RedisKey)userId.ToByteArray();
 
             var sw = System.Diagnostics.Stopwatch.StartNew();
@@ -38,7 +38,7 @@ namespace Weave.User.Service.Redis
 
         public Task<bool> Save(UserIndex userIndex)
         {
-            var db = connection.GetDatabase(DatabaseNumbers.INDICES_AND_NEWSCACHE);
+            var db = connection.GetDatabase(DatabaseNumbers.USER_INDICES);
             var key = (RedisKey)userIndex.Id.ToByteArray();
             var val = serializer.WriteAs(userIndex);
 

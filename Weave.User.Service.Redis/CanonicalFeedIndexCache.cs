@@ -9,18 +9,17 @@ namespace Weave.User.Service.Redis
 {
     public class CanonicalFeedIndexCache
     {
-        readonly ConnectionMultiplexer connection;
+        readonly IDatabaseAsync db;
         RedisValueSerializer2<FeedIndex> serializer;
 
-        public CanonicalFeedIndexCache(ConnectionMultiplexer connection)
+        public CanonicalFeedIndexCache(IDatabaseAsync db)
         {
-            this.connection = connection;
+            this.db = db;
             this.serializer = new CanonicalFeedIndexBinarySerializer();
         }
 
         public async Task<RedisCacheResult<FeedIndex>> Get(Guid feedId)
         {
-            var db = connection.GetDatabase(DatabaseNumbers.INDICES_AND_NEWSCACHE);
             var key = (RedisKey)feedId.ToByteArray();
 
             var value = await db.StringGetAsync(key, CommandFlags.None);
@@ -30,7 +29,6 @@ namespace Weave.User.Service.Redis
 
         public Task<bool> Save(FeedIndex feedIndex)
         {
-            var db = connection.GetDatabase(DatabaseNumbers.INDICES_AND_NEWSCACHE);
             var key = (RedisKey)feedIndex.Id.ToByteArray();
             var val = serializer.Write(feedIndex);
 

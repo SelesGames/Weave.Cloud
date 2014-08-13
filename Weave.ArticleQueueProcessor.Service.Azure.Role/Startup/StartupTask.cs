@@ -29,7 +29,9 @@ namespace Weave.ArticleQueueProcessor.Service.Azure.Role.Startup
             var connectionMultiplexer = ConnectionMultiplexer.Connect(redisClientConfig);
 
             messageQueue = new ArticleStateChangeMessageQueue(connectionMultiplexer);
-            newsCache = new NewsItemCache(connectionMultiplexer);
+
+            var db = connectionMultiplexer.GetDatabase(DatabaseNumbers.CANONICAL_FEEDS_AND_NEWSITEMS);
+            newsCache = new NewsItemCache(db);
         }
 
         public void OnStart()

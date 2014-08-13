@@ -14,14 +14,12 @@ namespace Weave.User.Service.Redis
     /// </summary>
     public class NewsItemCache
     {
-        readonly ConnectionMultiplexer connection;
-        readonly IDatabase db;
+        readonly IDatabaseAsync db;
         readonly RedisValueSerializer serializer;
 
-        public NewsItemCache(ConnectionMultiplexer connection)
+        public NewsItemCache(IDatabaseAsync db)
         {
-            this.connection = connection;
-            db = connection.GetDatabase(DatabaseNumbers.INDICES_AND_NEWSCACHE);
+            this.db = db;
             serializer = new RedisValueSerializer(new NewsItemBinarySerializer());
         }
 
@@ -36,18 +34,17 @@ namespace Weave.User.Service.Redis
 
         public async Task<IEnumerable<bool>> Set(IEnumerable<NewsItem> newsItems)
         {
-            var batch = db.CreateBatch();
-            var requests = newsItems.Select(o => CreateSaveRequest(o, batch));
-            //var results = await Task.WhenAll(requests);
-            //return results;
-
-            var resultsTask = Task.WhenAll(requests);
-            batch.Execute();
-            var results = await resultsTask;
+            var requests = newsItems.Select(CreateSaveRequest);
+            var results = await Task.WhenAll(requests);
             return results;
+
+            //var resultsTask = Task.WhenAll(requests);
+            //batch.Execute();
+            //var results = await resultsTask;
+            //return results;
         }
 
-        Task<bool> CreateSaveRequest(NewsItem newsItem, IBatch batch)
+        Task<bool> CreateSaveRequest(NewsItem newsItem)
         {
             if (newsItem == null)
                 return Task.FromResult(false);
@@ -68,8 +65,8 @@ namespace Weave.User.Service.Redis
             if (!value.HasValue)
                 return Task.FromResult(false);
 
-            //return db.StringSetAsync(key, value, TimeSpan.FromDays(60), When.NotExists, CommandFlags.None);
-            return batch.StringSetAsync(key, value, TimeSpan.FromDays(60), When.NotExists, CommandFlags.None);
+            return db.StringSetAsync(key, value, TimeSpan.FromDays(60), When.NotExists, CommandFlags.None);
+            //return batch.StringSetAsync(key, value, TimeSpan.FromDays(60), When.NotExists, CommandFlags.None);
         }
     }
 }

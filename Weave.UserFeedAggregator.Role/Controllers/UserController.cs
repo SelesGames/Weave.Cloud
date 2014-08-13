@@ -1,5 +1,6 @@
 ﻿using Microsoft.WindowsAzure.Storage;
 using SelesGames.WebApi;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +27,7 @@ namespace Weave.User.Service.Role.Controllers
 
         readonly UserRepository userRepo;
         readonly UserIndexCache userIndexCache;
-        readonly NewsItemCache newsItemCache;
+        readonly ConnectionMultiplexer connection;
         readonly UserLockHelper userLockHelper;
         readonly IArticleQueueService articleQueueService;
 
@@ -39,13 +40,13 @@ namespace Weave.User.Service.Role.Controllers
         public UserController(
             UserRepository userRepo,
             UserIndexCache userIndexCache,
-            NewsItemCache newsItemCache,
+            ConnectionMultiplexer connection,
             UserLockHelper userLockHelper,
             IArticleQueueService articleQueueService)
         {
             this.userRepo = userRepo;
             this.userIndexCache = userIndexCache;
-            this.newsItemCache = newsItemCache;
+            this.connection = connection;
             this.userLockHelper = userLockHelper;
             this.articleQueueService = articleQueueService;
 
@@ -623,7 +624,7 @@ namespace Weave.User.Service.Role.Controllers
 
                 // save the news articles from the refreshed feeds to Redis
                 var redisNews = userBO.Feeds.AllNews().Select(MapAsRedis);
-                var saveArticlesResults = await newsItemCache.Set(redisNews);
+                var saveArticlesResults = await SaveNewsToRedis(redisNews);
                 DebugEx.WriteLine(saveArticlesResults);
             }
         }
@@ -802,7 +803,7 @@ namespace Weave.User.Service.Role.Controllers
             var redisNews = subset.AllNews().Select(MapAsRedis);
 
             sw.Restart();
-            var saveToRedisResults = await newsItemCache.Set(redisNews);
+            var saveToRedisResults = await SaveNewsToRedis(redisNews);
             sw.Stop();
             timings.SaveToNewsCache = sw.Elapsed.Dump();
         }
@@ -907,15 +908,11 @@ namespace Weave.User.Service.Role.Controllers
                 return new List<Outgoing.NewsItem>();
 
             var newsIds = indices.Select(o => o.NewsItemIndex.Id);
-
-            var sw = System.Diagnostics.Stopwatch.StartNew();
-            var newsItems = await newsItemCache.Get(newsIds);
-            sw.Stop();
-            timings.GetNewsItemsFromCache = sw.Elapsed.Dump();
+            var newsItems = await GetNewsFromRedis(newsIds);
 
             var zipped = indices.Zip(newsItems, (tuple, ni) => new { tuple, ni });
 
-            sw.Restart();
+            var sw = System.Diagnostics.Stopwatch.StartNew();
             var outgoingNews =
                (from temp in zipped.Where(o => o.ni.Value != null)
                 let tuple = temp.tuple
@@ -1096,7 +1093,7 @@ namespace Weave.User.Service.Role.Controllers
 
 
 
-        #region Lock/Unlock User Index
+        #region Redis Lock/Unlock User Index
 
         Task<T> Lock<T>(Guid userId, Func<Task<T>> func)
         {
@@ -1106,6 +1103,43 @@ namespace Weave.User.Service.Role.Controllers
         Task Lock(Guid userId, Func<Task> func)
         {
             return userLockHelper.Lock(userId, func);
+        }
+
+        #endregion
+
+
+
+
+        #region Redis News Cache interactions
+
+        /// <summary>
+        /// Get news from Redis, do not use batching
+        /// </summary>
+        async Task<IEnumerable<RedisCacheResult<Redis.DTOs.NewsItem>>> GetNewsFromRedis(IEnumerable<Guid> newsIds)
+        {
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+
+            var db = connection.GetDatabase(DatabaseNumbers.CANONICAL_FEEDS_AND_NEWSITEMS);
+            var newsItemCache = new NewsItemCache(db);
+            var newsItems = await newsItemCache.Get(newsIds);
+
+            sw.Stop();
+            timings.GetNewsItemsFromCache = sw.Elapsed.Dump();
+
+            return newsItems;
+        }
+
+        /// <summary>
+        /// Save news to Redis; uses batching
+        /// </summary>
+        public Task<IEnumerable<bool>> SaveNewsToRedis(IEnumerable<Redis.DTOs.NewsItem> newsItems)
+        {
+            var db = connection.GetDatabase(DatabaseNumbers.CANONICAL_FEEDS_AND_NEWSITEMS);
+            var batch = db.CreateBatch();
+            var newsItemCache = new NewsItemCache(batch);
+            var resultsTask = newsItemCache.Set(newsItems);
+            batch.Execute();
+            return resultsTask;
         }
 
         #endregion
