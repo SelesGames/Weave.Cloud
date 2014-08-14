@@ -10,12 +10,12 @@ namespace Weave.User.Service.Redis
     public class UserIndexCache
     {
         readonly ConnectionMultiplexer connection;
-        readonly RedisValueSerializer serializer;
+        RedisValueSerializer<UserIndex> serializer;
 
         public UserIndexCache(ConnectionMultiplexer connection)
         {
             this.connection = connection;
-            serializer = new RedisValueSerializer(new UserIndexBinarySerializer());
+            serializer = new UserIndexBinarySerializer();
         }
 
         public async Task<RedisCacheResult<UserIndex>> Get(Guid userId)
@@ -29,7 +29,7 @@ namespace Weave.User.Service.Redis
             DebugEx.WriteLine("the actual getting of the user index took {0} ms", sw.ElapsedMilliseconds);
 
             sw.Restart();
-            var cacheResult = serializer.ReadAs<UserIndex>(value);
+            var cacheResult = serializer.Read(value);
             sw.Stop();
             DebugEx.WriteLine("deserializing the user index took {0} ms", sw.ElapsedMilliseconds);
 
@@ -40,7 +40,7 @@ namespace Weave.User.Service.Redis
         {
             var db = connection.GetDatabase(DatabaseNumbers.USER_INDICES);
             var key = (RedisKey)userIndex.Id.ToByteArray();
-            var val = serializer.WriteAs(userIndex);
+            var val = serializer.Write(userIndex);
 
             return db.StringSetAsync(
                 key: key, 

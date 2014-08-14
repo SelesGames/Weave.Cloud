@@ -10,7 +10,7 @@ namespace Weave.User.Service.Redis
     public class CanonicalFeedIndexCache
     {
         readonly IDatabaseAsync db;
-        RedisValueSerializer2<FeedIndex> serializer;
+        RedisValueSerializer<FeedIndex> serializer;
 
         public CanonicalFeedIndexCache(IDatabaseAsync db)
         {

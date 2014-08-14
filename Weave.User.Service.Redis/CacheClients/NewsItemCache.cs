@@ -15,12 +15,12 @@ namespace Weave.User.Service.Redis
     public class NewsItemCache
     {
         readonly IDatabaseAsync db;
-        readonly RedisValueSerializer serializer;
+        readonly RedisValueSerializer<NewsItem> serializer;
 
         public NewsItemCache(IDatabaseAsync db)
         {
             this.db = db;
-            serializer = new RedisValueSerializer(new NewsItemBinarySerializer());
+            serializer = new NewsItemBinarySerializer();
         }
 
         public async Task<IEnumerable<RedisCacheResult<NewsItem>>> Get(IEnumerable<Guid> newsItemIds)
@@ -28,7 +28,7 @@ namespace Weave.User.Service.Redis
             var keys = newsItemIds.Select(o => (RedisKey)o.ToByteArray()).ToArray();
 
             var values = await db.StringGetAsync(keys, CommandFlags.None);
-            var results = values.Select(serializer.ReadAs<NewsItem>);
+            var results = values.Select(serializer.Read);
             return results;
         }
 
@@ -37,11 +37,6 @@ namespace Weave.User.Service.Redis
             var requests = newsItems.Select(CreateSaveRequest);
             var results = await Task.WhenAll(requests);
             return results;
-
-            //var resultsTask = Task.WhenAll(requests);
-            //batch.Execute();
-            //var results = await resultsTask;
-            //return results;
         }
 
         Task<bool> CreateSaveRequest(NewsItem newsItem)
@@ -55,7 +50,7 @@ namespace Weave.User.Service.Redis
             try
             {
                 key = (RedisKey)newsItem.Id.ToByteArray();
-                value = serializer.WriteAs(newsItem);
+                value = serializer.Write(newsItem);
             }
             catch
             {
@@ -66,7 +61,6 @@ namespace Weave.User.Service.Redis
                 return Task.FromResult(false);
 
             return db.StringSetAsync(key, value, TimeSpan.FromDays(60), When.NotExists, CommandFlags.None);
-            //return batch.StringSetAsync(key, value, TimeSpan.FromDays(60), When.NotExists, CommandFlags.None);
         }
     }
 }
