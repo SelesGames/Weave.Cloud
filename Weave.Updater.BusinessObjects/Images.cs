@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,6 +17,9 @@ namespace Weave.Updater.BusinessObjects
         public bool Add(Image image)
         {
             if (image == null)
+                return false;
+
+            if (!Uri.IsWellFormedUriString(image.Url, UriKind.Absolute))
                 return false;
 
             innerList.Add(image);

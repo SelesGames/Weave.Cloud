@@ -29,8 +29,8 @@ namespace Weave.User.Service.Redis.Serializers.Binary
 
         internal void Write()
         {
-            bw.Write(newsItem.Id.ToByteArray());
-            bw.Write(newsItem.UtcPublishDateTime.ToBinary());
+            bw.Write(newsItem.Id);
+            bw.Write(newsItem.UtcPublishDateTime);
             bw.Write(newsItem.UtcPublishDateTimeString ?? "");
 
             var nullStates = 
@@ -47,7 +47,7 @@ namespace Weave.User.Service.Redis.Serializers.Binary
                 }
                 .Select(IsNotNull)
                 .ToList();
-            var stringState = ToByte(nullStates);
+            var stringState = nullStates.ToByte();
             bitEnumerator = nullStates.GetEnumerator();
 
             bw.Write(stringState);
@@ -88,24 +88,6 @@ namespace Weave.User.Service.Redis.Serializers.Binary
             }
 
             return true;
-        }
-
-        byte ToByte(IEnumerable<bool> bools)
-        {
-            int x = 0;
-            int index = 0;
-
-            foreach (var val in bools)
-            {
-                int mask = 1 << index;
-
-                if (val)
-                    x |= mask;
-
-                index++;
-            }
-
-            return (byte)x;
         }
 
         bool NextBit()

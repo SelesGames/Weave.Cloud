@@ -18,7 +18,7 @@ namespace Weave.Updater.BusinessObjects
         public string Name { get; private set; }
         public IReadOnlyList<string> Instructions { get; private set; }
         public FeedState LastFeedState { get; private set; }
-        public ExpandedEntries News { get; private set; }
+        public ExpandedEntries Entries { get; private set; }
 
         public string TeaserImageUrl { get; set; }
 
@@ -53,7 +53,7 @@ namespace Weave.Updater.BusinessObjects
             LastFeedState = FeedState.Uninitialized;
             RefreshTimeout = TimeSpan.FromMinutes(1);
 
-            News = new ExpandedEntries();
+            Entries = new ExpandedEntries();
 
             if (!string.IsNullOrWhiteSpace(instructions))
             {
@@ -92,11 +92,11 @@ namespace Weave.Updater.BusinessObjects
                         foreach (var o in resultNews)
                         {
                             o.OriginalDownloadDateTime = now;
-                            if (News.Add(o))
+                            if (Entries.Add(o))
                                 addedNews.Add(o);
                         }
 
-                        News.TrimTo(NUMBER_OF_NEWSITEMS_TO_HOLD);
+                        Entries.TrimTo(NUMBER_OF_NEWSITEMS_TO_HOLD);
 
                         if (addedNews.Any())
                         {
@@ -213,7 +213,7 @@ namespace Weave.Updater.BusinessObjects
 
         void UpdateTeaserImage()
         {
-            var image = News.SelectMany(o => o.Images).GetBest();
+            var image = Entries.SelectMany(o => o.Images).GetBest();
             if (image != null)
                 TeaserImageUrl = image.Url;
             //TeaserImageUrl = News

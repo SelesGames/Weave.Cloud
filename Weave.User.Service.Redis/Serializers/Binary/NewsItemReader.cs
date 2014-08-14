@@ -29,13 +29,13 @@ namespace Weave.User.Service.Redis.Serializers.Binary
         {
             newsItem = new NewsItem();
 
-            newsItem.Id = ReadGuid();
-            newsItem.UtcPublishDateTime = ReadDateTime();
+            newsItem.Id = br.ReadGuid();
+            newsItem.UtcPublishDateTime = br.ReadDateTime();
             newsItem.UtcPublishDateTimeString = ReadString();
 
             // a byte containing 8 true/false values for the presence of subsequent Strings and Image value
             var stringState = br.ReadByte();
-            bitEnumerator = GetBits(stringState).GetEnumerator();
+            bitEnumerator = stringState.GetBits().GetEnumerator();
 
             if (NextBit()) newsItem.Title = br.ReadString();
             if (NextBit()) newsItem.Link = br.ReadString();
@@ -62,19 +62,6 @@ namespace Weave.User.Service.Redis.Serializers.Binary
             newsItem.Image = image;
         }
 
-        IEnumerable<bool> GetBits(byte b)
-        {
-            for (int i = 0; i < 8; i++)
-            {
-                yield return ReadBit(b, i);
-            }
-        }
-
-        Guid ReadGuid()
-        {
-            return new Guid(br.ReadBytes(16));
-        }
-
         string ReadString()
         {
             var read = br.ReadString();
@@ -82,16 +69,6 @@ namespace Weave.User.Service.Redis.Serializers.Binary
                 return null;
             else
                 return read;
-        }
-
-        DateTime ReadDateTime()
-        {
-            return DateTime.FromBinary(br.ReadInt64());
-        }
-
-        bool ReadBit(byte b, int bitIndex)
-        {
-            return (b & (1 << bitIndex)) != 0;
         }
 
         bool NextBit()

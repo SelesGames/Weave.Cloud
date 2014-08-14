@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using Weave.User.BusinessObjects;
 using Weave.User.BusinessObjects.Mutable;
 
 namespace Weave.User.Service.Redis.Serializers.Binary
@@ -28,7 +27,7 @@ namespace Weave.User.Service.Redis.Serializers.Binary
         {
             feedIndex = new FeedIndex();
 
-            feedIndex.Id = ReadGuid();
+            feedIndex.Id = br.ReadGuid();
 
             // CERTAIN VALUES NO LONGER HOLD TRUE FOR CANONICAL FEEDS
             // since this feed data is not specific to any particular user, the
@@ -49,7 +48,7 @@ namespace Weave.User.Service.Redis.Serializers.Binary
             feedIndex.MostRecentNewsItemPubDate = ReadString();
 
             // read DateTime values
-            feedIndex.LastRefreshedOn = ReadDateTime();
+            feedIndex.LastRefreshedOn = br.ReadDateTime();
 
             var newsItemCount = br.ReadInt32();
 
@@ -63,7 +62,7 @@ namespace Weave.User.Service.Redis.Serializers.Binary
         {
             var newsItemIndex = new NewsItemIndex();
 
-            newsItemIndex.Id = ReadGuid();
+            newsItemIndex.Id = br.ReadGuid();
 
             // CERTAIN VALUES NO LONGER HOLD TRUE FOR CANONICAL NEWS ITEM INDICES
             // since this news item data is not specific to any particular user, the
@@ -71,16 +70,11 @@ namespace Weave.User.Service.Redis.Serializers.Binary
             //newsItemIndex.IsFavorite = br.ReadBoolean();
             //newsItemIndex.HasBeenViewed = br.ReadBoolean();
 
-            newsItemIndex.UtcPublishDateTime = ReadDateTime();
-            newsItemIndex.OriginalDownloadDateTime = ReadDateTime();
+            newsItemIndex.UtcPublishDateTime = br.ReadDateTime();
+            newsItemIndex.OriginalDownloadDateTime = br.ReadDateTime();
             newsItemIndex.HasImage = br.ReadBoolean();
 
             feedIndex.NewsItemIndices.Add(newsItemIndex);
-        }
-
-        Guid ReadGuid()
-        {
-            return new Guid(br.ReadBytes(16));
         }
 
         string ReadString()
@@ -90,11 +84,6 @@ namespace Weave.User.Service.Redis.Serializers.Binary
                 return null;
             else
                 return read;
-        }
-
-        DateTime ReadDateTime()
-        {
-            return DateTime.FromBinary(br.ReadInt64());
         }
 
         public void Dispose()

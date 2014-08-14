@@ -25,7 +25,7 @@ namespace Weave.User.Service.Redis.Serializers.Binary
 
         public void Write()
         {
-            bw.Write(feed.Id.ToByteArray());
+            bw.Write(feed.Id);
 
             // CERTAIN VALUES NO LONGER HOLD TRUE FOR CANONICAL FEEDS
             // since this feed data is not specific to any particular user, the
@@ -45,7 +45,7 @@ namespace Weave.User.Service.Redis.Serializers.Binary
             bw.Write(feed.MostRecentNewsItemPubDate ?? "");
 
             // write DateTime values
-            bw.Write(feed.LastRefreshedOn.ToBinary());
+            bw.Write(feed.LastRefreshedOn);
 
             if (feed.NewsItemIndices != null)
             {
@@ -62,7 +62,7 @@ namespace Weave.User.Service.Redis.Serializers.Binary
 
         void WriteNewsItemIndex(NewsItemIndex newsItem)
         {
-            bw.Write(newsItem.Id.ToByteArray());
+            bw.Write(newsItem.Id);
 
             // CERTAIN VALUES NO LONGER HOLD TRUE FOR CANONICAL NEWS ITEM INDICES
             // since this news item data is not specific to any particular user, the
@@ -70,8 +70,8 @@ namespace Weave.User.Service.Redis.Serializers.Binary
             //bw.Write(newsItem.IsFavorite);
             //bw.Write(newsItem.HasBeenViewed);
 
-            bw.Write(newsItem.UtcPublishDateTime.ToBinary());
-            bw.Write(newsItem.OriginalDownloadDateTime.ToBinary());
+            bw.Write(newsItem.UtcPublishDateTime);
+            bw.Write(newsItem.OriginalDownloadDateTime);
             bw.Write(newsItem.HasImage);
         }
 

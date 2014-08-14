@@ -3,7 +3,7 @@ using Weave.User.BusinessObjects.Mutable;
 
 namespace Weave.User.Service.Redis.Serializers.Binary
 {
-    class CanonicalFeedIndexBinarySerializer : RedisValueSerializer2<FeedIndex>
+    class CanonicalFeedIndexBinarySerializer : RedisValueSerializer<FeedIndex>
     {
         protected override FeedIndex Map(RedisValue value)
         {

@@ -1,36 +1,26 @@
-﻿using System.Linq;
+﻿using StackExchange.Redis;
 using Weave.User.Service.Redis.DTOs;
 
 namespace Weave.User.Service.Redis.Serializers.Binary
 {
-    class NewsItemBinarySerializer : IByteSerializer
+    class NewsItemBinarySerializer : RedisValueSerializer<NewsItem>
     {
-        public byte[] WriteNewsItem(NewsItem newsItem)
+        protected override NewsItem Map(RedisValue value)
         {
-            using (var helper = new NewsItemWriter(newsItem))
+            using (var reader = new NewsItemReader((byte[])value))
             {
-                helper.Write();
-                return helper.GetBytes();
+                reader.Read();
+                return reader.GetNewsItem();
             }
         }
 
-        public NewsItem ReadNewsItem(byte[] byteArray)
+        protected override RedisValue Map(NewsItem o)
         {
-            using (var helper = new NewsItemReader(byteArray))
+            using (var writer = new NewsItemWriter(o))
             {
-                helper.Read();
-                return helper.GetNewsItem();
+                writer.Write();
+                return writer.GetBytes();
             }
-        }
-
-        public T ReadObject<T>(byte[] byteArray)
-        {
-            return new[] { ReadNewsItem(byteArray) }.Cast<T>().First();
-        }
-
-        public byte[] WriteObject<T>(T obj)
-        {
-            return WriteNewsItem(new[] { obj }.Cast<NewsItem>().First());
         }
     }
 }

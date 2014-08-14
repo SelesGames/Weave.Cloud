@@ -1,36 +1,26 @@
-﻿using System.Linq;
+﻿using StackExchange.Redis;
 using Weave.User.BusinessObjects.Mutable;
 
 namespace Weave.User.Service.Redis.Serializers.Binary
 {
-    class UserIndexBinarySerializer : IByteSerializer
+    class UserIndexBinarySerializer : RedisValueSerializer<UserIndex>
     {
-        public byte[] WriterUserIndex(UserIndex userIndex)
+        protected override UserIndex Map(RedisValue value)
         {
-            using (var helper = new UserIndexWriter(userIndex))
+            using (var reader = new UserIndexReader((byte[])value))
             {
-                helper.Write();
-                return helper.GetBytes();
+                reader.Read();
+                return reader.GetUserIndex();
             }
         }
 
-        public UserIndex ReadUserIndex(byte[] byteArray)
+        protected override RedisValue Map(UserIndex o)
         {
-            using (var helper = new UserIndexReader(byteArray))
+            using (var writer = new UserIndexWriter(o))
             {
-                helper.Read();
-                return helper.GetUserIndex();
+                writer.Write();
+                return writer.GetBytes();
             }
-        }
-
-        public T ReadObject<T>(byte[] byteArray)
-        {
-            return new[] { ReadUserIndex(byteArray) }.Cast<T>().First();
-        }
-
-        public byte[] WriteObject<T>(T obj)
-        {
-            return WriterUserIndex(new[] { obj }.Cast<UserIndex>().First());
         }
     }
 }
