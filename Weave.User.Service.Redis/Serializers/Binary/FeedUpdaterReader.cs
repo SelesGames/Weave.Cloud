@@ -63,7 +63,7 @@ namespace Weave.User.Service.Redis.Serializers.Binary
             var stringState = br.ReadByte();
             bitEnumerator = stringState.GetBits().GetEnumerator();
 
-            if (NextBit()) entry.Description = br.ReadString();
+            //if (NextBit()) entry.Description = br.ReadString();
             if (NextBit()) entry.YoutubeId = br.ReadString();
             if (NextBit()) entry.VideoUri = br.ReadString();
             if (NextBit()) entry.PodcastUri = br.ReadString();

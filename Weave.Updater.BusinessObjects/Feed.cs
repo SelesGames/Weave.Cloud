@@ -91,6 +91,8 @@ namespace Weave.Updater.BusinessObjects
 
                         foreach (var o in resultNews)
                         {
+                            // null out the Description field
+                            o.Description = null;
                             o.OriginalDownloadDateTime = now;
                             if (Entries.Add(o))
                                 addedNews.Add(o);

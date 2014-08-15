@@ -60,7 +60,7 @@ namespace Weave.User.Service.Redis.Serializers.Binary
             var nullStates = 
                 new List<object>
                 {
-                    entry.Description,
+                    //entry.Description,
                     entry.YoutubeId,
                     entry.VideoUri,
                     entry.PodcastUri,
@@ -74,7 +74,7 @@ namespace Weave.User.Service.Redis.Serializers.Binary
 
             bw.Write(stringState);
 
-            if (NextBit()) bw.Write(entry.Description);
+            //if (NextBit()) bw.Write(entry.Description);
             if (NextBit()) bw.Write(entry.YoutubeId);
             if (NextBit()) bw.Write(entry.VideoUri);
             if (NextBit()) bw.Write(entry.PodcastUri);
