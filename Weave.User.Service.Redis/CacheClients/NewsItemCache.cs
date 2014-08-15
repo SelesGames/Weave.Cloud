@@ -60,7 +60,12 @@ namespace Weave.User.Service.Redis
             if (!value.HasValue)
                 return Task.FromResult(false);
 
-            return db.StringSetAsync(key, value, TimeSpan.FromDays(60), When.NotExists, CommandFlags.None);
+            return db.StringSetAsync(
+                key: key, 
+                value: value, 
+                expiry: TimeSpan.FromDays(60), 
+                when: When.NotExists, 
+                flags: CommandFlags.None);
         }
     }
 }

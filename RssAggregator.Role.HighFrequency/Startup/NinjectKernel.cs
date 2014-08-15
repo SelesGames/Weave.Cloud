@@ -42,9 +42,9 @@ namespace RssAggregator.Role.HighFrequency
                     DelegateProvider.Create(() => this.Get<EntryToBinaryUpdater>()),
                     DelegateProvider.Create(() => this.Get<SqlUpdater>()),
                     DelegateProvider.Create(() => this.Get<RedisFeedAndNewsProcessor>()),
+                    DelegateProvider.Create(() => this.Get<PubSubUpdater>()),
                     DelegateProvider.Create(() => this.Get<FeedUpdaterProcessor>()),
                     DelegateProvider.Create(() => this.Get<MobilizerOverride>()),
-                    DelegateProvider.Create(() => this.Get<PubSubUpdater>()),
                 }))
                 .InSingletonScope();
         }
