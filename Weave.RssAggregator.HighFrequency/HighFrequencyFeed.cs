@@ -31,9 +31,26 @@ namespace Weave.RssAggregator.HighFrequency
         /// </summary>
         public async Task Initialize()
         {
-            var key = RedisPrependKeyCreator.Create("expandedEntry:", Id.ToByteArray());
-            var val = db.StringGetAsync(key, flags: CommandFlags.None);
-            
+            var cache = new FeedUpdaterCache(db);
+
+            var cachedDataResult = await cache.Get(Id);
+            if (cachedDataResult.HasValue)
+            {
+                var cachedData = cachedDataResult.Value;
+                CopyState(cachedData);
+            }
+        }
+
+        void CopyState(Feed o)
+        {
+            innerFeed.TeaserImageUrl = o.TeaserImageUrl;
+            innerFeed.LastRefreshedOn = o.LastRefreshedOn;
+            innerFeed.Etag = o.Etag;
+            innerFeed.LastModified = o.LastModified;
+            innerFeed.MostRecentNewsItemPubDate = o.MostRecentNewsItemPubDate;
+
+            foreach (var entry in o.Entries)
+                innerFeed.Entries.Add(entry);
         }
 
         public async Task Refresh()

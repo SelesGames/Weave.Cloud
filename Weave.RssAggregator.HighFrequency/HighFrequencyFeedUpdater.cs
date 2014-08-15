@@ -1,19 +1,22 @@
-﻿using System;
+﻿using StackExchange.Redis;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Weave.RssAggregator.LibraryClient;
+using Weave.User.Service.Redis;
 
 namespace Weave.RssAggregator.HighFrequency
 {
     public class HighFrequencyFeedUpdater : IDisposable
     {
         Dictionary<string, HighFrequencyFeed> feeds = new Dictionary<string, HighFrequencyFeed>();
-    
-        TimeSpan highFrequencyRefreshPeriod;
-        string feedLibraryUrl;
-        SequentialProcessor processor;
+
+        readonly TimeSpan highFrequencyRefreshPeriod;
+        readonly string feedLibraryUrl;
+        readonly SequentialProcessor processor;
+        readonly IDatabase db;
         int currentRefreshIndex = 0;
         IDisposable subHandle;
 
@@ -21,23 +24,28 @@ namespace Weave.RssAggregator.HighFrequency
 
         #region Constructors
 
-        public HighFrequencyFeedUpdater(string feedLibraryUrl, SequentialProcessor processor)
+        public HighFrequencyFeedUpdater(
+            string feedLibraryUrl, 
+            SequentialProcessor processor, 
+            ConnectionMultiplexer connection)
         {
             if (string.IsNullOrEmpty(feedLibraryUrl)) return;
 
             this.feedLibraryUrl = feedLibraryUrl;
             this.processor = processor;
+            this.db = connection.GetDatabase(DatabaseNumbers.FEED_UPDATER);
 
             // set some default values
             this.highFrequencyRefreshPeriod = TimeSpan.FromMinutes(20);
         }
 
         public HighFrequencyFeedUpdater(
-                                    string feedLibraryUrl,
-                                    SequentialProcessor processor, 
-                                    TimeSpan highFrequencyRefreshPeriod)
+            string feedLibraryUrl,
+            SequentialProcessor processor,
+            ConnectionMultiplexer connection,
+            TimeSpan highFrequencyRefreshPeriod)
 
-            : this(feedLibraryUrl, processor)
+            : this(feedLibraryUrl, processor, connection)
         {
             if (string.IsNullOrEmpty(feedLibraryUrl)) return;
 
@@ -56,13 +64,16 @@ namespace Weave.RssAggregator.HighFrequency
             await feedClient.LoadFeedsAsync();
             var libraryFeeds = feedClient.Feeds;
 
-            var highFrequencyFeeds = libraryFeeds
+            var highFrequencyFeedsTasks = libraryFeeds
                 .Distinct()
                 //.Where(o => !string.IsNullOrWhiteSpace(o.CorrectedUri))
                 //.Where(o => o.FeedUri == "http://feeds.feedburner.com/Destructoid")
-                .Select(CreateHighFrequencyFeed)
-                .OfType<HighFrequencyFeed>()
-                .ToList();
+                .Select(CreateHighFrequencyFeed);
+
+            IEnumerable<HighFrequencyFeed> highFrequencyFeeds = 
+                await Task.WhenAll(highFrequencyFeedsTasks);
+
+            highFrequencyFeeds = highFrequencyFeeds.OfType<HighFrequencyFeed>();
 
             foreach (var feed in highFrequencyFeeds)
             {
@@ -73,7 +84,7 @@ namespace Weave.RssAggregator.HighFrequency
             feeds = highFrequencyFeeds.ToDictionary(o => o.Uri);
         }
 
-        HighFrequencyFeed CreateHighFrequencyFeed(FeedSource o)
+        async Task<HighFrequencyFeed> CreateHighFrequencyFeed(FeedSource o)
         {
             try
             {
@@ -89,8 +100,9 @@ namespace Weave.RssAggregator.HighFrequency
                     feedUri = o.FeedUri;
                 }
 
-                return new HighFrequencyFeed(o.FeedName, feedUri, originalUri, o.Instructions);
-
+                var hff = new HighFrequencyFeed(o.FeedName, feedUri, originalUri, o.Instructions, db);
+                await hff.Initialize();
+                return hff;
             }
             catch(Exception ex)
             {

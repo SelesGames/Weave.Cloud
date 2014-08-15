@@ -25,9 +25,9 @@ namespace Weave.User.Service.Redis.Serializers.Binary
 
         internal void Write()
         {
-            bw.Write(user.Id.ToByteArray());
-            bw.Write(user.PreviousLoginTime.ToBinary());
-            bw.Write(user.CurrentLoginTime.ToBinary());
+            bw.Write(user.Id);
+            bw.Write(user.PreviousLoginTime);
+            bw.Write(user.CurrentLoginTime);
 
             // write string values
             bw.Write(user.ArticleDeletionTimeForMarkedRead ?? "");
@@ -48,7 +48,7 @@ namespace Weave.User.Service.Redis.Serializers.Binary
 
         void WriteFeedIndex(FeedIndex feed)
         {
-            bw.Write(feed.Id.ToByteArray());
+            bw.Write(feed.Id);
 
             // write string values
             bw.Write(feed.Uri ?? "");
@@ -61,9 +61,9 @@ namespace Weave.User.Service.Redis.Serializers.Binary
             bw.Write(feed.MostRecentNewsItemPubDate ?? "");
 
             // write DateTime values
-            bw.Write(feed.LastRefreshedOn.ToBinary());
-            bw.Write(feed.MostRecentEntrance.ToBinary());
-            bw.Write(feed.PreviousEntrance.ToBinary());
+            bw.Write(feed.LastRefreshedOn);
+            bw.Write(feed.MostRecentEntrance);
+            bw.Write(feed.PreviousEntrance);
 
             bw.Write((int)feed.ArticleViewingType);
 
@@ -82,10 +82,10 @@ namespace Weave.User.Service.Redis.Serializers.Binary
 
         void WriteNewsItemIndex(NewsItemIndex newsItem)
         {
-            bw.Write(newsItem.Id.ToByteArray());
+            bw.Write(newsItem.Id);
 
-            bw.Write(newsItem.UtcPublishDateTime.ToBinary());
-            bw.Write(newsItem.OriginalDownloadDateTime.ToBinary());
+            bw.Write(newsItem.UtcPublishDateTime);
+            bw.Write(newsItem.OriginalDownloadDateTime);
             bw.Write(newsItem.IsFavorite);
             bw.Write(newsItem.HasBeenViewed);
             bw.Write(newsItem.HasImage);
