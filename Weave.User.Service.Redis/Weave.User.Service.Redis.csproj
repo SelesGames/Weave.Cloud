@@ -52,6 +52,7 @@
     <Compile Include="DTOs\NewsItem.cs" />
     <Compile Include="Communication\MessageQueue.cs" />
     <Compile Include="Extensions\BinaryExtensions.cs" />
+    <Compile Include="Extensions\UpdaterFeedExtensions.cs" />
     <Compile Include="PubSub\PubSubHelper.cs" />
     <Compile Include="RedisPrependKeyCreator.cs" />
     <Compile Include="RedisValueMap.cs" />

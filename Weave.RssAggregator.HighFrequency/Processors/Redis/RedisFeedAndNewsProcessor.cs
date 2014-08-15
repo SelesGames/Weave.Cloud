@@ -44,7 +44,11 @@ namespace Weave.RssAggregator.HighFrequency
                 DebugEx.WriteLine(feedResult);
                 DebugEx.WriteLine(newsItemsResults);
             }
-            catch { }
+            catch(Exception ex)
+            {
+                DebugEx.WriteLine("\r\n\r\n**** RedisFeedAndNewsProcessor ERROR ****");
+                DebugEx.WriteLine(ex);
+            }
         }
 
 

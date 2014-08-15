@@ -32,11 +32,6 @@ namespace Weave.User.Service.Role.Startup
             var connectionMultiplexer = ConnectionMultiplexer.Connect(redisClientConfig);
 
             Bind<ConnectionMultiplexer>().ToConstant(connectionMultiplexer).InSingletonScope();
-
-//            var server = connectionMultiplexer.GetServer(
-//"weaveuser.redis.cache.windows.net", 6379);
-//            server.FlushDatabase(0);
-
             Bind<IArticleQueueService>().To<ArticleQueueService>();
         }
     }

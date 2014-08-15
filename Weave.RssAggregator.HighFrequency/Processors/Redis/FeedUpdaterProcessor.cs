@@ -35,7 +35,11 @@ namespace Weave.RssAggregator.HighFrequency
                 DebugEx.WriteLine("Took {0} ms to save feed {1}", sw.Elapsed.TotalMilliseconds, update.Feed.Name);
                 DebugEx.WriteLine(result);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                DebugEx.WriteLine("\r\n\r\n**** FeedUpdaterProcessor ERROR ****");
+                DebugEx.WriteLine(ex);
+            }
         }
     }
 }

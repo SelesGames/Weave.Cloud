@@ -29,28 +29,9 @@ namespace Weave.RssAggregator.HighFrequency
         /// <summary>
         /// Recover the feed's state from Redis.  this will be used whenever the service restarts
         /// </summary>
-        public async Task Initialize()
+        public Task Initialize()
         {
-            var cache = new FeedUpdaterCache(db);
-
-            var cachedDataResult = await cache.Get(Id);
-            if (cachedDataResult.HasValue)
-            {
-                var cachedData = cachedDataResult.Value;
-                CopyState(cachedData);
-            }
-        }
-
-        void CopyState(Feed o)
-        {
-            innerFeed.TeaserImageUrl = o.TeaserImageUrl;
-            innerFeed.LastRefreshedOn = o.LastRefreshedOn;
-            innerFeed.Etag = o.Etag;
-            innerFeed.LastModified = o.LastModified;
-            innerFeed.MostRecentNewsItemPubDate = o.MostRecentNewsItemPubDate;
-
-            foreach (var entry in o.Entries)
-                innerFeed.Entries.Add(entry);
+            return innerFeed.RecoverStateFromRedis(db);
         }
 
         public async Task Refresh()

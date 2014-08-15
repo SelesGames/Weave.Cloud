@@ -59,7 +59,7 @@ namespace Weave.RssAggregator.HighFrequency
                 new SqlParameter("p3", entry.UtcPublishDateTime) { SqlDbType = SqlDbType.DateTime },
                 new SqlParameter("p4", entry.Title) { SqlDbType = SqlDbType.NVarChar },
                 new SqlParameter("p5", entry.Link) { SqlDbType = SqlDbType.NVarChar },
-                new SqlParameter("p6", entry.Description) { SqlDbType = SqlDbType.NVarChar },
+                new SqlParameter("p6", ""/*entry.Description*/) { SqlDbType = SqlDbType.NVarChar },
                 new SqlParameter("p7", entry.OriginalPublishDateTimeString) { SqlDbType = SqlDbType.NVarChar },
                 new SqlParameter("p8", entry.UtcPublishDateTimeString) { SqlDbType = SqlDbType.NVarChar },
 
