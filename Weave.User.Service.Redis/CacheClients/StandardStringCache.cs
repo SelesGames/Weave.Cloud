@@ -1,176 +1,123 @@
 ﻿using StackExchange.Redis;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
-using Weave.User.BusinessObjects.Mutable;
 using Weave.User.Service.Redis.Serializers;
-using Weave.User.Service.Redis.Serializers.Binary;
 
 namespace Weave.User.Service.Redis
 {
-    class StandardStringCache<TKey, TResult>
+    public static class Timings
     {
-        readonly IDatabaseAsync db;
-        readonly Func<TKey, RedisKey> keyMap;
-        readonly Func<TResult, TKey> objToKeyMap;
-        readonly RedisValueSerializer<TResult> serializer;
+        public static bool AreEnabled { get; set; }
 
-        public StandardStringCache(IDatabaseAsync db, Func<TKey, RedisKey> keyMap, Func<TResult, TKey> objToKeyMap, RedisValueSerializer<TResult> serializer)
+        static Timings()
         {
-            this.db = db;
-            this.keyMap = keyMap;
-            this.objToKeyMap = objToKeyMap;
-            this.serializer = serializer;
+            AreEnabled = true;
+        }
+    }
+
+    class TimingHelper
+    {
+        System.Diagnostics.Stopwatch sw;
+
+        public void Start()
+        {
+            if (Timings.AreEnabled)
+            {
+                if (sw == null)
+                    sw = System.Diagnostics.Stopwatch.StartNew();
+                else
+                    sw.Restart();
+            }
         }
 
-        public async Task<RedisCacheResult<TResult>> Get(TKey key)
+        public TimeSpan Record()
         {
-            var redisKey = keyMap(key);
+            if (Timings.AreEnabled && sw != null)
+            {
+                sw.Stop();
+                return sw.Elapsed;
+            }
 
-            var sw = System.Diagnostics.Stopwatch.StartNew();
-            var value = await db.StringGetAsync(redisKey, CommandFlags.None);
-            sw.Stop();
-            DebugEx.WriteLine("the actual getting of the user index took {0} ms", sw.ElapsedMilliseconds);
+            return TimeSpan.Zero;
+        }
+    }
 
-            sw.Restart();
+    public class StandardStringCache<T>
+    {
+        readonly IDatabaseAsync db;
+        readonly RedisValueSerializer<T> serializer;
+        readonly TimingHelper sw;
+
+        public StandardStringCache(IDatabaseAsync db, RedisValueSerializer<T> serializer)
+        {
+            this.db = db;
+            this.serializer = serializer;
+            this.sw = new TimingHelper();
+        }
+
+        protected async Task<RedisCacheResult<T>> Get(RedisKey key, CommandFlags flags = CommandFlags.None)
+        {
+            var timings = new CacheTimings();
+
+            sw.Start();
+            var value = await db.StringGetAsync(key, flags);
+            timings.ServiceTime = sw.Record();
+
+            sw.Start();
             var cacheResult = serializer.Read(value);
-            sw.Stop();
-            DebugEx.WriteLine("deserializing the user index took {0} ms", sw.ElapsedMilliseconds);
+            timings.SerializationTime = sw.Record();
 
+            cacheResult.RedisKey = key;
+            cacheResult.Timings = timings;
             return cacheResult;
         }
 
-        public Task<bool> Save(TResult obj)
+        protected async Task<RedisCacheMultiResult<T>> Get(RedisKey[] keys, CommandFlags flags = CommandFlags.None)
         {
-            var key = objToKeyMap(obj);
-            var redisKey = keyMap(key);
-            var val = serializer.Write(obj);
+            var timings = new CacheTimings();
 
-            return db.StringSetAsync(
-                key: redisKey,
-                value: val,
-                expiry: TimeSpan.FromDays(7),
-                when: When.Always,
-                flags: CommandFlags.HighPriority);
-        }
-    }
+            sw.Start();
+            var values = await db.StringGetAsync(keys, CommandFlags.None);
+            timings.ServiceTime = sw.Record();
 
-    class StandardStringCache2<TKey, TResult>
-    {
-        readonly StringGet<TKey, TResult> get;
-        readonly StringSet<TKey, TResult> set;
+            sw.Start();
+            var results = values.Select(serializer.Read);
+            timings.SerializationTime = sw.Record();
 
-        public StandardStringCache2(StringGet<TKey, TResult> get, StringSet<TKey, TResult> set)
-        {
-            this.get = get;
-            this.set = set;
-        }
+            foreach (var tuple in keys.Zip(results, (key, result) => new { key, result }))
+            {
+                tuple.result.RedisKey = tuple.key;
+            }
 
-        public Task<RedisCacheResult<TResult>> Get(TKey key)
-        {
-            return get.Get(key);
-        }
-
-        public Task<bool> Save(TResult obj)
-        {
-            return set.Save(obj);
-        }
-    }
-
-    class StringGet<TKey, TResult>
-    {
-        readonly IDatabaseAsync db;
-        readonly Func<TKey, RedisKey> keyMap;
-        readonly RedisValueSerializer<TResult> serializer;
-
-        public CommandFlags Flags { get; set; }
-
-        public StringGet(IDatabaseAsync db, Func<TKey, RedisKey> keyMap, RedisValueSerializer<TResult> serializer)
-        {
-            this.db = db;
-            this.keyMap = keyMap;
-            this.serializer = serializer;
-
-            Flags = CommandFlags.None;
-        }
-
-        public async Task<RedisCacheResult<TResult>> Get(TKey key)
-        {
-            var redisKey = keyMap(key);
-
-            var sw = System.Diagnostics.Stopwatch.StartNew();
-            var value = await db.StringGetAsync(redisKey, Flags);
-            sw.Stop();
-            DebugEx.WriteLine("the actual getting of the user index took {0} ms", sw.ElapsedMilliseconds);
-
-            sw.Restart();
-            var cacheResult = serializer.Read(value);
-            sw.Stop();
-            DebugEx.WriteLine("deserializing the user index took {0} ms", sw.ElapsedMilliseconds);
-
+            var cacheResult = new RedisCacheMultiResult<T>
+            {
+                Results = results,
+                Timings = timings,
+            };
             return cacheResult;
         }
-    }
 
-    class StringSet<TKey, TResult>
-    {
-        readonly IDatabaseAsync db;
-        readonly Func<TKey, RedisKey> keyMap;
-        readonly Func<TResult, TKey> objToKeyMap;
-        readonly RedisValueSerializer<TResult> serializer;
-
-        public TimeSpan? Expiry { get; set; }
-        public When When { get; set; }
-        public CommandFlags Flags { get; set; }
-
-        public StringSet(IDatabaseAsync db, Func<TKey, RedisKey> keyMap, Func<TResult, TKey> objToKeyMap, RedisValueSerializer<TResult> serializer)
+        protected async Task<RedisWriteResult<bool>> Set(RedisKey key, T value, TimeSpan? expiry = null, When when = When.Always, CommandFlags flags = CommandFlags.None)
         {
-            this.db = db;
-            this.keyMap = keyMap;
-            this.objToKeyMap = objToKeyMap;
-            this.serializer = serializer;
+            var timings = new CacheTimings();
 
-            Expiry = null;
-            When = When.Always;
-            Flags = CommandFlags.None;
-        }
+            sw.Start();
+            var val = serializer.Write(value);
+            timings.SerializationTime = sw.Record();
 
-        public Task<bool> Save(TResult obj)
-        {
-            var key = objToKeyMap(obj);
-            var redisKey = keyMap(key);
-            var val = serializer.Write(obj);
+            sw.Start();
+            var result = await  db.StringSetAsync(key, val, expiry, when, flags);
+            timings.ServiceTime = sw.Record();
 
-            return db.StringSetAsync(
-                key: redisKey,
-                value: val,
-                expiry: Expiry,
-                when: When,
-                flags: Flags);
-        }
-    }
-
-    class TestUserIndexCache : StandardStringCache2<Guid, UserIndex>
-    {
-        public TestUserIndexCache(IDatabaseAsync db)
-            : base(CreateGet(db), CreateSet(db))
-        { }
-
-        static StringGet<Guid, UserIndex> CreateGet(IDatabaseAsync db)
-        {
-            return new StringGet<Guid, UserIndex>(db, id => id.ToByteArray(), new UserIndexBinarySerializer())
+            var writeResult = new RedisWriteResult<bool>
             {
-                Flags = CommandFlags.None,
+                RedisKey = key,
+                RedisValue = val,
+                ResultValue = result,
+                Timings = timings,
             };
-        }
-
-        static StringSet<Guid, UserIndex> CreateSet(IDatabaseAsync db)
-        {
-            return new StringSet<Guid, UserIndex>(db, id => id.ToByteArray(), user => user.Id, new UserIndexBinarySerializer())
-            {
-                Expiry = TimeSpan.FromDays(7),
-                When = When.Always,
-                Flags = CommandFlags.HighPriority,
-            };
+            return writeResult;
         }
     }
 }

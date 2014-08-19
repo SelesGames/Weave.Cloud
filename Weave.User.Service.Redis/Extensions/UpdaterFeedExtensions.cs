@@ -9,7 +9,8 @@ namespace Weave.User.Service.Redis
         /// <summary>
         /// Recover the feed's state from Redis.  this will be used whenever the service restarts
         /// </summary>
-        public static async Task RecoverStateFromRedis(this Feed feed, IDatabaseAsync db)
+        /// <returns>Returns a bool indicating whether the state was recovered from Redis</returns>
+        public static async Task<bool> RecoverStateFromRedis(this Feed feed, IDatabaseAsync db)
         {
             var cache = new FeedUpdaterCache(db);
 
@@ -19,6 +20,8 @@ namespace Weave.User.Service.Redis
                 var cachedData = cachedDataResult.Value;
                 CopyState(source: cachedData, target: feed);
             }
+
+            return cachedDataResult.HasValue;
         }
 
         static void CopyState(Feed source, Feed target)

@@ -1,55 +1,30 @@
 ﻿using StackExchange.Redis;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Weave.Updater.BusinessObjects;
 using Weave.User.BusinessObjects.Mutable;
-using Weave.User.Service.Redis;
 
-namespace Weave.RssAggregator.HighFrequency
+namespace Weave.User.Service.Redis
 {
-    
-    /// <summary>
-    /// Saves the updated Feed Index and added News Items to Redis, as a transaction
-    /// </summary>
-    public class RedisFeedAndNewsProcessor : ISequentialAsyncProcessor<FeedUpdate>
+    public static class FeedUpdateRedisExtensions
     {
-        readonly ConnectionMultiplexer connection;
-
-        public RedisFeedAndNewsProcessor(ConnectionMultiplexer connection)
+        public static async Task<SaveFeedIndexAndNewNewsResult> SaveFeedIndexAndNewNews(this IDatabaseAsync db, FeedUpdate update)
         {
-            this.connection = connection;
-        }
+            var canonicalFeedCache = new CanonicalFeedIndexCache(db);
+            var newsItemsCache = new NewsItemCache(db);
 
-        public bool IsHandledFully { get { return false; } }
+            var index = Map(update.Feed);
+            var newsItems = update.Entries.Select(Map);
 
-        public async Task ProcessAsync(FeedUpdate update)
-        {
-            try
-            {
-                var db = connection.GetDatabase(DatabaseNumbers.CANONICAL_FEEDS_AND_NEWSITEMS);
-                var transaction = db.CreateTransaction();
-                var canonicalFeedCache = new CanonicalFeedIndexCache(transaction);
-                var newsItemsCache = new NewsItemCache(transaction);
+            var feedResultTask = canonicalFeedCache.Save(index);
+            var newsItemsResultsTask = newsItemsCache.Set(newsItems);
 
-                var index = Map(update.Feed);
-                var newsItems = update.Entries.Select(Map);
+            var feedResult = await feedResultTask;
+            var newsItemsResults = await newsItemsResultsTask;
 
-                var feedResultTask = canonicalFeedCache.Save(index);
-                var newsItemsResultsTask = newsItemsCache.Set(newsItems);
-
-                await transaction.ExecuteAsync(flags: CommandFlags.None);
-                var feedResult = await feedResultTask;
-                var newsItemsResults = await newsItemsResultsTask;
-
-                DebugEx.WriteLine(feedResult);
-                DebugEx.WriteLine(newsItemsResults);
-            }
-            catch(Exception ex)
-            {
-                DebugEx.WriteLine("\r\n\r\n**** RedisFeedAndNewsProcessor ERROR ****");
-                DebugEx.WriteLine(ex);
-            }
+            return new SaveFeedIndexAndNewNewsResult { FeedIndexSaveResult = feedResult, NewsItemsSaveResult = newsItemsResults };
         }
 
 
@@ -134,5 +109,11 @@ namespace Weave.RssAggregator.HighFrequency
         }
 
         #endregion
+    }
+
+    public class SaveFeedIndexAndNewNewsResult
+    {
+        public RedisWriteResult<bool> FeedIndexSaveResult { get; set; }
+        public IEnumerable<bool> NewsItemsSaveResult { get; set; }
     }
 }

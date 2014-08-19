@@ -116,6 +116,10 @@
     <Compile Include="WorkerRole.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Weave.Portable\SelesGames.HttpClient\SelesGames.HttpClient.csproj">
+      <Project>{e93c1441-a175-4d76-9e97-092e9c621e55}</Project>
+      <Name>SelesGames.HttpClient</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Weave.Portable\Weave.User.Service.Contracts\Weave.User.Service.Contracts.csproj">
       <Project>{02f3363f-7b0f-4c5f-9123-b388f2870c35}</Project>
       <Name>Weave.User.Service.Contracts</Name>
@@ -143,6 +147,10 @@
     <ProjectReference Include="..\SelesGames.WebApi\SelesGames.WebApi.csproj">
       <Project>{bb3ea281-94b3-435f-a1ef-c395a7d1f25a}</Project>
       <Name>SelesGames.WebApi</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Weave.RssAggregator.Core\RssAggregator.DTOs.csproj">
+      <Project>{2f1a280d-ee75-4dc1-a36c-f8e5488e3260}</Project>
+      <Name>RssAggregator.DTOs</Name>
     </ProjectReference>
     <ProjectReference Include="..\Weave.User.BusinessObjects.Mutable\Weave.User.BusinessObjects.Mutable.csproj">
       <Project>{fc7c92ee-0aed-4859-b5ec-a770ce148497}</Project>

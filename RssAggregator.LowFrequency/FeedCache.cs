@@ -20,7 +20,6 @@ namespace Weave.RssAggregator.LowFrequency
         object syncObject = new object();
 
         string feedLibraryUrl;
-        DbClient dbClient;
         ConnectionMultiplexer cm;
 
 
@@ -28,14 +27,12 @@ namespace Weave.RssAggregator.LowFrequency
 
         #region Constructor
 
-        public FeedCache(string feedLibraryUrl, DbClient dbClient, ConnectionMultiplexer cm)
+        public FeedCache(string feedLibraryUrl, ConnectionMultiplexer cm)
         {
             if (string.IsNullOrEmpty(feedLibraryUrl)) throw new ArgumentException("feedLibraryUrl cannot be null: FeedCache ctor");
-            if (dbClient == null) throw new ArgumentNullException("dbClient cannot be null: FeedCache ctor");
             if (cm == null) throw new ArgumentNullException("cm cannot be null: FeedCache ctor");
 
             this.feedLibraryUrl = feedLibraryUrl;
-            this.dbClient = dbClient;
             this.cm = cm;
         }
 
@@ -86,7 +83,7 @@ namespace Weave.RssAggregator.LowFrequency
                 }
             }
 
-            mediators = cachedFeeds.Select(cachedFeed => new HFeedDbMediator(dbClient, cachedFeed)).ToList();
+            mediators = cachedFeeds.Select(cachedFeed => new HFeedDbMediator(cachedFeed)).ToList();
 
             foreach (var mediator in mediators)
             {

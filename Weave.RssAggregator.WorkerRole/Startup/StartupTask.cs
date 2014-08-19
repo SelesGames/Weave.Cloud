@@ -41,7 +41,6 @@ namespace Weave.RssAggregator.WorkerRole.Startup
 
             hfCache = new FeedCache(
                 feedLibraryUrl,
-                kernel.Get<DbClient>(), 
                 kernel.Get<ConnectionMultiplexer>());
 
             kernel.Bind<FeedCache>().ToConstant(hfCache);
@@ -55,8 +54,6 @@ namespace Weave.RssAggregator.WorkerRole.Startup
 
             var config = SelfHost.Config;
             config.DependencyResolver = resolver;
-            config.MessageHandlers.Add(new InjectAcceptHandler("application/protobuf"));
-            config.MessageHandlers.Add(new InjectAcceptEncodingHandler("gzip"));
             SelfHost.StartServer(ipString);
 
             Trace.WriteLine("^&*^&*^&*^*&^  SERVER IS UP AND RUNNING!!!");

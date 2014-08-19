@@ -60,10 +60,11 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Outgoing\Image.cs" />
-    <Compile Include="Outgoing\NewsItem.cs" />
     <Compile Include="Incoming\FeedRequest.cs" />
     <Compile Include="Outgoing\FeedResult.cs" />
+    <Compile Include="Outgoing\Image.cs" />
+    <Compile Include="Outgoing\NewsItem.cs" />
+    <Compile Include="Outgoing\Result.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

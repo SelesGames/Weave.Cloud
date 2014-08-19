@@ -1,4 +1,5 @@
 ﻿using Microsoft.WindowsAzure.Storage;
+using SelesGames.HttpClient;
 using SelesGames.WebApi;
 using StackExchange.Redis;
 using System;
@@ -7,6 +8,8 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
+using Weave.RssAggregator.Core.DTOs.Incoming;
+using Weave.RssAggregator.Core.DTOs.Outgoing;
 using Weave.User.BusinessObjects;
 using Weave.User.BusinessObjects.Mutable;
 using Weave.User.Service.Cache;
@@ -771,6 +774,45 @@ namespace Weave.User.Service.Role.Controllers
 
 
         #region Feeds Refresh function
+
+        static FeedRequest CreateRequest(FeedIndex feed)
+        {
+            return new FeedRequest
+            {
+                Id = feed.Id.ToString(),
+                Url = feed.Uri,
+                MostRecentNewsItemPubDate = feed.MostRecentNewsItemPubDate,
+                Etag = feed.Etag,
+                LastModified = feed.LastModified,
+            };
+        }
+
+        async Task PerformRefreshForFeeds(IEnumerable<FeedIndex> feeds)
+        {
+            var client = new SmartHttpClient();
+            var requests = feeds.Select(CreateRequest).ToList();
+            var results = await client.PostAsync<List<FeedRequest>, List<Result>>(
+                "http://weave-v2-news.cloudapp.net/api/weave", requests);
+
+            var resultTuples = feeds.Zip(results, (feed, result) => new { feed, result });
+
+
+            var filteredIndices = resultTuples.Where(o => o.result.IsLoaded == true);
+            var ids = filteredIndices.Select(o => o.feed.Id);
+            var updatedfeedIndices = await GetFeedIndices(ids);
+
+            var feedIndex1 = new FeedIndex();
+            var feedIndex2 = new FeedIndex();
+            feedIndex1.
+        }
+
+        async Task<RedisCacheMultiResult<FeedIndex>> GetFeedIndices(IEnumerable<Guid> feedIds)
+        {
+            var db = connection.GetDatabase(DatabaseNumbers.CANONICAL_FEEDS_AND_NEWSITEMS);
+            var indexCache = new CanonicalFeedIndexCache(db);
+            var results = await indexCache.Get(feedIds);
+            return results;
+        }
 
         async Task PerformRefreshOnFeeds(IEnumerable<Feed> feeds)
         {
