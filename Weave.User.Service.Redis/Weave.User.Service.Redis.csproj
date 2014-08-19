@@ -56,7 +56,6 @@
     <Compile Include="Extensions\UpdaterFeedExtensions.cs" />
     <Compile Include="PubSub\PubSubHelper.cs" />
     <Compile Include="RedisPrependKeyCreator.cs" />
-    <Compile Include="RedisValueMap.cs" />
     <Compile Include="Serializers\Binary\CanonicalFeedIndexReader.cs" />
     <Compile Include="Serializers\Binary\CanonicalFeedIndexBinarySerializer.cs" />
     <Compile Include="Serializers\Binary\CanonicalFeedIndexWriter.cs" />

@@ -81,6 +81,7 @@ namespace Weave.Updater.BusinessObjects
 
                 if (result == Parsing.Feed.RequestStatus.OK)
                 {
+                    LastRefreshedOn = now;
                     Etag = requester.Etag;
                     LastModified = requester.LastModified;
 
@@ -116,6 +117,7 @@ namespace Weave.Updater.BusinessObjects
                 }
                 else if (result == Parsing.Feed.RequestStatus.Unmodified)
                 {
+                    LastRefreshedOn = now;
                     DebugEx.WriteLine("UNMODIFIED {0}  ({1})", Name, Uri);
                 }
                 LastFeedState = FeedState.OK;
@@ -140,12 +142,12 @@ namespace Weave.Updater.BusinessObjects
         {
             return new Parsing.Feed
             {
-                FeedId = this.Id,
-                FeedUri = this.Uri,
-                MostRecentNewsItemPubDate = this.MostRecentNewsItemPubDate,
-                Etag = this.Etag,
-                LastModified = this.LastModified,
-                UpdateTimeOut = this.RefreshTimeout,
+                FeedId = Id,
+                FeedUri = Uri,
+                MostRecentNewsItemPubDate = MostRecentNewsItemPubDate,
+                Etag = Etag,
+                LastModified = LastModified,
+                UpdateTimeOut = RefreshTimeout,
                 IsAggressiveDomainDiscoveryEnabled = false,
             };
         }

@@ -16,7 +16,7 @@ namespace Weave.User.Service.Redis
         }
     }
 
-    class TimingHelper
+    public class TimingHelper
     {
         System.Diagnostics.Stopwatch sw;
 
