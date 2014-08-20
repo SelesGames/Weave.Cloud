@@ -1,10 +1,9 @@
 ﻿using StackExchange.Redis;
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Weave.Updater.BusinessObjects;
 using Weave.User.Service.Redis;
-using System.Linq;
 
 namespace Weave.RssAggregator.HighFrequency
 {
@@ -56,57 +55,16 @@ namespace Weave.RssAggregator.HighFrequency
             if (update.Entries == null || !update.Entries.Any())
                 return null;
 
-            var news = update.Entries.Select(Map);
-
             var db = connection.GetDatabase(DatabaseNumbers.CANONICAL_FEEDS_AND_NEWSITEMS);
             var batch = db.CreateBatch();
-            var newsCache = new NewsItemCache(batch);
+            var entryCache = new ExpandedEntryCache(batch);
 
-            var resultTask = newsCache.Set(news);
+            var resultTask = entryCache.Set(update.Entries);
 
             batch.Execute();
 
             var result = await resultTask;
             return result;
-        }
-
-        #endregion
-
-
-
-
-        #region NewsItem Map functions
-
-        static Weave.User.Service.Redis.DTOs.NewsItem Map(ExpandedEntry o)
-        {
-            var bestImage = o.Images.GetBest();
-
-            return new Weave.User.Service.Redis.DTOs.NewsItem
-            {
-                Id = o.Id,
-                UtcPublishDateTime = o.UtcPublishDateTime,
-                UtcPublishDateTimeString = o.UtcPublishDateTimeString,
-                Title = o.Title,
-                Link = o.Link,
-                ImageUrl = bestImage == null ? null : bestImage.Url,
-                YoutubeId = o.YoutubeId,
-                VideoUri = o.VideoUri,
-                PodcastUri = o.PodcastUri,
-                ZuneAppId = o.ZuneAppId,
-                Image = bestImage == null ? null : Map(bestImage),
-            };
-        }
-
-        static Weave.User.Service.Redis.DTOs.Image Map(Image o)
-        {
-            return new Weave.User.Service.Redis.DTOs.Image
-            {
-                Width = o.Width,
-                Height = o.Height,
-                OriginalUrl = o.Url,
-                BaseImageUrl = null,
-                SupportedFormats = null,
-            };
         }
 
         #endregion

@@ -5,8 +5,8 @@ namespace Weave.User.Service.Redis
     public static class DatabaseNumbers
     {
         public const int USER_INDICES = 0;
-        public const int CANONICAL_FEEDS_AND_NEWSITEMS = 1;
         public const int FEED_UPDATER = 2;
+        public const int CANONICAL_FEEDS_AND_NEWSITEMS = 3;
         public const int LOCK = 4;
     }
 }

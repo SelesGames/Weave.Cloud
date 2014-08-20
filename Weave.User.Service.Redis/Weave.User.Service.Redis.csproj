@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CacheClients\FeedUpdaterCache.cs" />
+    <Compile Include="CacheClients\ExpandedEntryCache.cs" />
     <Compile Include="CacheClients\StandardStringCache.cs" />
     <Compile Include="Communication\Generic\Message.cs" />
     <Compile Include="Communication\Generic\MessageQueue.cs" />
@@ -55,9 +56,12 @@
     <Compile Include="Extensions\UpdaterFeedExtensions.cs" />
     <Compile Include="PubSub\PubSubHelper.cs" />
     <Compile Include="RedisPrependKeyCreator.cs" />
+    <Compile Include="Serializers\Binary\ExpandedEntryBinarySerializer.cs" />
     <Compile Include="Serializers\Binary\CanonicalFeedIndexReader.cs" />
     <Compile Include="Serializers\Binary\CanonicalFeedIndexBinarySerializer.cs" />
     <Compile Include="Serializers\Binary\CanonicalFeedIndexWriter.cs" />
+    <Compile Include="Serializers\Binary\ExpandedEntryReader.cs" />
+    <Compile Include="Serializers\Binary\ExpandedEntryWriter.cs" />
     <Compile Include="Serializers\Binary\FeedUpdaterBinarySerializer.cs" />
     <Compile Include="Serializers\Binary\FeedUpdaterReader.cs" />
     <Compile Include="Serializers\Binary\FeedUpdaterWriter.cs" />
