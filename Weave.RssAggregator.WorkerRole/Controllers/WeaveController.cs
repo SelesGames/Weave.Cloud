@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Weave.RssAggregator.Core.DTOs.Incoming;
@@ -16,76 +17,48 @@ using Weave.User.Service.Redis;
 
 namespace Weave.RssAggregator.WorkerRole.Controllers
 {
-    public class WeaveController : ApiController
+    public class WeaveControllerHelper
     {
         readonly FeedCache feedCache;
         readonly NLevelIconUrlCache iconCache;
         readonly ConnectionMultiplexer connection;
         readonly dynamic Metadata;
-        System.Diagnostics.Stopwatch sw;
+        readonly TimingHelper sw;
 
-        public WeaveController(FeedCache cache, NLevelIconUrlCache iconCache, ConnectionMultiplexer connection)
+        public WeaveControllerHelper(FeedCache cache, NLevelIconUrlCache iconCache, ConnectionMultiplexer connection)
         {
             this.feedCache = cache;
             this.iconCache = iconCache;
             this.connection = connection;
             this.Metadata = new ExpandoObject();
+            this.sw = new TimingHelper();
         }
 
-        [HttpGet]
-        public Task<Result> Get([FromUri] string feedUri)
+        public async Task<Result> GetResultFromRequest(Request request)
         {
-            var feedRequest = new FeedRequest { Url = feedUri };
-            return GetResultFromRequest(feedRequest);
-        }
+            VerifyRequest(request);
 
-        [HttpPost]
-        public async Task<List<Result>> Get([FromBody] List<FeedRequest> requests, [FromUri] bool fsd = true)
-        {
-            if (requests == null || !requests.Any())
-                throw ResponseHelper.CreateResponseException(
-                    HttpStatusCode.BadRequest, 
-                    "You must send at least one FeedRequest object in the message body");
-
-            var temp = await Task.WhenAll(requests.Select(o => GetResultFromRequest(o, fsd)));
-            var results = temp.ToList();
-            return results;
-        }
-
-
-
-
-        #region Helper method containing the logic for the get operation
-
-        async Task<Result> GetResultFromRequest(FeedRequest feedRequest, bool fsd = true)
-        {
             Result result = null;
 
-            sw = System.Diagnostics.Stopwatch.StartNew();
-            var cachedFeed = feedCache.Get(feedRequest.Url);
-            sw.Stop();
-            Metadata.CheckIfFeedIsHighFrequencyCached = sw.Elapsed.Dump();
+            sw.Start();
+            var cachedFeed = feedCache.Get(request.Url);
+            Metadata.CheckIfFeedIsHighFrequencyCached = sw.Record().Dump();
 
             if (cachedFeed != null)
             {
                 // don't need to do a refresh, since it was cached and refreshes on its own timer
-                var db = connection.GetDatabase(DatabaseNumbers.CANONICAL_FEEDS_AND_NEWSITEMS);
-                var key = GetKeyFromRequest(feedRequest);
-
-                sw.Restart();
-                var isFeedIndexLoaded = await db.KeyExistsAsync(key, flags: CommandFlags.None);
-                sw.Stop();
-                Metadata.IsCanonicalFeedIndexPresent = sw.Elapsed.Dump();
+                var key = GetKeyFromRequest(request);
+                var isFeedIndexLoaded = await CheckIfCanonicalFeedIndexKeyExists(key);
 
                 if (!isFeedIndexLoaded)
                 {
-                    await RefreshFeed(feedRequest);
+                    await RefreshFeed(request);
                 }
                 result = new Result { IsLoaded = true, };
             }
             else
             {
-                await RefreshFeed(feedRequest);
+                await RefreshFeed(request);
                 result = new Result { IsLoaded = true, };
             }
 
@@ -93,38 +66,50 @@ namespace Weave.RssAggregator.WorkerRole.Controllers
             return result;
         }
 
-        async Task RefreshFeed(FeedRequest request)
+        void VerifyRequest(Request request)
+        {
+            if (request == null || !Uri.IsWellFormedUriString(request.Url, UriKind.Absolute))
+                throw new ArgumentException("request in WeaveControllerHelper");
+        }
+
+        async Task<bool> CheckIfCanonicalFeedIndexKeyExists(byte[] key)
+        {
+            var db = connection.GetDatabase(DatabaseNumbers.CANONICAL_FEEDS_AND_NEWSITEMS);
+
+            sw.Start();
+            var isFeedIndexLoaded = await db.KeyExistsAsync(key, flags: CommandFlags.None);
+            Metadata.IsCanonicalFeedIndexPresent = sw.Record().Dump();
+
+            return isFeedIndexLoaded;
+        }
+
+        async Task RefreshFeed(Request request)
         {
             // do some crap to load the feed here
             // create the feed we will use for doing the actual refresh here
             var feed = CreateFeed(request);
-            var db2 = connection.GetDatabase(DatabaseNumbers.FEED_UPDATER);
+            var db = connection.GetDatabase(DatabaseNumbers.FEED_UPDATER);
 
             // the feed's prior data may or may not exist in Redis
-            sw.Restart();
-            var wasExistingFeedPresent = await feed.RecoverStateFromRedis(db2);
-            sw.Stop();
-            Metadata.RecoverUpdaterFeed = sw.Elapsed.Dump();
+            sw.Start();
+            var wasExistingFeedPresent = await feed.RecoverStateFromRedis(db);
+            Metadata.RecoverUpdaterFeed = sw.Record().Dump();
 
-            sw.Restart();
+            sw.Start();
             var update = await feed.Refresh();
-            sw.Stop();
-            Metadata.Refresh = sw.Elapsed.Dump();
+            Metadata.Refresh = sw.Record().Dump();
 
             // save the newly refreshed feed state
-            var feedUpdater = new FeedUpdaterCache(db2);
-
-            sw.Restart();
+            var feedUpdater = new FeedUpdaterCache(db);
+            sw.Start();
             var saveUpdaterFeedResult = await feedUpdater.Save(feed);
-            sw.Stop();
-            Metadata.SaveUpdaterFeed = sw.Elapsed.Dump();
+            Metadata.SaveUpdaterFeed = sw.Record().Dump();
 
             if (update != null)
             {
-                sw.Restart();
+                sw.Start();
                 var saveFeedIndexAndNewsIndices = await SaveFeedandNewsIndices(update);
-                sw.Stop();
-                Metadata.SaveFeedIndexAndNewsIndices = sw.Elapsed.Dump();
+                Metadata.SaveFeedIndexAndNewsIndices = sw.Record().Dump();
             }
         }
 
@@ -141,7 +126,7 @@ namespace Weave.RssAggregator.WorkerRole.Controllers
             return saveResult;
         }
 
-        static Feed CreateFeed(FeedRequest o)
+        static Feed CreateFeed(Request o)
         {
             return new Feed("notused", o.Url, null, null)
             {
@@ -151,18 +136,66 @@ namespace Weave.RssAggregator.WorkerRole.Controllers
             };
         }
 
-        static byte[] GetKeyFromRequest(FeedRequest request)
+        static byte[] GetKeyFromRequest(Request request)
         {
-            Guid id;
-            if (!string.IsNullOrEmpty(request.Id) && Guid.TryParse(request.Id, out id))
-            {
-                return id.ToByteArray();
-            }
-            else
-            {
-                var feed = new Feed("unused", request.Url, null, null);
-                return feed.Id.ToByteArray();
-            }
+            var key = Encoding.UTF8.GetBytes(request.Url);
+            return key;
+
+            //Guid id;
+            //if (!string.IsNullOrEmpty(request.Id) && Guid.TryParse(request.Id, out id))
+            //{
+            //    return id.ToByteArray();
+            //}
+            //else
+            //{
+            //    var feed = new Feed("unused", request.Url, null, null);
+            //    return feed.Id.ToByteArray();
+            //}
+        }
+    }
+
+    public class WeaveController : ApiController
+    {
+        readonly FeedCache feedCache;
+        readonly NLevelIconUrlCache iconCache;
+        readonly ConnectionMultiplexer connection;
+
+        public WeaveController(FeedCache feedCache, NLevelIconUrlCache iconCache, ConnectionMultiplexer connection)
+        {
+            this.feedCache = feedCache;
+            this.iconCache = iconCache;
+            this.connection = connection;
+        }
+
+        [HttpGet]
+        public Task<Result> Get([FromUri] string feedUri)
+        {
+            var feedRequest = new Request { Url = feedUri };
+            return GetResultFromRequest(feedRequest);
+        }
+
+        [HttpPost]
+        public async Task<List<Result>> Get([FromBody] List<Request> requests, [FromUri] bool fsd = true)
+        {
+            if (requests == null || !requests.Any())
+                throw ResponseHelper.CreateResponseException(
+                    HttpStatusCode.BadRequest, 
+                    "You must send at least one FeedRequest object in the message body");
+
+            var temp = await Task.WhenAll(requests.Select(GetResultFromRequest));
+            var results = temp.ToList();
+            return results;
+        }
+
+
+
+
+        #region Helper method containing the logic for the get operation
+
+        Task<Result> GetResultFromRequest(Request feedRequest)
+        {
+            var helper = new WeaveControllerHelper(feedCache, iconCache, connection);
+            return helper.GetResultFromRequest(feedRequest);
         }
 
         #endregion

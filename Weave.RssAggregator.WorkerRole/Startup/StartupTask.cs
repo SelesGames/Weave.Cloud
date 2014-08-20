@@ -1,9 +1,7 @@
-﻿using Common.WebApi.Handlers;
-using Microsoft.WindowsAzure.ServiceRuntime;
+﻿using Microsoft.WindowsAzure.ServiceRuntime;
 using Ninject;
 using Ninject.WebApi;
 using SelesGames.WebApi.SelfHost;
-using StackExchange.Redis;
 using System.Diagnostics;
 using System.Web.Http.Dependencies;
 using Weave.RssAggregator.LowFrequency;
@@ -39,9 +37,7 @@ namespace Weave.RssAggregator.WorkerRole.Startup
         {
             var feedLibraryUrl = RoleEnvironment.GetConfigurationSettingValue("FeedLibraryUrl");
 
-            hfCache = new FeedCache(
-                feedLibraryUrl,
-                kernel.Get<ConnectionMultiplexer>());
+            hfCache = new FeedCache(feedLibraryUrl);
 
             kernel.Bind<FeedCache>().ToConstant(hfCache);
         }

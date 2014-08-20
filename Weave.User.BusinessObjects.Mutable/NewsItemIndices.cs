@@ -38,6 +38,19 @@ namespace Weave.User.BusinessObjects.Mutable
             return false;
         }
 
+        public bool Remove(NewsItemIndex newsItem)
+        {
+            if (newsItem == null) return false;
+            if (newsItem.Id == Guid.Empty) return false;
+        
+            if (ids.Remove(newsItem.Id))
+            {
+                var matched = innerList.Single(o => o.Id == newsItem.Id);
+                return innerList.Remove(matched);         
+            }
+            return false;
+        }
+
         public int Count { get { return innerList.Count; } }
 
         public int CountUnread()

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Weave.User.Service.Redis.DTOs;
-using Weave.User.Service.Redis.Serializers;
 using Weave.User.Service.Redis.Serializers.Binary;
 
 namespace Weave.User.Service.Redis
@@ -12,57 +11,48 @@ namespace Weave.User.Service.Redis
     /// <summary>
     /// The cache for retrieving the actual article/news item content
     /// </summary>
-    public class NewsItemCache
+    public class NewsItemCache : StandardStringCache<NewsItem>
     {
-        readonly IDatabaseAsync db;
-        readonly RedisValueSerializer<NewsItem> serializer;
-
         public NewsItemCache(IDatabaseAsync db)
-        {
-            this.db = db;
-            serializer = new NewsItemBinarySerializer();
-        }
+            : base(db, new NewsItemBinarySerializer()) { }
 
-        public async Task<IEnumerable<RedisCacheResult<NewsItem>>> Get(IEnumerable<Guid> newsItemIds)
+        public Task<RedisCacheMultiResult<NewsItem>> Get(IEnumerable<Guid> newsItemIds)
         {
             var keys = newsItemIds.Select(o => (RedisKey)o.ToByteArray()).ToArray();
-
-            var values = await db.StringGetAsync(keys, CommandFlags.None);
-            var results = values.Select(serializer.Read);
-            return results;
+            return base.Get(keys, CommandFlags.None);
         }
 
-        public async Task<IEnumerable<bool>> Set(IEnumerable<NewsItem> newsItems)
+        public async Task<RedisWriteMultiResult<bool>> Set(IEnumerable<NewsItem> newsItems)
         {
             var requests = newsItems.Select(CreateSaveRequest);
             var results = await Task.WhenAll(requests);
-            return results;
+
+            return new RedisWriteMultiResult<bool>
+            {
+                Results = results,
+                Timings = !Timings.AreEnabled ? CacheTimings.Empty :
+                    results.Select(o => o.Timings).Aggregate(
+                        new CacheTimings(), (accum, result) =>
+                        {
+                            return new CacheTimings
+                            {
+                                SerializationTime = accum.SerializationTime + result.SerializationTime,
+                                ServiceTime = accum.ServiceTime + result.ServiceTime,
+                            };
+                        }),
+            };
         }
 
-        Task<bool> CreateSaveRequest(NewsItem newsItem)
+        Task<RedisWriteResult<bool>> CreateSaveRequest(NewsItem newsItem)
         {
             if (newsItem == null)
-                return Task.FromResult(false);
+                return Task.FromResult(new RedisWriteResult<bool> { ResultValue = false, Timings = CacheTimings.Empty });
 
-            RedisKey key;
-            RedisValue value;
+            var key = (RedisKey)newsItem.Id.ToByteArray();
 
-            try
-            {
-                key = (RedisKey)newsItem.Id.ToByteArray();
-                value = serializer.Write(newsItem);
-            }
-            catch
-            {
-                return Task.FromResult(false);
-            }
-
-            if (!value.HasValue)
-                return Task.FromResult(false);
-
-            return db.StringSetAsync(
+            return base.Set(
                 key: key, 
-                value: value, 
+                value: newsItem, 
                 expiry: TimeSpan.FromDays(60), 
                 when: When.NotExists, 
                 flags: CommandFlags.None);

@@ -24,7 +24,7 @@ namespace Weave.User.Service.Redis
         public async Task<RedisCacheMultiResult<FeedIndex>> Get(IEnumerable<string> feedUrls)
         {
             //var keys = feedIds.Select(o => (RedisKey)o.ToByteArray()).ToArray();
-            var keys = feedUrls.Select(o => (RedisKey)Encoding.UTF8.GetBytes(o)).ToArray();
+            var keys = feedUrls.Select(o => (RedisKey)o).ToArray();
 
             var result = await base.Get(keys, CommandFlags.None);
             return result;
@@ -32,7 +32,7 @@ namespace Weave.User.Service.Redis
 
         public Task<RedisWriteResult<bool>> Save(FeedIndex feedIndex)
         {
-            var key = Encoding.UTF8.GetBytes(feedIndex.Uri);
+            var key = (RedisKey)feedIndex.Uri;
             //\var key = (RedisKey)feedIndex.Id.ToByteArray();
 
             return base.Set(

@@ -20,38 +20,6 @@ namespace Weave.RssAggregator.LowFrequency
             LastRefresh = DateTime.MinValue;
         }
 
-        public async Task LoadLatestNews()
-        {
-            //CurrentLoadLatestException = null;
-
-            //try
-            //{
-            //    var now = DateTime.UtcNow;
-
-            //    var news = await dbClient.GetLatestNNewsAsBlobList(feed.FeedId, 64);
-
-            //    // if there is no news, assume something is wrong and leave it in the Uninitialized FeedState
-            //    if (news == null || !news.Any())
-            //        return;
-
-            //    var latest = news.First();
-            //    var oldest = news.Last();
-
-            //    feed.MostRecentNewsItemPubDate = latest.PublishDateTime;
-            //    feed.OldestNewsItemPubDate = oldest.PublishDateTime;
-            //    feed.News = news;
-
-            //    feed.LastFeedState = CachedFeed.FeedState.OK;
-
-            //    LastRefresh = now;
-            //}
-            //catch (Exception ex)
-            //{
-            //    CurrentLoadLatestException = ex;
-            //    feed.LastFeedState = CachedFeed.FeedState.Failed;
-            //}
-        }
-
         public async void ProcessFeedUpdateNotice(FeedUpdateNotice notice)
         {
             try
@@ -59,7 +27,7 @@ namespace Weave.RssAggregator.LowFrequency
                 if (notice == null)
                     return;
 
-                if (notice.FeedId.Equals(feed.FeedId))
+                if (notice.FeedUri.Equals(feed.Uri, StringComparison.OrdinalIgnoreCase))
                 {
                     if (notice.RefreshTime > LastRefresh)
                     {

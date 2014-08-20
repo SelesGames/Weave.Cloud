@@ -7,12 +7,11 @@ using Weave.User.BusinessObjects.Mutable;
 using Weave.User.Service.Redis;
 
 namespace Weave.RssAggregator.HighFrequency
-{
-    
+{ 
     /// <summary>
     /// Saves the updated Feed Index and added News Items to Redis, as a transaction
     /// </summary>
-    public class RedisFeedAndNewsProcessor : ISequentialAsyncProcessor<FeedUpdate>
+    public class RedisFeedAndNewsProcessor : ISequentialAsyncProcessor<HighFrequencyFeedUpdate>
     {
         readonly ConnectionMultiplexer connection;
 
@@ -23,7 +22,7 @@ namespace Weave.RssAggregator.HighFrequency
 
         public bool IsHandledFully { get { return false; } }
 
-        public async Task ProcessAsync(FeedUpdate update)
+        public async Task ProcessAsync(HighFrequencyFeedUpdate update)
         {
             try
             {
@@ -32,7 +31,7 @@ namespace Weave.RssAggregator.HighFrequency
                 var canonicalFeedCache = new CanonicalFeedIndexCache(transaction);
                 var newsItemsCache = new NewsItemCache(transaction);
 
-                var index = Map(update.Feed);
+                var index = Map(update.InnerFeed);
                 var newsItems = update.Entries.Select(Map);
 
                 var feedResultTask = canonicalFeedCache.Save(index);
@@ -74,7 +73,7 @@ namespace Weave.RssAggregator.HighFrequency
                 MostRecentNewsItemPubDate = o.MostRecentNewsItemPubDate,
             };
 
-            foreach (var entry in o.Entries)
+            foreach (var entry in o.News)
             {
                 var newsItemIndex = CreateIndex(entry);
                 feedIndex.NewsItemIndices.Add(newsItemIndex);

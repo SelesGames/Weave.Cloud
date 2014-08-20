@@ -1,39 +1,26 @@
-﻿using StackExchange.Redis;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Weave.RssAggregator.LibraryClient;
-using Weave.User.Service.Redis.PubSub;
 
 namespace Weave.RssAggregator.LowFrequency
 {
     public class FeedCache
     {
-        const string CHANNEL = "feedUpdate";
-
-        Dictionary<string, CachedFeed> feeds = new Dictionary<string, CachedFeed>();
-        List<HFeedDbMediator> mediators = new List<HFeedDbMediator>();
-
-        object syncObject = new object();
-
-        string feedLibraryUrl;
-        ConnectionMultiplexer cm;
+        readonly string feedLibraryUrl;
+        readonly Dictionary<string, CachedFeed> feeds = new Dictionary<string, CachedFeed>();
+        readonly object syncObject = new object();
 
 
 
 
         #region Constructor
 
-        public FeedCache(string feedLibraryUrl, ConnectionMultiplexer cm)
+        public FeedCache(string feedLibraryUrl)//, ConnectionMultiplexer cm)
         {
             if (string.IsNullOrEmpty(feedLibraryUrl)) throw new ArgumentException("feedLibraryUrl cannot be null: FeedCache ctor");
-            if (cm == null) throw new ArgumentNullException("cm cannot be null: FeedCache ctor");
-
             this.feedLibraryUrl = feedLibraryUrl;
-            this.cm = cm;
         }
 
         #endregion
@@ -48,7 +35,7 @@ namespace Weave.RssAggregator.LowFrequency
                 if (feeds.ContainsKey(feedUrl))
                 {
                     var feed = feeds[feedUrl];
-                    if (feed.LastFeedState != CachedFeed.FeedState.Uninitialized)
+                    //if (feed.LastFeedState != CachedFeed.FeedState.Uninitialized)
                         return feed;
                 }
             }
@@ -82,65 +69,79 @@ namespace Weave.RssAggregator.LowFrequency
                     feeds.Add(o.CorrectedUri, cachedFeed);
                 }
             }
-
-            mediators = cachedFeeds.Select(cachedFeed => new HFeedDbMediator(cachedFeed)).ToList();
-
-            foreach (var mediator in mediators)
-            {
-                await mediator.LoadLatestNews();
-            }
-
-            var sub = cm.GetSubscriber();
-            var observable = await sub.AsObservable(CHANNEL);
-            observable
-                .Select(Parse)
-                .OfType<FeedUpdateNotice>()
-                .Subscribe(OnFeedUpdateReceived, OnError);
         }
-
-        void OnFeedUpdateReceived(FeedUpdateNotice notice)
-        {
-            foreach (var mediator in mediators)
-            {
-                mediator.ProcessFeedUpdateNotice(notice);
-            }
-        }
-
-        void OnError(Exception exception)
-        {
-            DebugEx.WriteLine(exception);
-        }
-
-
-
-
-        #region private helper methods
-
-        FeedUpdateNotice Parse(RedisPubSubTuple o)
-        {
-            try
-            {
-                if (!o.Message.HasValue)
-                    return null;
-
-                var bytes = (byte[])o.Message;
-                using (var ms = new MemoryStream(bytes))
-                using (var br = new BinaryReader(ms))
-                {
-                    var notice = new FeedUpdateNotice();
-
-                    notice.FeedId = new Guid(br.ReadBytes(16));
-                    notice.RefreshTime = DateTime.FromBinary(br.ReadInt64());
-                    notice.FeedUri = br.ReadString();
-
-                    return notice;
-                }
-            }
-            catch { }
-
-            return null;
-        }
-
-        #endregion
     }
 }
+
+
+
+
+#region now deprecated code relating to processing feed updates from redis pubsub
+
+//const string CHANNEL = "feedUpdate";
+//List<HFeedDbMediator> mediators = new List<HFeedDbMediator>();
+//ConnectionMultiplexer cm;
+//            if (cm == null) throw new ArgumentNullException("cm cannot be null: FeedCache ctor");
+//this.cm = cm;
+
+                //mediators = cachedFeeds.Select(cachedFeed => new HFeedDbMediator(cachedFeed)).ToList();
+
+            //foreach (var mediator in mediators)
+            //{
+            //    await mediator.LoadLatestNews();
+            //}
+
+            //var sub = cm.GetSubscriber();
+            //var observable = await sub.AsObservable(CHANNEL);
+            //observable
+            //    .Select(Parse)
+            //    .OfType<FeedUpdateNotice>()
+            //    .Subscribe(OnFeedUpdateReceived, OnError);
+        //}
+
+        //void OnFeedUpdateReceived(FeedUpdateNotice notice)
+        //{
+        //    foreach (var mediator in mediators)
+        //    {
+        //        mediator.ProcessFeedUpdateNotice(notice);
+        //    }
+        //}
+
+        //void OnError(Exception exception)
+        //{
+        //    DebugEx.WriteLine(exception);
+        //}
+
+
+
+
+        //#region private helper methods
+
+        //FeedUpdateNotice Parse(RedisPubSubTuple o)
+        //{
+        //    try
+        //    {
+        //        if (!o.Message.HasValue)
+        //            return null;
+
+        //        var bytes = (byte[])o.Message;
+        //        using (var ms = new MemoryStream(bytes))
+        //        using (var br = new BinaryReader(ms))
+        //        {
+        //            var notice = new FeedUpdateNotice();
+
+        //            notice.FeedId = new Guid(br.ReadBytes(16));
+        //            notice.RefreshTime = DateTime.FromBinary(br.ReadInt64());
+        //            notice.FeedUri = br.ReadString();
+
+        //            return notice;
+        //        }
+        //    }
+        //    catch { }
+
+        //    return null;
+        //}
+
+        //#endregion
+
+#endregion

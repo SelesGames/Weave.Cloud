@@ -5,7 +5,7 @@ using Weave.Updater.BusinessObjects;
 
 namespace Weave.RssAggregator.HighFrequency
 {
-    public class SqlUpdater : ISequentialAsyncProcessor<FeedUpdate>
+    public class SqlUpdater : ISequentialAsyncProcessor<HighFrequencyFeedUpdate>
     {
         SqlClient dbClient;
 
@@ -16,7 +16,7 @@ namespace Weave.RssAggregator.HighFrequency
 
         public bool IsHandledFully { get { return false; } }
 
-        public async Task ProcessAsync(FeedUpdate update)
+        public async Task ProcessAsync(HighFrequencyFeedUpdate update)
         {
             int successCount = 0;
             foreach (var newsItem in Enumerable.Reverse(update.Entries))

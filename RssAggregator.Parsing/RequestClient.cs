@@ -15,9 +15,9 @@ namespace Weave.RssAggregator.Core.DTOs.Incoming
             RequestTimeout = TimeSpan.FromSeconds(30);
         }
 
-        public async Task<FeedResult> GetNewsAsync(FeedRequest request)
+        public async Task<Result> GetNewsAsync(Request request)
         {
-            FeedResult result;
+            Result result;
             try
             {
                 var feed = new Feed
@@ -33,19 +33,17 @@ namespace Weave.RssAggregator.Core.DTOs.Incoming
 
                 if (requestStatus == Feed.RequestStatus.Unmodified)
                 {
-                    result = new FeedResult { Id = request.Id, Status = FeedResultStatus.Unmodified };
+                    result = new Result { Status = FeedResultStatus.Unmodified };
                 }
                 else
                 {
-                    result = new FeedResult
+                    result = new Result
                     {
-                        Id = request.Id,
                         Status = FeedResultStatus.OK,
                         Etag = feed.Etag,
                         LastModified = feed.LastModified,
                         MostRecentNewsItemPubDate = feed.MostRecentNewsItemPubDate,
                         OldestNewsItemPubDate = feed.OldestNewsItemPubDate,
-                        News = feed.News.Select(Map).ToList(),
                     };
                 }
             }
@@ -55,30 +53,5 @@ namespace Weave.RssAggregator.Core.DTOs.Incoming
             }
             return result;
         }
-
-
-
-
-        #region Map functions
-
-        static NewsItem Map(Entry e)
-        {
-            return new NewsItem
-            {
-                Title = e.Title,
-                Link = e.Link,
-                ImageUrl = e.ImageUrls.FirstOrDefault(),
-                PublishDateTime = e.UtcPublishDateTimeString,
-                Description = null,//entry.Description,
-                VideoUri = e.VideoUri,
-                YoutubeId = e.YoutubeId,
-                PodcastUri = e.PodcastUri,
-                ZuneAppId = e.ZuneAppId,
-                Id = e.Id,
-                FeedId = e.FeedId,
-            };
-        }
-
-        #endregion
     }
 }

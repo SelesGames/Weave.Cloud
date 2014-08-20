@@ -7,11 +7,11 @@ using Weave.Updater.BusinessObjects;
 
 namespace Weave.RssAggregator.HighFrequency
 {
-    public class BestImageSelectorProcessor : ISequentialAsyncProcessor<FeedUpdate>
+    public class BestImageSelectorProcessor : ISequentialAsyncProcessor<HighFrequencyFeedUpdate>
     {
         public bool IsHandledFully { get { return false; } }
 
-        public async Task ProcessAsync(FeedUpdate o)
+        public async Task ProcessAsync(HighFrequencyFeedUpdate o)
         {
             if (o == null || EnumerableEx.IsNullOrEmpty(o.Entries))
                 return;

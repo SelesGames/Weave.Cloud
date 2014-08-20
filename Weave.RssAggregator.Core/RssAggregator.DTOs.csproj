@@ -56,14 +56,17 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Incoming\FeedRequest.cs" />
-    <Compile Include="Outgoing\FeedResult.cs" />
-    <Compile Include="Outgoing\Image.cs" />
-    <Compile Include="Outgoing\NewsItem.cs" />
+    <Compile Include="Incoming\Request.cs" />
+    <Compile Include="Outgoing\Image.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Outgoing\NewsItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Outgoing\Result.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -88,12 +91,6 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SelesGames.Common\SelesGames.Common.csproj">
-      <Project>{5b792c4b-80d8-420d-9fa7-e567faf1f7b1}</Project>
-      <Name>SelesGames.Common</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

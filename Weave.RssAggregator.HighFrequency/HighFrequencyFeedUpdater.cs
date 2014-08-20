@@ -64,16 +64,32 @@ namespace Weave.RssAggregator.HighFrequency
             await feedClient.LoadFeedsAsync();
             var libraryFeeds = feedClient.Feeds;
 
-            var highFrequencyFeedsTasks = libraryFeeds
+            var highFrequencyFeeds = libraryFeeds
                 .Distinct()
                 //.Where(o => !string.IsNullOrWhiteSpace(o.CorrectedUri))
                 //.Where(o => o.FeedUri == "http://feeds.feedburner.com/Destructoid")
-                .Select(CreateHighFrequencyFeed);
+                .Select(CreateHighFrequencyFeed)
+                .OfType<HighFrequencyFeed>()
+                .ToList();
 
-            IEnumerable<HighFrequencyFeed> highFrequencyFeeds = 
-                await Task.WhenAll(highFrequencyFeedsTasks);
+            var feedUrls = highFrequencyFeeds.Select(o => o.Uri);
 
-            highFrequencyFeeds = highFrequencyFeeds.OfType<HighFrequencyFeed>();
+            var cache = new FeedUpdaterCache(db);
+            var cacheMultiGet = await cache.Get(feedUrls);
+            var ordered = cacheMultiGet.Results.OrderByDescending(o => o.ByteLength).ToList();
+            DebugEx.WriteLine(ordered);
+            var recoveredFeedUpdaters = cacheMultiGet.GetValidValues().ToList();
+
+            var joined = highFrequencyFeeds.Join(
+                recoveredFeedUpdaters, 
+                o => o.Uri.ToLowerInvariant(), 
+                o => o.Uri.ToLowerInvariant(),
+                (hff, updater) => new { hff, updater });
+
+            foreach (var tuple in joined)
+            {
+                tuple.hff.InitializeWith(tuple.updater);
+            }
 
             foreach (var feed in highFrequencyFeeds)
             {
@@ -84,7 +100,7 @@ namespace Weave.RssAggregator.HighFrequency
             feeds = highFrequencyFeeds.ToDictionary(o => o.Uri);
         }
 
-        async Task<HighFrequencyFeed> CreateHighFrequencyFeed(FeedSource o)
+        HighFrequencyFeed CreateHighFrequencyFeed(FeedSource o)
         {
             try
             {
@@ -100,13 +116,11 @@ namespace Weave.RssAggregator.HighFrequency
                     feedUri = o.FeedUri;
                 }
 
-                var hff = new HighFrequencyFeed(o.FeedName, feedUri, originalUri, o.Instructions, db);
-                await hff.Initialize();
+                var hff = new HighFrequencyFeed(o.FeedName, feedUri, originalUri, o.Instructions);
                 return hff;
             }
-            catch(Exception ex)
+            catch
             {
-                DebugEx.WriteLine(ex);
                 return null;
             }
         }

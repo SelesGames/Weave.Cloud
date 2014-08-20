@@ -71,6 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HighFrequencyFeed.cs" />
+    <Compile Include="HighFrequencyFeedUpdate.cs" />
     <Compile Include="HighFrequencyFeedUpdater.cs" />
     <Compile Include="Processors\BestImageSelector\BestImageSelectorHelper.cs" />
     <Compile Include="Processors\BestImageSelector\BestImageSelectorProcessor.cs" />
@@ -82,7 +83,6 @@
     <Compile Include="Processors\PubSub\PubSubUpdater.cs" />
     <Compile Include="Processors\Redirect\RedirectResolver.cs" />
     <Compile Include="Processors\Redis\FeedUpdaterProcessor.cs" />
-    <Compile Include="Processors\Redis\RedisFeedAndNewsProcessor.cs" />
     <Compile Include="Processors\Sql\SqlSelectOnlyLatestNews.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Processors\SequentialProcessor.cs" />
@@ -110,10 +110,6 @@
     <ProjectReference Include="..\RssAggregator.LibraryClient\RssAggregator.LibraryClient.csproj">
       <Project>{2db284eb-5b81-425a-957e-77eeb704ebdc}</Project>
       <Name>RssAggregator.LibraryClient</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\RssAggregator.Parsing\RssAggregator.Client.csproj">
-      <Project>{92a8665a-571b-4972-8fc6-0937ee27731e}</Project>
-      <Name>RssAggregator.Client</Name>
     </ProjectReference>
     <ProjectReference Include="..\SelesGames.Common\SelesGames.Common.csproj">
       <Project>{5b792c4b-80d8-420d-9fa7-e567faf1f7b1}</Project>

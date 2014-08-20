@@ -1,11 +1,10 @@
 ﻿using StackExchange.Redis;
 using System.IO;
 using System.Threading.Tasks;
-using Weave.Updater.BusinessObjects;
 
 namespace Weave.RssAggregator.HighFrequency
 {
-    public class PubSubUpdater : ISequentialAsyncProcessor<FeedUpdate>
+    public class PubSubUpdater : ISequentialAsyncProcessor<HighFrequencyFeedUpdate>
     {
         const string CHANNEL = "feedUpdate";
 
@@ -18,7 +17,7 @@ namespace Weave.RssAggregator.HighFrequency
 
         public bool IsHandledFully { get; private set; }
 
-        public async Task ProcessAsync(FeedUpdate update)
+        public async Task ProcessAsync(HighFrequencyFeedUpdate update)
         {
             byte[] bytes;
 
@@ -26,7 +25,7 @@ namespace Weave.RssAggregator.HighFrequency
             using (var bw = new BinaryWriter(ms))
             {
                 bw.Write(update.Feed.Id.ToByteArray());
-                bw.Write(update.RefreshTime.ToBinary());
+                bw.Write(update.InnerUpdate.RefreshTime.ToBinary());
                 bw.Write(update.Feed.Uri);
 
                 bytes = ms.ToArray();

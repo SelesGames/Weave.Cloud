@@ -7,7 +7,7 @@ using Weave.Updater.BusinessObjects;
 
 namespace Weave.RssAggregator.HighFrequency
 {
-    public class MobilizerOverride : ISequentialAsyncProcessor<FeedUpdate>
+    public class MobilizerOverride : ISequentialAsyncProcessor<HighFrequencyFeedUpdate>
     {
         readonly static string token = "hxyuiplkx78!ksdfl";
         readonly MobilizerServiceClient client;
@@ -19,7 +19,7 @@ namespace Weave.RssAggregator.HighFrequency
 
         public bool IsHandledFully { get { return false; } }
 
-        public async Task ProcessAsync(FeedUpdate o)
+        public async Task ProcessAsync(HighFrequencyFeedUpdate o)
         {
             if (o.RequiresMobilizerUpload())
             {
@@ -27,7 +27,7 @@ namespace Weave.RssAggregator.HighFrequency
             }
         }
 
-        async Task ProcessEntry(ExpandedEntry e, FeedUpdate feed)
+        async Task ProcessEntry(ExpandedEntry e, HighFrequencyFeedUpdate feed)
         {
             try
             {
@@ -54,11 +54,11 @@ namespace Weave.RssAggregator.HighFrequency
         }
     }
 
-    internal static class FeedUpdateExtensions
+    internal static class HighFrequencyFeedUpdateExtensions
     {
         readonly static string MOBILIZER_UPLOAD = "mu";
 
-        internal static bool RequiresMobilizerUpload(this FeedUpdate o)
+        internal static bool RequiresMobilizerUpload(this HighFrequencyFeedUpdate o)
         {
             return o.Feed.Instructions == null ? false : o.Feed.Instructions.Contains(MOBILIZER_UPLOAD);
         }

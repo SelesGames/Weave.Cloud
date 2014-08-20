@@ -27,11 +27,11 @@ namespace Weave.User.Service.Redis.Serializers.Binary
         {
             feedIndex = new FeedIndex();
 
-            feedIndex.Id = br.ReadGuid();
-
             // CERTAIN VALUES NO LONGER HOLD TRUE FOR CANONICAL FEEDS
             // since this feed data is not specific to any particular user, the
-            // following values will be omitted:
+            // following values will be omitted.  NOTE - the ID is no longer 
+            // valid either, since a feed's ID is really specific to a user
+            //feedIndex.Id = br.ReadGuid();
             //feedIndex.Name = ReadString();
             //feedIndex.Category = ReadString();
             //feedIndex.MostRecentEntrance = ReadDateTime();

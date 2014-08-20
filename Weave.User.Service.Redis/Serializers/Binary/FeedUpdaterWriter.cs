@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -12,8 +11,6 @@ namespace Weave.User.Service.Redis.Serializers.Binary
         readonly MemoryStream ms;
         readonly BinaryWriter bw;
         readonly Feed feed;
-
-        IEnumerator<bool> bitEnumerator;
 
         internal FeedUpdaterWriter(Feed feed)
         {
@@ -38,106 +35,37 @@ namespace Weave.User.Service.Redis.Serializers.Binary
             bw.Write(feed.MostRecentNewsItemPubDate ?? "");
 
             // write the number of entries
-            bw.Write(feed.Entries.Count());
+            bw.Write(feed.News.Count());
 
-            foreach(var entry in feed.Entries)
+            foreach(var record in feed.News)
             {
-                WriteEntry(entry);
+                Write(record);
             }           
         }
 
-        void WriteEntry(ExpandedEntry entry)
+        void Write(NewsItemRecord record)
         {
-            bw.Write(entry.Id);
-            bw.Write(entry.FeedId);
-            bw.Write(entry.UtcPublishDateTime);
-            bw.Write(entry.OriginalDownloadDateTime);
+            bw.Write(record.Id);
+            bw.Write(record.UtcPublishDateTime);
+            bw.Write(record.Title);
+            bw.Write(record.Link);
 
-            bw.Write(entry.Title);
-            bw.Write(entry.OriginalPublishDateTimeString);
-            bw.Write(entry.Link);
-
-            var nullStates = 
-                new List<object>
-                {
-                    //entry.Description,
-                    entry.YoutubeId,
-                    entry.VideoUri,
-                    entry.PodcastUri,
-                    entry.ZuneAppId,
-                    entry.OriginalRssXml,
-                }
-                .Select(IsNotNull)
-                .ToList();
-            var stringState = nullStates.ToByte();
-            bitEnumerator = nullStates.GetEnumerator();
-
-            bw.Write(stringState);
-
-            //if (NextBit()) bw.Write(entry.Description);
-            if (NextBit()) bw.Write(entry.YoutubeId);
-            if (NextBit()) bw.Write(entry.VideoUri);
-            if (NextBit()) bw.Write(entry.PodcastUri);
-            if (NextBit()) bw.Write(entry.ZuneAppId);
-            if (NextBit()) bw.Write(entry.OriginalRssXml);
-
-            // write the number of ImageUrls
-            bw.Write(entry.ImageUrls.Count());
-
-            foreach (var imageUrl in entry.ImageUrls)
-            {
-                bw.Write(imageUrl);
-            }
-
-            // write the number of Images
-            bw.Write(entry.Images.Count());
-
-            foreach (var image in entry.Images)
-            {
-                WriteImage(image);
-            }
+            // ?
+            //bw.Write(record.OriginalDownloadDateTime);
+            //bw.Write(record.HasImage);
         }
 
-        void WriteImage(Image image)
-        {
-            bw.Write(image.Width);
-            bw.Write(image.Height);
-            bw.Write(image.ContentLength);
-            bw.Write(image.Url);
+        //void Write(Image image)
+        //{
+        //    bw.Write(image.Width);
+        //    bw.Write(image.Height);
+        //    bw.Write(image.ContentLength);
+        //    bw.Write(image.Url);
 
-            // optional string values
-            bw.Write(image.Format ?? "");
-            bw.Write(image.ContentType ?? "");
-        }
-
-
-
-
-        #region helper methods
-
-        bool IsNotNull(object o)
-        {
-            if (o == null)
-                return false;
-
-            else
-            {
-                if (o is string)
-                {
-                    return !string.IsNullOrWhiteSpace((string)o);
-                }
-            }
-
-            return true;
-        }
-
-        bool NextBit()
-        {
-            bitEnumerator.MoveNext();
-            return bitEnumerator.Current;
-        }
-
-        #endregion
+        //    // optional string values
+        //    bw.Write(image.Format ?? "");
+        //    bw.Write(image.ContentType ?? "");
+        //}
 
 
 

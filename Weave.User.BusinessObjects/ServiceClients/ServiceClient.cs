@@ -11,10 +11,10 @@ namespace Weave.User.BusinessObjects.ServiceClients
     {
         const string SERVICE_URL = "http://weave-aggregator.cloudapp.net/api/Weave";
 
-        public async Task<List<FeedResult>> GetFeedResultsAsync(List<FeedRequest> outgoingFeedRequests)
+        public async Task<List<FeedResult>> GetFeedResultsAsync(List<Request> outgoingFeedRequests)
         {
             var client = new SmartHttpClient(ContentEncoderSettings.Json, CompressionSettings.AcceptEncoding);
-            var results = await client.PostAsync<List<FeedRequest>, List<FeedResult>>(SERVICE_URL, outgoingFeedRequests, CancellationToken.None);
+            var results = await client.PostAsync<List<Request>, List<FeedResult>>(SERVICE_URL, outgoingFeedRequests, CancellationToken.None);
             return results;
         }
     }

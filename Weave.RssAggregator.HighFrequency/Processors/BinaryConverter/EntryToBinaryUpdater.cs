@@ -1,14 +1,12 @@
 ﻿using ProtoBuf;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Outgoing = Weave.RssAggregator.Core.DTOs.Outgoing;
-using System.Linq;
 using Weave.Updater.BusinessObjects;
+using Outgoing = Weave.RssAggregator.Core.DTOs.Outgoing;
 
 namespace Weave.RssAggregator.HighFrequency
 {
-    public class EntryToBinaryUpdater : ISequentialAsyncProcessor<FeedUpdate>
+    public class EntryToBinaryUpdater : ISequentialAsyncProcessor<HighFrequencyFeedUpdate>
     {
         static EntryToBinaryUpdater()
         {
@@ -22,7 +20,7 @@ namespace Weave.RssAggregator.HighFrequency
 
         public bool IsHandledFully { get; private set; }
 
-        public Task ProcessAsync(FeedUpdate update)
+        public Task ProcessAsync(HighFrequencyFeedUpdate update)
         {
             if (update.Entries == null)
                 return Task.FromResult<object>(null);

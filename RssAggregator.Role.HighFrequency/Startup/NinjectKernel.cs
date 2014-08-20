@@ -3,7 +3,6 @@ using Ninject;
 using SelesGames.Common;
 using StackExchange.Redis;
 using Weave.RssAggregator.HighFrequency;
-using Weave.Updater.BusinessObjects;
 
 namespace RssAggregator.Role.HighFrequency
 {
@@ -33,7 +32,7 @@ namespace RssAggregator.Role.HighFrequency
             Bind<ConnectionMultiplexer>().ToConstant(connectionMultiplexer).InSingletonScope();
 
             Bind<SequentialProcessor>().ToMethod(_ => new SequentialProcessor(
-                new IProvider<ISequentialAsyncProcessor<FeedUpdate>>[]
+                new IProvider<ISequentialAsyncProcessor<HighFrequencyFeedUpdate>>[]
                 {
                     DelegateProvider.Create(() => this.Get<SqlSelectOnlyLatestNews>()),
                     DelegateProvider.Create(() => this.Get<RedirectResolver>()),
@@ -41,7 +40,6 @@ namespace RssAggregator.Role.HighFrequency
                     //DelegateProvider.Create(() => this.Get<ImageScalerUpdater>()),
                     DelegateProvider.Create(() => this.Get<EntryToBinaryUpdater>()),
                     DelegateProvider.Create(() => this.Get<SqlUpdater>()),
-                    DelegateProvider.Create(() => this.Get<RedisFeedAndNewsProcessor>()),
                     DelegateProvider.Create(() => this.Get<PubSubUpdater>()),
                     DelegateProvider.Create(() => this.Get<FeedUpdaterProcessor>()),
                     DelegateProvider.Create(() => this.Get<MobilizerOverride>()),

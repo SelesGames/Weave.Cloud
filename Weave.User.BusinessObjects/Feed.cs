@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Weave.RssAggregator.Core.DTOs.Incoming;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
 using Weave.User.BusinessObjects.Comparers;
-using Weave.User.BusinessObjects.ServiceClients;
+//using Weave.User.BusinessObjects.ServiceClients;
 
 namespace Weave.User.BusinessObjects
 {
@@ -52,12 +52,12 @@ namespace Weave.User.BusinessObjects
             set
             {
                 news = value == null ? null : value.ToList();
-                UpdateTeaserImage();
+                //UpdateTeaserImage();
             }
         }
 
         // Read-only properties
-        public Task CurrentRefresh { get; private set; }
+        //public Task CurrentRefresh { get; private set; }
 
         #endregion
 
@@ -68,198 +68,117 @@ namespace Weave.User.BusinessObjects
         {
             if (Guid.Empty.Equals(Id))
                 Id = CryptoHelper.ComputeHashUsedByMobilizer(Uri);
-        }
-
-
-
-
-        #region Refresh News
-
-        public void RefreshNews(NewsServer client, Action<Exception> onError = null)
-        {
-            if (isUpdating)
-                return;
-
-            CurrentRefresh = refreshNews(client, onError);
-        }
-
-        async Task refreshNews(NewsServer client, Action<Exception> onError = null)
-        {
-            if (isUpdating)
-                return;
-
-            isUpdating = true;
-
-            if (client == null)
-                throw new Exception("no NewsServer was registered via the Service Resolver");
-
-            var updatedRequest = new FeedRequest
-            {
-                Id = Id.ToString(),
-                Etag = Etag,
-                Url = Uri,
-                LastModified = LastModified,
-                MostRecentNewsItemPubDate = MostRecentNewsItemPubDate,
-            };
-
-            try
-            {
-                var update = await client.GetFeedResultAsync(updatedRequest).ConfigureAwait(false);
-                HandleUpdate(update);
-            }
-            catch (Exception exception)
-            {
-                DebugEx.WriteLine(exception.Message);
-                if (onError != null)
-                    onError(exception);
-            }
-
-            isUpdating = false;
-        }
-
-        #endregion
-
-
-
-
-        #region Helper functions for handling an update
-
-        void HandleUpdate(FeedResult update)
-        {
-            if (update == null ||
-                update.Status != FeedResultStatus.OK || 
-                EnumerableEx.IsNullOrEmpty(update.News))
-                return;
-
-            var now = DateTime.UtcNow;
-            news = news ?? new List<NewsItem>();
-            var previousNews = news;
-
-            var updatedNews = update.News.Convert().ToList();
-
-            foreach (var newsItem in updatedNews)
-            {
-                newsItem.OriginalDownloadDateTime = now;
-                newsItem.Feed = this;
-            }
-
-            var mergedNews = news
-                .Union(updatedNews, newsItemTitleComparer)
-                .OrderByDescending(o => o.IsNew())
-                .ThenByDescending(o => o.UtcPublishDateTime)
-                .Take(TRIM)
-                .ToList();
-
-            news = mergedNews;
-
-            if (news.IsSetEqualTo(previousNews, new NewsItemIdComparer()))
-                return;
-
-            LastRefreshedOn = now;
-            IconUri = update.IconUri;
-            Etag = update.Etag;
-            LastModified = update.LastModified;
-            MostRecentNewsItemPubDate = update.MostRecentNewsItemPubDate;
-            UpdateTeaserImage();
-        }
-
-        void UpdateTeaserImage()
-        {
-            if (EnumerableEx.IsNullOrEmpty(news))
-                return;
-
-            TeaserImageUrl = news
-                .OrderByDescending(o => o.UtcPublishDateTime)
-                .Where(o => o.HasImage)
-                .Select(o => o.GetBestImageUrl())
-                .FirstOrDefault();
-        }
-
-        #endregion
+        }   
     }
 }
 
 
 
 
-#region deprecated, old way of merging in the news
+#region all feed refreshing is now deprecated
+
+ //#region Refresh News
+
+ //       public void RefreshNews(NewsServer client, Action<Exception> onError = null)
+ //       {
+ //           if (isUpdating)
+ //               return;
+
+ //           CurrentRefresh = refreshNews(client, onError);
+ //       }
+
+ //       async Task refreshNews(NewsServer client, Action<Exception> onError = null)
+ //       {
+ //           if (isUpdating)
+ //               return;
+
+ //           isUpdating = true;
+
+ //           if (client == null)
+ //               throw new Exception("no NewsServer was registered via the Service Resolver");
+
+ //           var updatedRequest = new Request
+ //           {
+ //               Id = Id.ToString(),
+ //               Etag = Etag,
+ //               Url = Uri,
+ //               LastModified = LastModified,
+ //               MostRecentNewsItemPubDate = MostRecentNewsItemPubDate,
+ //           };
+
+ //           try
+ //           {
+ //               var update = await client.GetFeedResultAsync(updatedRequest).ConfigureAwait(false);
+ //               HandleUpdate(update);
+ //           }
+ //           catch (Exception exception)
+ //           {
+ //               DebugEx.WriteLine(exception.Message);
+ //               if (onError != null)
+ //                   onError(exception);
+ //           }
+
+ //           isUpdating = false;
+ //       }
+
+ //       #endregion
 
 
-//DeleteNewsOlderThan(update.OldestNewsItemPubDate);
-//AddNews(update.News);
-//AdjustForDuplicateTitles();
-//Trim();
 
 
-//void DeleteNewsOlderThan(string date)
-//{
-//    if (EnumerableEx.IsNullOrEmpty(news))
-//        return;
+ //       #region Helper functions for handling an update
 
-//    var tryGetOldestDate = date.TryGetUtcDate();
-//    if (tryGetOldestDate.Item1)
-//    {
-//        var oldestPubDate = tryGetOldestDate.Item2;
-//        lock (syncObject)
-//        {
-//            // keep all news that is newer than the oldest pub date, as well as all favorited news
-//            var correctedNews = news.Where(o => o.IsFavorite || o.UtcPublishDateTime >= oldestPubDate).ToList();
-//            news = correctedNews;
-//        }
-//    }
-//}
+ //       void HandleUpdate(FeedResult update)
+ //       {
+ //           if (update == null ||
+ //               update.Status != FeedResultStatus.OK || 
+ //               EnumerableEx.IsNullOrEmpty(update.News))
+ //               return;
 
-//void AddNews(IEnumerable<Weave.RssAggregator.Core.DTOs.Outgoing.NewsItem> newNews)
-//{
-//    if (newNews == null || !newNews.Any())
-//        return;
+ //           var now = DateTime.UtcNow;
+ //           news = news ?? new List<NewsItem>();
+ //           var previousNews = news;
 
-//    var newNewsInCorrectFormat = newNews
-//        .Where(o => !DoesAnyExistingNewsItemMatch(o))
-//        .Select(o => o.Convert<Weave.RssAggregator.Core.DTOs.Outgoing.NewsItem, NewsItem>(Converters.Converters.Instance))
-//        .Where(o => !o.FailedToParseUtcPublishDateTime)
-//        .ToList();
+ //           var updatedNews = update.News.Convert().ToList();
 
-//    AddNewNewsItems(newNewsInCorrectFormat);
-//}
+ //           foreach (var newsItem in updatedNews)
+ //           {
+ //               newsItem.OriginalDownloadDateTime = now;
+ //               newsItem.Feed = this;
+ //           }
 
-//void AddNewNewsItems(IEnumerable<NewsItem> newsToAdd)
-//{
-//    if (newsToAdd == null || !newsToAdd.Any())
-//        return;
+ //           var mergedNews = news
+ //               .Union(updatedNews, newsItemTitleComparer)
+ //               .OrderByDescending(o => o.IsNew())
+ //               .ThenByDescending(o => o.UtcPublishDateTime)
+ //               .Take(TRIM)
+ //               .ToList();
 
-//    var originalDownloadDateTime = DateTime.UtcNow;
-//    foreach (var newsItem in newsToAdd)
-//    {
-//        newsItem.OriginalDownloadDateTime = originalDownloadDateTime;
-//        newsItem.Feed = this;
-//    }
+ //           news = mergedNews;
 
-//    lock (syncObject)
-//    {
-//        if (news == null)
-//            news = new List<NewsItem>();
+ //           if (news.IsSetEqualTo(previousNews, new NewsItemIdComparer()))
+ //               return;
 
-//        news.InsertRange(0, newsToAdd);
-//    }
-//}
+ //           LastRefreshedOn = now;
+ //           IconUri = update.IconUri;
+ //           Etag = update.Etag;
+ //           LastModified = update.LastModified;
+ //           MostRecentNewsItemPubDate = update.MostRecentNewsItemPubDate;
+ //           UpdateTeaserImage();
+ //       }
 
-//bool DoesAnyExistingNewsItemMatch(Weave.RssAggregator.Core.DTOs.Outgoing.NewsItem newNewsItem)
-//{
-//    if (EnumerableEx.IsNullOrEmpty(news))
-//        return false;
+ //       void UpdateTeaserImage()
+ //       {
+ //           if (EnumerableEx.IsNullOrEmpty(news))
+ //               return;
 
-//    return news.Any(newsItem => newsItem.Id.Equals(newNewsItem.Id));
-//}
+ //           TeaserImageUrl = news
+ //               .OrderByDescending(o => o.UtcPublishDateTime)
+ //               .Where(o => o.HasImage)
+ //               .Select(o => o.GetBestImageUrl())
+ //               .FirstOrDefault();
+ //       }
 
-//void AdjustForDuplicateTitles()
-//{
-//    news = news == null ? null : news.Distinct(newsItemTitleComparer).ToList();
-//}
-
-//void Trim()
-//{
-//    news = news == null ? null : news.Take(TRIM).ToList();
-//}
+ //       #endregion
 
 #endregion

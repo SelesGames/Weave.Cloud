@@ -47,10 +47,10 @@ namespace Weave.User.BusinessObjects
             Articles = new Articles(this);
         }
 
-        public Task RefreshAllFeeds()
-        {
-            return new FeedsSubset(Feeds).Refresh();
-        }
+        //public Task RefreshAllFeeds()
+        //{
+            //return new FeedsSubset(Feeds).Refresh();
+        //}
 
         public IEnumerable<NewsItem> GetLatestArticles()
         {
@@ -62,38 +62,38 @@ namespace Weave.User.BusinessObjects
 
         #region Create a feed subset from either a category name or a list of feedIds
         
-        public FeedsSubset CreateSubsetFromCategory(string category)
-        {
-            IEnumerable<Feed> feeds = null;
+        //public FeedsSubset CreateSubsetFromCategory(string category)
+        //{
+        //    IEnumerable<Feed> feeds = null;
 
-            if (string.IsNullOrEmpty(category))
-                throw new Exception("No category specified");
+        //    if (string.IsNullOrEmpty(category))
+        //        throw new Exception("No category specified");
 
-            feeds = Feeds.OfCategory(category);
+        //    feeds = Feeds.OfCategory(category);
 
-            if (EnumerableEx.IsNullOrEmpty(feeds))
-                throw new Exception(string.Format("No feeds match category: {0}", category));
+        //    if (EnumerableEx.IsNullOrEmpty(feeds))
+        //        throw new Exception(string.Format("No feeds match category: {0}", category));
 
-            return new FeedsSubset(feeds);
-        }
+        //    return new FeedsSubset(feeds);
+        //}
 
-        public FeedsSubset CreateSubsetFromFeedIds(IEnumerable<Guid> feedIds)
-        {
-            if (EnumerableEx.IsNullOrEmpty(feedIds))
-                throw new Exception("No feedIds specified");
+        //public FeedsSubset CreateSubsetFromFeedIds(IEnumerable<Guid> feedIds)
+        //{
+        //    if (EnumerableEx.IsNullOrEmpty(feedIds))
+        //        throw new Exception("No feedIds specified");
 
-            var feeds = from f in Feeds
-                        join id in feedIds on f.Id equals id
-                        select f;
+        //    var feeds = from f in Feeds
+        //                join id in feedIds on f.Id equals id
+        //                select f;
 
-            if (EnumerableEx.IsNullOrEmpty(feeds))
-                throw new Exception(
-                    string.Format("No feeds match feedIds: {0}", 
-                    feedIds.Aggregate(new StringBuilder(), (sb, id) => sb.Append(id + ", ")).ToString()
-                    ));
+        //    if (EnumerableEx.IsNullOrEmpty(feeds))
+        //        throw new Exception(
+        //            string.Format("No feeds match feedIds: {0}", 
+        //            feedIds.Aggregate(new StringBuilder(), (sb, id) => sb.Append(id + ", ")).ToString()
+        //            ));
 
-            return new FeedsSubset(feeds);
-        }
+        //    return new FeedsSubset(feeds);
+        //}
 
         #endregion
 

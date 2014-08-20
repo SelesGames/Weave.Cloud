@@ -61,7 +61,6 @@
   <ItemGroup>
     <Compile Include="CachedFeed.cs" />
     <Compile Include="FeedUpdateNotice.cs" />
-    <Compile Include="HFeedDbMediator.cs" />
     <Compile Include="FeedCache.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -25,11 +25,12 @@ namespace Weave.User.Service.Redis.Serializers.Binary
 
         public void Write()
         {
-            bw.Write(feed.Id);
 
             // CERTAIN VALUES NO LONGER HOLD TRUE FOR CANONICAL FEEDS
             // since this feed data is not specific to any particular user, the
-            // following values will be omitted:
+            // following values will be omitted.  NOTE - the ID is no longer 
+            // valid either, since a feed's ID is really specific to a user
+            //bw.Write(feed.Id);
             //bw.Write(feed.Name ?? "");
             //bw.Write(feed.Category ?? "");
             //bw.Write(feed.MostRecentEntrance.ToBinary());

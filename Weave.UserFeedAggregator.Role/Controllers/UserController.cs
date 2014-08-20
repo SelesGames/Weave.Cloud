@@ -121,7 +121,7 @@ namespace Weave.User.Service.Role.Controllers
             await SaveUserIndex();
             SaveUserInfoBusinessObject();
 
-            await PerformRefreshOnFeeds(userBO.Feeds);
+            await PerformRefreshOnFeeds(userIndex.FeedIndices);
 
 
             var outgoing = ConvertToOutgoing(userIndex);
@@ -144,12 +144,12 @@ namespace Weave.User.Service.Role.Controllers
         {
             if (refresh)
             {
-                await LoadBoth(userId);
+                await LoadIndexOnly(userId);
 
                 userBO.PreviousLoginTime = userBO.CurrentLoginTime;
                 userBO.CurrentLoginTime = DateTime.UtcNow;
 
-                var feeds = userBO.Feeds;
+                var feeds = userIndex.FeedIndices;
                 await PerformRefreshOnFeeds(feeds);
             }
             else
@@ -198,19 +198,17 @@ namespace Weave.User.Service.Role.Controllers
 
             if (entry == EntryType.ExtendRefresh)
             {
-                await LoadBoth(userId);
+                await LoadIndexOnly(userId);
 
-                var feedsBO = userBO.Feeds.OfCategory(category);
-                var subset = new FeedsSubset(feedsBO);
-                subset.ExtendEntry();
-                await PerformRefreshOnFeeds(feedsBO);
                 feeds = userIndex.FeedIndices.OfCategory(category);
+                feeds.ExtendEntry();
+                await PerformRefreshOnFeeds(feeds);
             }
             else if (entry == EntryType.Mark)
             {
                 await Lock(userId, async () =>
                 {
-                    await LoadIndexOnly(userId);  //, saveOnFail: false);
+                    await LoadIndexOnly(userId);;
                     feeds = userIndex.FeedIndices.OfCategory(category);
                     feeds.MarkEntry();
                     await SaveUserIndex();
@@ -218,7 +216,7 @@ namespace Weave.User.Service.Role.Controllers
             }
             else
             {
-                await LoadIndexOnly(userId);  //, saveOnFail: true);
+                await LoadIndexOnly(userId);
                 feeds = userIndex.FeedIndices.OfCategory(category);
             }
 
@@ -242,13 +240,11 @@ namespace Weave.User.Service.Role.Controllers
 
             if (entry == EntryType.ExtendRefresh)
             {
-                await LoadBoth(userId);
+                await LoadIndexOnly(userId);
 
-                var feedsBO = userBO.Feeds.WithId(feedId).ToList();
-                var subset = new FeedsSubset(feedsBO);
-                subset.ExtendEntry();
-                await PerformRefreshOnFeeds(feedsBO);
                 feeds = userIndex.FeedIndices.WithId(feedId).ToList();
+                feeds.ExtendEntry();
+                await PerformRefreshOnFeeds(feeds);
             }
             else if (entry == EntryType.Mark)
             {
@@ -290,13 +286,13 @@ namespace Weave.User.Service.Role.Controllers
         {
             if (refresh)
             {
-                await LoadBoth(userId);
+                await LoadIndexOnly(userId);
 
-                var feeds = userBO.Feeds;
+                var feeds = userIndex.FeedIndices;
                 await PerformRefreshOnFeeds(feeds);
             }
             else
-                await LoadIndexOnly(userId);  //, saveOnFail: true);
+                await LoadIndexOnly(userId);
 
             var indexSubset = userIndex.FeedIndices;
             return CreateOutgoingFeedsInfoList(indexSubset, nested);
@@ -308,13 +304,13 @@ namespace Weave.User.Service.Role.Controllers
         {
             if (refresh)
             {
-                await LoadBoth(userId);
+                await LoadIndexOnly(userId);
 
-                var feeds = userBO.CreateSubsetFromCategory(category);
+                var feeds = userIndex.FeedIndices.OfCategory(category);
                 await PerformRefreshOnFeeds(feeds);
             }
             else
-                await LoadIndexOnly(userId);  //, saveOnFail: true);
+                await LoadIndexOnly(userId);
 
             var indexSubset = userIndex.FeedIndices.OfCategory(category);
             return CreateOutgoingFeedsInfoList(indexSubset, nested);
@@ -326,13 +322,13 @@ namespace Weave.User.Service.Role.Controllers
         {
             if (refresh)
             {
-                await LoadBoth(userId);
+                await LoadIndexOnly(userId);
 
-                var feeds = userBO.CreateSubsetFromFeedIds(new[] { feedId });
+                var feeds = userIndex.FeedIndices.WithId(feedId);;
                 await PerformRefreshOnFeeds(feeds);
             }
             else
-                await LoadIndexOnly(userId);  //, saveOnFail: true);
+                await LoadIndexOnly(userId);
 
             var indexSubset = userIndex.FeedIndices.Where(o => o.Id == feedId);
             return CreateOutgoingFeedsInfoList(indexSubset, nested);
@@ -632,24 +628,6 @@ namespace Weave.User.Service.Role.Controllers
             }
         }
 
-        /// <summary>
-        /// Load the user Index first.  If the full user graph was not loaded yet 
-        /// (which will be the majority case) then load it.  Finally, merge any changes 
-        /// from the current user index state into the user graph.
-        /// </summary>
-        async Task LoadBoth(Guid userId)
-        {
-            await LoadIndexOnly(userId);
-
-            if (userBO == null)
-            {
-                await LoadUserInfoBusinessObject();
-                await LoadUserIndex();
-            }
-
-            userBO.UpdateFrom(userIndex);
-        }
-
         void VerifyUserId()
         {
             if (userId == Guid.Empty)
@@ -775,9 +753,32 @@ namespace Weave.User.Service.Role.Controllers
 
         #region Feeds Refresh function
 
-        static FeedRequest CreateRequest(FeedIndex feed)
+        async Task PerformRefreshOnFeeds(IEnumerable<FeedIndex> feeds)
         {
-            return new FeedRequest
+            var client = new SmartHttpClient();
+            var requests = feeds.Select(CreateRequest).ToList();
+            var results = await client.PostAsync<List<Request>, List<Result>>(
+                "http://weave-v2-news.cloudapp.net/api/weave", requests);
+
+            var resultTuples = feeds.Zip(results, (feed, result) => new { feed, result });
+
+            var filteredIndices = resultTuples.Where(o => o.result.IsLoaded == true);
+            var ids = filteredIndices.Select(o => o.feed.Id);
+            var updatedfeedIndices = (await GetFeedIndices(ids)).Results.Where(o => o.HasValue).Select(o => o.Value);
+
+            foreach (var feedIndex in updatedfeedIndices)
+            {
+                var matchingIndex = userIndex.FeedIndices.FirstOrDefault(o => o.Id == feedIndex.Id);
+                if (matchingIndex != null)
+                {
+                    UpdateFeedIndex(matchingIndex, feedIndex);              
+                }
+            }
+        }
+
+        static Request CreateRequest(FeedIndex feed)
+        {
+            return new Request
             {
                 Id = feed.Id.ToString(),
                 Url = feed.Uri,
@@ -787,23 +788,26 @@ namespace Weave.User.Service.Role.Controllers
             };
         }
 
-        async Task PerformRefreshForFeeds(IEnumerable<FeedIndex> feeds)
+        static void UpdateFeedIndex(FeedIndex o, FeedIndex update)
         {
-            var client = new SmartHttpClient();
-            var requests = feeds.Select(CreateRequest).ToList();
-            var results = await client.PostAsync<List<FeedRequest>, List<Result>>(
-                "http://weave-v2-news.cloudapp.net/api/weave", requests);
+            o.Uri = update.Uri;
+            //o.IconUri = update.IconUri;
+            //o.TeaserImageUrl = update.TeaserImageUrl;
+            o.Etag = update.Etag;
+            o.LastModified = update.LastModified;
+            o.MostRecentNewsItemPubDate = update.MostRecentNewsItemPubDate;
+            o.LastRefreshedOn = update.LastRefreshedOn;
 
-            var resultTuples = feeds.Zip(results, (feed, result) => new { feed, result });
+            var newsDiff = o.NewsItemIndices.Diff(update.NewsItemIndices);
+            foreach (var newsItem in newsDiff.Removed)
+            {
+                o.NewsItemIndices.Remove(newsItem);
+            }
 
-
-            var filteredIndices = resultTuples.Where(o => o.result.IsLoaded == true);
-            var ids = filteredIndices.Select(o => o.feed.Id);
-            var updatedfeedIndices = await GetFeedIndices(ids);
-
-            var feedIndex1 = new FeedIndex();
-            var feedIndex2 = new FeedIndex();
-            feedIndex1.
+            foreach (var newsItem in newsDiff.Added)
+            {
+                o.NewsItemIndices.Add(newsItem);
+            }
         }
 
         async Task<RedisCacheMultiResult<FeedIndex>> GetFeedIndices(IEnumerable<Guid> feedIds)
@@ -812,42 +816,6 @@ namespace Weave.User.Service.Role.Controllers
             var indexCache = new CanonicalFeedIndexCache(db);
             var results = await indexCache.Get(feedIds);
             return results;
-        }
-
-        async Task PerformRefreshOnFeeds(IEnumerable<Feed> feeds)
-        {
-            // refresh news for relevant feeds
-            var subset = new FeedsSubset(feeds);
-
-            var sw = System.Diagnostics.Stopwatch.StartNew();
-            await subset.Refresh();
-            sw.Stop();
-            timings.Refresh = sw.Elapsed.Dump();
-
-            // 1. Lock the userIndex first, because we will be modifying/recreating it
-            // 2. Grab the latest user index, which may be different from the previous one
-            // that was grabbed prior to the refresh
-            // 3. Merge the state of the latest user index into the object graph
-            // 4. Recreate the userIndex from the newly updated user graph
-            // 5. Save the user index
-            await Lock(userId, async () =>
-            {
-                await LoadUserIndex();
-                userBO.UpdateFrom(userIndex);
-                userIndex = userBO.CreateUserIndex();
-                await SaveUserIndex();
-            });
-
-            // save the full user graph, which was updated via the refresh
-            SaveUserInfoBusinessObject();
-
-            // save the news articles from the refreshed feeds to Redis
-            var redisNews = subset.AllNews().Select(MapAsRedis);
-
-            sw.Restart();
-            var saveToRedisResults = await SaveNewsToRedis(redisNews);
-            sw.Stop();
-            timings.SaveToNewsCache = sw.Elapsed.Dump();
         }
 
         #endregion
@@ -1100,7 +1068,7 @@ namespace Weave.User.Service.Role.Controllers
             return BusinessObjectToServerOutgoing.Convert(user);
         }
 
-        Redis.DTOs.NewsItem MapAsRedis(NewsItem o)
+        Redis.DTOs.NewsItem MapAsRedis(Weave.User.BusinessObjects.NewsItem o)
         {
             return new Redis.DTOs.NewsItem
             {
@@ -1118,7 +1086,7 @@ namespace Weave.User.Service.Role.Controllers
             };
         }
 
-        Redis.DTOs.Image MapAsRedis(Image o)
+        Redis.DTOs.Image MapAsRedis(Weave.User.BusinessObjects.Image o)
         {
             return new Redis.DTOs.Image
             {
@@ -1195,3 +1163,71 @@ namespace Weave.User.Service.Role.Controllers
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+#region deprecated
+
+///// <summary>
+///// Load the user Index first.  If the full user graph was not loaded yet 
+///// (which will be the majority case) then load it.  Finally, merge any changes 
+///// from the current user index state into the user graph.
+///// </summary>
+//async Task LoadBoth(Guid userId)
+//{
+//    await LoadIndexOnly(userId);
+
+//    if (userBO == null)
+//    {
+//        await LoadUserInfoBusinessObject();
+//        await LoadUserIndex();
+//    }
+
+//    userBO.UpdateFrom(userIndex);
+//}
+
+//async Task PerformRefreshOnFeeds(IEnumerable<Feed> feeds)
+//{
+//    // refresh news for relevant feeds
+//    var subset = new FeedsSubset(feeds);
+
+//    var sw = System.Diagnostics.Stopwatch.StartNew();
+//    await subset.Refresh();
+//    sw.Stop();
+//    timings.Refresh = sw.Elapsed.Dump();
+
+//    // 1. Lock the userIndex first, because we will be modifying/recreating it
+//    // 2. Grab the latest user index, which may be different from the previous one
+//    // that was grabbed prior to the refresh
+//    // 3. Merge the state of the latest user index into the object graph
+//    // 4. Recreate the userIndex from the newly updated user graph
+//    // 5. Save the user index
+//    await Lock(userId, async () =>
+//    {
+//        await LoadUserIndex();
+//        userBO.UpdateFrom(userIndex);
+//        userIndex = userBO.CreateUserIndex();
+//        await SaveUserIndex();
+//    });
+
+//    // save the full user graph, which was updated via the refresh
+//    SaveUserInfoBusinessObject();
+
+//    // save the news articles from the refreshed feeds to Redis
+//    var redisNews = subset.AllNews().Select(MapAsRedis);
+
+//    sw.Restart();
+//    var saveToRedisResults = await SaveNewsToRedis(redisNews);
+//    sw.Stop();
+//    timings.SaveToNewsCache = sw.Elapsed.Dump();
+//}
+
+#endregion

@@ -11,7 +11,7 @@ namespace Weave.User.BusinessObjects.ServiceClients
     {
         struct shim
         {
-            public FeedRequest Request { get; set; }
+            public Request Request { get; set; }
             public TaskCompletionSource<FeedResult> TaskSource { get; set; }
         }
 
@@ -24,14 +24,14 @@ namespace Weave.User.BusinessObjects.ServiceClients
             ProcessQueueViaWeaveServer(copy);
         }
 
-        public Task<FeedResult> GetFeedResultAsync(FeedRequest request)
+        public Task<FeedResult> GetFeedResultAsync(Request request)
         {
             var t = new TaskCompletionSource<FeedResult>();
             AddToQueue(request, t);
             return t.Task;
         }
 
-        void AddToQueue(FeedRequest request, TaskCompletionSource<FeedResult> taskSource)
+        void AddToQueue(Request request, TaskCompletionSource<FeedResult> taskSource)
         {
             var x = new shim { Request = request, TaskSource = taskSource };
             updateQueue.Add(x);

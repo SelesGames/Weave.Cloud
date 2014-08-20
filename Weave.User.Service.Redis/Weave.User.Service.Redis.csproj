@@ -41,7 +41,6 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CacheClients\CanonicalFeedIndexCache.cs" />
     <Compile Include="CacheClients\FeedUpdaterCache.cs" />
     <Compile Include="CacheClients\StandardStringCache.cs" />
     <Compile Include="Communication\Generic\Message.cs" />

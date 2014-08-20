@@ -1,5 +1,4 @@
-﻿using SelesGames.Common.Hashing;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -8,18 +7,24 @@ using Weave.Parsing;
 
 namespace Weave.Updater.BusinessObjects
 {
+    /// <summary>
+    /// A class used for updating a feed.  The functions the class provides are:
+    /// 
+    /// - To maintain ETag and LastModified data for efficient refreshes of the underlying RSS feed
+    /// - To maintain a historical list of the last N news items, sorted by publication date
+    /// - To allow for efficient addition of new news articles without duplicates
+    /// </summary>
     public class Feed
     {
         const int NUMBER_OF_NEWSITEMS_TO_HOLD = 200;
 
         // Read-only properties
-        public Guid Id { get; private set; }
+        //public Guid Id { get; private set; }
         public string Uri { get; private set; }
-        public string Name { get; private set; }
-        public IReadOnlyList<string> Instructions { get; private set; }
-        public FeedState LastFeedState { get; private set; }
-        public ExpandedEntries Entries { get; private set; }
-
+        //public string Name { get; private set; }
+        //public IReadOnlyList<string> Instructions { get; private set; }
+        //public FeedState LastFeedState { get; private set; }
+        public News News { get; private set; }
         public string TeaserImageUrl { get; set; }
 
         // record-keeping for feed updates
@@ -30,39 +35,32 @@ namespace Weave.Updater.BusinessObjects
 
         public TimeSpan RefreshTimeout { get; set; }
 
-        public enum FeedState
-        {
-            Uninitialized,
-            Failed,
-            OK
-        }
-
 
 
 
         #region Constructor
 
-        public Feed(string name, string feedUri, string originalUri, string instructions)
+        public Feed(/*string name, */string feedUri, string originalUri)//, string instructions)
         {
-            if (string.IsNullOrWhiteSpace(name))        throw new ArgumentException("name in HighFrequencyFeed ctor");
+            //if (string.IsNullOrWhiteSpace(name))        throw new ArgumentException("name in HighFrequencyFeed ctor");
             if (string.IsNullOrWhiteSpace(feedUri)) throw new ArgumentException("feedUri in HighFrequencyFeed ctor");
 
-            Name = name;
+            //Name = name;
             Uri = feedUri;
-            InitializeId(string.IsNullOrWhiteSpace(originalUri) ? feedUri : originalUri);
-            LastFeedState = FeedState.Uninitialized;
+            //InitializeId(string.IsNullOrWhiteSpace(originalUri) ? feedUri : originalUri);
+            //LastFeedState = FeedState.Uninitialized;
             RefreshTimeout = TimeSpan.FromMinutes(1);
 
-            Entries = new ExpandedEntries();
+            News = new News();
 
-            if (!string.IsNullOrWhiteSpace(instructions))
-            {
-                Instructions = instructions
-                    .Split(',')
-                    .Where(o => !string.IsNullOrWhiteSpace(o))
-                    .Select(o => o.Trim())
-                    .ToList();
-            }
+            //if (!string.IsNullOrWhiteSpace(instructions))
+            //{
+            //    Instructions = instructions
+            //        .Split(',')
+            //        .Where(o => !string.IsNullOrWhiteSpace(o))
+            //        .Select(o => o.Trim())
+            //        .ToList();
+            //}
         }
 
         #endregion
@@ -90,19 +88,24 @@ namespace Weave.Updater.BusinessObjects
                         var resultNews = requester.News.Select(Map).ToList();
                         var addedNews = new List<ExpandedEntry>();
 
-                        foreach (var o in resultNews)
+                        foreach (var o in requester.News)
                         {
-                            // null out the Description field
-                            o.Description = null;
-                            o.OriginalDownloadDateTime = now;
-                            if (Entries.Add(o))
-                                addedNews.Add(o);
+                            var record = AsRecord(o);
+                            if (News.Add(record))
+                            {
+                                var expandedEntry = Map(o);
+                                expandedEntry.Description = null;
+                                expandedEntry.OriginalDownloadDateTime = now;
+                                addedNews.Add(expandedEntry);
+                            }
                         }
 
-                        Entries.TrimTo(NUMBER_OF_NEWSITEMS_TO_HOLD);
+                        News.TrimTo(NUMBER_OF_NEWSITEMS_TO_HOLD);
 
                         if (addedNews.Any())
                         {
+                            UpdateTeaserImage(addedNews);
+
                             var update = new FeedUpdate
                             {
                                 Feed = this,
@@ -113,14 +116,15 @@ namespace Weave.Updater.BusinessObjects
                         }
                     }
 
-                    DebugEx.WriteLine("REFRESHED {0}  ({1})", Name, Uri);
+                    //DebugEx.WriteLine("REFRESHED {0}  ({1})", Name, Uri);
+                    DebugEx.WriteLine("REFRESHED {0}", Uri);
                 }
                 else if (result == Parsing.Feed.RequestStatus.Unmodified)
                 {
                     LastRefreshedOn = now;
-                    DebugEx.WriteLine("UNMODIFIED {0}  ({1})", Name, Uri);
+                    DebugEx.WriteLine("UNMODIFIED {0}", Uri);
                 }
-                LastFeedState = FeedState.OK;
+                //LastFeedState = FeedState.OK;
             }
             catch (TaskCanceledException ex) { HandleTimeoutException(ex); }
             catch (HttpRequestException ex) { HandleHttpRequestException(ex); }
@@ -133,16 +137,16 @@ namespace Weave.Updater.BusinessObjects
 
         #region Private helper functions
 
-        void InitializeId(string uri)
-        {
-            Id = CryptoHelper.ComputeHashUsedByMobilizer(uri);
-        }
+        //void InitializeId(string uri)
+        //{
+        //    Id = SelesGames.Common.Hashing.CryptoHelper.ComputeHashUsedByMobilizer(uri);
+        //}
 
         Parsing.Feed CreateInnerFeed()
         {
             return new Parsing.Feed
             {
-                FeedId = Id,
+                //FeedId = Id,
                 FeedUri = Uri,
                 MostRecentNewsItemPubDate = MostRecentNewsItemPubDate,
                 Etag = Etag,
@@ -152,26 +156,38 @@ namespace Weave.Updater.BusinessObjects
             };
         }
 
+        void UpdateTeaserImage(IEnumerable<ExpandedEntry> addedNews)
+        {
+            var mostRecentAndBestImage = addedNews
+                .OrderByDescending(o => o.UtcPublishDateTime)
+                .Select(o => o.Images.GetBest())
+                .OfType<Image>()
+                .FirstOrDefault();
+
+            if (mostRecentAndBestImage != null)
+                TeaserImageUrl = mostRecentAndBestImage.Url;
+        }
+
         void HandleTimeoutException(TaskCanceledException ex)
         {
-            DebugEx.WriteLine("!!!!!! TIMED OUT {0}  ({1}): {2}", Name, Uri, ex.Message);
-            LastFeedState = FeedState.Failed;
+            DebugEx.WriteLine("!!!!!! TIMED OUT {0}: {2}", Uri, ex.Message);
+            //LastFeedState = FeedState.Failed;
         }
 
         void HandleHttpRequestException(HttpRequestException ex)
         {
             if (ex.InnerException != null)
-                DebugEx.WriteLine("!!!!!! FAILED {0}  ({1}): {2}: {3}", Name, Uri, ex.Message, ex.InnerException.Message);
+                DebugEx.WriteLine("!!!!!! FAILED {0}: {2}: {3}", Uri, ex.Message, ex.InnerException.Message);
             else
-                DebugEx.WriteLine("!!!!!! FAILED {0}  ({1}): {2}", Name, Uri, ex.Message);
+                DebugEx.WriteLine("!!!!!! FAILED {0}: {2}", Uri, ex.Message);
 
-            LastFeedState = FeedState.Failed;
+            //LastFeedState = FeedState.Failed;
         }
 
         void HandleGeneralException(Exception ex)
         {
-            DebugEx.WriteLine("!!!!!! FAILED {0}  ({1}): {2}", Name, Uri, ex.Message);
-            LastFeedState = FeedState.Failed;
+            DebugEx.WriteLine("!!!!!! FAILED {0}: {2}", Uri, ex.Message);
+            //LastFeedState = FeedState.Failed;
         }
 
         #endregion
@@ -180,6 +196,17 @@ namespace Weave.Updater.BusinessObjects
 
 
         #region Map functions
+
+        static NewsItemRecord AsRecord(Entry o)
+        {
+            return new NewsItemRecord
+            {
+                Id = o.Id,
+                UtcPublishDateTime = o.UtcPublishDateTime,
+                Title = o.Title,
+                Link = o.Link,
+            };
+        }
 
         static void Copy(Entry source, Entry destination)
         {
@@ -215,20 +242,9 @@ namespace Weave.Updater.BusinessObjects
 
 
 
-        void UpdateTeaserImage()
-        {
-            var image = Entries.SelectMany(o => o.Images).GetBest();
-            if (image != null)
-                TeaserImageUrl = image.Url;
-            //TeaserImageUrl = News
-            //    .Where(o => o.HasImage)
-            //    .Select(o => o.GetBestImageUrl())
-            //    .FirstOrDefault();
-        }
-
         public override string ToString()
         {
-            return Name + ": " + Uri;
+            return Uri;
         }
     }
 }

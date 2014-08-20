@@ -1,5 +1,6 @@
-﻿using StackExchange.Redis;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
@@ -11,39 +12,62 @@ namespace Weave.RssAggregator.HighFrequency
     public class HighFrequencyFeed
     {
         readonly Feed innerFeed;
-        readonly Subject<FeedUpdate> feedUpdate;
-        readonly IDatabaseAsync db;
+        readonly Subject<HighFrequencyFeedUpdate> feedUpdate;
 
-        public Guid Id { get { return innerFeed.Id; } }
+        public Guid Id { get; private set; }
+        public string Name { get; private set; }
+        public IReadOnlyList<string> Instructions { get; private set; }
+
         public string Uri { get { return innerFeed.Uri; } }
-        public IObservable<FeedUpdate> FeedUpdate { get; private set; }
+        public IObservable<HighFrequencyFeedUpdate> FeedUpdate { get; private set; }
 
-        public HighFrequencyFeed(string name, string feedUri, string originalUri, string instructions, IDatabaseAsync db)
+        public HighFrequencyFeed(string name, string feedUri, string originalUri, string instructions)
         {
-            this.innerFeed = new Feed(name, feedUri, originalUri, instructions);
-            this.feedUpdate = new Subject<FeedUpdate>();
-            this.db = db;
+            this.innerFeed = new Feed(feedUri, originalUri);
+            this.feedUpdate = new Subject<HighFrequencyFeedUpdate>();
+
+            Name = name;
+            InitializeId(string.IsNullOrWhiteSpace(originalUri) ? feedUri : originalUri);
+
             FeedUpdate = feedUpdate.AsObservable();
+
+            if (!string.IsNullOrWhiteSpace(instructions))
+            {
+                Instructions = instructions
+                    .Split(',')
+                    .Where(o => !string.IsNullOrWhiteSpace(o))
+                    .Select(o => o.Trim())
+                    .ToList();
+            }
         }
 
         /// <summary>
-        /// Recover the feed's state from Redis.  this will be used whenever the service restarts
+        /// Merge the feed's state (from Redis).  This will be used whenever the service restarts
         /// </summary>
-        public Task Initialize()
+        public void InitializeWith(Feed feed)
         {
-            return innerFeed.RecoverStateFromRedis(db);
+            if (feed != null)
+                feed.CopyStateTo(innerFeed);
         }
 
         public async Task Refresh()
         {
             var result = await innerFeed.Refresh();
             if (result != null)
-                feedUpdate.OnNext(result);
+            {
+                var update = new HighFrequencyFeedUpdate(this, result);
+                feedUpdate.OnNext(update);
+            }
+        }
+
+        void InitializeId(string uri)
+        {
+            Id = SelesGames.Common.Hashing.CryptoHelper.ComputeHashUsedByMobilizer(uri);
         }
 
         public override string ToString()
         {
-            return innerFeed.Name + ": " + innerFeed.Uri;
+            return Name + ": " + Uri;
         }
     }
 }

@@ -5,15 +5,15 @@ using System.Linq;
 
 namespace Weave.Updater.BusinessObjects
 {
-    public class ExpandedEntries : IEnumerable<ExpandedEntry>
+    public class News : IEnumerable<NewsItemRecord>
     {
-        static readonly EntryComparer entryComparer = new EntryComparer();
+        static readonly NewsItemRecordComparer recordComparer = new NewsItemRecordComparer();
 
-        SortedSet<ExpandedEntry> set;
+        SortedSet<NewsItemRecord> set;
 
-        public ExpandedEntries()
+        public News()
         {
-            set = new SortedSet<ExpandedEntry>(entryComparer);
+            set = new SortedSet<NewsItemRecord>(recordComparer);
         }
 
         /// <summary>
@@ -21,7 +21,7 @@ namespace Weave.Updater.BusinessObjects
         /// </summary>
         /// <param name="feed">The Entry to be added</param>
         /// <returns>True if the entry was added, false if the entry was already present or invalid</returns>
-        public bool Add(ExpandedEntry entry)
+        public bool Add(NewsItemRecord entry)
         {
             if (entry == null) return false;
             if (string.IsNullOrWhiteSpace(entry.Link) ||
@@ -36,7 +36,7 @@ namespace Weave.Updater.BusinessObjects
 
         public void TrimTo(int target)
         {
-            set = new SortedSet<ExpandedEntry>(set.Take(target), entryComparer);
+            set = new SortedSet<NewsItemRecord>(set.Take(target), recordComparer);
         }
 
 
@@ -44,9 +44,9 @@ namespace Weave.Updater.BusinessObjects
 
         #region helper class for doing the EntryWithPostProcessInfo comparisons
 
-        class EntryComparer : IComparer<ExpandedEntry>
+        class NewsItemRecordComparer : IComparer<NewsItemRecord>
         {
-            public int Compare(ExpandedEntry x, ExpandedEntry y)
+            public int Compare(NewsItemRecord x, NewsItemRecord y)
             {
                 if (x.Id == y.Id)
                     return 0;
@@ -71,7 +71,7 @@ namespace Weave.Updater.BusinessObjects
 
         #region IEnumerable interface implementation
 
-        public IEnumerator<ExpandedEntry> GetEnumerator()
+        public IEnumerator<NewsItemRecord> GetEnumerator()
         {
             return set.GetEnumerator();
         }

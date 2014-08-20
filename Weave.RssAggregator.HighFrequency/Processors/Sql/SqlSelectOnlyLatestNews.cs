@@ -1,10 +1,9 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Weave.Updater.BusinessObjects;
 
 namespace Weave.RssAggregator.HighFrequency
 {
-    public class SqlSelectOnlyLatestNews : ISequentialAsyncProcessor<FeedUpdate>
+    public class SqlSelectOnlyLatestNews : ISequentialAsyncProcessor<HighFrequencyFeedUpdate>
     {
         SqlClient dbClient;
 
@@ -16,9 +15,9 @@ namespace Weave.RssAggregator.HighFrequency
 
         public bool IsHandledFully { get; private set; }
 
-        public async Task ProcessAsync(FeedUpdate update)
+        public async Task ProcessAsync(HighFrequencyFeedUpdate update)
         {
-            var entries = update.Entries;
+            var entries = update.InnerUpdate.Entries;
 
             var latestNewsItemTimeStamp = await dbClient.GetLatestForFeedId(update.Feed.Id);
 
@@ -32,9 +31,9 @@ namespace Weave.RssAggregator.HighFrequency
             }
             else
             {
-                int totalCount = update.Entries.Count;
-                update.Entries = latestNews;
-                int filteredCount = update.Entries.Count;
+                int totalCount = update.InnerUpdate.Entries.Count;
+                update.InnerUpdate.Entries = latestNews;
+                int filteredCount = update.InnerUpdate.Entries.Count;
                 DebugEx.WriteLine("SqlSelectOnlyLatestNews processed: {0}, filtered from {1} down to {2} articles", update.Feed.Uri, totalCount, filteredCount);
             }
         }
