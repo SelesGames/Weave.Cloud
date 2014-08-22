@@ -19,11 +19,7 @@ namespace Weave.Updater.BusinessObjects
         const int NUMBER_OF_NEWSITEMS_TO_HOLD = 200;
 
         // Read-only properties
-        //public Guid Id { get; private set; }
         public string Uri { get; private set; }
-        //public string Name { get; private set; }
-        //public IReadOnlyList<string> Instructions { get; private set; }
-        //public FeedState LastFeedState { get; private set; }
         public News News { get; private set; }
         public string TeaserImageUrl { get; set; }
 
@@ -40,27 +36,13 @@ namespace Weave.Updater.BusinessObjects
 
         #region Constructor
 
-        public Feed(/*string name, */string feedUri, string originalUri)//, string instructions)
+        public Feed(string feedUri)
         {
-            //if (string.IsNullOrWhiteSpace(name))        throw new ArgumentException("name in HighFrequencyFeed ctor");
             if (string.IsNullOrWhiteSpace(feedUri)) throw new ArgumentException("feedUri in HighFrequencyFeed ctor");
 
-            //Name = name;
             Uri = feedUri;
-            //InitializeId(string.IsNullOrWhiteSpace(originalUri) ? feedUri : originalUri);
-            //LastFeedState = FeedState.Uninitialized;
             RefreshTimeout = TimeSpan.FromMinutes(1);
-
             News = new News();
-
-            //if (!string.IsNullOrWhiteSpace(instructions))
-            //{
-            //    Instructions = instructions
-            //        .Split(',')
-            //        .Where(o => !string.IsNullOrWhiteSpace(o))
-            //        .Select(o => o.Trim())
-            //        .ToList();
-            //}
         }
 
         #endregion
@@ -116,7 +98,6 @@ namespace Weave.Updater.BusinessObjects
                         }
                     }
 
-                    //DebugEx.WriteLine("REFRESHED {0}  ({1})", Name, Uri);
                     DebugEx.WriteLine("REFRESHED {0}", Uri);
                 }
                 else if (result == Parsing.Feed.RequestStatus.Unmodified)
@@ -124,7 +105,6 @@ namespace Weave.Updater.BusinessObjects
                     LastRefreshedOn = now;
                     DebugEx.WriteLine("UNMODIFIED {0}", Uri);
                 }
-                //LastFeedState = FeedState.OK;
             }
             catch (TaskCanceledException ex) { HandleTimeoutException(ex); }
             catch (HttpRequestException ex) { HandleHttpRequestException(ex); }
@@ -137,16 +117,10 @@ namespace Weave.Updater.BusinessObjects
 
         #region Private helper functions
 
-        //void InitializeId(string uri)
-        //{
-        //    Id = SelesGames.Common.Hashing.CryptoHelper.ComputeHashUsedByMobilizer(uri);
-        //}
-
         Parsing.Feed CreateInnerFeed()
         {
             return new Parsing.Feed
             {
-                //FeedId = Id,
                 FeedUri = Uri,
                 MostRecentNewsItemPubDate = MostRecentNewsItemPubDate,
                 Etag = Etag,
@@ -171,7 +145,6 @@ namespace Weave.Updater.BusinessObjects
         void HandleTimeoutException(TaskCanceledException ex)
         {
             DebugEx.WriteLine("!!!!!! TIMED OUT {0}: {2}", Uri, ex.Message);
-            //LastFeedState = FeedState.Failed;
         }
 
         void HandleHttpRequestException(HttpRequestException ex)
@@ -180,14 +153,11 @@ namespace Weave.Updater.BusinessObjects
                 DebugEx.WriteLine("!!!!!! FAILED {0}: {2}: {3}", Uri, ex.Message, ex.InnerException.Message);
             else
                 DebugEx.WriteLine("!!!!!! FAILED {0}: {2}", Uri, ex.Message);
-
-            //LastFeedState = FeedState.Failed;
         }
 
         void HandleGeneralException(Exception ex)
         {
             DebugEx.WriteLine("!!!!!! FAILED {0}: {2}", Uri, ex.Message);
-            //LastFeedState = FeedState.Failed;
         }
 
         #endregion
@@ -205,6 +175,7 @@ namespace Weave.Updater.BusinessObjects
                 UtcPublishDateTime = o.UtcPublishDateTime,
                 Title = o.Title,
                 Link = o.Link,
+                HasImage = o.ImageUrls.Any(),
             };
         }
 

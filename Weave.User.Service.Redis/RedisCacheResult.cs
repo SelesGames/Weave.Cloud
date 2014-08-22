@@ -2,19 +2,21 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Weave.User.Service.Redis.Serializers;
 
 namespace Weave.User.Service.Redis
 {
     public class RedisCacheResult<T>
     {
-        public RedisKey RedisKey { get; internal set; }
-        public RedisValue RedisValue { get; internal set; }
+        public RedisKey RedisKey { get; set; }
+        public RedisValue RedisValue { get; set; }
+        public T Value { get; set; }
+        public SerializationException SerializationException { get; set; }
 
         public bool HasValue { get { return RedisValue.HasValue && Value is T; } }
-        public T Value { get; internal set; }
         public int ByteLength { get { return GetByteLength(RedisValue); } }
 
-        public CacheTimings Timings { get; internal set; }
+        public CacheTimings Timings { get; set; }
 
         static int GetByteLength(RedisValue value)
         {
@@ -27,8 +29,8 @@ namespace Weave.User.Service.Redis
 
     public class RedisCacheMultiResult<T>
     {
-        public IEnumerable<RedisCacheResult<T>> Results { get; internal set; }
-        public CacheTimings Timings { get; internal set; }
+        public IEnumerable<RedisCacheResult<T>> Results { get; set; }
+        public CacheTimings Timings { get; set; }
 
         public IEnumerable<T> GetValidValues()
         {
@@ -38,18 +40,18 @@ namespace Weave.User.Service.Redis
 
     public class RedisWriteResult<T>
     {
-        public RedisKey RedisKey { get; internal set; }
-        public RedisValue RedisValue { get; internal set; }
+        public RedisKey RedisKey { get; set; }
+        public RedisValue RedisValue { get; set; }
 
-        public T ResultValue { get; internal set; }
+        public T ResultValue { get; set; }
 
-        public CacheTimings Timings { get; internal set; }
+        public CacheTimings Timings { get; set; }
     }
 
     public class RedisWriteMultiResult<T>
     {
-        public IEnumerable<RedisWriteResult<T>> Results { get; internal set; }
-        public CacheTimings Timings { get; internal set; }
+        public IEnumerable<RedisWriteResult<T>> Results { get; set; }
+        public CacheTimings Timings { get; set; }
     }
 
     public class CacheTimings
@@ -60,11 +62,11 @@ namespace Weave.User.Service.Redis
         public static CacheTimings Empty = new CacheTimings { SerializationTime = TimeSpan.Zero, ServiceTime = TimeSpan.Zero };
     }
 
-    static class RedisCacheResult
-    {
-        public static RedisCacheResult<T> Create<T>(T val, RedisValue redisVal)
-        {
-            return new RedisCacheResult<T> { Value = val, RedisValue = redisVal };
-        }
-    }
+    //static class RedisCacheResult
+    //{
+    //    public static RedisCacheResult<T> Create<T>(T val, RedisValue redisVal)
+    //    {
+    //        return new RedisCacheResult<T> { Value = val, RedisValue = redisVal };
+    //    }
+    //}
 }

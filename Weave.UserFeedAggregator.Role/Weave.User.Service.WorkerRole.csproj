@@ -108,11 +108,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\UserController.cs" />
-    <Compile Include="Map\BusinessObjectToServerOutgoing.cs" />
-    <Compile Include="Map\ServerIncomingToBusinessObject.cs" />
+    <Compile Include="Map\IndexToServerOutgoing.cs" />
+    <Compile Include="Map\ServerIncomingToIndex.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup\NinjectKernel.cs" />
     <Compile Include="Startup\StartupTask.cs" />
+    <Compile Include="UpdateHelper.cs" />
     <Compile Include="WorkerRole.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -148,9 +149,17 @@
       <Project>{bb3ea281-94b3-435f-a1ef-c395a7d1f25a}</Project>
       <Name>SelesGames.WebApi</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Weave.Parsing\Weave.Parsing.csproj">
+      <Project>{a9731e9c-72fc-4171-ba99-9a6f97cd379f}</Project>
+      <Name>Weave.Parsing</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Weave.RssAggregator.Core\RssAggregator.DTOs.csproj">
       <Project>{2f1a280d-ee75-4dc1-a36c-f8e5488e3260}</Project>
       <Name>RssAggregator.DTOs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Weave.Updater.BusinessObjects\Weave.Updater.BusinessObjects.csproj">
+      <Project>{95fa1246-08c5-4ce4-a78d-e0f3a254aa7c}</Project>
+      <Name>Weave.Updater.BusinessObjects</Name>
     </ProjectReference>
     <ProjectReference Include="..\Weave.User.BusinessObjects.Mutable\Weave.User.BusinessObjects.Mutable.csproj">
       <Project>{fc7c92ee-0aed-4859-b5ec-a770ce148497}</Project>
@@ -160,9 +169,9 @@
       <Project>{db5274e6-15f6-4ec8-920a-842ea93a2601}</Project>
       <Name>Weave.User.BusinessObjects</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Weave.User.Service.Cache\Weave.User.Service.Cache.csproj">
+    <ProjectReference Include="..\Weave.User.Service.Cache\Weave.User.Service.Azure.Blob.csproj">
       <Project>{edb6b676-e4fd-4b51-8c5b-98c7d1837ef6}</Project>
-      <Name>Weave.User.Service.Cache</Name>
+      <Name>Weave.User.Service.Azure.Blob</Name>
     </ProjectReference>
     <ProjectReference Include="..\Weave.User.Service.InterRoleMessaging\Weave.User.Service.InterRoleMessaging.csproj">
       <Project>{83f82b51-2a9c-4d55-bf4c-8a61de8d9428}</Project>

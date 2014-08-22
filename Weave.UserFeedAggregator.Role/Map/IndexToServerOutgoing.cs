@@ -21,7 +21,7 @@ namespace Weave.User.Service.Role.Map
                 NewArticleCount = o.NewsItemIndices.CountNew(),
                 UnreadArticleCount = o.NewsItemIndices.CountUnread(),
                 TeaserImageUrl = o.TeaserImageUrl,
-                LastRefreshedOn = o.LastRefreshedOn,
+                //LastRefreshedOn = o.LastRefreshedOn,
                 MostRecentEntrance = o.MostRecentEntrance,
                 PreviousEntrance = o.PreviousEntrance,
             };

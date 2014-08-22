@@ -55,7 +55,7 @@ namespace Weave.RssAggregator.HighFrequency
             if (update.Entries == null || !update.Entries.Any())
                 return null;
 
-            var db = connection.GetDatabase(DatabaseNumbers.CANONICAL_FEEDS_AND_NEWSITEMS);
+            var db = connection.GetDatabase(DatabaseNumbers.CANONICAL_NEWSITEMS);
             var batch = db.CreateBatch();
             var entryCache = new ExpandedEntryCache(batch);
 

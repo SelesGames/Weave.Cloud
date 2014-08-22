@@ -8,8 +8,8 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
-using Weave.RssAggregator.Core.DTOs.Incoming;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
+using Weave.Updater.BusinessObjects;
 using Weave.User.BusinessObjects;
 using Weave.User.BusinessObjects.Mutable;
 using Weave.User.Service.Cache;
@@ -146,8 +146,8 @@ namespace Weave.User.Service.Role.Controllers
             {
                 await LoadIndexOnly(userId);
 
-                userBO.PreviousLoginTime = userBO.CurrentLoginTime;
-                userBO.CurrentLoginTime = DateTime.UtcNow;
+                userIndex.PreviousLoginTime = userIndex.CurrentLoginTime;
+                userIndex.CurrentLoginTime = DateTime.UtcNow;
 
                 var feeds = userIndex.FeedIndices;
                 await PerformRefreshOnFeeds(feeds);
@@ -622,9 +622,9 @@ namespace Weave.User.Service.Role.Controllers
                 await SaveUserIndex();
 
                 // save the news articles from the refreshed feeds to Redis
-                var redisNews = userBO.Feeds.AllNews().Select(MapAsRedis);
-                var saveArticlesResults = await SaveNewsToRedis(redisNews);
-                DebugEx.WriteLine(saveArticlesResults);
+                //var redisNews = userBO.Feeds.AllNews().Select(MapAsRedis);
+                //var saveArticlesResults = await SaveNewsToRedis(redisNews);
+                //DebugEx.WriteLine(saveArticlesResults);
             }
         }
 
@@ -755,68 +755,98 @@ namespace Weave.User.Service.Role.Controllers
 
         async Task PerformRefreshOnFeeds(IEnumerable<FeedIndex> feeds)
         {
-            var client = new SmartHttpClient();
-            var requests = feeds.Select(CreateRequest).ToList();
-            var results = await client.PostAsync<List<Request>, List<Result>>(
-                "http://weave-v2-news.cloudapp.net/api/weave", requests);
+            var updateHelper = new UpdateHelper(connection);
+            var refreshMeta = await updateHelper.PerformRefreshOnFeeds(feeds);
+            timings.RefreshMeta = refreshMeta;
 
-            var resultTuples = feeds.Zip(results, (feed, result) => new { feed, result });
+            //// Send the request to the news aggregator server to update the specified feed urls, saving them in Redis
+            //var client = new SmartHttpClient();
+            //var urls = feeds.Select(o => o.Uri).ToList();
+            //var results = await client.PostAsync<List<string>, List<Result>>(
+            //    "http://weave-v2-news.cloudapp.net/api/weave", urls);
 
-            var filteredIndices = resultTuples.Where(o => o.result.IsLoaded == true);
-            var ids = filteredIndices.Select(o => o.feed.Id);
-            var updatedfeedIndices = (await GetFeedIndices(ids)).Results.Where(o => o.HasValue).Select(o => o.Value);
+            //var resultTuples = feeds.Zip(results, (feed, result) => new { feed, result });
 
-            foreach (var feedIndex in updatedfeedIndices)
-            {
-                var matchingIndex = userIndex.FeedIndices.FirstOrDefault(o => o.Id == feedIndex.Id);
-                if (matchingIndex != null)
-                {
-                    UpdateFeedIndex(matchingIndex, feedIndex);              
-                }
-            }
+            //var filteredIndices = resultTuples
+            //    .Where(o => o.result.IsLoaded == true)
+            //    .Select(o => o.feed);
+            //var updatedFeeds = (await GetUpdaterFeeds(filteredIndices)).GetValidValues();
+
+            //foreach (var feed in updatedFeeds)
+            //{
+            //    var matchingIndex = userIndex.FeedIndices.FirstOrDefault(o => o.Uri.Equals(feed.Uri, StringComparison.OrdinalIgnoreCase));
+            //    if (matchingIndex != null)
+            //    {
+            //        UpdateFeedIndex(matchingIndex, feed);              
+            //    }
+            //}
         }
 
-        static Request CreateRequest(FeedIndex feed)
-        {
-            return new Request
-            {
-                Id = feed.Id.ToString(),
-                Url = feed.Uri,
-                MostRecentNewsItemPubDate = feed.MostRecentNewsItemPubDate,
-                Etag = feed.Etag,
-                LastModified = feed.LastModified,
-            };
-        }
+        //async Task<RedisCacheMultiResult<Updater.BusinessObjects.Feed>> GetUpdaterFeeds(IEnumerable<FeedIndex> feedIndices)
+        //{
+        //    var feeds = feedIndices.Select(Map);
+        //    var feedUrls = feedIndices.Select(o => o.Uri);
 
-        static void UpdateFeedIndex(FeedIndex o, FeedIndex update)
-        {
-            o.Uri = update.Uri;
-            //o.IconUri = update.IconUri;
-            //o.TeaserImageUrl = update.TeaserImageUrl;
-            o.Etag = update.Etag;
-            o.LastModified = update.LastModified;
-            o.MostRecentNewsItemPubDate = update.MostRecentNewsItemPubDate;
-            o.LastRefreshedOn = update.LastRefreshedOn;
+        //    var db = connection.GetDatabase(DatabaseNumbers.FEED_UPDATER);
+        //    var cache = new FeedUpdaterCache(db);
+        //    var cacheResult = await cache.Get(feedUrls);
 
-            var newsDiff = o.NewsItemIndices.Diff(update.NewsItemIndices);
-            foreach (var newsItem in newsDiff.Removed)
-            {
-                o.NewsItemIndices.Remove(newsItem);
-            }
+        //    var zipped = cacheResult.Results.Zip(feeds, (result, feed) => new { result, feed });
 
-            foreach (var newsItem in newsDiff.Added)
-            {
-                o.NewsItemIndices.Add(newsItem);
-            }
-        }
+        //    var fixedList = new List<RedisCacheResult<Updater.BusinessObjects.Feed>>();
+        //    foreach (var tuple in zipped)
+        //    {
+        //        var result = tuple.result;
+        //        var feed = tuple.feed;
 
-        async Task<RedisCacheMultiResult<FeedIndex>> GetFeedIndices(IEnumerable<Guid> feedIds)
-        {
-            var db = connection.GetDatabase(DatabaseNumbers.CANONICAL_FEEDS_AND_NEWSITEMS);
-            var indexCache = new CanonicalFeedIndexCache(db);
-            var results = await indexCache.Get(feedIds);
-            return results;
-        }
+        //        if (result.HasValue)
+        //        {
+        //            result.Value.CopyStateTo(feed);
+        //            result.Value = feed;
+        //        }
+        //        fixedList.Add(result);
+        //    }
+
+        //    cacheResult.Results = fixedList;
+
+        //    return cacheResult;
+        //}
+
+        //static void UpdateFeedIndex(FeedIndex feed, Updater.BusinessObjects.Feed update)
+        //{
+        //    feed.Uri = update.Uri;
+        //    //o.IconUri = update.IconUri;
+        //    feed.TeaserImageUrl = update.TeaserImageUrl;
+
+        //    var newsDiff = feed.NewsItemIndices.Diff(update.News, o => o.Id, o => o.Id);
+        //    foreach (var newsItem in newsDiff.Removed)
+        //    {
+        //        feed.NewsItemIndices.Remove(newsItem);
+        //    }
+
+        //    foreach (var record in newsDiff.Added)
+        //    {
+        //        var newsItemIndex = Map(record, feed);
+        //        feed.NewsItemIndices.Add(newsItemIndex);
+        //    }
+        //}
+
+        //static NewsItemIndex Map(Updater.BusinessObjects.NewsItemRecord o, FeedIndex feed)
+        //{
+        //    return new NewsItemIndex
+        //    {
+        //        Id = o.Id,
+        //        UtcPublishDateTime = o.UtcPublishDateTime,
+        //        OriginalDownloadDateTime = DateTime.Now,
+        //        HasImage = o.HasImage,
+        //        FeedIndex = feed,
+        //    };
+        //}
+
+        //static Updater.BusinessObjects.Feed Map(FeedIndex feed)
+        //{
+        //    return new Updater.BusinessObjects.Feed(feed.Uri);
+        //}
 
         #endregion
 
@@ -902,7 +932,7 @@ namespace Weave.User.Service.Role.Controllers
                 Category = o.Category,
                 ArticleViewingType = (Weave.User.Service.DTOs.ArticleViewingType)o.ArticleViewingType,
                 TeaserImageUrl = o.TeaserImageUrl,
-                LastRefreshedOn = o.LastRefreshedOn,
+                //LastRefreshedOn = o.LastRefreshedOn,
                 MostRecentEntrance = o.MostRecentEntrance,
                 PreviousEntrance = o.PreviousEntrance,
                 NewArticleCount = o.NewsItemIndices.CountNew(),
@@ -924,7 +954,7 @@ namespace Weave.User.Service.Role.Controllers
 
             var sw = System.Diagnostics.Stopwatch.StartNew();
             var outgoingNews =
-               (from temp in zipped.Where(o => o.ni.Value != null)
+               (from temp in zipped.Where(o => o.ni.HasValue)
                 let tuple = temp.tuple
                 let newsItem = temp.ni.Value
                 select Merge(tuple, newsItem)).ToList();
@@ -934,25 +964,27 @@ namespace Weave.User.Service.Role.Controllers
             return outgoingNews;
         }
 
-        static Outgoing.NewsItem Merge(NewsItemIndexFeedIndexTuple tuple, Redis.DTOs.NewsItem newsItem)
+        static Outgoing.NewsItem Merge(NewsItemIndexFeedIndexTuple tuple, ExpandedEntry entry)
         {
             var newsIndex = tuple.NewsItemIndex;
             var feedIndex = tuple.FeedIndex;
+
+            var bestImage = entry.Images.GetBest();
 
             return new Outgoing.NewsItem
             {
                 FeedId = feedIndex.Id,
                 
-                Id = newsItem.Id,
-                Title = newsItem.Title,
-                Link = newsItem.Link,
-                UtcPublishDateTime = newsItem.UtcPublishDateTimeString,
-                ImageUrl = newsItem.ImageUrl,
-                YoutubeId = newsItem.YoutubeId,
-                VideoUri = newsItem.VideoUri,
-                PodcastUri = newsItem.PodcastUri,
-                ZuneAppId = newsItem.ZuneAppId,
-                Image = newsItem.Image == null ? null : MapToOutgoing(newsItem.Image),
+                Id = entry.Id,
+                Title = entry.Title,
+                Link = entry.Link,
+                UtcPublishDateTime = entry.UtcPublishDateTimeString,
+                ImageUrl = bestImage == null ? null : bestImage.Url,
+                YoutubeId = entry.YoutubeId,
+                VideoUri = entry.VideoUri,
+                PodcastUri = entry.PodcastUri,
+                ZuneAppId = entry.ZuneAppId,
+                Image = bestImage == null ? null : MapToOutgoing(bestImage),
                 
                 IsNew = tuple.IsNew,
 
@@ -962,15 +994,15 @@ namespace Weave.User.Service.Role.Controllers
             };
         }
 
-        static Outgoing.Image MapToOutgoing(Redis.DTOs.Image o)
+        static Outgoing.Image MapToOutgoing(Updater.BusinessObjects.Image o)
         {
             return new Outgoing.Image
             {
                 Width = o.Width,
                 Height = o.Height,
-                OriginalUrl = o.OriginalUrl,
-                BaseImageUrl = o.BaseImageUrl,
-                SupportedFormats = o.SupportedFormats,
+                OriginalUrl = o.Url,
+                BaseImageUrl = null,
+                SupportedFormats = null,
             };
         }
 
@@ -1068,35 +1100,35 @@ namespace Weave.User.Service.Role.Controllers
             return BusinessObjectToServerOutgoing.Convert(user);
         }
 
-        Redis.DTOs.NewsItem MapAsRedis(Weave.User.BusinessObjects.NewsItem o)
-        {
-            return new Redis.DTOs.NewsItem
-            {
-                Id = o.Id,
-                UtcPublishDateTimeString = o.UtcPublishDateTimeString,
-                UtcPublishDateTime = o.UtcPublishDateTime,
-                Title = o.Title,
-                Link = o.Link,
-                ImageUrl = o.ImageUrl,
-                YoutubeId = o.YoutubeId,
-                VideoUri = o.VideoUri,
-                PodcastUri = o.PodcastUri,
-                ZuneAppId = o.ZuneAppId,
-                Image = o.Image == null ? null : MapAsRedis(o.Image),
-            };
-        }
+        //Redis.DTOs.NewsItem MapAsRedis(Weave.User.BusinessObjects.NewsItem o)
+        //{
+        //    return new Redis.DTOs.NewsItem
+        //    {
+        //        Id = o.Id,
+        //        UtcPublishDateTimeString = o.UtcPublishDateTimeString,
+        //        UtcPublishDateTime = o.UtcPublishDateTime,
+        //        Title = o.Title,
+        //        Link = o.Link,
+        //        ImageUrl = o.ImageUrl,
+        //        YoutubeId = o.YoutubeId,
+        //        VideoUri = o.VideoUri,
+        //        PodcastUri = o.PodcastUri,
+        //        ZuneAppId = o.ZuneAppId,
+        //        Image = o.Image == null ? null : MapAsRedis(o.Image),
+        //    };
+        //}
 
-        Redis.DTOs.Image MapAsRedis(Weave.User.BusinessObjects.Image o)
-        {
-            return new Redis.DTOs.Image
-            {
-                Width = o.Width,
-                Height = o.Height,
-                OriginalUrl = o.OriginalUrl,
-                BaseImageUrl = o.BaseImageUrl,
-                SupportedFormats = o.SupportedFormats,
-            };
-        }
+        //Redis.DTOs.Image MapAsRedis(Weave.User.BusinessObjects.Image o)
+        //{
+        //    return new Redis.DTOs.Image
+        //    {
+        //        Width = o.Width,
+        //        Height = o.Height,
+        //        OriginalUrl = o.OriginalUrl,
+        //        BaseImageUrl = o.BaseImageUrl,
+        //        SupportedFormats = o.SupportedFormats,
+        //    };
+        //}
 
         #endregion
 
@@ -1125,32 +1157,30 @@ namespace Weave.User.Service.Role.Controllers
         /// <summary>
         /// Get news from Redis, do not use batching
         /// </summary>
-        async Task<IEnumerable<RedisCacheResult<Redis.DTOs.NewsItem>>> GetNewsFromRedis(IEnumerable<Guid> newsIds)
+        async Task<IEnumerable<RedisCacheResult<ExpandedEntry>>> GetNewsFromRedis(IEnumerable<Guid> newsIds)
         {
-            var sw = System.Diagnostics.Stopwatch.StartNew();
+            var db = connection.GetDatabase(DatabaseNumbers.CANONICAL_NEWSITEMS);
+            var cache = new ExpandedEntryCache(db);
+            var entries = await cache.Get(newsIds);
 
-            var db = connection.GetDatabase(DatabaseNumbers.CANONICAL_FEEDS_AND_NEWSITEMS);
-            var newsItemCache = new NewsItemCache(db);
-            var newsItems = await newsItemCache.Get(newsIds);
+            timings.GetNewsItemsFromCache_Deserialization = entries.Timings.SerializationTime.Dump();
+            timings.GetNewsItemsFromCache_Retrieval = entries.Timings.ServiceTime.Dump();
 
-            sw.Stop();
-            timings.GetNewsItemsFromCache = sw.Elapsed.Dump();
-
-            return newsItems;
+            return entries.Results;
         }
 
-        /// <summary>
-        /// Save news to Redis; uses batching
-        /// </summary>
-        public Task<IEnumerable<bool>> SaveNewsToRedis(IEnumerable<Redis.DTOs.NewsItem> newsItems)
-        {
-            var db = connection.GetDatabase(DatabaseNumbers.CANONICAL_FEEDS_AND_NEWSITEMS);
-            var batch = db.CreateBatch();
-            var newsItemCache = new NewsItemCache(batch);
-            var resultsTask = newsItemCache.Set(newsItems);
-            batch.Execute();
-            return resultsTask;
-        }
+        ///// <summary>
+        ///// Save news to Redis; uses batching
+        ///// </summary>
+        //public Task<IEnumerable<bool>> SaveNewsToRedis(IEnumerable<Redis.DTOs.NewsItem> newsItems)
+        //{
+        //    var db = connection.GetDatabase(DatabaseNumbers.CANONICAL_NEWSITEMS);
+        //    var batch = db.CreateBatch();
+        //    var newsItemCache = new NewsItemCache(batch);
+        //    var resultsTask = newsItemCache.Set(newsItems);
+        //    batch.Execute();
+        //    return resultsTask;
+        //}
 
         #endregion
     }

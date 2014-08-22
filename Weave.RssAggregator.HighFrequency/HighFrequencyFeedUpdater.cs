@@ -76,8 +76,10 @@ namespace Weave.RssAggregator.HighFrequency
 
             var cache = new FeedUpdaterCache(db);
             var cacheMultiGet = await cache.Get(feedUrls);
-            var ordered = cacheMultiGet.Results.OrderByDescending(o => o.ByteLength).ToList();
-            DebugEx.WriteLine(ordered);
+
+            //var ordered = cacheMultiGet.Results.OrderByDescending(o => o.ByteLength).ToList();
+            //DebugEx.WriteLine(ordered);
+
             var recoveredFeedUpdaters = cacheMultiGet.GetValidValues().ToList();
 
             var joined = highFrequencyFeeds.Join(

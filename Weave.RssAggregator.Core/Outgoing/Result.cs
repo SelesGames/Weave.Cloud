@@ -1,13 +1,13 @@
 ﻿using System.Runtime.Serialization;
-using Weave.RssAggregator.Core.DTOs.Incoming;
 
 namespace Weave.RssAggregator.Core.DTOs.Outgoing
 {
     [DataContract]
-    public class Result : Request
+    public class Result
     {
-        [DataMember(Order=5)]   public bool IsLoaded { get; set; }
-        [DataMember(Order=6)]   public object Meta { get; set; }
+        [DataMember(Order=1)]   public string Url { get; set; }
+        [DataMember(Order=2)]   public bool IsLoaded { get; set; }
+        [DataMember(Order=3)]   public object Meta { get; set; }
 
         public override string ToString()
         {

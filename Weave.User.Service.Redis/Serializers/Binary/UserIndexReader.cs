@@ -55,12 +55,12 @@ namespace Weave.User.Service.Redis.Serializers.Binary
             feedIndex.IconUri = ReadString();
             feedIndex.Category = ReadString();
             feedIndex.TeaserImageUrl = ReadString();
-            feedIndex.Etag = ReadString();
-            feedIndex.LastModified = ReadString();
-            feedIndex.MostRecentNewsItemPubDate = ReadString();
+            object unused = ReadString();
+            unused = ReadString();
+            unused = ReadString();
 
             // read DateTime values
-            feedIndex.LastRefreshedOn = br.ReadDateTime();
+            unused = br.ReadDateTime();
             feedIndex.MostRecentEntrance = br.ReadDateTime();
             feedIndex.PreviousEntrance = br.ReadDateTime();
 

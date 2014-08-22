@@ -52,23 +52,8 @@ namespace Weave.User.Service.Redis.Serializers.Binary
 
             // ?
             //bw.Write(record.OriginalDownloadDateTime);
-            //bw.Write(record.HasImage);
+            bw.Write(record.HasImage);
         }
-
-        //void Write(Image image)
-        //{
-        //    bw.Write(image.Width);
-        //    bw.Write(image.Height);
-        //    bw.Write(image.ContentLength);
-        //    bw.Write(image.Url);
-
-        //    // optional string values
-        //    bw.Write(image.Format ?? "");
-        //    bw.Write(image.ContentType ?? "");
-        //}
-
-
-
 
         public void Dispose()
         {

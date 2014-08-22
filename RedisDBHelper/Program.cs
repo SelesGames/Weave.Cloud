@@ -24,7 +24,7 @@ namespace RedisDBHelper
 
             var server = connectionMultiplexer.GetServer(
 "weaveuser.redis.cache.windows.net", 6379);
-            server.FlushDatabase(2);
+            server.FlushDatabase(3);
         }
     }
 }

@@ -14,6 +14,7 @@
     <Name>RssAggregator.Azure.UpdaterService</Name>
     <UseEmulatorExpressByDefault>False</UseEmulatorExpressByDefault>
     <UseWebProjectPorts>True</UseWebProjectPorts>
+    <PackageEnableRemoteDebugger>False</PackageEnableRemoteDebugger>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

@@ -35,8 +35,7 @@ namespace Weave.RssAggregator.LowFrequency
                 if (feeds.ContainsKey(feedUrl))
                 {
                     var feed = feeds[feedUrl];
-                    //if (feed.LastFeedState != CachedFeed.FeedState.Uninitialized)
-                        return feed;
+                    return feed;
                 }
             }
 

@@ -54,10 +54,6 @@ namespace Weave.User.BusinessObjects.Mutable.Extensions.Helpers
                 Category = o.Category,
                 TeaserImageUrl = o.TeaserImageUrl,
                 ArticleViewingType = o.ArticleViewingType,
-                LastRefreshedOn = o.LastRefreshedOn,
-                Etag = o.Etag,
-                LastModified = o.LastModified,
-                MostRecentNewsItemPubDate = o.MostRecentNewsItemPubDate,
                 MostRecentEntrance = o.MostRecentEntrance,
                 PreviousEntrance = o.PreviousEntrance,
             };

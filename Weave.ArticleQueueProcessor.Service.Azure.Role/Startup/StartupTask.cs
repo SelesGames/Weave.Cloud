@@ -3,8 +3,8 @@ using StackExchange.Redis;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Weave.Article.Service.DTOs;
 using Weave.Article.Service.DTOs.ServerIncoming;
+using Weave.Updater.BusinessObjects;
 using Weave.User.Service.InterRoleMessaging.Articles;
 using Weave.User.Service.Redis;
 
@@ -18,7 +18,7 @@ namespace Weave.ArticleQueueProcessor.Service.Azure.Role.Startup
         readonly TimeSpan pollingInterval = TimeSpan.FromMilliseconds(30);
         readonly Article.Service.Client.ServiceClient articleService;
         readonly ArticleStateChangeMessageQueue messageQueue;
-        readonly NewsItemCache newsCache;
+        readonly ExpandedEntryCache newsCache;
 
         public StartupTask()
         {
@@ -30,8 +30,8 @@ namespace Weave.ArticleQueueProcessor.Service.Azure.Role.Startup
 
             messageQueue = new ArticleStateChangeMessageQueue(connectionMultiplexer);
 
-            var db = connectionMultiplexer.GetDatabase(DatabaseNumbers.CANONICAL_FEEDS_AND_NEWSITEMS);
-            newsCache = new NewsItemCache(db);
+            var db = connectionMultiplexer.GetDatabase(DatabaseNumbers.CANONICAL_NEWSITEMS);
+            newsCache = new ExpandedEntryCache(db);
         }
 
         public void OnStart()
@@ -86,7 +86,7 @@ namespace Weave.ArticleQueueProcessor.Service.Azure.Role.Startup
         async Task<SavedNewsItem> FindNewsItem(Guid userId, Guid articleId)
         {
             var cacheResults = await newsCache.Get(new[] { articleId });
-            var cacheResult = cacheResults.FirstOrDefault();
+            var cacheResult = cacheResults.Results.FirstOrDefault();
 
             if (cacheResult != null && cacheResult.HasValue)
             {
@@ -107,34 +107,36 @@ namespace Weave.ArticleQueueProcessor.Service.Azure.Role.Startup
 
         #region Map functions
 
-        SavedNewsItem Map(Weave.User.Service.Redis.DTOs.NewsItem o)
+        SavedNewsItem Map(ExpandedEntry o)
         {
+            var bestImage = o.Images.GetBest();
+
             return new SavedNewsItem
             {
                 //SourceName = "temp",
                 Title = o.Title,
                 Link = o.Link,
                 UtcPublishDateTime = o.UtcPublishDateTimeString,
-                ImageUrl = o.ImageUrl,
+                ImageUrl = bestImage == null ? null : bestImage.Url,
                 YoutubeId = o.YoutubeId,
                 VideoUri = o.VideoUri,
                 PodcastUri = o.PodcastUri,
                 ZuneAppId = o.ZuneAppId,
                 Notes = null,
                 Tags = null,
-                Image = o.Image == null ? null : Map(o.Image),
+                Image = bestImage == null ? null : Map(bestImage),
             };
         }
 
-        Image Map(Weave.User.Service.Redis.DTOs.Image o)
+        Weave.Article.Service.DTOs.Image Map(Updater.BusinessObjects.Image o)
         {
-            return new Image
-            {
+            return new Weave.Article.Service.DTOs.Image
+            {      
                 Width = o.Width,
                 Height = o.Height,
-                BaseImageUrl = o.BaseImageUrl,
-                OriginalUrl = o.OriginalUrl,
-                SupportedFormats = o.SupportedFormats,
+                BaseImageUrl = o.Url,
+                OriginalUrl = o.Url,
+                SupportedFormats = null,
             };
         }
 

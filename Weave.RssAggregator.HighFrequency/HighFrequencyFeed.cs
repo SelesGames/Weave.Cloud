@@ -9,6 +9,21 @@ using Weave.User.Service.Redis;
 
 namespace Weave.RssAggregator.HighFrequency
 {
+    public class MessageProcessor
+    {
+        List<HighFrequencyFeed> queue;
+        List<HighFrequencyFeed> processQueue;
+
+        public void Enqueue(HighFrequencyFeed feed)
+        {
+
+        }
+    }
+
+
+
+
+
     public class HighFrequencyFeed
     {
         readonly Feed innerFeed;
@@ -23,7 +38,7 @@ namespace Weave.RssAggregator.HighFrequency
 
         public HighFrequencyFeed(string name, string feedUri, string originalUri, string instructions)
         {
-            this.innerFeed = new Feed(feedUri, originalUri);
+            this.innerFeed = new Feed(feedUri);
             this.feedUpdate = new Subject<HighFrequencyFeedUpdate>();
 
             Name = name;

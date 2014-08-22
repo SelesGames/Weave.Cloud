@@ -56,12 +56,12 @@ namespace Weave.User.Service.Redis.Serializers.Binary
             bw.Write(feed.IconUri ?? "");
             bw.Write(feed.Category ?? "");
             bw.Write(feed.TeaserImageUrl ?? "");
-            bw.Write(feed.Etag ?? "");
-            bw.Write(feed.LastModified ?? "");
-            bw.Write(feed.MostRecentNewsItemPubDate ?? "");
+            bw.Write("");
+            bw.Write("");
+            bw.Write("");
 
             // write DateTime values
-            bw.Write(feed.LastRefreshedOn);
+            bw.Write(DateTime.MinValue);
             bw.Write(feed.MostRecentEntrance);
             bw.Write(feed.PreviousEntrance);
 

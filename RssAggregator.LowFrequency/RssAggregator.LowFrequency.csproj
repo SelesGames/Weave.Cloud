@@ -40,7 +40,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Reactive.Core">
       <SpecificVersion>False</SpecificVersion>
@@ -65,10 +64,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Common.Data\Common.Data.csproj">
-      <Project>{cad7cc28-36e9-4b39-ba90-df99815904eb}</Project>
-      <Name>Common.Data</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Common.DateTime\Common.TimeFormatting.csproj">
       <Project>{86060d7e-3115-4f54-8008-384b3d7c598e}</Project>
       <Name>Common.TimeFormatting</Name>

@@ -26,7 +26,7 @@ namespace Weave.User.Service.Redis.Serializers.Binary
 
         internal void Read()
         {
-            feed = new Feed("unused", "unused");
+            feed = new Feed("unused");
 
             feed.LastRefreshedOn = br.ReadDateTime();
 
@@ -55,26 +55,10 @@ namespace Weave.User.Service.Redis.Serializers.Binary
 
             // ?
             //record.OriginalDownloadDateTime = br.ReadDateTime();
-            //record.HasImage = br.ReadBoolean();
+            record.HasImage = br.ReadBoolean();
 
             feed.News.Add(record);
         }
-
-        //void ReadImage()
-        //{
-        //    var image = new Image();
-
-        //    image.Width = br.ReadInt32();
-        //    image.Height = br.ReadInt32();
-        //    image.ContentLength = br.ReadInt64();
-        //    image.Url = br.ReadString();
-
-        //    // optional string values
-        //    image.Format = ReadString();
-        //    image.ContentType = ReadString();
-
-        //    record.Images.Add(image);
-        //}
 
 
 

@@ -21,10 +21,6 @@ namespace Weave.User.BusinessObjects.Mutable.Extensions
             feed.Category = o.Category;
             feed.TeaserImageUrl = o.TeaserImageUrl;
             feed.ArticleViewingType = o.ArticleViewingType;
-            feed.LastRefreshedOn = o.LastRefreshedOn;
-            feed.Etag = o.Etag;
-            feed.LastModified = o.LastModified;
-            feed.MostRecentNewsItemPubDate = o.MostRecentNewsItemPubDate;
             feed.MostRecentEntrance = o.MostRecentEntrance;
             feed.PreviousEntrance = o.PreviousEntrance;
         }

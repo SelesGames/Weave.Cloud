@@ -1,4 +1,5 @@
 ﻿using StackExchange.Redis;
+using System;
 
 namespace Weave.User.Service.Redis.Serializers
 {
@@ -10,12 +11,20 @@ namespace Weave.User.Service.Redis.Serializers
         public RedisCacheResult<T> Read(RedisValue val)
         {
             if (val.IsNullOrEmpty || !val.HasValue)
-                return RedisCacheResult.Create(default(T), val);
+                return new RedisCacheResult<T> { RedisValue = val };//, RedisCacheResult.Create(default(T), val);
 
             byte[] array = (byte[])val;
-            var result = Map(array);
-
-            return RedisCacheResult.Create(result, val);
+            try
+            {
+                var result = Map(array);
+                return new RedisCacheResult<T> { RedisValue = val, Value = result };
+                //return RedisCacheResult.Create(result, val);
+            }
+            catch(Exception ex)
+            {
+                var serializationException = new SerializationException(ex);
+                return new RedisCacheResult<T> { RedisValue = val, SerializationException = serializationException };
+            }
         }
 
         public RedisValue Write(T o)

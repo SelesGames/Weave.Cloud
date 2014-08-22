@@ -18,6 +18,6 @@ namespace Weave.Updater.BusinessObjects
 
         // used to create the NewsItemIndex
         //public DateTime OriginalDownloadDateTime { get; set; }
-        //public bool HasImage { get; set; }
+        public bool HasImage { get; set; }
     }
 }

@@ -6,17 +6,6 @@ namespace Weave.RssAggregator.LowFrequency
     {
         public string Name { get; private set; }
         public string Uri { get; private set; }
-        //public string MostRecentNewsItemPubDate { get; set; }
-        //public string OldestNewsItemPubDate { get; set; }
-        //public FeedState LastFeedState { get; set; }
-
-
-        //public enum FeedState
-        //{
-        //    Uninitialized,
-        //    Failed,
-        //    OK
-        //}
 
         public CachedFeed(string name, string feedUri)
         {
@@ -25,7 +14,6 @@ namespace Weave.RssAggregator.LowFrequency
 
             Name = name;
             Uri = feedUri;
-            //LastFeedState = FeedState.OK;
         }
 
         public override string ToString()
