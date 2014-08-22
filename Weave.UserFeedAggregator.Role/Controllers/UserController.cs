@@ -1,5 +1,4 @@
 ﻿using Microsoft.WindowsAzure.Storage;
-using SelesGames.HttpClient;
 using SelesGames.WebApi;
 using StackExchange.Redis;
 using System;
@@ -8,7 +7,6 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
-using Weave.RssAggregator.Core.DTOs.Outgoing;
 using Weave.Updater.BusinessObjects;
 using Weave.User.BusinessObjects;
 using Weave.User.BusinessObjects.Mutable;
@@ -142,28 +140,20 @@ namespace Weave.User.Service.Role.Controllers
         [ActionName("info")]
         public async Task<Outgoing.UserInfo> GetUserInfo(Guid userId, bool refresh = false)
         {
-            if (refresh)
+            // Modify the user data to record a "login", and optionally refresh all their feed indices
+            await Lock(userId, async () =>
             {
                 await LoadIndexOnly(userId);
 
                 userIndex.PreviousLoginTime = userIndex.CurrentLoginTime;
                 userIndex.CurrentLoginTime = DateTime.UtcNow;
 
-                var feeds = userIndex.FeedIndices;
-                await PerformRefreshOnFeeds(feeds);
-            }
-            else
-            {
-                await Lock(userId, async () =>
-                {
-                    await LoadIndexOnly(userId);
+                if (refresh)
+                    await PerformRefreshOnFeeds(userIndex.FeedIndices);
 
-                    userIndex.PreviousLoginTime = userIndex.CurrentLoginTime;
-                    userIndex.CurrentLoginTime = DateTime.UtcNow;
+                await SaveUserIndex();
+            });
 
-                    await SaveUserIndex();
-                });
-            }
 
             var outgoing = ConvertToOutgoing(userIndex);
             var latestNewsIndices = userIndex.FeedIndices.GetLatestNews();
@@ -198,11 +188,14 @@ namespace Weave.User.Service.Role.Controllers
 
             if (entry == EntryType.ExtendRefresh)
             {
-                await LoadIndexOnly(userId);
-
-                feeds = userIndex.FeedIndices.OfCategory(category);
-                feeds.ExtendEntry();
-                await PerformRefreshOnFeeds(feeds);
+                await Lock(userId, async () =>
+                {
+                    await LoadIndexOnly(userId);
+                    feeds = userIndex.FeedIndices.OfCategory(category);
+                    feeds.ExtendEntry();
+                    await PerformRefreshOnFeeds(feeds);
+                    await SaveUserIndex();
+                });
             }
             else if (entry == EntryType.Mark)
             {
@@ -286,10 +279,13 @@ namespace Weave.User.Service.Role.Controllers
         {
             if (refresh)
             {
-                await LoadIndexOnly(userId);
-
-                var feeds = userIndex.FeedIndices;
-                await PerformRefreshOnFeeds(feeds);
+                await Lock(userId, async () =>
+                {
+                    await LoadIndexOnly(userId);
+                    var feeds = userIndex.FeedIndices;
+                    await PerformRefreshOnFeeds(feeds);
+                    await SaveUserIndex();
+                });
             }
             else
                 await LoadIndexOnly(userId);
@@ -304,10 +300,13 @@ namespace Weave.User.Service.Role.Controllers
         {
             if (refresh)
             {
-                await LoadIndexOnly(userId);
-
-                var feeds = userIndex.FeedIndices.OfCategory(category);
-                await PerformRefreshOnFeeds(feeds);
+                await Lock(userId, async () =>
+                {
+                    await LoadIndexOnly(userId);
+                    var feeds = userIndex.FeedIndices.OfCategory(category);
+                    await PerformRefreshOnFeeds(feeds);
+                    await SaveUserIndex();
+                });
             }
             else
                 await LoadIndexOnly(userId);
@@ -322,10 +321,13 @@ namespace Weave.User.Service.Role.Controllers
         {
             if (refresh)
             {
-                await LoadIndexOnly(userId);
-
-                var feeds = userIndex.FeedIndices.WithId(feedId);;
-                await PerformRefreshOnFeeds(feeds);
+                await Lock(userId, async () =>
+                {
+                    await LoadIndexOnly(userId);
+                    var feeds = userIndex.FeedIndices.WithId(feedId);
+                    await PerformRefreshOnFeeds(feeds);
+                    await SaveUserIndex();
+                });
             }
             else
                 await LoadIndexOnly(userId);
@@ -758,95 +760,7 @@ namespace Weave.User.Service.Role.Controllers
             var updateHelper = new UpdateHelper(connection);
             var refreshMeta = await updateHelper.PerformRefreshOnFeeds(feeds);
             timings.RefreshMeta = refreshMeta;
-
-            //// Send the request to the news aggregator server to update the specified feed urls, saving them in Redis
-            //var client = new SmartHttpClient();
-            //var urls = feeds.Select(o => o.Uri).ToList();
-            //var results = await client.PostAsync<List<string>, List<Result>>(
-            //    "http://weave-v2-news.cloudapp.net/api/weave", urls);
-
-            //var resultTuples = feeds.Zip(results, (feed, result) => new { feed, result });
-
-            //var filteredIndices = resultTuples
-            //    .Where(o => o.result.IsLoaded == true)
-            //    .Select(o => o.feed);
-            //var updatedFeeds = (await GetUpdaterFeeds(filteredIndices)).GetValidValues();
-
-            //foreach (var feed in updatedFeeds)
-            //{
-            //    var matchingIndex = userIndex.FeedIndices.FirstOrDefault(o => o.Uri.Equals(feed.Uri, StringComparison.OrdinalIgnoreCase));
-            //    if (matchingIndex != null)
-            //    {
-            //        UpdateFeedIndex(matchingIndex, feed);              
-            //    }
-            //}
         }
-
-        //async Task<RedisCacheMultiResult<Updater.BusinessObjects.Feed>> GetUpdaterFeeds(IEnumerable<FeedIndex> feedIndices)
-        //{
-        //    var feeds = feedIndices.Select(Map);
-        //    var feedUrls = feedIndices.Select(o => o.Uri);
-
-        //    var db = connection.GetDatabase(DatabaseNumbers.FEED_UPDATER);
-        //    var cache = new FeedUpdaterCache(db);
-        //    var cacheResult = await cache.Get(feedUrls);
-
-        //    var zipped = cacheResult.Results.Zip(feeds, (result, feed) => new { result, feed });
-
-        //    var fixedList = new List<RedisCacheResult<Updater.BusinessObjects.Feed>>();
-        //    foreach (var tuple in zipped)
-        //    {
-        //        var result = tuple.result;
-        //        var feed = tuple.feed;
-
-        //        if (result.HasValue)
-        //        {
-        //            result.Value.CopyStateTo(feed);
-        //            result.Value = feed;
-        //        }
-        //        fixedList.Add(result);
-        //    }
-
-        //    cacheResult.Results = fixedList;
-
-        //    return cacheResult;
-        //}
-
-        //static void UpdateFeedIndex(FeedIndex feed, Updater.BusinessObjects.Feed update)
-        //{
-        //    feed.Uri = update.Uri;
-        //    //o.IconUri = update.IconUri;
-        //    feed.TeaserImageUrl = update.TeaserImageUrl;
-
-        //    var newsDiff = feed.NewsItemIndices.Diff(update.News, o => o.Id, o => o.Id);
-        //    foreach (var newsItem in newsDiff.Removed)
-        //    {
-        //        feed.NewsItemIndices.Remove(newsItem);
-        //    }
-
-        //    foreach (var record in newsDiff.Added)
-        //    {
-        //        var newsItemIndex = Map(record, feed);
-        //        feed.NewsItemIndices.Add(newsItemIndex);
-        //    }
-        //}
-
-        //static NewsItemIndex Map(Updater.BusinessObjects.NewsItemRecord o, FeedIndex feed)
-        //{
-        //    return new NewsItemIndex
-        //    {
-        //        Id = o.Id,
-        //        UtcPublishDateTime = o.UtcPublishDateTime,
-        //        OriginalDownloadDateTime = DateTime.Now,
-        //        HasImage = o.HasImage,
-        //        FeedIndex = feed,
-        //    };
-        //}
-
-        //static Updater.BusinessObjects.Feed Map(FeedIndex feed)
-        //{
-        //    return new Updater.BusinessObjects.Feed(feed.Uri);
-        //}
 
         #endregion
 

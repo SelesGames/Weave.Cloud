@@ -111,9 +111,22 @@ namespace Weave.RssAggregator.WorkerRole.Controllers
 
             if (update != null && update.Entries.Any())
             {
+                // fix images - for when ImageUrls haven't been transferred to Images
+                foreach (var entry in update.Entries)
+                    FixImages(entry);
+
                 var saveFeedIndexAndNewsIndices = await SaveNewEntries(update.Entries);
                 Metadata.SaveNewEntries_SaveTime = saveFeedIndexAndNewsIndices.Timings.ServiceTime;
                 Metadata.SaveNewEntries_SerializationTime = saveFeedIndexAndNewsIndices.Timings.SerializationTime;
+            }
+        }
+
+        static void FixImages(ExpandedEntry entry)
+        {
+            if (!entry.Images.Any() && entry.ImageUrls.Any())
+            {
+                foreach (var imageUrl in entry.ImageUrls)
+                    entry.Images.Add(new Image { Url = imageUrl });
             }
         }
 
