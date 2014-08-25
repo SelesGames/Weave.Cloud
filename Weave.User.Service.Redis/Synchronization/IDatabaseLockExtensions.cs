@@ -71,12 +71,6 @@ namespace Weave.User.Service.Redis.Synchronization
             var numKeysRemoved = (long)result;
 
             return numKeysRemoved > 0;
-
-            //var result = await db.KeyDeleteAsync(
-            //    keys[0],
-            //    flags: CommandFlags.None);
-
-            //return result;
         }
     }
 }

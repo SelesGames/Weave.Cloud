@@ -28,7 +28,6 @@ namespace Weave.User.Service.Role.Startup
             var redisClientConfig = ConfigurationOptions.Parse(
 "weaveuser.redis.cache.windows.net,ssl=false,password=dM/xNBd9hB9Wgn3tPhkTsiwzIw4gImnS+eAN9sYuouY=");
 
-            redisClientConfig.AllowAdmin = true;
             var connectionMultiplexer = ConnectionMultiplexer.Connect(redisClientConfig);
 
             Bind<ConnectionMultiplexer>().ToConstant(connectionMultiplexer).InSingletonScope();

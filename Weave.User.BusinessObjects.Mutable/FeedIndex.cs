@@ -24,7 +24,7 @@ namespace Weave.User.BusinessObjects.Mutable
             NewsItemIndices = new NewsItemIndices(this);
         }
 
-        public void EnsureGuidIsSet()
+        internal void EnsureGuidIsSet()
         {
             if (Guid.Empty.Equals(Id))
                 Id = CryptoHelper.ComputeHashUsedByMobilizer(Uri);

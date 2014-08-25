@@ -11,7 +11,17 @@ namespace Redis.Testing
     {
         static  void Main(string[] args)
         {
-            DoStuff().Wait();
+            //DoStuff().Wait();
+        }
+
+        static async Task TestJsonSerialization()
+        {
+            var redisClientConfig = ConfigurationOptions.Parse(
+"weaveuser.redis.cache.windows.net,ssl=false,password=dM/xNBd9hB9Wgn3tPhkTsiwzIw4gImnS+eAN9sYuouY=");
+
+            var connectionMultiplexer = ConnectionMultiplexer.Connect(redisClientConfig);
+
+            3333333333333333333333331`u`y41t31`2334
         }
 
         static async Task DoStuff()

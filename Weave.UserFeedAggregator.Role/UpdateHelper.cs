@@ -124,7 +124,7 @@ namespace Weave.User.Service.Role.Controllers
                     UtcPublishDateTime = o.UtcPublishDateTime,
                     OriginalDownloadDateTime = DateTime.Now,
                     HasImage = o.HasImage,
-                    FeedIndex = index,
+                    //FeedIndex = index,
                 };
             }
         }

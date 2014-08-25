@@ -1,0 +1,6 @@
+﻿key = KEYS[1]
+
+node = HGETALL key
+result = node[1]
+index = node[2]
+
