@@ -45,7 +45,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Reactive.Core, Version=2.0.20823.0, Culture=neutral, PublicKeyToken=f300afd708cefcd3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -98,10 +97,6 @@
     <ProjectReference Include="..\..\Weave.Portable\Weave.Mobilizer.DTOs\Weave.Mobilizer.DTOs.csproj">
       <Project>{0a9019e4-e76f-4fac-a5c7-70f32cf5e2c1}</Project>
       <Name>Weave.Mobilizer.DTOs</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Common.Data\Common.Data.csproj">
-      <Project>{cad7cc28-36e9-4b39-ba90-df99815904eb}</Project>
-      <Name>Common.Data</Name>
     </ProjectReference>
     <ProjectReference Include="..\RssAggregator.LibraryClient\RssAggregator.LibraryClient.csproj">
       <Project>{2db284eb-5b81-425a-957e-77eeb704ebdc}</Project>
