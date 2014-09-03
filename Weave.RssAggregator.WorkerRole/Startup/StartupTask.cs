@@ -4,7 +4,6 @@ using Ninject.WebApi;
 using SelesGames.WebApi.SelfHost;
 using System.Diagnostics;
 using System.Web.Http.Dependencies;
-using Weave.RssAggregator.LowFrequency;
 
 namespace Weave.RssAggregator.WorkerRole.Startup
 {

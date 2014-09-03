@@ -120,6 +120,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\PingController.cs" />
+    <Compile Include="Core\CachedFeed.cs" />
+    <Compile Include="Core\FeedCache.cs" />
+    <Compile Include="Core\TimeSpanFormattingExtensions.cs" />
+    <Compile Include="Core\WeaveControllerHelper.cs" />
     <Compile Include="Startup\AppSettings.cs" />
     <Compile Include="Controllers\WeaveController.cs" />
     <Compile Include="Startup\NinjectKernel.cs" />
@@ -148,9 +152,9 @@
       <Project>{5eaf7a94-ddee-482b-874b-f5d509264b14}</Project>
       <Name>RssAggregator.IconCaching</Name>
     </ProjectReference>
-    <ProjectReference Include="..\RssAggregator.LowFrequency\RssAggregator.LowFrequency.csproj">
-      <Project>{bdf7d1ee-a9f2-4971-9ebf-b711d6c4b857}</Project>
-      <Name>RssAggregator.LowFrequency</Name>
+    <ProjectReference Include="..\RssAggregator.LibraryClient\RssAggregator.LibraryClient.csproj">
+      <Project>{2db284eb-5b81-425a-957e-77eeb704ebdc}</Project>
+      <Name>RssAggregator.LibraryClient</Name>
     </ProjectReference>
     <ProjectReference Include="..\SelesGames.Common\SelesGames.Common.csproj">
       <Project>{5b792c4b-80d8-420d-9fa7-e567faf1f7b1}</Project>
@@ -171,6 +175,10 @@
     <ProjectReference Include="..\Weave.RssAggregator.Core\RssAggregator.DTOs.csproj">
       <Project>{2f1a280d-ee75-4dc1-a36c-f8e5488e3260}</Project>
       <Name>RssAggregator.DTOs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Weave.Updater.Azure.Blob\Weave.Updater.csproj">
+      <Project>{be2ab7b9-7783-460a-845d-e06b712c0497}</Project>
+      <Name>Weave.Updater</Name>
     </ProjectReference>
     <ProjectReference Include="..\Weave.Updater.BusinessObjects\Weave.Updater.BusinessObjects.csproj">
       <Project>{95fa1246-08c5-4ce4-a78d-e0f3a254aa7c}</Project>
