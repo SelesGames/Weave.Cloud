@@ -43,26 +43,44 @@ namespace Common.Azure.SmartBlobClient
 
         #region Generic Get
 
-        public async Task<T> Get<T>(
+        public async Task<BlobResult<T>> Get<T>(
             string container,
             string blobName,
             AccessCondition accessCondition = null,
             BlobRequestOptions options = null,
             OperationContext operationContext = null)
         {
-            using (var content = await this.GetBlobContent(container, blobName, accessCondition, options, operationContext))
+            try
             {
-                return await ReadContent<T>(content);
+                using (var content = await this.GetBlobContent(container, blobName, accessCondition, options, operationContext))
+                {
+                    var result = await ReadContent<T>(content);
+                    result.BlobName = blobName;
+                    return result;
+                }
+            }
+            catch(StorageException storageException)
+            {
+                return new BlobResult<T> { BlobName = blobName, StorageException = storageException };
             }
         }
 
-        public async Task<T> Get<T>(string container, string blobName, RequestProperties properties)
+        public async Task<BlobResult<T>> Get<T>(string container, string blobName, RequestProperties properties)
         {
             if (properties == null) throw new ArgumentNullException("properties");
 
-            using (var content = await this.GetBlobContent(container, blobName, properties))
+            try
             {
-                return await ReadContent<T>(content);
+                using (var content = await this.GetBlobContent(container, blobName, properties))
+                {
+                    var result = await ReadContent<T>(content);
+                    result.BlobName = blobName;
+                    return result;
+                }
+            }
+            catch (StorageException storageException)
+            {
+                return new BlobResult<T> { BlobName = blobName, StorageException = storageException };
             }
         }
 
@@ -122,20 +140,29 @@ namespace Common.Azure.SmartBlobClient
 
         #region helper methods
 
-        async Task<T> ReadContent<T>(BlobContent content)
+        async Task<BlobResult<T>> ReadContent<T>(BlobContent content)
         {
-            var contentType = content.Properties.ContentType;
-
-            MediaTypeHeaderValue mediaHeader;
-            if (!MediaTypeHeaderValue.TryParse(contentType, out mediaHeader))
+            try
             {
-                throw new Exception(string.Format("Invalid ContentType returned by the call to Get<T> in SmartBlobClient: {0}", contentType));
+                var contentType = content.Properties.ContentType;
+
+                MediaTypeHeaderValue mediaHeader;
+                if (!MediaTypeHeaderValue.TryParse(contentType, out mediaHeader))
+                {
+                    throw new Exception(string.Format("Invalid ContentType returned by the call to Get<T> in SmartBlobClient: {0}", contentType));
+                }
+
+                var deserializer = FindReadFormatter<T>(mediaHeader);
+
+                var result = await deserializer.ReadFromStreamAsync(typeof(T), content.Content, null, null);
+                var value = (T)result;
+                return new BlobResult<T> { Content = content, Value = value };
             }
-
-            var deserializer = FindReadFormatter<T>(mediaHeader);
-
-            var result = await deserializer.ReadFromStreamAsync(typeof(T), content.Content, null, null);
-            return (T)result;
+            catch(Exception ex)
+            {
+                var serializationException = new SerializationException(ex);
+                return new BlobResult<T> { SerializationException = serializationException };
+            }
         }
 
         MediaTypeFormatter FindReadFormatter<T>(MediaTypeHeaderValue mediaType)
