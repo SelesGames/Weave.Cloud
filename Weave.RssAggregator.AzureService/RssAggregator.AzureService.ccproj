@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Profiles" />
+    <Folder Include="Weave.Updater.Monitor.Azure.WorkerRoleContent\" />
   </ItemGroup>
   <ItemGroup>
     <PublishProfile Include="Profiles\Weave v2 News.azurePubxml" />
@@ -55,6 +56,19 @@
       <RoleName>RssAggregator.WorkerRole</RoleName>
       <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
     </ProjectReference>
+    <ProjectReference Include="..\Weave.Updater.Monitor.Azure.WorkerRole\Weave.Updater.Monitor.Azure.WorkerRole.csproj">
+      <Name>Weave.Updater.Monitor.Azure.WorkerRole</Name>
+      <Project>{85ee7ef8-65bf-4eba-92d8-db2c6cc97604}</Project>
+      <Private>True</Private>
+      <RoleType>Worker</RoleType>
+      <RoleName>Weave.Updater.Monitor.Azure.WorkerRole</RoleName>
+      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Weave.Updater.Monitor.Azure.WorkerRoleContent\diagnostics.wadcfg">
+      <SubType>Content</SubType>
+    </Content>
   </ItemGroup>
   <!-- Import the target files for this project template -->
   <PropertyGroup>

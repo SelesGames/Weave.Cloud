@@ -59,7 +59,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CachedFeed.cs" />
-    <Compile Include="FeedUpdateNotice.cs" />
     <Compile Include="FeedCache.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

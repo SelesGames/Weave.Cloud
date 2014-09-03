@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Weave.RssAggregator.LowFrequency
+namespace Weave.Updater.PubSub
 {
     public class FeedUpdateNotice
     {

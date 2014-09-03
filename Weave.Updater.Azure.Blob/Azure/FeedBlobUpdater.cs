@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Redis = Weave.User.Service.Redis;
 
-namespace Weave.Updater.Azure.Blob
+namespace Weave.Updater.Azure
 {
     public class FeedBlobUpdater
     {

@@ -3,7 +3,7 @@ using Common.Azure.SmartBlobClient;
 using System.Threading.Tasks;
 using Weave.Updater.BusinessObjects;
 
-namespace Weave.Updater.Azure.Blob
+namespace Weave.Updater.Azure
 {
     public class FeedUpdaterCache
     {
@@ -26,7 +26,7 @@ namespace Weave.Updater.Azure.Blob
         {
             var requestProperties = new WriteRequestProperties
             {
-                UseCompression = true, 
+                UseCompression = false, 
             };
             var blobName = feed.Uri;
             try
