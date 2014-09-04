@@ -24,10 +24,13 @@ namespace Weave.RssAggregator.HighFrequency
             try
             {
                 var saveFeedResult = await SaveFeed(update.InnerFeed);
-                DebugEx.WriteLine("Took {0} ms to serialize, {1} ms to save updater feed for {2}", saveFeedResult.Timings.SerializationTime.TotalMilliseconds, saveFeedResult.Timings.ServiceTime.TotalMilliseconds, update.Feed.Name);
+                DebugEx.WriteLine("** FEED UPDATER PROCESSOR ** Took {0} ms to serialize, {1} ms to save updater feed for {2}", saveFeedResult.Timings.SerializationTime.TotalMilliseconds, saveFeedResult.Timings.ServiceTime.TotalMilliseconds, update.Feed.Name);
 
-                var saveNewsResults = await SaveNewNews(update);
-                DebugEx.WriteLine("Took {0} ms to serialize, {1} ms to save news for {2}", saveNewsResults.Timings.SerializationTime.TotalMilliseconds, saveNewsResults.Timings.ServiceTime.TotalMilliseconds, update.Feed.Name);
+                if (update.Entries.Any())
+                {
+                    var saveNewsResults = await SaveNewNews(update);
+                    DebugEx.WriteLine("** FEED UPDATER PROCESSOR ** Took {0} ms to serialize, {1} ms to save news for {2}", saveNewsResults.Timings.SerializationTime.TotalMilliseconds, saveNewsResults.Timings.ServiceTime.TotalMilliseconds, update.Feed.Name);
+                }
             }
             catch (Exception ex)
             {
@@ -50,9 +53,6 @@ namespace Weave.RssAggregator.HighFrequency
 
         async Task<RedisWriteMultiResult<bool>> SaveNewNews(HighFrequencyFeedUpdate update)
         {
-            if (update.Entries == null || !update.Entries.Any())
-                return null;
-
             var db = connection.GetDatabase(DatabaseNumbers.CANONICAL_NEWSITEMS);
             var batch = db.CreateBatch();
             var entryCache = new ExpandedEntryCache(batch);

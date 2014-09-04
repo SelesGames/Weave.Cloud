@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Weave.Parsing;
 
@@ -74,41 +73,44 @@ namespace Weave.Updater.BusinessObjects
                     LastRefreshedOn = now;
                     Etag = requester.Etag;
                     LastModified = requester.LastModified;
+                    MostRecentNewsItemPubDate = requester.MostRecentNewsItemPubDate;
 
-                    if (requester.News != null && requester.News.Any())
+                    if (requester.News == null || !requester.News.Any())
                     {
-                        var resultNews = requester.News.Select(Map).ToList();
-                        var addedNews = new List<ExpandedEntry>();
+                        DebugEx.WriteLine("{0}: Requester had no news, or was not able to parse any news", Uri);
+                        return new FeedUpdate { RefreshTime = now, Entries = new List<ExpandedEntry>(), Feed = this };
+                    }
 
-                        foreach (var o in requester.News)
+                    var resultNews = requester.News.Select(Map).ToList();
+                    var addedNews = new List<ExpandedEntry>();
+
+                    foreach (var o in requester.News)
+                    {
+                        var record = AsRecord(o);
+                        if (News.Add(record))
                         {
-                            var record = AsRecord(o);
-                            if (News.Add(record))
-                            {
-                                var expandedEntry = Map(o);
-                                expandedEntry.Description = null;
-                                expandedEntry.OriginalDownloadDateTime = now;
-                                addedNews.Add(expandedEntry);
-                            }
-                        }
-
-                        News.TrimTo(NUMBER_OF_NEWSITEMS_TO_HOLD);
-
-                        if (addedNews.Any())
-                        {
-                            TeaserImageUrl = addedNews.GetBestImageUrl() ?? TeaserImageUrl;
-
-                            var update = new FeedUpdate
-                            {
-                                Feed = this,
-                                RefreshTime = now,
-                                Entries = addedNews,
-                            };
-                            return update;
+                            var expandedEntry = Map(o);
+                            expandedEntry.Description = null;
+                            expandedEntry.OriginalDownloadDateTime = now;
+                            addedNews.Add(expandedEntry);
                         }
                     }
 
+                    News.TrimTo(NUMBER_OF_NEWSITEMS_TO_HOLD);
+
+                    if (addedNews.Any())
+                    {
+                        TeaserImageUrl = addedNews.GetBestImageUrl() ?? TeaserImageUrl;
+                    }
+
                     DebugEx.WriteLine("REFRESHED {0}", Uri);
+
+                    return new FeedUpdate
+                    {
+                        Feed = this,
+                        RefreshTime = now,
+                        Entries = addedNews,
+                    };
                 }
                 else if (result == Parsing.Feed.RequestStatus.Unmodified)
                 {
@@ -117,7 +119,6 @@ namespace Weave.Updater.BusinessObjects
                 }
             }
             catch (TaskCanceledException ex) { HandleTimeoutException(ex); }
-            catch (HttpRequestException ex) { HandleHttpRequestException(ex); }
             catch (Exception ex) { HandleGeneralException(ex); }
             return null;
         }
@@ -145,17 +146,12 @@ namespace Weave.Updater.BusinessObjects
             DebugEx.WriteLine("!!!!!! TIMED OUT {0}: {1}", Uri, ex.Message);
         }
 
-        void HandleHttpRequestException(HttpRequestException ex)
+        void HandleGeneralException(Exception ex)
         {
             if (ex.InnerException != null)
                 DebugEx.WriteLine("!!!!!! FAILED {0}: {1}: {2}", Uri, ex.Message, ex.InnerException.Message);
             else
                 DebugEx.WriteLine("!!!!!! FAILED {0}: {1}", Uri, ex.Message);
-        }
-
-        void HandleGeneralException(Exception ex)
-        {
-            DebugEx.WriteLine("!!!!!! FAILED {0}: {1}", Uri, ex.Message);
         }
 
         #endregion

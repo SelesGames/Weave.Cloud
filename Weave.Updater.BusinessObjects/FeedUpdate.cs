@@ -7,6 +7,6 @@ namespace Weave.Updater.BusinessObjects
     {
         public Feed Feed { get; set; }
         public DateTime RefreshTime { get; set; }
-        public IReadOnlyList<ExpandedEntry> Entries { get; set; }
+        public IEnumerable<ExpandedEntry> Entries { get; internal set; }
     }
 }

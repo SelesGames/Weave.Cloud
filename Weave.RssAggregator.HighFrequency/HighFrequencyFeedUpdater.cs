@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Weave.RssAggregator.LibraryClient;
 using Weave.User.Service.Redis;
@@ -14,8 +13,6 @@ namespace Weave.RssAggregator.HighFrequency
         readonly string feedLibraryUrl;
         readonly ConnectionMultiplexer connection;
         readonly ProcessQueue<HighFrequencyFeed> processQueue;
-
-        public TimeSpan RefreshPeriod { get; set; }
 
 
 
@@ -29,9 +26,6 @@ namespace Weave.RssAggregator.HighFrequency
             this.feedLibraryUrl = feedLibraryUrl;
             this.connection = connection;
             this.processQueue = new ProcessQueue<HighFrequencyFeed>();
-
-            // set some default values
-            RefreshPeriod = TimeSpan.FromMinutes(20);
         }
 
         #endregion
@@ -48,8 +42,7 @@ namespace Weave.RssAggregator.HighFrequency
 
             var highFrequencyFeeds = libraryFeeds
                 .Distinct()
-                //.Where(o => !string.IsNullOrWhiteSpace(o.CorrectedUri))
-                .Where(o => o.FeedUri == "http://www.gameinformer.com:80/feeds/thefeedrss.aspx")
+                //.Where(o => o.FeedUri == "http://feeds.gawker.com/kotaku/vip")
                 .Select(CreateHighFrequencyFeed)
                 .OfType<HighFrequencyFeed>()
                 .ToList();
@@ -59,9 +52,6 @@ namespace Weave.RssAggregator.HighFrequency
             var db = connection.GetDatabase(DatabaseNumbers.FEED_UPDATER);
             var cache = new FeedUpdaterCache(db);
             var cacheMultiGet = await cache.Get(feedUrls);
-
-            //var ordered = cacheMultiGet.Results.OrderByDescending(o => o.ByteLength).ToList();
-            //DebugEx.WriteLine(ordered);
 
             var recoveredFeedUpdaters = cacheMultiGet.GetValidValues().ToList();
 
@@ -83,7 +73,10 @@ namespace Weave.RssAggregator.HighFrequency
 
 #if DEBUG
             await RefreshAllFeedsImmediately();
+            await Task.Delay(TimeSpan.FromSeconds(30));
 #endif
+
+            StartFeedRefreshTimer();
         }
 
 
@@ -128,9 +121,14 @@ namespace Weave.RssAggregator.HighFrequency
 
             if (feedsList.Any())
             {
-                await Task.WhenAll(feedsList.Select(o => o.Refresh(CreateProcessor())));
                 foreach (var feed in feedsList)
+                {
+                    await feed.Refresh(CreateProcessor());
                     processQueue.Requeue(feed);
+                }
+                //await Task.WhenAll(feedsList.Select(o => o.Refresh(CreateProcessor())));
+                //foreach (var feed in feedsList)
+                //    processQueue.Requeue(feed);
             }
         }
 
@@ -144,7 +142,7 @@ namespace Weave.RssAggregator.HighFrequency
 
 
 
-        public async void StartFeedRefreshTimer()
+        async void StartFeedRefreshTimer()
         {
             var interval = TimeSpan.FromSeconds(2);
 
@@ -167,40 +165,10 @@ namespace Weave.RssAggregator.HighFrequency
             }
             catch (Exception ex)
             {
-                DebugEx.WriteLine(ex);
+                DebugEx.WriteLine("{0} faulted: {1}", next, ex);
             }
 
             processQueue.Requeue(next);
         }
     }
 }
-
-
-
-
-#region unused
-
-//async Task LoadAllFeeds()
-//{
-//    var feedsList = feeds.Select(o => o.Value).ToList();
-
-//    var longTime = TimeSpan.FromMinutes(5);
-//    foreach (var feed in feedsList)
-//    {
-//        feed.RefreshTimeout = longTime;
-//    }
-
-//    //foreach (var feed in feedsList)
-//    //{
-//    //    await feed.Refresh();
-//    //}
-//    await Task.WhenAll(feedsList.Select(o => o.Refresh()));
-
-//    var shortTime = TimeSpan.FromMinutes(1);
-//    foreach (var feed in feedsList)
-//    {
-//        feed.RefreshTimeout = shortTime;
-//    }
-//}
-
-#endregion

@@ -183,15 +183,50 @@ namespace Weave.User.Service.Role.Controllers
             NewsItemType type = NewsItemType.Any,
             bool requireImage = false)
         {
-            IEnumerable<FeedIndex> feeds = null;
             category = category ?? "all news";
+
+            return await GetNewsImpl(
+                userId: userId,
+                feedSelector: o => o.FeedIndices.OfCategory(category).ToList(),
+                skip: skip,
+                take: take,
+                type: type,
+                entry: entry,
+                requireImage: requireImage);
+        }
+
+        [HttpGet]
+        [ActionName("news")]
+        public async Task<Outgoing.NewsList> GetNews(
+            Guid userId, Guid feedId, EntryType entry = EntryType.Peek, int skip = 0, int take = 10, NewsItemType type = NewsItemType.Any, bool requireImage = false)
+        {
+            return await GetNewsImpl(
+                userId: userId,
+                feedSelector: o => o.FeedIndices.WithId(feedId).ToList(),
+                skip: skip,
+                take: take,
+                type: type,
+                entry: entry,
+                requireImage: requireImage);
+        }
+
+        async Task<Outgoing.NewsList> GetNewsImpl(
+            Guid userId, 
+            Func<UserIndex, IEnumerable<FeedIndex>> feedSelector, 
+            EntryType entry, 
+            int skip, 
+            int take, 
+            NewsItemType type, 
+            bool requireImage)
+        {
+            IEnumerable<FeedIndex> feeds = null;
 
             if (entry == EntryType.ExtendRefresh)
             {
                 await Lock(userId, async () =>
                 {
                     await LoadIndexOnly(userId);
-                    feeds = userIndex.FeedIndices.OfCategory(category);
+                    feeds = feedSelector(userIndex);
                     feeds.ExtendEntry();
                     await PerformRefreshOnFeeds(feeds);
                     await SaveUserIndex();
@@ -201,8 +236,8 @@ namespace Weave.User.Service.Role.Controllers
             {
                 await Lock(userId, async () =>
                 {
-                    await LoadIndexOnly(userId);;
-                    feeds = userIndex.FeedIndices.OfCategory(category);
+                    await LoadIndexOnly(userId);
+                    feeds = feedSelector(userIndex);
                     feeds.MarkEntry();
                     await SaveUserIndex();
                 });
@@ -210,49 +245,7 @@ namespace Weave.User.Service.Role.Controllers
             else
             {
                 await LoadIndexOnly(userId);
-                feeds = userIndex.FeedIndices.OfCategory(category);
-            }
-
-            var list = await CreateNewsListFromSubset(
-                feeds: feeds,
-                skip: skip, 
-                take: take, 
-                type: type,
-                entry: entry,
-                requireImage: requireImage);
-
-            return list;
-        }
-
-        [HttpGet]
-        [ActionName("news")]
-        public async Task<Outgoing.NewsList> GetNews(
-            Guid userId, Guid feedId, EntryType entry = EntryType.Peek, int skip = 0, int take = 10, NewsItemType type = NewsItemType.Any, bool requireImage = false)
-        {
-            IEnumerable<FeedIndex> feeds = null;
-
-            if (entry == EntryType.ExtendRefresh)
-            {
-                await LoadIndexOnly(userId);
-
-                feeds = userIndex.FeedIndices.WithId(feedId).ToList();
-                feeds.ExtendEntry();
-                await PerformRefreshOnFeeds(feeds);
-            }
-            else if (entry == EntryType.Mark)
-            {
-                await Lock(userId, async () =>
-                {
-                    await LoadIndexOnly(userId);  //, saveOnFail: false);
-                    feeds = userIndex.FeedIndices.WithId(feedId).ToList();
-                    feeds.MarkEntry();
-                    await SaveUserIndex();
-                });
-            }
-            else
-            {
-                await LoadIndexOnly(userId);  //, saveOnFail: true);
-                feeds = userIndex.FeedIndices.WithId(feedId).ToList();
+                feeds = feedSelector(userIndex);
             }
 
             var list = await CreateNewsListFromSubset(

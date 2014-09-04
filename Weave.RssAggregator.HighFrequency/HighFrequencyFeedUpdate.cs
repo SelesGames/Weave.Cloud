@@ -9,7 +9,7 @@ namespace Weave.RssAggregator.HighFrequency
         public FeedUpdate InnerUpdate { get; private set; }
 
         public Feed InnerFeed { get { return InnerUpdate.Feed; } }
-        public IReadOnlyList<ExpandedEntry> Entries { get { return InnerUpdate.Entries; } }
+        public IEnumerable<ExpandedEntry> Entries { get { return InnerUpdate.Entries; } }
 
         internal HighFrequencyFeedUpdate(HighFrequencyFeed feed, FeedUpdate innerUpdate)
         {
