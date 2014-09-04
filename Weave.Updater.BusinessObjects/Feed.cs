@@ -16,6 +16,13 @@ namespace Weave.Updater.BusinessObjects
     /// </summary>
     public class Feed
     {
+        public static TimeSpan MinimumElapsedRefreshTime { get; set; }
+        static Feed()
+        {
+            // prevent the feed from being refreshed more frequently than every X minutes
+            MinimumElapsedRefreshTime = TimeSpan.FromMinutes(3);
+        }
+
         const int NUMBER_OF_NEWSITEMS_TO_HOLD = 200;
 
         // Read-only properties
@@ -55,6 +62,9 @@ namespace Weave.Updater.BusinessObjects
             try
             {
                 var now = DateTime.UtcNow;
+
+                if (now - LastRefreshedOn < MinimumElapsedRefreshTime)
+                    return null;
 
                 var requester = CreateInnerFeed();
                 var result = await requester.Update();

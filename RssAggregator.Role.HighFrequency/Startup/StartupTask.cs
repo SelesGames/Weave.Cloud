@@ -27,9 +27,7 @@ namespace RssAggregator.Role.HighFrequency
             {
                 System.Diagnostics.Debug.WriteLine(ex);
             }
-#if DEBUG
-            hfUpdater.RefreshAllFeedsImmediately().Wait();
-#endif
+
             hfUpdater.StartFeedRefreshTimer();
         }
 

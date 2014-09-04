@@ -73,7 +73,7 @@ namespace Weave.Parsing
             #endregion
 
 
-            var response = await client.SendAsync(request, CancellationToken.None);// (Uri);
+            var response = await client.SendAsync(request, CancellationToken.None);
             var responseMessage = response.HttpResponseMessage;
 
             if (responseMessage.StatusCode == HttpStatusCode.NotModified)

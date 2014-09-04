@@ -9,20 +9,14 @@ using Weave.User.Service.Redis;
 
 namespace Weave.RssAggregator.HighFrequency
 {
-    public class HighFrequencyFeedUpdater : IDisposable
+    public class HighFrequencyFeedUpdater
     {
-        Dictionary<string, HighFrequencyFeed> feeds = new Dictionary<string, HighFrequencyFeed>();
-
         readonly string feedLibraryUrl;
         readonly ConnectionMultiplexer connection;
-        int currentRefreshIndex = 0;
-        IDisposable subHandle;
+        readonly ProcessQueue<HighFrequencyFeed> processQueue;
 
         public TimeSpan RefreshPeriod { get; set; }
 
-        readonly Queue<HighFrequencyFeed> queue = new Queue<HighFrequencyFeed>();
-        readonly List<HighFrequencyFeed> processList = new List<HighFrequencyFeed>();
-        readonly object sync = new object();
 
 
 
@@ -34,24 +28,13 @@ namespace Weave.RssAggregator.HighFrequency
         {
             this.feedLibraryUrl = feedLibraryUrl;
             this.connection = connection;
+            this.processQueue = new ProcessQueue<HighFrequencyFeed>();
 
             // set some default values
             RefreshPeriod = TimeSpan.FromMinutes(20);
         }
 
         #endregion
-
-
-        void ProcessNext()
-        {
-            HighFrequencyFeed next;
-
-            lock(sync)
-            {
-                next = queue.Dequeue()
-            }
-            var next = 
-        }
 
 
 
@@ -93,8 +76,20 @@ namespace Weave.RssAggregator.HighFrequency
                 tuple.hff.InitializeWith(tuple.updater);
             }
 
-            CreateLookup(highFrequencyFeeds);
+            foreach (var hff in highFrequencyFeeds)
+            {
+                processQueue.Enqueue(hff);
+            }
+
+#if DEBUG
+            await RefreshAllFeedsImmediately();
+#endif
         }
+
+
+
+
+        #region Initialization helper functions
 
         HighFrequencyFeed CreateHighFrequencyFeed(FeedSource o)
         {
@@ -121,77 +116,22 @@ namespace Weave.RssAggregator.HighFrequency
             }
         }
 
-        void CreateLookup(IEnumerable<HighFrequencyFeed> highFrequencyFeeds)
+        async Task RefreshAllFeedsImmediately()
         {
-            foreach (var hff in highFrequencyFeeds)
+            var feedsList = new List<HighFrequencyFeed>();
+            var next = processQueue.GetNextFromQueue();
+            while (next != null)
             {
-                var uris = hff.PreviousUris.Union(new[] { hff.Uri });
-                foreach (var uri in uris)
-                {
-                    if (!feeds.ContainsKey(uri))
-                        feeds.Add(uri, hff);
-                }
+                feedsList.Add(next);
+                next = processQueue.GetNextFromQueue();
             }
-        }
 
-
-
-#if DEBUG
-        public Task RefreshAllFeedsImmediately()
-        {
-            var feedsList = feeds.Select(o => o.Value).ToList();
-            return Task.WhenAll(feedsList.Select(o => o.Refresh(CreateProcessor())));
-        }
-#endif
-
-
-
-        public async void StartFeedRefreshTimer()
-        {
-            if (subHandle != null)
-                subHandle.Dispose();
-
-            var feedsList = feeds.Select(o => o.Value).ToList();
-            var totalNumberOfFeeds = feedsList.Count;
-
-            var wrappedFeeds = feedsList.Wrap().Skip(currentRefreshIndex);
-
-#if DEBUG
-            await Task.Delay(5000);
-#else
-            await Task.Delay(highFrequencyRefreshPeriod);
-#endif
-
-            var fullPeriodInMs = RefreshPeriod.TotalMilliseconds;
-            var pulseInterval = fullPeriodInMs / totalNumberOfFeeds;
-
-            subHandle = Observable
-                .Interval(TimeSpan.FromMilliseconds(pulseInterval))
-                .Zip(wrappedFeeds, (_, feed) => feed)
-                .Subscribe(feed =>
-                {
-                    RefreshFeed(feed);
-                    IncrementCurrentIndex();
-                }, 
-                exception => { ; });
-        }
-
-        async void RefreshFeed(HighFrequencyFeed feed)
-        {
-            try
+            if (feedsList.Any())
             {
-                await feed.Refresh(CreateProcessor());
+                await Task.WhenAll(feedsList.Select(o => o.Refresh(CreateProcessor())));
+                foreach (var feed in feedsList)
+                    processQueue.Requeue(feed);
             }
-            catch(Exception ex)
-            {
-                DebugEx.WriteLine(ex);
-            }
-        }
-
-        void IncrementCurrentIndex()
-        {
-            currentRefreshIndex++;
-            currentRefreshIndex = currentRefreshIndex % feeds.Count;
         }
 
         IAsyncProcessor<HighFrequencyFeedUpdate> CreateProcessor()
@@ -199,12 +139,38 @@ namespace Weave.RssAggregator.HighFrequency
             return new StandardProcessorChain(connection);
         }
 
-        public void Dispose()
-        {
-            if (subHandle != null)
-                subHandle.Dispose();
+        #endregion
 
-            feeds = null;
+
+
+
+        public async void StartFeedRefreshTimer()
+        {
+            var interval = TimeSpan.FromSeconds(2);
+
+            while (true)
+            {
+                await Task.Delay(interval);
+                ProcessNext();
+            }
+        }
+
+        async void ProcessNext()
+        {
+            var next = processQueue.GetNextFromQueue();
+            if (next == null)
+                return;
+
+            try
+            {
+                await next.Refresh(CreateProcessor());
+            }
+            catch (Exception ex)
+            {
+                DebugEx.WriteLine(ex);
+            }
+
+            processQueue.Requeue(next);
         }
     }
 }

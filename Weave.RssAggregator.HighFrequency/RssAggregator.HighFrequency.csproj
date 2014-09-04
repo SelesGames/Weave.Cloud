@@ -78,6 +78,7 @@
     <Compile Include="Processors\Redirect\RedirectResolver.cs" />
     <Compile Include="Processors\Redis\FeedUpdaterProcessor.cs" />
     <Compile Include="Processors\SequentialProcessorCollection.cs" />
+    <Compile Include="ProcessQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Processors\StandardProcessorChain.cs" />
   </ItemGroup>
