@@ -390,7 +390,7 @@
     <Feed Name="Engadget | WP" CorrectedUrl="http://www.engadget.com/tag/windowsphone/rss-full.xml" IconUrl="http://weave.blob.core.windows.net/icons/Engadget-WP.png">http://www.engadget.com/tag/windowsphone/rss.xml</Feed>
     <Feed Name="MetroAppSauce">http://metroappsauce.com/feed/</Feed>
     <Feed Name="Mobility Digest" IconUrl="http://weave.blob.core.windows.net/icons/Mobility Digest.png">http://mobilitydigest.com/category/windowsphone/feed</Feed>
-    <Feed Name="Nokia Conversations" IconUrl="http://weave.blob.core.windows.net/icons/Nokia Conversations.png">http://feeds.feedburner.com/NokiaConversations-Posts</Feed>
+    <Feed Name="Nokia Conversations" IconUrl="http://weave.blob.core.windows.net/icons/Nokia Conversations.png">http://feeds.feedburner.com/NokiaConversations</Feed>
     <Feed Name="PhoneArena" ViewType="ie" IconUrl="http://weave.blob.core.windows.net/icons/PhoneArena.png">http://www.phonearena.com/feed/windows/news</Feed>
     <Feed Name="Windows Phone Daily" in="mu" IconUrl="http://weave.blob.core.windows.net/icons/WindowsPhoneDaily.png">http://feeds.feedburner.com/windowsphonedaily/DnwK</Feed>
     <Feed Name="Windows Team Blog" IconUrl="http://weave.blob.core.windows.net/icons/Windows Team Blog.png">http://windowsteamblog.com/windows_phone/rss.aspx</Feed>

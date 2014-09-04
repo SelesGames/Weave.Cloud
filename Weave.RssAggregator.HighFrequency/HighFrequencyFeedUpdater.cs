@@ -13,46 +13,45 @@ namespace Weave.RssAggregator.HighFrequency
     {
         Dictionary<string, HighFrequencyFeed> feeds = new Dictionary<string, HighFrequencyFeed>();
 
-        readonly TimeSpan highFrequencyRefreshPeriod;
         readonly string feedLibraryUrl;
-        readonly SequentialProcessor processor;
-        readonly IDatabase db;
+        readonly ConnectionMultiplexer connection;
         int currentRefreshIndex = 0;
         IDisposable subHandle;
 
+        public TimeSpan RefreshPeriod { get; set; }
+
+        readonly Queue<HighFrequencyFeed> queue = new Queue<HighFrequencyFeed>();
+        readonly List<HighFrequencyFeed> processList = new List<HighFrequencyFeed>();
+        readonly object sync = new object();
 
 
-        #region Constructors
+
+        #region Constructor
 
         public HighFrequencyFeedUpdater(
             string feedLibraryUrl, 
-            SequentialProcessor processor, 
             ConnectionMultiplexer connection)
         {
-            if (string.IsNullOrEmpty(feedLibraryUrl)) return;
-
             this.feedLibraryUrl = feedLibraryUrl;
-            this.processor = processor;
-            this.db = connection.GetDatabase(DatabaseNumbers.FEED_UPDATER);
+            this.connection = connection;
 
             // set some default values
-            this.highFrequencyRefreshPeriod = TimeSpan.FromMinutes(20);
-        }
-
-        public HighFrequencyFeedUpdater(
-            string feedLibraryUrl,
-            SequentialProcessor processor,
-            ConnectionMultiplexer connection,
-            TimeSpan highFrequencyRefreshPeriod)
-
-            : this(feedLibraryUrl, processor, connection)
-        {
-            if (string.IsNullOrEmpty(feedLibraryUrl)) return;
-
-            this.highFrequencyRefreshPeriod = highFrequencyRefreshPeriod;
+            RefreshPeriod = TimeSpan.FromMinutes(20);
         }
 
         #endregion
+
+
+        void ProcessNext()
+        {
+            HighFrequencyFeed next;
+
+            lock(sync)
+            {
+                next = queue.Dequeue()
+            }
+            var next = 
+        }
 
 
 
@@ -67,13 +66,14 @@ namespace Weave.RssAggregator.HighFrequency
             var highFrequencyFeeds = libraryFeeds
                 .Distinct()
                 //.Where(o => !string.IsNullOrWhiteSpace(o.CorrectedUri))
-                //.Where(o => o.FeedUri == "http://feeds.feedburner.com/Destructoid")
+                .Where(o => o.FeedUri == "http://www.gameinformer.com:80/feeds/thefeedrss.aspx")
                 .Select(CreateHighFrequencyFeed)
                 .OfType<HighFrequencyFeed>()
                 .ToList();
 
             var feedUrls = highFrequencyFeeds.Select(o => o.Uri);
 
+            var db = connection.GetDatabase(DatabaseNumbers.FEED_UPDATER);
             var cache = new FeedUpdaterCache(db);
             var cacheMultiGet = await cache.Get(feedUrls);
 
@@ -93,13 +93,7 @@ namespace Weave.RssAggregator.HighFrequency
                 tuple.hff.InitializeWith(tuple.updater);
             }
 
-            foreach (var feed in highFrequencyFeeds)
-            {
-                if (processor != null)
-                    processor.Register(feed);
-            }
-
-            feeds = highFrequencyFeeds.ToDictionary(o => o.Uri);
+            CreateLookup(highFrequencyFeeds);
         }
 
         HighFrequencyFeed CreateHighFrequencyFeed(FeedSource o)
@@ -118,7 +112,7 @@ namespace Weave.RssAggregator.HighFrequency
                     feedUri = o.FeedUri;
                 }
 
-                var hff = new HighFrequencyFeed(o.FeedName, feedUri, originalUri, o.Instructions);
+                var hff = new HighFrequencyFeed(o.FeedName, feedUri, o.Instructions, originalUri == null ? null : new[] { originalUri });
                 return hff;
             }
             catch
@@ -127,14 +121,29 @@ namespace Weave.RssAggregator.HighFrequency
             }
         }
 
+        void CreateLookup(IEnumerable<HighFrequencyFeed> highFrequencyFeeds)
+        {
+            foreach (var hff in highFrequencyFeeds)
+            {
+                var uris = hff.PreviousUris.Union(new[] { hff.Uri });
+                foreach (var uri in uris)
+                {
+                    if (!feeds.ContainsKey(uri))
+                        feeds.Add(uri, hff);
+                }
+            }
+        }
+
+
 
 #if DEBUG
         public Task RefreshAllFeedsImmediately()
         {
             var feedsList = feeds.Select(o => o.Value).ToList();
-            return Task.WhenAll(feedsList.Select(o => o.Refresh()));
+            return Task.WhenAll(feedsList.Select(o => o.Refresh(CreateProcessor())));
         }
 #endif
+
 
 
         public async void StartFeedRefreshTimer()
@@ -153,7 +162,7 @@ namespace Weave.RssAggregator.HighFrequency
             await Task.Delay(highFrequencyRefreshPeriod);
 #endif
 
-            var fullPeriodInMs = highFrequencyRefreshPeriod.TotalMilliseconds;
+            var fullPeriodInMs = RefreshPeriod.TotalMilliseconds;
             var pulseInterval = fullPeriodInMs / totalNumberOfFeeds;
 
             subHandle = Observable
@@ -161,16 +170,33 @@ namespace Weave.RssAggregator.HighFrequency
                 .Zip(wrappedFeeds, (_, feed) => feed)
                 .Subscribe(feed =>
                 {
-                    feed.Refresh();
+                    RefreshFeed(feed);
                     IncrementCurrentIndex();
                 }, 
                 exception => { ; });
+        }
+
+        async void RefreshFeed(HighFrequencyFeed feed)
+        {
+            try
+            {
+                await feed.Refresh(CreateProcessor());
+            }
+            catch(Exception ex)
+            {
+                DebugEx.WriteLine(ex);
+            }
         }
 
         void IncrementCurrentIndex()
         {
             currentRefreshIndex++;
             currentRefreshIndex = currentRefreshIndex % feeds.Count;
+        }
+
+        IAsyncProcessor<HighFrequencyFeedUpdate> CreateProcessor()
+        {
+            return new StandardProcessorChain(connection);
         }
 
         public void Dispose()

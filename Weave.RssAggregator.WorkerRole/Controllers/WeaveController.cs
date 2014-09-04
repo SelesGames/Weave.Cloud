@@ -30,7 +30,7 @@ namespace Weave.RssAggregator.WorkerRole.Controllers
         }
 
         [HttpPost]
-        public async Task<List<Result>> Get([FromBody] List<string> uris, [FromUri] bool fsd = true)
+        public async Task<List<Result>> Get([FromBody] List<string> uris)
         {
             if (uris == null || !uris.Any())
                 throw ResponseHelper.CreateResponseException(

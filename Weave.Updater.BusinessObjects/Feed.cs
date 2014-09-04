@@ -19,7 +19,7 @@ namespace Weave.Updater.BusinessObjects
         const int NUMBER_OF_NEWSITEMS_TO_HOLD = 200;
 
         // Read-only properties
-        public string Uri { get; private set; }
+        public string Uri { get; set; }
         public News News { get; private set; }
         public string TeaserImageUrl { get; set; }
 
@@ -86,7 +86,7 @@ namespace Weave.Updater.BusinessObjects
 
                         if (addedNews.Any())
                         {
-                            UpdateTeaserImage(addedNews);
+                            TeaserImageUrl = addedNews.GetBestImageUrl() ?? TeaserImageUrl;
 
                             var update = new FeedUpdate
                             {
@@ -121,7 +121,7 @@ namespace Weave.Updater.BusinessObjects
         {
             return new Parsing.Feed
             {
-                FeedUri = Uri,
+                Uri = Uri,
                 MostRecentNewsItemPubDate = MostRecentNewsItemPubDate,
                 Etag = Etag,
                 LastModified = LastModified,
@@ -130,34 +130,22 @@ namespace Weave.Updater.BusinessObjects
             };
         }
 
-        void UpdateTeaserImage(IEnumerable<ExpandedEntry> addedNews)
-        {
-            var mostRecentAndBestImage = addedNews
-                .OrderByDescending(o => o.UtcPublishDateTime)
-                .Select(o => o.Images.GetBest())
-                .OfType<Image>()
-                .FirstOrDefault();
-
-            if (mostRecentAndBestImage != null)
-                TeaserImageUrl = mostRecentAndBestImage.Url;
-        }
-
         void HandleTimeoutException(TaskCanceledException ex)
         {
-            DebugEx.WriteLine("!!!!!! TIMED OUT {0}: {2}", Uri, ex.Message);
+            DebugEx.WriteLine("!!!!!! TIMED OUT {0}: {1}", Uri, ex.Message);
         }
 
         void HandleHttpRequestException(HttpRequestException ex)
         {
             if (ex.InnerException != null)
-                DebugEx.WriteLine("!!!!!! FAILED {0}: {2}: {3}", Uri, ex.Message, ex.InnerException.Message);
+                DebugEx.WriteLine("!!!!!! FAILED {0}: {1}: {2}", Uri, ex.Message, ex.InnerException.Message);
             else
-                DebugEx.WriteLine("!!!!!! FAILED {0}: {2}", Uri, ex.Message);
+                DebugEx.WriteLine("!!!!!! FAILED {0}: {1}", Uri, ex.Message);
         }
 
         void HandleGeneralException(Exception ex)
         {
-            DebugEx.WriteLine("!!!!!! FAILED {0}: {2}", Uri, ex.Message);
+            DebugEx.WriteLine("!!!!!! FAILED {0}: {1}", Uri, ex.Message);
         }
 
         #endregion

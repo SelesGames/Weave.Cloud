@@ -31,36 +31,44 @@ namespace Weave.RssAggregator.WorkerRole
 
         public async Task<Result> GetResultFromRequest(string url)
         {
-            VerifyRequest(url);
-
-            Result result = null;
-
-            Metadata.Url = url;
-
-            sw.Start();
-            var cachedFeed = feedCache.Get(url);
-            Metadata.CheckIfFeedIsHighFrequencyCached = sw.Record().Dump();
-
-            if (cachedFeed != null)
+            try
             {
-                // don't need to do a refresh, since it was cached and refreshes on its own timer
-                var key = (RedisKey)url;
-                var isFeedIndexLoaded = await CheckIfFeedUpdaterExists(key);
+                VerifyRequest(url);
 
-                if (!isFeedIndexLoaded)
+                Result result = null;
+
+                Metadata.Url = url;
+
+                sw.Start();
+                var cachedFeed = feedCache.Get(url);
+                Metadata.CheckIfFeedIsHighFrequencyCached = sw.Record().Dump();
+
+                if (cachedFeed != null)
+                {
+                    // don't need to do a refresh, since it was cached and refreshes on its own timer
+                    var key = (RedisKey)url;
+                    var isFeedIndexLoaded = await CheckIfFeedUpdaterExists(key);
+
+                    if (!isFeedIndexLoaded)
+                    {
+                        await RefreshFeed(url);
+                    }
+                    result = new Result { IsLoaded = true, };
+                }
+                else
                 {
                     await RefreshFeed(url);
+                    result = new Result { IsLoaded = true, };
                 }
-                result = new Result { IsLoaded = true, };
-            }
-            else
-            {
-                await RefreshFeed(url);
-                result = new Result { IsLoaded = true, };
-            }
 
-            result.Meta = Metadata;
-            return result;
+                result.Meta = Metadata;
+                return result;
+            }
+            catch(Exception ex)
+            {
+                Metadata.ExceptionMessage = ex.ToString();
+                return new Result { IsLoaded = false, Url = url, Meta = Metadata };
+            }
         }
 
         static void VerifyRequest(string url)
@@ -106,10 +114,15 @@ namespace Weave.RssAggregator.WorkerRole
             var update = await feed.Refresh();
             Metadata.Refresh = sw.Record().Dump();
 
+            // if LastRefreshedOn hasn't changed, then the feed wasn't updated
+            // maybe switch this to a new ETAG or something?
+            if (feed.LastRefreshedOn == previousFeedUpdate)
+                return;
+
             // save the newly refreshed feed state
             var saveUpdaterFeedResult = await cache.Save(feed);
-            Metadata.SaveUpdaterFeed_SaveTime = saveUpdaterFeedResult.Timings.ServiceTime;
-            Metadata.SaveUpdaterFeed_SerializationTime = saveUpdaterFeedResult.Timings.SerializationTime;
+            Metadata.SaveUpdaterFeed_SaveTime = saveUpdaterFeedResult.Timings.ServiceTime.Dump();
+            Metadata.SaveUpdaterFeed_SerializationTime = saveUpdaterFeedResult.Timings.SerializationTime.Dump();
 
             if (update != null && update.Entries.Any())
             {
@@ -118,17 +131,14 @@ namespace Weave.RssAggregator.WorkerRole
                     FixImages(entry);
 
                 var saveFeedIndexAndNewsIndices = await SaveNewEntries(update.Entries);
-                Metadata.SaveNewEntries_SaveTime = saveFeedIndexAndNewsIndices.Timings.ServiceTime;
-                Metadata.SaveNewEntries_SerializationTime = saveFeedIndexAndNewsIndices.Timings.SerializationTime;
+                Metadata.SaveNewEntries_SaveTime = saveFeedIndexAndNewsIndices.Timings.ServiceTime.Dump();
+                Metadata.SaveNewEntries_SerializationTime = saveFeedIndexAndNewsIndices.Timings.SerializationTime.Dump();
             }
 
             // Send a notice via Redis PubSub that the feed updater was updated
-            if (feed.LastRefreshedOn != previousFeedUpdate)
-            {
-                var bridge = new FeedUpdateEventBridge(connection);
-                var received = await bridge.Publish(update);
-                Metadata.NumberThatReceivedPubSubNotification = received;
-            }
+            var bridge = new FeedUpdateEventBridge(connection);
+            var received = await bridge.Publish(new FeedUpdateNotice { FeedUri = url, RefreshTime = feed.LastRefreshedOn });
+            Metadata.NumberThatReceivedPubSubNotification = received;
         }
 
         static void FixImages(ExpandedEntry entry)

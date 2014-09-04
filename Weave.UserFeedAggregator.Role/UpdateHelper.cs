@@ -55,7 +55,7 @@ namespace Weave.User.Service.Role.Controllers
 
         Task<List<Result>> GetUpdateResults(IEnumerable<string> urls)
         {
-            var client = new SmartHttpClient();
+            var client = new SmartHttpClient(CompressionSettings.None) { Timeout = TimeSpan.FromMinutes(2) };
             return client.PostAsync<List<string>, List<Result>>(
                 "http://weave-v2-news.cloudapp.net/api/weave", urls.ToList());
         }
@@ -96,18 +96,19 @@ namespace Weave.User.Service.Role.Controllers
                 if (!updateResult.HasValue)
                     return;
 
-                var update = updateResult.Value;
+                var feed = updateResult.Value;
 
                 // you shouldn't need to update the Uri, and the IconUri is currently broken
                 //index.Uri = feed.Uri;
                 //index.IconUri = feed.IconUri;
-                index.TeaserImageUrl = update.TeaserImageUrl;
+                index.TeaserImageUrl = feed.TeaserImageUrl;
 
-                var newsDiff = index.NewsItemIndices.Diff(update.News, o => o.Id, o => o.Id);
-                foreach (var newsItem in newsDiff.Removed)
-                {
-                    index.NewsItemIndices.Remove(newsItem);
-                }
+                var newsDiff = index.NewsItemIndices.Diff(feed.News, o => o.Id, o => o.Id);
+                // don't remove a news item just because it was removed from the underlying feed!
+                //foreach (var newsItem in newsDiff.Removed)
+                //{
+                //    index.NewsItemIndices.Remove(newsItem);
+                //}
 
                 foreach (var record in newsDiff.Added)
                 {

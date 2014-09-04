@@ -20,16 +20,18 @@ namespace Weave.User.Service.Cache
             this.containerName = containerName;
         }
 
-        public Task<UserInfo> Get(Guid userId)
+        public async Task<UserInfo> Get(Guid userId)
         {
             var fileName = GetFileName(userId);
-            return new SmartBlobClient(csa).Get<UserInfo>(containerName, fileName,
+            var result = await new SmartBlobClient(csa).Get<UserInfo>(containerName, fileName,
                 options: new BlobRequestOptions
                 {
                     ServerTimeout = TimeSpan.FromSeconds(15),
                     RetryPolicy = new LinearRetry(TimeSpan.FromSeconds(2), 3),
                     MaximumExecutionTime = TimeSpan.FromSeconds(25),
                 });
+
+            return result.Value;
         }
 
         public Task Save(UserInfo user)

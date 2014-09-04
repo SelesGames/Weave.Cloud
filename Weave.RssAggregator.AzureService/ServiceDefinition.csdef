@@ -13,7 +13,7 @@
       <Setting name="FeedLibraryUrl" />
     </ConfigurationSettings>
   </WorkerRole>
-  <WorkerRole name="Weave.Updater.Monitor.Azure.WorkerRole" vmsize="Small">
+  <WorkerRole name="Weave.Updater.Monitor.Azure.WorkerRole" vmsize="ExtraSmall">
     <Imports>
       <Import moduleName="Diagnostics" />
     </Imports>

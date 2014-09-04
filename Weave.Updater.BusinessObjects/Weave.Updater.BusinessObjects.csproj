@@ -37,11 +37,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ExpandedEntry.cs" />
+    <Compile Include="Extensions\EntryExtensions.cs" />
     <Compile Include="News.cs" />
     <Compile Include="Feed.cs" />
     <Compile Include="FeedUpdate.cs" />
     <Compile Include="Image.cs" />
-    <Compile Include="ImageExtensions.cs" />
+    <Compile Include="Extensions\ImageExtensions.cs" />
     <Compile Include="Images.cs" />
     <Compile Include="NewsItemRecord.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

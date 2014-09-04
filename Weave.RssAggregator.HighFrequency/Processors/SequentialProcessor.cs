@@ -8,11 +8,11 @@ namespace Weave.RssAggregator.HighFrequency
 {
     public class SequentialProcessor : IDisposable
     {
-        IEnumerable<IProvider<ISequentialAsyncProcessor<HighFrequencyFeedUpdate>>> processorProviders;
+        IEnumerable<IProvider<IAsyncProcessor<HighFrequencyFeedUpdate>>> processorProviders;
         SubscriptionAggregator<Guid, HighFrequencyFeedUpdate> sub;
         IDisposable subHandle;
 
-        public SequentialProcessor(IEnumerable<IProvider<ISequentialAsyncProcessor<HighFrequencyFeedUpdate>>> processorProviders)
+        public SequentialProcessor(IEnumerable<IProvider<IAsyncProcessor<HighFrequencyFeedUpdate>>> processorProviders)
         {
             this.processorProviders = processorProviders;
             InitializeSubscription();

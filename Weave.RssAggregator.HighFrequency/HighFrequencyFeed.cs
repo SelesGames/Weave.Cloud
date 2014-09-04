@@ -1,50 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using Weave.Updater.BusinessObjects;
 using Weave.User.Service.Redis;
 
 namespace Weave.RssAggregator.HighFrequency
 {
-    public class MessageProcessor
-    {
-        List<HighFrequencyFeed> queue;
-        List<HighFrequencyFeed> processQueue;
-
-        public void Enqueue(HighFrequencyFeed feed)
-        {
-
-        }
-    }
-
-
-
-
-
     public class HighFrequencyFeed
     {
         readonly Feed innerFeed;
-        readonly Subject<HighFrequencyFeedUpdate> feedUpdate;
 
-        public Guid Id { get; private set; }
         public string Name { get; private set; }
-        public IReadOnlyList<string> Instructions { get; private set; }
-
         public string Uri { get { return innerFeed.Uri; } }
-        public IObservable<HighFrequencyFeedUpdate> FeedUpdate { get; private set; }
+        public IEnumerable<string> Instructions { get; private set; }
+        public IEnumerable<string> PreviousUris { get; private set; }
 
-        public HighFrequencyFeed(string name, string feedUri, string originalUri, string instructions)
+        public HighFrequencyFeed(string name, string uri, string instructions, IEnumerable<string> previousUris = null)
         {
-            this.innerFeed = new Feed(feedUri);
-            this.feedUpdate = new Subject<HighFrequencyFeedUpdate>();
+            this.innerFeed = new Feed(uri);
 
             Name = name;
-            InitializeId(string.IsNullOrWhiteSpace(originalUri) ? feedUri : originalUri);
-
-            FeedUpdate = feedUpdate.AsObservable();
 
             if (!string.IsNullOrWhiteSpace(instructions))
             {
@@ -54,6 +30,10 @@ namespace Weave.RssAggregator.HighFrequency
                     .Select(o => o.Trim())
                     .ToList();
             }
+            else
+                Instructions = new List<string>(0);
+
+            PreviousUris = previousUris ?? new List<string>();
         }
 
         /// <summary>
@@ -65,19 +45,14 @@ namespace Weave.RssAggregator.HighFrequency
                 feed.CopyStateTo(innerFeed);
         }
 
-        public async Task Refresh()
+        public async Task Refresh(IAsyncProcessor<HighFrequencyFeedUpdate> processor)
         {
             var result = await innerFeed.Refresh();
             if (result != null)
             {
                 var update = new HighFrequencyFeedUpdate(this, result);
-                feedUpdate.OnNext(update);
+                await processor.ProcessAsync(update);
             }
-        }
-
-        void InitializeId(string uri)
-        {
-            Id = SelesGames.Common.Hashing.CryptoHelper.ComputeHashUsedByMobilizer(uri);
         }
 
         public override string ToString()

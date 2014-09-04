@@ -16,16 +16,28 @@ namespace Weave.User.Service.Redis
         public FeedUpdaterCache(IDatabaseAsync db)
             : base(db, new FeedUpdaterBinarySerializer()) { }
 
-        public Task<RedisCacheResult<Feed>> Get(string feedUrl)
+        public async Task<RedisCacheResult<Feed>> Get(string feedUrl)
         {
             var key = (RedisKey)feedUrl;
-            return base.Get(key, CommandFlags.None);
+            var result = await base.Get(key, CommandFlags.None);
+            ApplyUrlFix(result, feedUrl);
+
+            return result;
         }
 
-        public Task<RedisCacheMultiResult<Feed>> Get(IEnumerable<string> feedUrls)
+        public async Task<RedisCacheMultiResult<Feed>> Get(IEnumerable<string> feedUrls)
         {
             var keys = feedUrls.Select(o => (RedisKey)o).ToArray();
-            return base.Get(keys, CommandFlags.None);
+            var multiResult = await base.Get(keys, CommandFlags.None);
+            var zipped = feedUrls.Zip(multiResult.Results, (url, result) => new { url, result });
+            var fixedResults = new List<RedisCacheResult<Feed>>();
+            foreach (var tuple in zipped)
+            {
+                ApplyUrlFix(tuple.result, tuple.url);
+                fixedResults.Add(tuple.result);
+            }
+            multiResult.Results = fixedResults;
+            return multiResult;
         }
 
         public async Task<RedisWriteResult<bool>> Save(Feed feed)
@@ -39,6 +51,14 @@ namespace Weave.User.Service.Redis
                 flags: CommandFlags.HighPriority);
 
             return result;
+        }
+
+        static void ApplyUrlFix(RedisCacheResult<Feed> result, string feedUrl)
+        {
+            if (result.HasValue)
+            {
+                result.Value.Uri = feedUrl;
+            }
         }
     }
 }

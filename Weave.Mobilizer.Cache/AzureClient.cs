@@ -35,15 +35,17 @@ namespace Weave.Mobilizer.Cache
             Debug.WriteLine(string.Format("{0} uploaded to azure", url), "AZURE");
         }
 
-        public Task<MobilizerResult> Get(string url)
+        public async Task<MobilizerResult> Get(string url)
         {
             var client = new SmartBlobClient(account, key, USE_HTTPS);
 
-            return client.Get<MobilizerResult>(CONTAINER, url,
+            var result = await client.Get<MobilizerResult>(CONTAINER, url,
                 new RequestProperties
                 {
                     RequestTimeOut = TimeSpan.FromMinutes(8)
                 });
+
+            return result.Value;
         }
     }
 }

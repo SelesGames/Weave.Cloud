@@ -10,7 +10,7 @@ namespace Weave.RssAggregator.HighFrequency
     /// <summary>
     /// Saves the state of the Updater Feed
     /// </summary>
-    public class FeedUpdaterProcessor : ISequentialAsyncProcessor<HighFrequencyFeedUpdate>
+    public class FeedUpdaterProcessor : IAsyncProcessor<HighFrequencyFeedUpdate>
     {
         readonly ConnectionMultiplexer connection;
 
@@ -18,8 +18,6 @@ namespace Weave.RssAggregator.HighFrequency
         {
             this.connection = connection;
         }
-
-        public bool IsHandledFully { get { return false; } }
 
         public async Task ProcessAsync(HighFrequencyFeedUpdate update)
         {

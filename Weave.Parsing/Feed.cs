@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Weave.Parsing.Intermediates;
@@ -17,7 +18,7 @@ namespace Weave.Parsing
     public class Feed
     {
         public Guid FeedId { get; set; }
-        public string FeedUri { get; set; }
+        public string Uri { get; set; }
         public string MostRecentNewsItemPubDate { get; set; }
         public string OldestNewsItemPubDate { get; private set; }
         public string Etag { get; set; }
@@ -41,75 +42,62 @@ namespace Weave.Parsing
         public Feed()
         {
             this.News = new List<Entry>();
-            this.UpdateTimeOut = TimeSpan.FromMinutes(1);
-
-#if DEBUG
-            this.UpdateTimeOut = TimeSpan.FromHours(1);
-#endif
+            this.UpdateTimeOut = TimeSpan.FromSeconds(100);
         }
 
         public async Task<RequestStatus> Update()
         {
             EnsureFeedIdIsSet();
 
-            var handler = new HttpClientCompressionHandler();
+            var client = new SmartHttpClient();
 
-            var request = new HttpClient(handler);
-            request.Timeout = UpdateTimeOut;
-            request.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Encoding", new[] { "gzip", "deflate" });
-
+            var request = new HttpRequestMessage(HttpMethod.Get, Uri);
+            client.Timeout = UpdateTimeOut;
+            request.Headers.TryAddWithoutValidation("Accept-Encoding", new[] { "gzip", "deflate" });
+            request.Headers.TryAddWithoutValidation(
+                "User-Agent",
+                "Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko/20100101 Firefox/12.0");
 
             #region CONDITIONAL GET
 
-            //if (!string.IsNullOrEmpty(Etag))
-            //{
-            //    request.DefaultRequestHeaders.IfNoneMatch.TryParseAdd(Etag);
-            //}
-
-            //if (!string.IsNullOrEmpty(LastModified))
-            //{
-            //    DateTime lastModified;
-            //    if (DateTime.TryParse(LastModified, out lastModified))
-            //        request.DefaultRequestHeaders.IfModifiedSince = lastModified;
-            //}
-
             if (!string.IsNullOrEmpty(Etag))
             {
-                request.DefaultRequestHeaders.TryAddWithoutValidation("If-None-Match", Etag);
+                request.Headers.TryAddWithoutValidation("If-None-Match", Etag);
             }
 
             if (!string.IsNullOrEmpty(LastModified))
             {
-                request.DefaultRequestHeaders.TryAddWithoutValidation("If-Modified-Since", LastModified);
+                request.Headers.TryAddWithoutValidation("If-Modified-Since", LastModified);
             }
 
             #endregion
 
 
-            var response = await request.GetAsync(FeedUri);
+            var response = await client.SendAsync(request, CancellationToken.None);// (Uri);
+            var responseMessage = response.HttpResponseMessage;
 
-            if (response.StatusCode == HttpStatusCode.NotModified)
+            if (responseMessage.StatusCode == HttpStatusCode.NotModified)
             {
                 HandleNonModifiedResponse();
                 return Status;
             }
 
-            else if (response.StatusCode == HttpStatusCode.OK)
+            else if (responseMessage.StatusCode == HttpStatusCode.OK)
             {
-                await HandleNewData(response);
+                await HandleNewData(responseMessage);
                 return Status;
             }
 
             else
             {
-                throw new Exception(response.StatusCode.ToString());
+                throw new Exception(responseMessage.StatusCode.ToString());
             }
         }
 
         void EnsureFeedIdIsSet()
         {
             if (FeedId.Equals(Guid.Empty))
-                FeedId = CryptoHelper.ComputeHashUsedByMobilizer(FeedUri);
+                FeedId = CryptoHelper.ComputeHashUsedByMobilizer(Uri);
         }
 
         void HandleNonModifiedResponse()
@@ -194,7 +182,7 @@ namespace Weave.Parsing
             foreach (var newsItem in News)
             {
                 newsItem.FeedId = FeedId;
-                newsItem.Id = CryptoHelper.ComputeHashUsedByMobilizer(newsItem.Link + FeedUri);
+                newsItem.Id = CryptoHelper.ComputeHashUsedByMobilizer(newsItem.Link + Uri);
 
                 // cap the publishdatetime as no later than the current time
                 if (newsItem.UtcPublishDateTime > now)
@@ -232,10 +220,10 @@ namespace Weave.Parsing
 
             try
             {
-                link = await SelesGames.HttpClient.UrlHelper.GetFinalRedirectLocation(link);
+                link = await SelesGames.HttpClient.UrlHelper.GetFinalRedirectLocation(link, TimeSpan.FromSeconds(10));
                 var linkUri = new Uri(link, UriKind.Absolute);
                 domainUrl = linkUri.Scheme + "://" + linkUri.Host;
-                if (!Uri.IsWellFormedUriString(domainUrl, UriKind.Absolute))
+                if (!System.Uri.IsWellFormedUriString(domainUrl, UriKind.Absolute))
                     return;
             }
             catch { }
@@ -245,7 +233,7 @@ namespace Weave.Parsing
 
         public override string ToString()
         {
-            return FeedUri;
+            return Uri;
         }
     }
 }

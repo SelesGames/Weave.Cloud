@@ -48,9 +48,8 @@ namespace RssAggregator.Role.HighFrequency
 
             hfUpdater = new HighFrequencyFeedUpdater(
                 feedLibraryUrl, 
-                kernel.Get<SequentialProcessor>(), 
-                kernel.Get<ConnectionMultiplexer>(),
-                highFrequencyRefreshPeriod);
+                kernel.Get<ConnectionMultiplexer>());
+            hfUpdater.RefreshPeriod = highFrequencyRefreshPeriod;
 
             kernel.Bind<HighFrequencyFeedUpdater>().ToMethod(_ => hfUpdater).InSingletonScope();
         }

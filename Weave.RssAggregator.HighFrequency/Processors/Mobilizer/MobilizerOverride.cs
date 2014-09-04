@@ -7,7 +7,7 @@ using Weave.Updater.BusinessObjects;
 
 namespace Weave.RssAggregator.HighFrequency
 {
-    public class MobilizerOverride : ISequentialAsyncProcessor<HighFrequencyFeedUpdate>
+    public class MobilizerOverride : IAsyncProcessor<HighFrequencyFeedUpdate>
     {
         readonly static string token = "hxyuiplkx78!ksdfl";
         readonly MobilizerServiceClient client;
@@ -16,8 +16,6 @@ namespace Weave.RssAggregator.HighFrequency
         {
             client = new MobilizerServiceClient(token);
         }
-
-        public bool IsHandledFully { get { return false; } }
 
         public async Task ProcessAsync(HighFrequencyFeedUpdate o)
         {

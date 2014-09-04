@@ -26,7 +26,7 @@ namespace FeedIconGrabber
                     {
                         Feed = new Feed
                         {
-                            FeedUri = o.FeedUri,
+                            Uri = o.FeedUri,
                             IsAggressiveDomainDiscoveryEnabled = true
                         },
                         Name = o.FeedName

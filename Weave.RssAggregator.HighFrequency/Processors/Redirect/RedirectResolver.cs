@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SelesGames.HttpClient;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,13 +7,12 @@ using Weave.Updater.BusinessObjects;
 
 namespace Weave.RssAggregator.HighFrequency
 {
-    public class RedirectResolver : ISequentialAsyncProcessor<HighFrequencyFeedUpdate>
+    public class RedirectResolver : IAsyncProcessor<HighFrequencyFeedUpdate>
     {
-        public bool IsHandledFully { get { return false; } }
+        static TimeSpan REDIRECT_TIMEOUT = TimeSpan.FromSeconds(10);
 
         public async Task ProcessAsync(HighFrequencyFeedUpdate o)
         {
-            //return Task.WhenAll(o.Entries.Select(ProcessEntry));
             if (o == null || EnumerableEx.IsNullOrEmpty(o.Entries))
                 return;
 
@@ -23,12 +23,12 @@ namespace Weave.RssAggregator.HighFrequency
             catch { }
         }
 
-        async Task ProcessEntry(ExpandedEntry e)
+        static async Task ProcessEntry(ExpandedEntry e)
         {
             try
             {
                 var link = e.Link;
-                var finalLinkLocation = await SelesGames.HttpClient.UrlHelper.GetFinalRedirectLocation(link);
+                var finalLinkLocation = await UrlHelper.GetFinalRedirectLocation(link, REDIRECT_TIMEOUT);
                 if (link != finalLinkLocation)
                 {
                     e.Link = finalLinkLocation;

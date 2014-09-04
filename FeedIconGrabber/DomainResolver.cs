@@ -17,7 +17,7 @@ namespace FeedIconGrabber
             var feed = new Feed
             {
                 IsAggressiveDomainDiscoveryEnabled = true,
-                FeedUri = rssUrl
+                Uri = rssUrl
             };
             await feed.Update();
             return feed.DomainUrl;

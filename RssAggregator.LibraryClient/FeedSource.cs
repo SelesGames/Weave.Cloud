@@ -1,5 +1,4 @@
 ﻿
-
 namespace Weave.RssAggregator.LibraryClient
 {
     public class FeedSource
