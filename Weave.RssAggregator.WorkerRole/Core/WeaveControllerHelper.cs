@@ -156,7 +156,7 @@ namespace Weave.RssAggregator.WorkerRole
             var transaction = db.CreateTransaction();
             var cache = new ExpandedEntryCache(transaction);
 
-            var saveResultTask = cache.Set(entries);
+            var saveResultTask = cache.Set(entries, overwrite: false);
             await transaction.ExecuteAsync(flags: CommandFlags.None);
             return await saveResultTask;
         }

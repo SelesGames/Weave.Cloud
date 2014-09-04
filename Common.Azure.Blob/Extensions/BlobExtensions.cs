@@ -10,7 +10,7 @@ namespace Common.Azure.Blob
     public static class BlobExtensions
     {
         static AccessCondition EmptyAccessCondition = AccessCondition.GenerateEmptyCondition();
-
+        static RequestProperties DefaultRequestProperties = new RequestProperties();
 
 
 
@@ -78,9 +78,9 @@ namespace Common.Azure.Blob
             this AzureBlobClient client,
             string container,
             string blobName,
-            RequestProperties properties)
+            RequestProperties properties = null)
         {
-            if (properties == null) throw new ArgumentNullException("properties");
+            properties = properties ?? DefaultRequestProperties;
 
             return client.GetBlobContent(container, blobName,
                 options: new BlobRequestOptions

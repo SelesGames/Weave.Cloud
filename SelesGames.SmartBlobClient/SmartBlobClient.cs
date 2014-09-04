@@ -43,31 +43,31 @@ namespace Common.Azure.SmartBlobClient
 
         #region Generic Get
 
-        public async Task<BlobResult<T>> Get<T>(
-            string container,
-            string blobName,
-            AccessCondition accessCondition = null,
-            BlobRequestOptions options = null,
-            OperationContext operationContext = null)
-        {
-            try
-            {
-                using (var content = await this.GetBlobContent(container, blobName, accessCondition, options, operationContext))
-                {
-                    var result = await ReadContent<T>(content);
-                    result.BlobName = blobName;
-                    return result;
-                }
-            }
-            catch(StorageException storageException)
-            {
-                return new BlobResult<T> { BlobName = blobName, StorageException = storageException };
-            }
-        }
+        //public async Task<BlobResult<T>> Get<T>(
+        //    string container,
+        //    string blobName,
+        //    AccessCondition accessCondition = null,
+        //    BlobRequestOptions options = null,
+        //    OperationContext operationContext = null)
+        //{
+        //    try
+        //    {
+        //        using (var content = await this.GetBlobContent(container, blobName, accessCondition, options, operationContext))
+        //        {
+        //            var result = await ReadContent<T>(content);
+        //            result.BlobName = blobName;
+        //            return result;
+        //        }
+        //    }
+        //    catch(StorageException storageException)
+        //    {
+        //        return new BlobResult<T> { BlobName = blobName, StorageException = storageException };
+        //    }
+        //}
 
-        public async Task<BlobResult<T>> Get<T>(string container, string blobName, RequestProperties properties)
+        public async Task<BlobResult<T>> Get<T>(string container, string blobName, RequestProperties properties = null)
         {
-            if (properties == null) throw new ArgumentNullException("properties");
+            //if (properties == null) throw new ArgumentNullException("properties");
 
             try
             {
@@ -91,30 +91,30 @@ namespace Common.Azure.SmartBlobClient
 
         #region Generic Save
 
-        public async Task Save<T>(
-            string container,
-            string blobName,
-            T obj,
-            BlobProperties blobProperties = null,
-            AccessCondition accessCondition = null,
-            BlobRequestOptions options = null,
-            OperationContext operationContext = null)
-        {
-            blobProperties = blobProperties ?? new BlobProperties();
+        //public async Task Save<T>(
+        //    string container,
+        //    string blobName,
+        //    T obj,
+        //    BlobProperties blobProperties = null,
+        //    AccessCondition accessCondition = null,
+        //    BlobRequestOptions options = null,
+        //    OperationContext operationContext = null)
+        //{
+        //    blobProperties = blobProperties ?? new BlobProperties();
 
-            blobProperties.ContentEncoding = blobProperties.ContentEncoding ??
-                ((UseCompressionByDefault.HasValue && UseCompressionByDefault.Value) ? "gzip" : null);
+        //    blobProperties.ContentEncoding = blobProperties.ContentEncoding ??
+        //        ((UseCompressionByDefault.HasValue && UseCompressionByDefault.Value) ? "gzip" : null);
 
-            blobProperties.ContentType = blobProperties.ContentType ?? DefaultContentType;
-            var formatter = GetBestTypeFormatterForContentType<T>(blobProperties.ContentType);
+        //    blobProperties.ContentType = blobProperties.ContentType ?? DefaultContentType;
+        //    var formatter = GetBestTypeFormatterForContentType<T>(blobProperties.ContentType);
 
-            using (var ms = new MemoryStream())
-            {
-                await formatter.WriteToStreamAsync(typeof(T), obj, ms, null, null);
-                ms.Position = 0;
-                await this.SaveBlobContent(container, blobName, ms, blobProperties, accessCondition, options, operationContext);
-            }
-        }
+        //    using (var ms = new MemoryStream())
+        //    {
+        //        await formatter.WriteToStreamAsync(typeof(T), obj, ms, null, null);
+        //        ms.Position = 0;
+        //        await this.SaveBlobContent(container, blobName, ms, blobProperties, accessCondition, options, operationContext);
+        //    }
+        //}
 
         public async Task Save<T>(string container, string blobName, T obj, WriteRequestProperties properties)
         {

@@ -22,9 +22,9 @@ namespace Weave.User.Service.Redis
             return base.Get(keys, CommandFlags.None);
         }
 
-        public async Task<RedisWriteMultiResult<bool>> Set(IEnumerable<ExpandedEntry> entries)
+        public async Task<RedisWriteMultiResult<bool>> Set(IEnumerable<ExpandedEntry> entries, bool overwrite)
         {
-            var requests = entries.Select(CreateSaveRequest);
+            var requests = entries.Select(o => CreateSaveRequest(o, overwrite));
             var results = await Task.WhenAll(requests);
 
             return new RedisWriteMultiResult<bool>
@@ -43,7 +43,7 @@ namespace Weave.User.Service.Redis
             };
         }
 
-        Task<RedisWriteResult<bool>> CreateSaveRequest(ExpandedEntry entry)
+        Task<RedisWriteResult<bool>> CreateSaveRequest(ExpandedEntry entry, bool overwrite)
         {
             if (entry == null)
                 return Task.FromResult(new RedisWriteResult<bool> { ResultValue = false, Timings = CacheTimings.Empty });
@@ -54,7 +54,7 @@ namespace Weave.User.Service.Redis
                 key: key,
                 value: entry, 
                 expiry: TimeSpan.FromDays(60), 
-                when: When.Always, 
+                when: overwrite ? When.Always : When.NotExists, 
                 flags: CommandFlags.None);
         }
     }

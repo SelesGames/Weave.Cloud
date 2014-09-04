@@ -57,7 +57,7 @@ namespace Weave.RssAggregator.HighFrequency
             var batch = db.CreateBatch();
             var entryCache = new ExpandedEntryCache(batch);
 
-            var resultTask = entryCache.Set(update.Entries);
+            var resultTask = entryCache.Set(update.Entries, overwrite: true);
 
             batch.Execute();
 

@@ -50,6 +50,8 @@
     <Compile Include="IBasicCache.cs" />
     <Compile Include="IExtendedCache.cs" />
     <Compile Include="LocalMemoryCache.cs" />
+    <Compile Include="LRUCache.cs" />
+    <Compile Include="LRUCacheItem.cs" />
     <Compile Include="NLevelCache.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CacheEntry.cs" />
