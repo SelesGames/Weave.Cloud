@@ -9,5 +9,10 @@ namespace Weave.Updater.BusinessObjects
         public string Format { get; set; }
         public string ContentType { get; set; }
         public long ContentLength { get; set; }
+
+        public override string ToString()
+        {
+            return Url;
+        }
     }
 }

@@ -42,29 +42,12 @@ namespace Weave.RssAggregator.HighFrequency
 
             var highFrequencyFeeds = libraryFeeds
                 .Distinct()
-                //.Where(o => o.FeedUri == "http://feeds.gawker.com/kotaku/vip")
+                .Where(o => o.FeedUri == "http://www.wired.com/gadgetlab/feed")
                 .Select(CreateHighFrequencyFeed)
                 .OfType<HighFrequencyFeed>()
                 .ToList();
 
-            var feedUrls = highFrequencyFeeds.Select(o => o.Uri);
-
-            var db = connection.GetDatabase(DatabaseNumbers.FEED_UPDATER);
-            var cache = new FeedUpdaterCache(db);
-            var cacheMultiGet = await cache.Get(feedUrls);
-
-            var recoveredFeedUpdaters = cacheMultiGet.GetValidValues().ToList();
-
-            var joined = highFrequencyFeeds.Join(
-                recoveredFeedUpdaters, 
-                o => o.Uri.ToLowerInvariant(), 
-                o => o.Uri.ToLowerInvariant(),
-                (hff, updater) => new { hff, updater });
-
-            foreach (var tuple in joined)
-            {
-                tuple.hff.InitializeWith(tuple.updater);
-            }
+            //await RecoverFeedStateForFeeds(highFrequencyFeeds);
 
             foreach (var hff in highFrequencyFeeds)
             {
@@ -79,6 +62,7 @@ namespace Weave.RssAggregator.HighFrequency
             StartFeedRefreshTimer();
         }
 
+        
 
 
 
@@ -106,6 +90,28 @@ namespace Weave.RssAggregator.HighFrequency
             catch
             {
                 return null;
+            }
+        }
+
+        async Task RecoverFeedStateForFeeds(IEnumerable<HighFrequencyFeed> feeds)
+        {
+            var feedUrls = feeds.Select(o => o.Uri);
+
+            var db = connection.GetDatabase(DatabaseNumbers.FEED_UPDATER);
+            var cache = new FeedUpdaterCache(db);
+            var cacheMultiGet = await cache.Get(feedUrls);
+
+            var recoveredFeedUpdaters = cacheMultiGet.GetValidValues().ToList();
+
+            var joined = feeds.Join(
+                recoveredFeedUpdaters,
+                o => o.Uri.ToLowerInvariant(),
+                o => o.Uri.ToLowerInvariant(),
+                (hff, updater) => new { hff, updater });
+
+            foreach (var tuple in joined)
+            {
+                tuple.hff.InitializeWith(tuple.updater);
             }
         }
 

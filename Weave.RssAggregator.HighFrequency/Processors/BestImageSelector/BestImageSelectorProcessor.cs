@@ -17,6 +17,19 @@ namespace Weave.RssAggregator.HighFrequency
             try
             {
                 await Task.WhenAll(o.Entries.Select(ProcessEntry));
+
+                var feed = o.InnerFeed;
+                var update = o.InnerUpdate;
+
+                // fix the bool flag for whether the NewsItemRecords have images
+                var joined = update.Entries.Join(feed.News, x => x.Id, x => x.Id, (e, n) => new { e, n });
+                foreach (var tuple in joined)
+                {
+                    var record = tuple.n;
+                    var entry = tuple.e;
+
+                    record.HasImage = entry.Images.Any();
+                }
             }
             catch { }
         }

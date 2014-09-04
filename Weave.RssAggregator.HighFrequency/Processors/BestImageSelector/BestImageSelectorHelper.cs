@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using HtmlAgilityPack;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Weave.Mobilizer.Client;
+using Weave.Mobilizer.DTOs;
 using Weave.Updater.BusinessObjects;
 
 namespace Weave.RssAggregator.HighFrequency.Processors.BestImageSelector
@@ -12,31 +15,48 @@ namespace Weave.RssAggregator.HighFrequency.Processors.BestImageSelector
         readonly MobilizerServiceClient mobilizerClient;
         readonly ExpandedEntry entry;
         readonly ImageInfoClient imageInfoClient;
+        readonly List<ImageInfo> imagePool;
 
         public BestImageSelectorHelper(ExpandedEntry entry)
         {
             this.entry = entry;
             mobilizerClient = new MobilizerServiceClient(token);
             imageInfoClient = new ImageInfoClient();
+            imagePool = new List<ImageInfo>();
         }
 
         public async Task Process()
         {
-            var images = await GetImages();
+            await LoadBestImages();
+            var images = imagePool.Select(Map);
             foreach (var image in images)
                 entry.Images.Add(image);
         }
 
-        async Task<IEnumerable<Image>> GetImages()
+        async Task LoadBestImages()
         {
-            var imageTasks = entry.ImageUrls
-                .Select(GetFromUrl)
-                .Union(new Task<ImageInfo>[]{ GetFromMobilizedRep() });
+            IEnumerable<string> urls = entry.ImageUrls;
 
-            var imagesWithInfo = await Task.WhenAll(imageTasks);
+            await AddImagesFromUrls(urls);
+            if (imagePool.Any())
+                return;
 
-            var images = imagesWithInfo.OfType<ImageInfo>().Select(Map).ToList();
-            return images;
+            urls = await GetImageUrlsFromMobilizer();
+            await AddImagesFromUrls(urls);
+        }
+
+
+
+
+        #region Get ImageInfo metadata for a list of image urls
+
+        async Task AddImagesFromUrls(IEnumerable<string> urls)
+        {
+            var images = await Task.WhenAll(urls.Select(GetFromUrl));
+            foreach (var image in Filter(images))
+            {
+                imagePool.Add(image);
+            }
         }
 
         /// <summary>
@@ -51,36 +71,69 @@ namespace Weave.RssAggregator.HighFrequency.Processors.BestImageSelector
                 imageInfo = await imageInfoClient.Get(url);
                 imageInfo.ImageUrl = url;
             }
-            catch(InvalidImageException)
+            catch (InvalidImageException)
             {
                 return null;
             }
-            catch 
+            catch
             {
                 imageInfo = new ImageInfo { ImageUrl = url };
             }
             return imageInfo;
         }
 
-        async Task<ImageInfo> GetFromMobilizedRep()
+        static IEnumerable<ImageInfo> Filter(IEnumerable<ImageInfo> images)
         {
-            ImageInfo imageInfo = null;
+            return images.OfType<ImageInfo>().Where(o =>
+            {
+                var imageArea = o.ImageHeight * o.ImageWidth;
+                return imageArea == 0 || imageArea > 10000;
+            });
+        }
 
+        #endregion
+
+
+
+
+        #region Get the mobilized rep of the article, extract image urls from there
+
+        async Task<IEnumerable<string>> GetImageUrlsFromMobilizer()
+        {
             try
             {
                 var url = entry.Link;
                 var mobilized = await mobilizerClient.Get(url);
-                var imageUrl = mobilized.lead_image_url;
 
-                if (string.IsNullOrWhiteSpace(imageUrl))
-                    return null;
-
-                imageInfo = await imageInfoClient.Get(imageUrl);
-                imageInfo.ImageUrl = imageUrl;
+                var html = mobilized.content;
+                var doc = new HtmlDocument();
+                doc.OptionDefaultStreamEncoding = Encoding.UTF8;
+                doc.LoadHtml(html);
+                return doc.DocumentNode
+                    .Descendants()
+                    .Where(IsImageNode)
+                    .Select(o => o.Attributes["src"].Value)
+                    .Union(new[] { mobilized.lead_image_url })
+                    .OfType<string>()
+                    .Distinct();
             }
-            catch { }
-            return imageInfo;
+            catch { return new List<string>(); }         
         }
+
+        static bool IsImageNode(HtmlNode node)
+        {
+            return
+                node.Name == "img" &&
+                node.Attributes["src"] != null;// &&
+                //mobilizerDetectedFirstImage.Equals(node.Attributes["src"].Value, StringComparison.OrdinalIgnoreCase);
+        }
+
+        #endregion
+
+
+
+
+        #region Map function
 
         static Image Map(ImageInfo o)
         {
@@ -94,5 +147,7 @@ namespace Weave.RssAggregator.HighFrequency.Processors.BestImageSelector
                 Format = o.ImageFormat,
             };
         }
+
+        #endregion
     }
 }

@@ -54,7 +54,7 @@ namespace Weave.User.Service.Redis
                 key: key,
                 value: entry, 
                 expiry: TimeSpan.FromDays(60), 
-                when: When.NotExists, 
+                when: When.Always, 
                 flags: CommandFlags.None);
         }
     }
