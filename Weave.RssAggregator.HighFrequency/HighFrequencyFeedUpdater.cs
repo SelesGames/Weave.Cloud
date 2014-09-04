@@ -42,12 +42,12 @@ namespace Weave.RssAggregator.HighFrequency
 
             var highFrequencyFeeds = libraryFeeds
                 .Distinct()
-                .Where(o => o.FeedUri == "http://www.wired.com/gadgetlab/feed")
+                //.Where(o => o.FeedUri == "http://www.wired.com/gadgetlab/feed")
                 .Select(CreateHighFrequencyFeed)
                 .OfType<HighFrequencyFeed>()
                 .ToList();
 
-            //await RecoverFeedStateForFeeds(highFrequencyFeeds);
+            await RecoverFeedStateForFeeds(highFrequencyFeeds);
 
             foreach (var hff in highFrequencyFeeds)
             {
