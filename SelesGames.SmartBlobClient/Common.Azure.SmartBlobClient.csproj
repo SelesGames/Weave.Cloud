@@ -50,8 +50,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BlobResponse.cs" />
     <Compile Include="BlobResult.cs" />
     <Compile Include="ContentEncoderSettings.cs" />
+    <Compile Include="Extensions\SmartBlobClientExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SerializationException.cs" />
     <Compile Include="SmartBlobClient.cs" />
@@ -67,7 +69,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

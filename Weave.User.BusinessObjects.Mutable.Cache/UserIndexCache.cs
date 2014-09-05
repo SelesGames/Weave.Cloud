@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Weave.User.BusinessObjects.Mutable.Cache.Azure;
-using Weave.User.BusinessObjects.Mutable.Cache.Local;
+using Weave.User.BusinessObjects.Mutable.Cache.Azure.Legacy;
 
 namespace Weave.User.BusinessObjects.Mutable.Cache
 {
@@ -16,16 +16,23 @@ namespace Weave.User.BusinessObjects.Mutable.Cache
         readonly LRUCache<Guid, UserIndex> localCache;
         readonly Weave.User.Service.Redis.UserIndexCache redisCache;
         readonly UserIndexBlobClient blobClient;
+        readonly UserInfoBlobClient legacyDataStoreBlobClient;
 
         public UserIndexCache(
             ConnectionMultiplexer cm, 
-            string azureStorageAccountName,
-            string azureStorageAccountKey)
+            string azureUserIndexStorageAccountName,
+            string azureUserIndexStorageAccountKey,
+            string )
         {
             this.cacheId = Guid.NewGuid();
             this.localCache = new LRUCache<Guid, UserIndex>(2000);
             this.redisCache = new Service.Redis.UserIndexCache(cm);
-            this.blobClient = new UserIndexBlobClient(azureStorageAccountName, azureStorageAccountKey, "userindices");
+            this.blobClient = new UserIndexBlobClient(
+                storageAccountName: azureUserIndexStorageAccountName,
+                storageKey: azureUserIndexStorageAccountKey,
+                containerName: "userindices");
+            this.legacyDataStoreBlobClient = new UserInfoBlobClient(
+                accountName: )
         }
 
         public async Task<UserIndex> Get(Guid id)
@@ -33,7 +40,7 @@ namespace Weave.User.BusinessObjects.Mutable.Cache
             UserIndex user;
 
             // try to grab from local storage first - if successful, return
-            user = localCache[id];
+            user = localCache.Get(id);
             if (user != null)
                 return user;
 
@@ -42,7 +49,7 @@ namespace Weave.User.BusinessObjects.Mutable.Cache
             if (fromRedis.HasValue)
             {
                 user = fromRedis.Value;
-                localCache[id] = user;
+                localCache.AddOrUpdate(id, user);
                 return user;
             }
 
@@ -51,7 +58,7 @@ namespace Weave.User.BusinessObjects.Mutable.Cache
             if (fromBlob.HasValue)
             {
                 user = fromBlob.Value;
-                localCache[id] = user;
+                localCache.AddOrUpdate(id, user);
                 var wasSavedToRedis = await redisCache.Save(user);
                 return user;
             }
@@ -70,13 +77,14 @@ namespace Weave.User.BusinessObjects.Mutable.Cache
             if (user == null)
                 throw new ArgumentNullException("user in UserIndexCache.Save");
 
-            localCache[user.Id] = user;
+            localCache.AddOrUpdate(user.Id,  user);
             var wasSavedToRedis = await redisCache.Save(user);
             if (wasSavedToRedis)
             {
                 // send notice here
             }
 
+            return true;
         }
     }
 }

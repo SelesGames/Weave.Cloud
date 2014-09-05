@@ -10,12 +10,12 @@ namespace Weave.User.Service.Redis
     public class UserIndexCache
     {
         readonly ConnectionMultiplexer connection;
-        RedisValueSerializer<UserIndex> serializer;
+        readonly RedisValueSerializer<UserIndex> serializer;
 
         public UserIndexCache(ConnectionMultiplexer connection)
         {
             this.connection = connection;
-            serializer = new UserIndexBinarySerializer();
+            this.serializer = new UserIndexBinarySerializer();
         }
 
         public async Task<RedisCacheResult<UserIndex>> Get(Guid userId)

@@ -25,7 +25,7 @@ namespace Common.Caching
             cache = new Dictionary<TKey, LinkedListNode<LRUCacheItem<TKey, TValue>>>(capacity + 1);
         }
 
-        TValue Get(TKey key)
+        public TValue Get(TKey key)
         {
             lock (sync)
             {
@@ -42,13 +42,12 @@ namespace Common.Caching
         }
 
         /// <summary>
-        /// 
+        /// Adds an element with the provided key and value to the LRUCache<TKey,TValue>.  
+        /// If the number of elements is greater than capacity, returns the evicted item.
         /// </summary>
-        /// <param name="key"></param>
         /// <param name="value"></param>
-        /// <param name="checkPresenceOfKeyBeforeAdd"></param>
         /// <returns>The evicted LRU item, if any</returns>
-        LRUCacheItem<TKey, TValue> AddOrUpdate(TKey key, TValue value, bool checkPresenceOfKeyBeforeAdd)
+        public LRUCacheItem<TKey, TValue> AddOrUpdate(TKey key, TValue value)
         {
             LRUCacheItem<TKey, TValue> evicted = null;
 
@@ -146,50 +145,6 @@ namespace Common.Caching
         public ICollection<TValue> Values
         {
             get { return cache.Values.Select(o => o.Value.Value).ToList(); }
-        }
-
-        /// <summary>
-        /// Gets or sets the value associated with the specified key.
-        /// </summary>
-        /// <param name="key">The key of the value to get or set.</param>
-        /// <returns>
-        /// The value associated with the specified key. If the specified key is not
-        /// found, a get operation throws a System.Collections.Generic.KeyNotFoundException,
-        /// and a set operation creates a new element with the specified key.
-        /// </returns>
-        /// <exception cref="System.ArgumentNullException">key is null.</exception>
-        /// <exception cref="System.Collections.Generic.KeyNotFoundException:">The property is retrieved and key does not exist in the collection.</exception>
-        public TValue this[TKey key]
-        {
-            get
-            {
-                return Get(key);
-            }
-            set
-            {
-                AddOrUpdate(key, value, true);
-            }
-        }
-
-        // Summary:
-        //     Adds an element with the provided key and value to the LRUCache<TKey,TValue>.
-        //
-        // Parameters:
-        //   key:
-        //     The object to use as the key of the element to add.
-        //
-        //   value:
-        //     The object to use as the value of the element to add.
-        //
-        // Exceptions:
-        //   System.ArgumentNullException:
-        //     key is null.
-        //
-        //   System.ArgumentException:
-        //     An element with the same key already exists in the System.Collections.Generic.IDictionary<TKey,TValue>.
-        public void Add(TKey key, TValue value)
-        {
-            AddOrUpdate(key, value, false);
         }
 
         // Summary:

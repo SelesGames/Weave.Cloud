@@ -41,6 +41,7 @@ namespace RssAggregator.IconCaching
             var iconMappings = await response.Read<FeedUrlIconMappings>();
             feedIconLookup = iconMappings.ToDictionary(o => o.Url, o => o.IconUrl);
             isCacheLoaded = true;
+            response.Dispose();
         }
 
 
