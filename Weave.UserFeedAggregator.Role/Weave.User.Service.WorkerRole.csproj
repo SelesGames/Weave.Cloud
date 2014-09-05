@@ -89,7 +89,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Net.Http.Extensions, Version=2.2.28.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -181,17 +180,13 @@
       <Project>{95fa1246-08c5-4ce4-a78d-e0f3a254aa7c}</Project>
       <Name>Weave.Updater.BusinessObjects</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Weave.User.BusinessObjects.Mutable.Cache\Weave.User.BusinessObjects.Mutable.Cache.csproj">
+      <Project>{00d9ae16-67ff-41d5-8fa2-fab5c39fbd44}</Project>
+      <Name>Weave.User.BusinessObjects.Mutable.Cache</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Weave.User.BusinessObjects.Mutable\Weave.User.BusinessObjects.Mutable.csproj">
       <Project>{fc7c92ee-0aed-4859-b5ec-a770ce148497}</Project>
       <Name>Weave.User.BusinessObjects.Mutable</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Weave.User.BusinessObjects\Weave.User.BusinessObjects.csproj">
-      <Project>{db5274e6-15f6-4ec8-920a-842ea93a2601}</Project>
-      <Name>Weave.User.BusinessObjects</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Weave.User.Service.Cache\Weave.User.Service.Azure.Blob.csproj">
-      <Project>{edb6b676-e4fd-4b51-8c5b-98c7d1837ef6}</Project>
-      <Name>Weave.User.Service.Azure.Blob</Name>
     </ProjectReference>
     <ProjectReference Include="..\Weave.User.Service.InterRoleMessaging\Weave.User.Service.InterRoleMessaging.csproj">
       <Project>{83f82b51-2a9c-4d55-bf4c-8a61de8d9428}</Project>

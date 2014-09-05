@@ -46,6 +46,7 @@ namespace Weave.Article.Service.Client
 
             var client = CreateClient();
             var result = await client.GetAsync(url, CancellationToken.None);
+            result.Dispose();
             return;
         }
 
@@ -100,6 +101,7 @@ namespace Weave.Article.Service.Client
 
             var client = CreateClient();
             var result = await client.GetAsync(url, CancellationToken.None);
+            result.Dispose();
             return;
         }
 

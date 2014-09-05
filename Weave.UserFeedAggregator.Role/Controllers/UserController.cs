@@ -1,5 +1,4 @@
-﻿using Microsoft.WindowsAzure.Storage;
-using SelesGames.WebApi;
+﻿using SelesGames.WebApi;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
@@ -8,9 +7,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Weave.Updater.BusinessObjects;
-using Weave.User.BusinessObjects;
 using Weave.User.BusinessObjects.Mutable;
-using Weave.User.Service.Cache;
 using Weave.User.Service.Contracts;
 using Weave.User.Service.DTOs;
 using Weave.User.Service.InterRoleMessaging.Articles;
@@ -26,28 +23,24 @@ namespace Weave.User.Service.Role.Controllers
     {
         #region Private member variables + constructor
 
-        readonly UserRepository userRepo;
-        readonly UserIndexCache userIndexCache;
         readonly ConnectionMultiplexer connection;
+        readonly Weave.User.BusinessObjects.Mutable.Cache.UserIndexCache userIndexCache;
         readonly UserLockHelper userLockHelper;
         readonly IArticleQueueService articleQueueService;
 
         dynamic timings;
 
         Guid userId;
-        UserInfo userBO;
         UserIndex userIndex;
 
         public UserController(
-            UserRepository userRepo,
-            UserIndexCache userIndexCache,
             ConnectionMultiplexer connection,
+            Weave.User.BusinessObjects.Mutable.Cache.UserIndexCache userIndexCache,
             UserLockHelper userLockHelper,
             IArticleQueueService articleQueueService)
         {
-            this.userRepo = userRepo;
-            this.userIndexCache = userIndexCache;
             this.connection = connection;
+            this.userIndexCache = userIndexCache;
             this.userLockHelper = userLockHelper;
             this.articleQueueService = articleQueueService;
 
@@ -89,17 +82,10 @@ namespace Weave.User.Service.Role.Controllers
 
                 try
                 {
-                    userBO = await userRepo.Get(incomingUser.Id);
-                    if (userBO != null)
+                    userIndex = await userIndexCache.Get(incomingUser.Id);
+                    //userBO = await userRepo.Get(incomingUser.Id);
+                    if (userIndex != null)
                         doesUserAlreadyExist = true;
-                }
-                catch (StorageException)
-                {
-                    // if we get here, we couldn't find the user
-                }
-                catch
-                {
-                    throw;
                 }
                 finally
                 {
@@ -113,19 +99,13 @@ namespace Weave.User.Service.Role.Controllers
                 throw ResponseHelper.CreateResponseException(HttpStatusCode.BadRequest, "A user with that Id already exists");
             }
 
-            userBO = ServerIncomingToBusinessObject.Convert(incomingUser);
-            this.userId = userBO.Id;
-            userIndex = userBO.CreateUserIndex();
+            userIndex = ServerIncomingToBusinessObject.Convert(incomingUser);
+            this.userId = userIndex.Id;
             await SaveUserIndex();
-            SaveUserInfoBusinessObject();
-
             await PerformRefreshOnFeeds(userIndex.FeedIndices);
 
-
             var outgoing = ConvertToOutgoing(userIndex);
-
             outgoing.Timings = timings;
-
             return outgoing;
         }
 
@@ -594,33 +574,11 @@ namespace Weave.User.Service.Role.Controllers
         /// Try to load the user index.  If that fails, try to load the full user graph
         /// from blob storage, then rehydrate the user index
         /// </summary>
-        async Task LoadIndexOnly(Guid userId)//, bool saveOnFail = false)
+        async Task LoadIndexOnly(Guid userId)
         {
             this.userId = userId;
             VerifyUserId();
-
-            bool wasIndexLoaded = false;
-
-            try
-            {
-                await LoadUserIndex();
-                wasIndexLoaded = true;
-            }
-            catch { }
-
-            if (!wasIndexLoaded)
-            {
-                await LoadUserInfoBusinessObject();
-                
-                // DO NOT lock the user index here - any time you get here, you are already inside a lock
-                userIndex = userBO.CreateUserIndex();
-                await SaveUserIndex();
-
-                // save the news articles from the refreshed feeds to Redis
-                //var redisNews = userBO.Feeds.AllNews().Select(MapAsRedis);
-                //var saveArticlesResults = await SaveNewsToRedis(redisNews);
-                //DebugEx.WriteLine(saveArticlesResults);
-            }
+            await LoadUserIndex();
         }
 
         void VerifyUserId()
@@ -632,56 +590,23 @@ namespace Weave.User.Service.Role.Controllers
 
         async Task LoadUserIndex()
         {
-            if (userId == Guid.Empty)
-                throw new Exception("The user Id is set to the empty GUID, which should never be the case");
-
             var sw = System.Diagnostics.Stopwatch.StartNew();
 
             try
             {
                 var result = await userIndexCache.Get(userId);
 
-                if (!result.HasValue)
-                    throw new Exception("unable to retrieve user matching the give id from the Redis cache");
+                if (result == null)
+                    throw ResponseHelper.CreateResponseException(HttpStatusCode.NotFound,
+                        "unable to retrieve user matching the give id from the user cache");
 
-                userIndex = result.Value;
-            }
-            catch (Exception)
-            {
-                throw;
+                userIndex = result;
             }
             finally
             {
                 sw.Stop();
                 DebugEx.WriteLine("took {0} ms to get user index from cache", sw.ElapsedMilliseconds);
                 timings.LoadUserIndex = sw.Elapsed.Dump();
-            }
-        }
-
-        async Task LoadUserInfoBusinessObject()
-        {
-            if (userId == Guid.Empty)
-                throw new Exception("The user Id is set to the empty GUID, which should never be the case");
-
-            var sw = System.Diagnostics.Stopwatch.StartNew();
-
-            try
-            {
-                userBO = await userRepo.Get(userId);
-            }
-            catch (StorageException)
-            {
-                throw ResponseHelper.CreateResponseException(HttpStatusCode.NotFound,
-                    "No user found matching that userId");
-            }
-            catch
-            {
-                throw;
-            }
-            finally
-            {
-                sw.Stop();
-                timings.LoadUserInfoBusinessObject = sw.Elapsed.Dump();
             }
         }
 
@@ -713,31 +638,6 @@ namespace Weave.User.Service.Role.Controllers
             {
                 sw.Stop();
                 timings.SaveUserIndex = sw.Elapsed.Dump();
-            }
-
-            // TODO: Add code here that notifies some process that the UserBO needs to now be updated
-        }
-
-        void SaveUserInfoBusinessObject()
-        {
-            if (userBO == null)
-                throw new Exception("User Business Object needs to be loaded/hydrated before you can save it");
-
-            var sw = System.Diagnostics.Stopwatch.StartNew();
-
-            try
-            {
-                userRepo.Save(userId, userBO);
-            }
-            catch (Exception e)
-            {
-                DebugEx.WriteLine(e);
-                throw;
-            }
-            finally
-            {
-                sw.Stop();
-                timings.SaveUserInfoBusinessObject = sw.Elapsed.Dump();
             }
         }
 
@@ -987,7 +887,7 @@ namespace Weave.User.Service.Role.Controllers
                 Uri = o.Uri,
                 Name = o.Name,
                 Category = o.Category,
-                ArticleViewingType = (BusinessObjects.ArticleViewingType)o.ArticleViewingType,
+                ArticleViewingType = (Weave.User.BusinessObjects.Mutable.ArticleViewingType)o.ArticleViewingType,
             };
         }
 
@@ -998,7 +898,7 @@ namespace Weave.User.Service.Role.Controllers
                 Id = feed.Id,
                 Name = feed.Name,
                 Category = feed.Category,
-                ArticleViewingType = (BusinessObjects.ArticleViewingType)feed.ArticleViewingType,
+                ArticleViewingType = (Weave.User.BusinessObjects.Mutable.ArticleViewingType)feed.ArticleViewingType,
             };
         }
 
@@ -1006,36 +906,6 @@ namespace Weave.User.Service.Role.Controllers
         {
             return BusinessObjectToServerOutgoing.Convert(user);
         }
-
-        //Redis.DTOs.NewsItem MapAsRedis(Weave.User.BusinessObjects.NewsItem o)
-        //{
-        //    return new Redis.DTOs.NewsItem
-        //    {
-        //        Id = o.Id,
-        //        UtcPublishDateTimeString = o.UtcPublishDateTimeString,
-        //        UtcPublishDateTime = o.UtcPublishDateTime,
-        //        Title = o.Title,
-        //        Link = o.Link,
-        //        ImageUrl = o.ImageUrl,
-        //        YoutubeId = o.YoutubeId,
-        //        VideoUri = o.VideoUri,
-        //        PodcastUri = o.PodcastUri,
-        //        ZuneAppId = o.ZuneAppId,
-        //        Image = o.Image == null ? null : MapAsRedis(o.Image),
-        //    };
-        //}
-
-        //Redis.DTOs.Image MapAsRedis(Weave.User.BusinessObjects.Image o)
-        //{
-        //    return new Redis.DTOs.Image
-        //    {
-        //        Width = o.Width,
-        //        Height = o.Height,
-        //        OriginalUrl = o.OriginalUrl,
-        //        BaseImageUrl = o.BaseImageUrl,
-        //        SupportedFormats = o.SupportedFormats,
-        //    };
-        //}
 
         #endregion
 

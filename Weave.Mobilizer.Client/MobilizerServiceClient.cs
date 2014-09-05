@@ -32,7 +32,7 @@ namespace Weave.Mobilizer.Client
             return result;
         }
 
-        public Task Post(string url, MobilizerResult article)
+        public async Task Post(string url, MobilizerResult article)
         {
             if (string.IsNullOrEmpty(url)) throw new ArgumentException("Not a valid url");
 
@@ -43,7 +43,7 @@ namespace Weave.Mobilizer.Client
                 .ToString();
 
             var client = CreateClient();
-            return client.PostAsync(fullUrl, article, CancellationToken.None);
+            using (var response = await client.PostAsync(fullUrl, article, CancellationToken.None)) { }
         }
 
         SmartHttpClient CreateClient()

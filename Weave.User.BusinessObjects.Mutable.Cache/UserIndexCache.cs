@@ -1,38 +1,48 @@
 ﻿using Common.Caching;
 using StackExchange.Redis;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Weave.User.BusinessObjects.Mutable.Cache.Azure;
 using Weave.User.BusinessObjects.Mutable.Cache.Azure.Legacy;
+using Weave.User.BusinessObjects.Mutable.Cache.PubSub;
 
 namespace Weave.User.BusinessObjects.Mutable.Cache
 {
-    public class UserIndexCache
+    public class UserIndexCache : IDisposable
     {
         readonly Guid cacheId;
         readonly LRUCache<Guid, UserIndex> localCache;
         readonly Weave.User.Service.Redis.UserIndexCache redisCache;
         readonly UserIndexBlobClient blobClient;
         readonly UserInfoBlobClient legacyDataStoreBlobClient;
+        readonly UserIndexUpdateEventBridge notificationBridge;
 
-        public UserIndexCache(
+        IDisposable disposeHandle;
+
+        internal UserIndexCache(
             ConnectionMultiplexer cm, 
             string azureUserIndexStorageAccountName,
             string azureUserIndexStorageAccountKey,
-            string )
+            string azureUserIndexContainerName,
+            string legacyUserDataStoreAccountName,
+            string legacyUserDataStoreAccountKey,
+            string legacyUserDataStoreContainerName)
         {
             this.cacheId = Guid.NewGuid();
             this.localCache = new LRUCache<Guid, UserIndex>(2000);
             this.redisCache = new Service.Redis.UserIndexCache(cm);
+
             this.blobClient = new UserIndexBlobClient(
                 storageAccountName: azureUserIndexStorageAccountName,
                 storageKey: azureUserIndexStorageAccountKey,
-                containerName: "userindices");
+                containerName: azureUserIndexContainerName);
+
             this.legacyDataStoreBlobClient = new UserInfoBlobClient(
-                accountName: )
+                accountName: legacyUserDataStoreAccountName,
+                accountKey: legacyUserDataStoreAccountKey,
+                containerName: legacyUserDataStoreContainerName);
+
+            this.notificationBridge = new UserIndexUpdateEventBridge(cm);
         }
 
         public async Task<UserIndex> Get(Guid id)
@@ -59,7 +69,16 @@ namespace Weave.User.BusinessObjects.Mutable.Cache
             {
                 user = fromBlob.Value;
                 localCache.AddOrUpdate(id, user);
-                var wasSavedToRedis = await redisCache.Save(user);
+                await SaveToRedis(user);
+                return user;
+            }
+
+            // as a last resort try grabbing from the legacy User Data Store
+            user = await legacyDataStoreBlobClient.Get(id);
+            if (user != null)
+            {
+                localCache.AddOrUpdate(id, user);
+                await SaveToRedis(user);
                 return user;
             }
 
@@ -78,13 +97,62 @@ namespace Weave.User.BusinessObjects.Mutable.Cache
                 throw new ArgumentNullException("user in UserIndexCache.Save");
 
             localCache.AddOrUpdate(user.Id,  user);
+            await SaveToRedis(user);
+
+            return true;
+        }
+
+        // Begin listening to update notifications
+        internal async Task InitializeAsync()
+        {
+            disposeHandle = await notificationBridge.Observe(OnUpdateNoticeReceived);
+        }
+
+
+
+        #region helper function
+
+        // Any time we save to Redis, send a notification that the other local caches 
+        // (across other server instances) need to refresh their copy of this user
+        async Task SaveToRedis(UserIndex user)
+        {
             var wasSavedToRedis = await redisCache.Save(user);
             if (wasSavedToRedis)
             {
                 // send notice here
+                var notice = new UserIndexUpdateNotice { UserId = user.Id, CacheId = cacheId };
+                var numReceived = await notificationBridge.Publish(notice);
             }
+        }
 
-            return true;
+        async void OnUpdateNoticeReceived(UserIndexUpdateNotice notice)
+        {
+            // ignore notifications sent from itself
+            if (notice.CacheId == cacheId)
+                return;
+
+            try
+            {
+                var userId = notice.UserId;
+                var fromRedis = await redisCache.Get(userId);
+                if (fromRedis.HasValue)
+                {
+                    var user = fromRedis.Value;
+                    localCache.AddOrUpdate(userId, user);
+                }
+            }
+            catch { }
+        }
+
+        #endregion
+
+
+
+
+        public void Dispose()
+        {
+            if (disposeHandle != null)
+                disposeHandle.Dispose();
         }
     }
 }

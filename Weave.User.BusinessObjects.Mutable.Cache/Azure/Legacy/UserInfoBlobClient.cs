@@ -67,7 +67,7 @@ namespace Weave.User.BusinessObjects.Mutable.Cache.Azure.Legacy
                 IconUri = o.IconUri,
                 Category = o.Category,
                 TeaserImageUrl = null,
-                ArticleViewingType = o.ArticleViewingType,
+                ArticleViewingType = (ArticleViewingType)o.ArticleViewingType,
                 MostRecentEntrance = o.MostRecentEntrance,
                 PreviousEntrance = o.PreviousEntrance,
             };

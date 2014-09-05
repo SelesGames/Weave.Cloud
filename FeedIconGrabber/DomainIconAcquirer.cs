@@ -25,7 +25,7 @@ namespace FeedIconGrabber
         public async Task<string> GetIconUrl()
         {
             var client = new SmartHttpClient();
-            var response = await client.GetAsync(domainUrl);
+            using (var response = await client.GetAsync(domainUrl))
             using (var stream = await response.ReadStream())
             {
                 var htmlDoc = new HtmlDocument();

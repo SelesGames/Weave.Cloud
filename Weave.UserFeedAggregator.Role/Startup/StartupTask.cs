@@ -3,10 +3,13 @@ using Microsoft.WindowsAzure.ServiceRuntime;
 using Ninject;
 using Ninject.WebApi;
 using SelesGames.WebApi.SelfHost;
+using StackExchange.Redis;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using System.Web.Http.Dependencies;
+using Weave.User.BusinessObjects.Mutable.Cache;
 
 namespace Weave.User.Service.Role.Startup
 {
@@ -15,10 +18,13 @@ namespace Weave.User.Service.Role.Startup
         IKernel kernel;
         IDependencyResolver resolver;
 
-        public void OnStart()
+        public async Task OnStart()
         {
             kernel = new NinjectKernel();
-            resolver = new NinjectResolver(kernel); 
+            resolver = new NinjectResolver(kernel);
+
+            var userIndexCache = await UserIndexCacheFactory.CreateCacheAsync(kernel.Get<ConnectionMultiplexer>());
+            kernel.Bind<UserIndexCache>().ToConstant(userIndexCache).InSingletonScope();
             
             CreateAndStartServer();
         }

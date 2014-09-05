@@ -14,20 +14,22 @@ namespace Weave.RssAggregator.HighFrequency.Processors.BestImageSelector
 
             var client = new SmartHttpClient(CompressionSettings.None);
 
-            var response = await client.GetAsync(fullUrl);
-            var responseMessage = response.HttpResponseMessage;
-
-            if (responseMessage.IsSuccessStatusCode && 
-                responseMessage.Content.Headers.ContentLength.HasValue && 
-                responseMessage.Content.Headers.ContentLength.Value < 10)
+            using (var response = await client.GetAsync(fullUrl))
             {
-                var stringResponse = await responseMessage.Content.ReadAsStringAsync();
-                if (stringResponse == "null")
-                    throw new InvalidImageException();
-            }
+                var responseMessage = response.HttpResponseMessage;
 
-            var info = await response.Read<ImageInfo>();
-            return info;
+                if (responseMessage.IsSuccessStatusCode &&
+                    responseMessage.Content.Headers.ContentLength.HasValue &&
+                    responseMessage.Content.Headers.ContentLength.Value < 10)
+                {
+                    var stringResponse = await responseMessage.Content.ReadAsStringAsync();
+                    if (stringResponse == "null")
+                        throw new InvalidImageException();
+                }
+
+                var info = await response.Read<ImageInfo>();
+                return info;
+            }
         }
     }
 

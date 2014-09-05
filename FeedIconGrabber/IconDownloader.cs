@@ -58,20 +58,22 @@ namespace FeedIconGrabber
 
                 var extension = Path.GetExtension(iconUrl);
 
-                var response = await client.GetAsync(iconUrl);
-                if (string.IsNullOrEmpty(extension))
+                using (var response = await client.GetAsync(iconUrl))
                 {
-                    var mimeType = response.HttpResponseMessage.Content.Headers.ContentType.MediaType;
-                    extension = GetImageExtensionFromMimeType(mimeType);
-                }
+                    if (string.IsNullOrEmpty(extension))
+                    {
+                        var mimeType = response.HttpResponseMessage.Content.Headers.ContentType.MediaType;
+                        extension = GetImageExtensionFromMimeType(mimeType);
+                    }
 
-                string fileName = string.Format("{0}\\{1}{2}", PATH, feed.Name, extension);
+                    string fileName = string.Format("{0}\\{1}{2}", PATH, feed.Name, extension);
 
-                using (var fs = new FileStream(fileName, FileMode.Create))
-                {
-                    await response.HttpResponseMessage.Content.CopyToAsync(fs);
-                    fs.Flush();
-                    fs.Close();
+                    using (var fs = new FileStream(fileName, FileMode.Create))
+                    {
+                        await response.HttpResponseMessage.Content.CopyToAsync(fs);
+                        fs.Flush();
+                        fs.Close();
+                    }
                 }
             }
             catch { }

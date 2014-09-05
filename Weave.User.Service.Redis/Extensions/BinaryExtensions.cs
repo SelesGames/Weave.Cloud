@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-namespace Weave.User.Service.Redis
+namespace System.IO
 {
-    static class BinaryExtensions
+    public static class BinaryExtensions
     {
         public static Guid ReadGuid(this BinaryReader br)
         {

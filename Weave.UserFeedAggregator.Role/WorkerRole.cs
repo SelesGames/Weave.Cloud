@@ -38,7 +38,7 @@ namespace Weave.User.Service.Role
 
             try
             {
-                startupTask.OnStart();
+                startupTask.OnStart().Wait();
             }
             catch (Exception e)
             {

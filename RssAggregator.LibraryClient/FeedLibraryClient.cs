@@ -28,7 +28,7 @@ namespace Weave.RssAggregator.LibraryClient
             if (Uri.IsWellFormedUriString(libraryUrl, UriKind.Absolute))
             {
                 var client = new SmartHttpClient();
-                var response = await client.GetAsync(libraryUrl);
+                using (var response = await client.GetAsync(libraryUrl))
                 using (var stream = await response.ReadStream())
                 {
                     OnStreamRead(stream);
