@@ -123,7 +123,7 @@ namespace Weave.User.Service.Role.Controllers
                 {
                     Id = o.Id,
                     UtcPublishDateTime = o.UtcPublishDateTime,
-                    OriginalDownloadDateTime = DateTime.Now,
+                    OriginalDownloadDateTime = DateTime.UtcNow,
                     HasImage = o.HasImage,
                     //FeedIndex = index,
                 };

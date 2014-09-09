@@ -24,7 +24,7 @@ namespace Common.Caching
                     var val = valueFactory(key);
                     return new CacheEntry<TResult> { Value = val };
                 });
-            entry.LastAccess = DateTime.Now;
+            entry.LastAccess = DateTime.UtcNow;
             return entry.Value;
         }
 

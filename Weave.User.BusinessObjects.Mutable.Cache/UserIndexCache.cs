@@ -110,7 +110,7 @@ namespace Weave.User.BusinessObjects.Mutable.Cache
 
 
 
-        #region helper function
+        #region helper functions
 
         // Any time we save to Redis, send a notification that the other local caches 
         // (across other server instances) need to refresh their copy of this user

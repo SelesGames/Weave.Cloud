@@ -134,6 +134,7 @@ namespace Common.Azure.SmartBlobClient
             collection.Add(new SelesGames.WebApi.Protobuf.ProtobufFormatter());
             var jsonFormatter = (JsonMediaTypeFormatter)collection.First();
             jsonFormatter.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+            jsonFormatter.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Utc;
             return collection;
         }
 

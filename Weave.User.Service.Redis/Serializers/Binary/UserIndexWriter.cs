@@ -30,8 +30,10 @@ namespace Weave.User.Service.Redis.Serializers.Binary
             bw.Write(user.CurrentLoginTime);
 
             // write string values
-            bw.Write(user.ArticleDeletionTimeForMarkedRead ?? "");
-            bw.Write(user.ArticleDeletionTimeForUnread ?? "");
+            //bw.Write(user.ArticleDeletionTimeForMarkedRead ?? "");
+            //bw.Write(user.ArticleDeletionTimeForUnread ?? "");
+            bw.Write(user.ArticleDeletionTimeForMarkedRead);
+            bw.Write(user.ArticleDeletionTimeForUnread);
 
             if (user.FeedIndices != null)
             {

@@ -17,8 +17,8 @@ namespace RedisDBHelper
 
         static void Main(string[] args)
         {
-            //Stuff();
-            TestFeedUpdateToAzure().Wait();
+            Stuff();
+            //TestFeedUpdateToAzure().Wait();
         }
 
         static void Stuff()
@@ -31,7 +31,7 @@ namespace RedisDBHelper
 
             var server = connectionMultiplexer.GetServer(
 "weaveuser.redis.cache.windows.net", 6379);
-            server.FlushDatabase(3);
+            server.FlushDatabase(0);
         }
 
         static async Task TestFeedUpdateToAzure()

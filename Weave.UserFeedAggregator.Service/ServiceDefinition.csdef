@@ -14,4 +14,9 @@
       <Import moduleName="Diagnostics" />
     </Imports>
   </WorkerRole>
+  <WorkerRole name="Weave.User.Service.UpdateProcessor" vmsize="Small">
+    <Imports>
+      <Import moduleName="Diagnostics" />
+    </Imports>
+  </WorkerRole>
 </ServiceDefinition>

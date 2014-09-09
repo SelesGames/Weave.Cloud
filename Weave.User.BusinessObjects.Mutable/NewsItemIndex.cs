@@ -12,6 +12,7 @@ namespace Weave.User.BusinessObjects.Mutable
         public bool HasImage { get; set; }
 
         // reference to the parent FeedIndex. Should not be serialized
+        [System.Runtime.Serialization.IgnoreDataMember]
         public FeedIndex FeedIndex { get; internal set; }
     }
 }

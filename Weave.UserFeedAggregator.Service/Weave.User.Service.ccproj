@@ -42,6 +42,7 @@
   <ItemGroup>
     <Folder Include="Profiles" />
     <Folder Include="Weave.ArticleQueueProcessor.Service.Azure.RoleContent\" />
+    <Folder Include="Weave.User.Service.UpdateProcessorContent\" />
     <Folder Include="Weave.User.Service.WorkerRoleContent" />
   </ItemGroup>
   <ItemGroup>
@@ -49,6 +50,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Weave.ArticleQueueProcessor.Service.Azure.RoleContent\diagnostics.wadcfg">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Weave.User.Service.UpdateProcessorContent\diagnostics.wadcfg">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Weave.User.Service.WorkerRoleContent\diagnostics.wadcfg">
@@ -62,6 +66,14 @@
       <Private>True</Private>
       <RoleType>Worker</RoleType>
       <RoleName>Weave.ArticleQueueProcessor.Service.Azure.Role</RoleName>
+      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
+    </ProjectReference>
+    <ProjectReference Include="..\Weave.User.Service.UpdateProcessor\Weave.User.Service.UpdateProcessor.csproj">
+      <Name>Weave.User.Service.UpdateProcessor</Name>
+      <Project>{dccf11b4-ac65-4708-99e0-868abaea11a9}</Project>
+      <Private>True</Private>
+      <RoleType>Worker</RoleType>
+      <RoleName>Weave.User.Service.UpdateProcessor</RoleName>
       <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
     </ProjectReference>
     <ProjectReference Include="..\Weave.UserFeedAggregator.Role\Weave.User.Service.WorkerRole.csproj">

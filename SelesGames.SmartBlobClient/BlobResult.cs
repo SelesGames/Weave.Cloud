@@ -27,6 +27,24 @@ namespace Common.Azure.SmartBlobClient
         }
     }
 
+    public static class BlobResultExtensions
+    {
+        public static BlobResult<TResult> Copy<T, TResult>(this BlobResult<T> o, Func<T, TResult> map)
+        {
+            var copy = new BlobResult<TResult>
+            {
+                BlobName = o.BlobName,
+                Content = o.Content,
+                SerializationException = o.SerializationException,
+                StorageException = o.StorageException,
+                Timings = o.Timings,
+            };
+            if (o.HasValue)
+                copy.Value = map(o.Value);
+            return copy;
+        }
+    }
+
     //public class RedisWriteResult<T>
     //{
     //    public RedisKey RedisKey { get; set; }

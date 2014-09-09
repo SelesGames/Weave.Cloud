@@ -1,16 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{00D9AE16-67FF-41D5-8FA2-FAB5C39FBD44}</ProjectGuid>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{DCCF11B4-AC65-4708-99E0-868ABAEA11A9}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Weave.User.BusinessObjects.Mutable.Cache</RootNamespace>
-    <AssemblyName>Weave.User.BusinessObjects.Mutable.Cache</AssemblyName>
+    <RootNamespace>Weave.User.Service.UpdateProcessor</RootNamespace>
+    <AssemblyName>Weave.User.Service.UpdateProcessor</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <RoleType>Worker</RoleType>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
@@ -32,12 +34,22 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Microsoft.WindowsAzure.Configuration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.WindowsAzure.ConfigurationManager.2.0.3\lib\net40\Microsoft.WindowsAzure.Configuration.dll</HintPath>
     </Reference>
-    <Reference Include="StackExchange.Redis, Version=1.0.316.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Microsoft.WindowsAzure.Diagnostics, Version=2.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAzure.ServiceRuntime, Version=2.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAzure.Storage, Version=3.0.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\WindowsAzure.Storage.3.0.3.0\lib\net40\Microsoft.WindowsAzure.Storage.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.5.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="StackExchange.Redis">
       <HintPath>..\packages\StackExchange.Redis.1.0.330\lib\net45\StackExchange.Redis.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -45,51 +57,28 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Azure\Legacy\UserInfoBlobClient.cs" />
-    <Compile Include="Azure\Serialization\UserIndex.cs" />
-    <Compile Include="Azure\UserIndexBlobClient.cs" />
+    <Compile Include="Helper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PubSub\UserIndexUpdateEventBridge.cs" />
-    <Compile Include="PubSub\UserIndexUpdateNotice.cs" />
-    <Compile Include="PubSub\UserIndexUpdateNoticeExtensions.cs" />
-    <Compile Include="UserIndexCache.cs" />
-    <Compile Include="UserIndexCacheFactory.cs" />
+    <Compile Include="WorkerRole.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Common.Azure.Blob\Common.Azure.Blob.csproj">
-      <Project>{9259074d-90ae-4a44-a211-db3e122bf34e}</Project>
-      <Name>Common.Azure.Blob</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Common.Caching\Common.Caching.csproj">
-      <Project>{c83ab657-c7a6-4cf8-b4f5-d4e01bf2e562}</Project>
-      <Name>Common.Caching</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Common.DateTime\Common.TimeFormatting.csproj">
-      <Project>{86060d7e-3115-4f54-8008-384b3d7c598e}</Project>
-      <Name>Common.TimeFormatting</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SelesGames.SmartBlobClient\Common.Azure.SmartBlobClient.csproj">
-      <Project>{d115cf60-990a-4138-8496-538a6ce74541}</Project>
-      <Name>Common.Azure.SmartBlobClient</Name>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Weave.User.BusinessObjects.Mutable.Cache\Weave.User.BusinessObjects.Mutable.Cache.csproj">
+      <Project>{00d9ae16-67ff-41d5-8fa2-fab5c39fbd44}</Project>
+      <Name>Weave.User.BusinessObjects.Mutable.Cache</Name>
     </ProjectReference>
     <ProjectReference Include="..\Weave.User.BusinessObjects.Mutable\Weave.User.BusinessObjects.Mutable.csproj">
       <Project>{fc7c92ee-0aed-4859-b5ec-a770ce148497}</Project>
       <Name>Weave.User.BusinessObjects.Mutable</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Weave.User.DataStore\Weave.User.DataStore.csproj">
-      <Project>{458cbdea-f41c-4209-9dec-b2f285c217ab}</Project>
-      <Name>Weave.User.DataStore</Name>
     </ProjectReference>
     <ProjectReference Include="..\Weave.User.Service.Redis\Weave.User.Service.Redis.csproj">
       <Project>{32c547a5-8c67-4886-95ab-dc73f9af7673}</Project>
       <Name>Weave.User.Service.Redis</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

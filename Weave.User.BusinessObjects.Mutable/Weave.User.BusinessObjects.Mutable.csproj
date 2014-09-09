@@ -33,8 +33,10 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArticleDeleteTime.cs" />
     <Compile Include="Articles.cs" />
     <Compile Include="ArticleViewingType.cs" />
     <Compile Include="Extensions\Helpers\LatestNewsHelper.cs" />
