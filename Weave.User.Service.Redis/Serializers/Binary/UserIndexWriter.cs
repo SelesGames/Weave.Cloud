@@ -26,6 +26,7 @@ namespace Weave.User.Service.Redis.Serializers.Binary
         internal void Write()
         {
             bw.Write(user.Id);
+            bw.Write(user.LastModified);
             bw.Write(user.PreviousLoginTime);
             bw.Write(user.CurrentLoginTime);
 

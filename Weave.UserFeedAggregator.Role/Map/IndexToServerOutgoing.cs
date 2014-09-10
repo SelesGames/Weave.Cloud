@@ -38,6 +38,7 @@ namespace Weave.User.Service.Role.Map
                 CurrentLoginTime = o.CurrentLoginTime,
                 ArticleDeletionTimeForMarkedRead = o.ArticleDeletionTimeForMarkedRead,
                 ArticleDeletionTimeForUnread = o.ArticleDeletionTimeForUnread,
+                LastModified = o.LastModified,              
             };
         }
     }

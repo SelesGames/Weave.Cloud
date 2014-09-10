@@ -14,11 +14,13 @@ namespace Weave.User.BusinessObjects.Mutable
         public ArticleDeletionTime ArticleDeletionTimeForMarkedRead { get; set; }
         public ArticleDeletionTime ArticleDeletionTimeForUnread { get; set; }
 
+        public DateTime LastModified { get; set; }
+
         public UserIndex()
         {
             FeedIndices = new FeedIndices();
             Articles = new Articles(this);
-            ArticleDeletionTimeForMarkedRead = "6 hours";
+            ArticleDeletionTimeForMarkedRead = "12 hours";
             ArticleDeletionTimeForUnread = "3 days";
         }
     }

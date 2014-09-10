@@ -30,6 +30,7 @@ namespace Weave.User.Service.Redis.Serializers.Binary
             userIndex = new UserIndex();
 
             userIndex.Id = br.ReadGuid();
+            userIndex.LastModified = br.ReadDateTime();
             userIndex.PreviousLoginTime = br.ReadDateTime();
             userIndex.CurrentLoginTime = br.ReadDateTime();
             userIndex.ArticleDeletionTimeForMarkedRead = ReadString();
