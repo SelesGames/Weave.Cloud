@@ -72,6 +72,8 @@
     <Compile Include="Synchronization\LockTimeout.cs" />
     <Compile Include="Synchronization\UserIndex\UserLockHelper.cs" />
     <Compile Include="CacheClients\UserIndexCache.cs" />
+    <Compile Include="TimingHelper.cs" />
+    <Compile Include="Timings.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -93,9 +95,6 @@
       <Project>{fc7c92ee-0aed-4859-b5ec-a770ce148497}</Project>
       <Name>Weave.User.BusinessObjects.Mutable</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="LRU\LRUScripts.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

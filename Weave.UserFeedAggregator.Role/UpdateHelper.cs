@@ -15,10 +15,12 @@ namespace Weave.User.Service.Role.Controllers
     class UpdateHelper
     {
         readonly ConnectionMultiplexer connection;
+        readonly TimingHelper th;
 
         public UpdateHelper(ConnectionMultiplexer connection)
         {
             this.connection = connection;
+            this.th = new TimingHelper();
         }
 
         public async Task<dynamic> PerformRefreshOnFeeds(IEnumerable<FeedIndex> indices)
@@ -28,7 +30,10 @@ namespace Weave.User.Service.Role.Controllers
             var urls = indices.Select(o => o.Uri).Distinct();
 
             // Send the request to the news aggregator server to update the specified feed urls, saving them in Redis
+
+            th.Start();
             var results = await GetUpdateResults(urls);
+            meta.RefreshServiceRoundtripTime = th.Record().Dump();
             meta.NewsServiceUpdateResults = results;
 
             var resultTuples = indices.Zip(results);
@@ -41,7 +46,8 @@ namespace Weave.User.Service.Role.Controllers
 
             // Get the updater feeds from Redis - which should now have the most up-to-date info
             var cacheResult = await GetUpdaterFeeds(urls);
-            meta.RedisFeedUpdaterResultTimings = cacheResult.Timings;
+            meta.RedisFeedUpdaterResult_Deserialization = cacheResult.Timings.SerializationTime.Dump();
+            meta.RedisFeedUpdaterResult_Retrieval = cacheResult.Timings.ServiceTime.Dump();
 
             foreach (var tuple in filteredIndices.Zip(cacheResult.Results))
             {

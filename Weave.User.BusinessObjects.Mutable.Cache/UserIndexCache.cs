@@ -96,6 +96,8 @@ namespace Weave.User.BusinessObjects.Mutable.Cache
             if (user == null)
                 throw new ArgumentNullException("user in UserIndexCache.Save");
 
+            user.LastModified = DateTime.UtcNow;
+
             localCache.AddOrUpdate(user.Id,  user);
             await SaveToRedis(user);
 

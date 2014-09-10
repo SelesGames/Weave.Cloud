@@ -19,7 +19,7 @@ using Outgoing = Weave.User.Service.DTOs.ServerOutgoing;
 
 namespace Weave.User.Service.Role.Controllers
 {
-    public class UserController : ApiController//, IWeaveUserService
+    public class UserController : ApiController
     {
         #region Private member variables + constructor
 
