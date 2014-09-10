@@ -45,8 +45,13 @@ namespace Weave.User.BusinessObjects.Mutable
         
             if (ids.Remove(newsItem.Id))
             {
-                var matched = innerList.Single(o => o.Id == newsItem.Id);
-                return innerList.Remove(matched);         
+                if (!innerList.Remove(newsItem))
+                {
+                    var matched = innerList.Single(o => o.Id == newsItem.Id);
+                    return innerList.Remove(matched);
+                }
+                else
+                    return true;
             }
             return false;
         }

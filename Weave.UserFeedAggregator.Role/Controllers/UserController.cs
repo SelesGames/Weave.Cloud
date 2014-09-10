@@ -129,7 +129,10 @@ namespace Weave.User.Service.Role.Controllers
                 userIndex.CurrentLoginTime = DateTime.UtcNow;
 
                 if (refresh)
+                {
                     await PerformRefreshOnFeeds(userIndex.FeedIndices);
+                    DeleteOldNews(userIndex.FeedIndices);
+                }
 
                 await SaveUserIndex();
             });
@@ -654,6 +657,33 @@ namespace Weave.User.Service.Role.Controllers
             var refreshMeta = await updateHelper.PerformRefreshOnFeeds(feeds);
             timings.RefreshMeta = refreshMeta;
         }
+
+        //********** test
+        public void DeleteOldNews(IEnumerable<FeedIndex> feeds)
+        {
+            var now = DateTime.UtcNow;
+
+            foreach (var feed in feeds)
+            {
+                var toDelete = feed.NewsItemIndices.Where(o => IsNewsOld(o, now)).ToList();
+                foreach (var newsItemIndex in toDelete)
+                    feed.NewsItemIndices.Remove(newsItemIndex);
+            }
+        }
+
+        bool IsNewsOld(NewsItemIndex newsItem, DateTime now)
+        {
+            var age = now - newsItem.UtcPublishDateTime;
+
+            var isNew =
+                newsItem.IsFavorite ||
+                newsItem.FeedIndex.IsNewsItemNew(newsItem) ||
+                (!newsItem.HasBeenViewed && (age < userIndex.ArticleDeletionTimeForUnread)) ||
+                (newsItem.HasBeenViewed && (age < userIndex.ArticleDeletionTimeForMarkedRead));
+
+            return !isNew;
+        }
+        //***************
 
         #endregion
 
