@@ -5,11 +5,11 @@ using System.Text;
 
 namespace Weave.User.BusinessObjects.Mutable
 {
-    public struct ArticleDeleteTime
+    public struct ArticleDeletionTime
     {
         readonly TimeSpan ts;
 
-        ArticleDeleteTime(TimeSpan ts)
+        ArticleDeletionTime(TimeSpan ts)
         {
             this.ts = ts;
         }
@@ -19,12 +19,12 @@ namespace Weave.User.BusinessObjects.Mutable
 
         #region Implicit to/from TimeSpan
 
-        public static implicit operator ArticleDeleteTime(TimeSpan ts)
+        public static implicit operator ArticleDeletionTime(TimeSpan ts)
         {
-            return new ArticleDeleteTime(ts);
+            return new ArticleDeletionTime(ts);
         }
 
-        public static implicit operator TimeSpan(ArticleDeleteTime o)
+        public static implicit operator TimeSpan(ArticleDeletionTime o)
         {
             return o.ts;
         }
@@ -36,46 +36,17 @@ namespace Weave.User.BusinessObjects.Mutable
 
         #region Implicit to/from string
 
-        public static implicit operator ArticleDeleteTime(string s)
+        public static implicit operator ArticleDeletionTime(string s)
         {
-            return new ArticleDeleteTime(FromString(s));
+            return new ArticleDeletionTime(FromString(s));
         }
 
-        public static implicit operator string(ArticleDeleteTime o)
+        public static implicit operator string(ArticleDeletionTime o)
         {
-            return ToString(o);
+            return ToString(o.ts);
         }
 
         #endregion
-
-
-
-
-        static string ToString(ArticleDeleteTime o)
-        {
-            if (o.ts == TimeSpan.MaxValue)
-                return "never";
-
-            var sb = new StringBuilder();
-
-            var days = o.ts.Days;
-            if (days > 0)
-                sb.Append(string.Format("{0} {1} ", days, days == 1 ? "day" : "days"));
-
-            var hours = o.ts.Hours;
-            if (hours > 0)
-                sb.Append(string.Format("{0} {1} ", hours, hours == 1 ? "hour" : "hours"));
-
-            var minutes = o.ts.Minutes;
-            if (minutes > 0)
-                sb.Append(string.Format("{0} {1} ", minutes, minutes == 1 ? "minute" : "minutes"));
-
-            var seconds = o.ts.Seconds;
-            if (minutes > 0)
-                sb.Append(string.Format("{0} {1} ", seconds, seconds == 1 ? "second" : "seconds"));
-
-            return sb.ToString().Trim();
-        }
 
 
 
@@ -100,6 +71,8 @@ namespace Weave.User.BusinessObjects.Mutable
             var aggregate = timeSpans.Aggregate(TimeSpan.Zero, (seed, o) => seed += o);
             if (aggregate <= TimeSpan.Zero)
                 return TimeSpan.MaxValue;
+
+            return aggregate;
         }
 
         static TimeSpan? GetTimeSpan(string numeric, string qualifier)
@@ -128,6 +101,47 @@ namespace Weave.User.BusinessObjects.Mutable
         }
 
         #endregion
+
+
+
+
+        #region Helper function - converts a TimeSpan to a string
+
+        static string ToString(TimeSpan ts)
+        {
+            if (ts == TimeSpan.MaxValue)
+                return "never";
+
+            var sb = new StringBuilder();
+
+            var days = ts.Days;
+            if (days > 0)
+                sb.Append(string.Format("{0} {1} ", days, days == 1 ? "day" : "days"));
+
+            var hours = ts.Hours;
+            if (hours > 0)
+                sb.Append(string.Format("{0} {1} ", hours, hours == 1 ? "hour" : "hours"));
+
+            var minutes = ts.Minutes;
+            if (minutes > 0)
+                sb.Append(string.Format("{0} {1} ", minutes, minutes == 1 ? "minute" : "minutes"));
+
+            var seconds = ts.Seconds;
+            if (minutes > 0)
+                sb.Append(string.Format("{0} {1} ", seconds, seconds == 1 ? "second" : "seconds"));
+
+            return sb.ToString().Trim();
+        }
+
+        #endregion
+
+
+
+
+        public override string ToString()
+        {
+            return (string)this;
+        }
     }
 
     static class ext

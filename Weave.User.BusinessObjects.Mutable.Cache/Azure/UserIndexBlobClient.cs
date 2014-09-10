@@ -24,10 +24,73 @@ namespace Weave.User.BusinessObjects.Mutable.Cache.Azure
             return result.Copy(Map);
         }
 
+        public async Task<bool> Save(UserIndex user)
+        {
+            var requestProperties = new WriteRequestProperties
+            {
+                UseCompression = false,
+            };
+            var blobName = user.Id.ToString("N");
+            try
+            {
+                var mapped = Map(user);
+                await blobClient.Save(containerName, blobName, mapped, requestProperties);
+                return true;
+            }
+            catch(Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+                return false;
+            }
+        }
+
 
 
 
         #region Map functions
+
+        static Serialization.UserIndex Map(UserIndex o)
+        {
+            return new Serialization.UserIndex
+            {
+                Id = o.Id,
+                PreviousLoginTime = o.PreviousLoginTime,
+                CurrentLoginTime = o.CurrentLoginTime,
+                ArticleDeletionTimeForMarkedRead = o.ArticleDeletionTimeForMarkedRead,
+                ArticleDeletionTimeForUnread = o.ArticleDeletionTimeForUnread,
+                FeedIndices = o.FeedIndices.Select(Map).ToList(),
+            };
+        }
+
+        static Serialization.FeedIndex Map(FeedIndex o)
+        {
+            return new Serialization.FeedIndex
+            {
+                Id = o.Id,
+                Uri = o.Uri,
+                Name = o.Name,
+                IconUri = o.IconUri,
+                Category = o.Category,
+                TeaserImageUrl = o.TeaserImageUrl,
+                ArticleViewingType = o.ArticleViewingType,
+                MostRecentEntrance = o.MostRecentEntrance,
+                PreviousEntrance = o.PreviousEntrance,
+                NewsItemIndices = o.NewsItemIndices.Select(Map).ToList(),
+            };
+        }
+
+        static Serialization.NewsItemIndex Map(NewsItemIndex o)
+        {
+            return new Serialization.NewsItemIndex
+            {
+                Id = o.Id,
+                UtcPublishDateTime = o.UtcPublishDateTime,
+                OriginalDownloadDateTime = o.OriginalDownloadDateTime,
+                IsFavorite = o.IsFavorite,
+                HasBeenViewed = o.HasBeenViewed,
+                HasImage = o.HasImage,
+            };
+        }
 
         static UserIndex Map(Serialization.UserIndex o)
         {
@@ -91,27 +154,5 @@ namespace Weave.User.BusinessObjects.Mutable.Cache.Azure
         }
 
         #endregion
-
-
-
-
-        public async Task<bool> Save(UserIndex user)
-        {
-            var requestProperties = new WriteRequestProperties
-            {
-                UseCompression = false,
-            };
-            var blobName = user.Id.ToString("N");
-            try
-            {
-                await blobClient.Save(containerName, blobName, user, requestProperties);
-                return true;
-            }
-            catch(Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine(ex);
-                return false;
-            }
-        }
     }
 }
