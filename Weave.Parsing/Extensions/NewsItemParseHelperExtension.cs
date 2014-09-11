@@ -1,5 +1,7 @@
-﻿using System;
+﻿using HtmlAgilityPack;
+using System;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Weave.Parsing
@@ -24,10 +26,31 @@ namespace Weave.Parsing
                 .Where(o => !string.IsNullOrEmpty(o))
                 .ToList();
 
+            // try to load the description as html and parse it
+            bool htmlParseFailed = false;
+            try
+            {
+                var doc = new HtmlDocument();
+                doc.OptionDefaultStreamEncoding = Encoding.UTF8;
+                doc.LoadHtml(descriptionText);
+                var imageUrls = doc.DocumentNode
+                    .Descendants()
+                    .Where(IsImageNode)
+                    .Select(o => o.Attributes["src"].Value)
+                    .OfType<string>();
 
-            var potentialImages = matches.Where(o => o.IsImageUrl());
-            foreach (var image in potentialImages)
-                e.ImageUrls.Add(image);
+                foreach (var url in imageUrls)
+                    e.ImageUrls.Add(url);
+            }
+            catch { htmlParseFailed = true; }
+
+            // revert back to the old style of getting images if html parsing failed
+            if (htmlParseFailed)
+            {
+                var potentialImages = matches.Where(o => o.IsImageUrl());
+                foreach (var image in potentialImages)
+                    e.ImageUrls.Add(image);
+            }
 
 
             var potentialYoutube = matches
@@ -41,13 +64,19 @@ namespace Weave.Parsing
                 e.YoutubeId = youtubeVideoId;
             }
 
-
             var potentialVideo = matches.Where(o => o.IsVideoFileUrl()).FirstOrDefault();
             e.VideoUri = potentialVideo;
 
-
             var potentialPodcast = matches.Where(o => o.IsAudioFileUrl()).FirstOrDefault();
             e.PodcastUri = potentialPodcast;
+        }
+
+        static bool IsImageNode(HtmlNode node)
+        {
+            return
+                node.Name == "img" &&
+                node.Attributes["src"] != null;// &&
+            //mobilizerDetectedFirstImage.Equals(node.Attributes["src"].Value, StringComparison.OrdinalIgnoreCase);
         }
 
         static string ExtractYoutubeVideoIdFromUrl(string potentialYoutube)

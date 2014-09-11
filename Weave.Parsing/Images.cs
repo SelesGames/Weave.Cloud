@@ -16,14 +16,14 @@ namespace Weave.Parsing
         public bool Add(string imageUrl)
         {
             if (string.IsNullOrEmpty(imageUrl)) return false;
-            if (!imageUrl.IsImageUrl()) return false;
+            if (!Uri.IsWellFormedUriString(imageUrl, UriKind.Absolute))
+                return false;
 
             if (imageUrl.StartsWith("http://share.feedsportal.com/share/", StringComparison.OrdinalIgnoreCase))
                 return false;
 
             if (imageUrl.StartsWith("http://res3.feedsportal.com/social/", StringComparison.OrdinalIgnoreCase))
                 return false;
-
             
             return innerList.Add(imageUrl);
         }
