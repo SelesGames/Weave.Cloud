@@ -25,6 +25,9 @@ namespace Weave.User.Service.Role.Controllers
 
         public async Task<dynamic> PerformRefreshOnFeeds(IEnumerable<FeedIndex> indices)
         {
+            if (EnumerableEx.IsNullOrEmpty(indices))
+                throw new ArgumentException("PerformRefreshOnFeeds: indices cannot be empty");
+
             dynamic meta = new ExpandoObject();
 
             var urls = indices.Select(o => o.Uri).Distinct();

@@ -59,6 +59,7 @@ namespace Weave.User.BusinessObjects.Mutable.Cache.Azure
                 ArticleDeletionTimeForMarkedRead = o.ArticleDeletionTimeForMarkedRead,
                 ArticleDeletionTimeForUnread = o.ArticleDeletionTimeForUnread,
                 FeedIndices = o.FeedIndices.Select(Map).ToList(),
+                LastModified = o.LastModified,
             };
         }
 
@@ -101,6 +102,7 @@ namespace Weave.User.BusinessObjects.Mutable.Cache.Azure
                 CurrentLoginTime = o.CurrentLoginTime,
                 ArticleDeletionTimeForMarkedRead = o.ArticleDeletionTimeForMarkedRead,
                 ArticleDeletionTimeForUnread = o.ArticleDeletionTimeForUnread,
+                LastModified = o.LastModified,
             };
 
             if (o.FeedIndices != null)

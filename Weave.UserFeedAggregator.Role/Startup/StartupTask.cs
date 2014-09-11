@@ -45,6 +45,8 @@ namespace Weave.User.Service.Role.Startup
             var cors = new EnableCorsAttribute(origins: "*", headers: "*", methods: "*");
             config.EnableCors(cors);
 
+            config.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.Always;
+
             SelfHost.StartServer(ipString);// host.StartServer(ipString);
 
             Trace.WriteLine("^&*^&*^&*^*&^  SERVER IS UP AND RUNNING!!!");

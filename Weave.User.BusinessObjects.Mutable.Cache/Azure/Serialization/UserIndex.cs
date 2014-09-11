@@ -13,6 +13,8 @@ namespace Weave.User.BusinessObjects.Mutable.Cache.Azure.Serialization
 
         public string ArticleDeletionTimeForMarkedRead { get; set; }
         public string ArticleDeletionTimeForUnread { get; set; }
+
+        public DateTime LastModified { get; set; }
     }
 
     public class FeedIndex

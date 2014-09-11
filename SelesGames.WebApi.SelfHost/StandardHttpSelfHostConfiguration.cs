@@ -25,6 +25,8 @@ namespace SelesGames.WebApi.SelfHost
 
             MessageHandlers.Add(new WebApiCompressionHandler());
             Formatters.Add(new ProtobufFormatter());
+
+            //Services.Replace(typeof(IExceptionHandler), new StandardExceptionHandler());
         }
     }
 }

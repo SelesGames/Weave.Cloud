@@ -54,6 +54,7 @@
     <Compile Include="ExceptionHandlingAttribute.cs" />
     <Compile Include="Handlers\InjectAcceptEncodingHandler.cs" />
     <Compile Include="Handlers\InjectAcceptHandler.cs" />
+    <Compile Include="Handlers\StandardExceptionHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResponseHelper.cs" />
   </ItemGroup>
