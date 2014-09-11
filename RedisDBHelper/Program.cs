@@ -17,6 +17,11 @@ namespace RedisDBHelper
 
         static void Main(string[] args)
         {
+            TestFeedUpdateToAzure().Wait();
+        }
+
+        async void RunLoop()
+        {
             while (true)
             {
                 var input = Console.ReadLine();
@@ -27,7 +32,7 @@ namespace RedisDBHelper
                     var url = parameters.Skip(1).First();
                     var temp = new RedisFeedUpdaterTest(url);
                     Console.WriteLine("executing...");
-                    temp.Execute().Wait();
+                    await temp.Execute();
                     Console.WriteLine("finished.  check debug window");
                 }
             }
@@ -48,7 +53,7 @@ namespace RedisDBHelper
 
         static async Task TestFeedUpdateToAzure()
         {
-            var feedUrl = "http://www.gameinformer.com:80/feeds/thefeedrss.aspx";
+            var feedUrl = "http://www.polygon.com/rss/index.xml";
 
             var redisClientConfig = ConfigurationOptions.Parse(REDIS_CONN);
             var cm = ConnectionMultiplexer.Connect(redisClientConfig);

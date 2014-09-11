@@ -19,7 +19,7 @@ namespace Weave.Updater.PubSub
                 {
                     var notice = new FeedUpdateNotice();
 
-                    notice.RefreshTime = DateTime.FromBinary(br.ReadInt64());
+                    notice.RefreshTime = br.ReadDateTime();
                     notice.FeedUri = br.ReadString();
 
                     return notice;
@@ -37,7 +37,7 @@ namespace Weave.Updater.PubSub
             using (var ms = new MemoryStream())
             using (var bw = new BinaryWriter(ms))
             {
-                bw.Write(update.RefreshTime.ToBinary());
+                bw.Write(update.RefreshTime);
                 bw.Write(update.FeedUri);
 
                 bytes = ms.ToArray();
