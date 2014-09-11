@@ -50,6 +50,7 @@
     <Compile Include="IProvider.cs" />
     <Compile Include="IStreamHandler.cs" />
     <Compile Include="ModifiedTuple.cs" />
+    <Compile Include="Option.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SetDifference.cs" />
   </ItemGroup>

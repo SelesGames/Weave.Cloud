@@ -721,7 +721,7 @@ namespace Weave.User.Service.Role.Controllers
                 .Take(take)
                 .ToList();
             sw.Stop();
-            timings.CreateOrderedIndices = sw.Elapsed.Dump();
+            timings.CreateOrderedNewsIndices = sw.Elapsed.Dump();
             //DebugEx.WriteLine("creating ordered indices took {0} ms", sw.ElapsedMilliseconds);
 
             var outgoingNews = await CreateOutgoingNews(indices);

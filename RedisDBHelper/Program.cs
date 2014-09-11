@@ -17,8 +17,20 @@ namespace RedisDBHelper
 
         static void Main(string[] args)
         {
-            Stuff();
-            //TestFeedUpdateToAzure().Wait();
+            while (true)
+            {
+                var input = Console.ReadLine();
+                var parameters = input.Split(' ');
+                var command = parameters.First();
+                if (command.Equals("testfeed", StringComparison.OrdinalIgnoreCase))
+                {
+                    var url = parameters.Skip(1).First();
+                    var temp = new RedisFeedUpdaterTest(url);
+                    Console.WriteLine("executing...");
+                    temp.Execute().Wait();
+                    Console.WriteLine("finished.  check debug window");
+                }
+            }
         }
 
         static void Stuff()
