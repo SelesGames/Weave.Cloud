@@ -18,7 +18,7 @@ namespace Weave.Updater.BusinessObjects
             if (image == null)
                 return false;
 
-            if (!Uri.IsWellFormedUriString(image.Url, UriKind.Absolute))
+            if (string.IsNullOrWhiteSpace(image.Url))
                 return false;
 
             innerList.Add(image);

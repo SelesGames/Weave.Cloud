@@ -17,10 +17,11 @@ namespace RedisDBHelper
 
         static void Main(string[] args)
         {
-            TestFeedUpdateToAzure().Wait();
+            //TestFeedUpdateToAzure().Wait();
+            RunLoop().Wait();
         }
 
-        async void RunLoop()
+        static async Task RunLoop()
         {
             while (true)
             {
@@ -31,6 +32,15 @@ namespace RedisDBHelper
                 {
                     var url = parameters.Skip(1).First();
                     var temp = new RedisFeedUpdaterTest(url);
+                    Console.WriteLine("executing...");
+                    await temp.Execute();
+                    Console.WriteLine("finished.  check debug window");
+                }
+
+                else if (command.Equals("testentry", StringComparison.OrdinalIgnoreCase))
+                {
+                    var id = parameters.Skip(1).First();
+                    var temp = new RedisExpandedEntryTest(id);
                     Console.WriteLine("executing...");
                     await temp.Execute();
                     Console.WriteLine("finished.  check debug window");

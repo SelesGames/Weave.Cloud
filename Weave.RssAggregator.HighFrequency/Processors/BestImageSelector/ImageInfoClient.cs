@@ -8,11 +8,15 @@ namespace Weave.RssAggregator.HighFrequency.Processors.BestImageSelector
     {
         readonly string urlFormat = "http://weave-imagecache.cloudapp.net/api/info?url={0}";
 
+        public TimeSpan? Timeout { get; set; }
+
         public async Task<ImageInfo> Get(string url)
         {
             var fullUrl = string.Format(urlFormat, url);
 
             var client = new SmartHttpClient(CompressionSettings.None);
+            if (Timeout.HasValue)
+                client.Timeout = Timeout.Value;
 
             using (var response = await client.GetAsync(fullUrl))
             {

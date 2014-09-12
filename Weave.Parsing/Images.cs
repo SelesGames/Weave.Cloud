@@ -15,9 +15,7 @@ namespace Weave.Parsing
 
         public bool Add(string imageUrl)
         {
-            if (string.IsNullOrEmpty(imageUrl)) return false;
-            if (!Uri.IsWellFormedUriString(imageUrl, UriKind.Absolute))
-                return false;
+            if (string.IsNullOrWhiteSpace(imageUrl)) return false;
 
             if (imageUrl.StartsWith("http://share.feedsportal.com/share/", StringComparison.OrdinalIgnoreCase))
                 return false;

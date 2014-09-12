@@ -793,8 +793,8 @@ namespace Weave.User.Service.Role.Controllers
             var outgoingNews =
                (from temp in zipped.Where(o => o.ni.HasValue)
                 let tuple = temp.tuple
-                let newsItem = temp.ni.Value
-                select Merge(tuple, newsItem)).ToList();
+                let entry = temp.ni.Value
+                select Merge(tuple, entry)).ToList();
             sw.Stop();
             timings.CreateOutgoingNews = sw.Elapsed.Dump();
 
