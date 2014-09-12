@@ -26,6 +26,13 @@ namespace Weave.RssAggregator.HighFrequency
                 var saveFeedResult = await SaveFeed(update.InnerFeed);
                 DebugEx.WriteLine("** FEED UPDATER PROCESSOR ** Took {0} ms to serialize, {1} ms to save updater feed for {2}", saveFeedResult.Timings.SerializationTime.TotalMilliseconds, saveFeedResult.Timings.ServiceTime.TotalMilliseconds, update.Feed.Name);
 
+                foreach (var previous in update.Feed.PreviousUris)
+                {
+                    var feed = new Feed(previous);
+                    update.InnerFeed.CopyStateTo(feed);
+                    await SaveFeed(feed);
+                }
+
                 if (update.Entries.Any())
                 {
                     var saveNewsResults = await SaveNewNews(update);
