@@ -49,7 +49,9 @@
     <Compile Include="Azure\Serialization\UserIndex.cs" />
     <Compile Include="Azure\UserIndexBlobClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PubSub\UserIndexUpdateEventBridge.cs" />
+    <Compile Include="PubSub\Constants.cs" />
+    <Compile Include="PubSub\UserIndexUpdateEventObserver.cs" />
+    <Compile Include="PubSub\UserIndexUpdateEventPublisher.cs" />
     <Compile Include="PubSub\UserIndexUpdateNotice.cs" />
     <Compile Include="PubSub\UserIndexUpdateNoticeExtensions.cs" />
     <Compile Include="UserIndexCache.cs" />
