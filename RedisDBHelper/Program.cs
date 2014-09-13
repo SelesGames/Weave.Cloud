@@ -10,42 +10,45 @@ using Weave.User.Service.Redis;
 
 namespace RedisDBHelper
 {
-    class Program
+    public class Program
     {
         const string REDIS_CONN =
 "weaveuser.redis.cache.windows.net,ssl=false,password=dM/xNBd9hB9Wgn3tPhkTsiwzIw4gImnS+eAN9sYuouY=";
 
-        static void Main(string[] args)
-        {
-            //TestFeedUpdateToAzure().Wait();
-            RunLoop().Wait();
-        }
+        //static void Main(string[] args)
+        //{
+        //    //TestFeedUpdateToAzure().Wait();
+        //    RunLoop().Wait();
+        //}
 
-        static async Task RunLoop()
+        //static async Task RunLoop()
+        //{
+        //    while (true)
+        //    {
+        //        var input = Console.ReadLine();
+                
+        //    }
+        //}
+
+        public Task<string> ProcessInput(string input)
         {
-            while (true)
+            var parameters = input.Split(' ');
+            var command = parameters.First();
+            if (command.Equals("testfeed", StringComparison.OrdinalIgnoreCase))
             {
-                var input = Console.ReadLine();
-                var parameters = input.Split(' ');
-                var command = parameters.First();
-                if (command.Equals("testfeed", StringComparison.OrdinalIgnoreCase))
-                {
-                    var url = parameters.Skip(1).First();
-                    var temp = new RedisFeedUpdaterTest(url);
-                    Console.WriteLine("executing...");
-                    await temp.Execute();
-                    Console.WriteLine("finished.  check debug window");
-                }
-
-                else if (command.Equals("testentry", StringComparison.OrdinalIgnoreCase))
-                {
-                    var id = parameters.Skip(1).First();
-                    var temp = new RedisExpandedEntryTest(id);
-                    Console.WriteLine("executing...");
-                    await temp.Execute();
-                    Console.WriteLine("finished.  check debug window");
-                }
+                var url = parameters.Skip(1).First();
+                var temp = new RedisFeedUpdaterTest(url);
+                return temp.Execute();
             }
+
+            else if (command.Equals("testentry", StringComparison.OrdinalIgnoreCase))
+            {
+                var id = parameters.Skip(1).First();
+                var temp = new RedisExpandedEntryTest(id);
+                return temp.Execute();
+            }
+
+            else return Task.FromResult("unrecognized command");
         }
 
         static void Stuff()

@@ -73,7 +73,7 @@ namespace Weave.RssAggregator.WorkerRole
 
         static void VerifyRequest(string url)
         {
-            if (!Uri.IsWellFormedUriString(url, UriKind.Absolute))
+            if (!url.IsWellFormedUriString())
                 throw new ArgumentException("INVALID URL: request in WeaveControllerHelper");
         }
 

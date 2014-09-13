@@ -29,11 +29,6 @@ namespace Weave.Parsing
             return url.EndsWith(".mp4", StringComparison.OrdinalIgnoreCase);
         }
 
-        public static bool IsWellFormed(this string url)
-        {
-            return Uri.IsWellFormedUriString(url, UriKind.Absolute);
-        }
-
         public static string ParseImageUrlFromHtml(this string html)
         {
             if (string.IsNullOrEmpty(html))

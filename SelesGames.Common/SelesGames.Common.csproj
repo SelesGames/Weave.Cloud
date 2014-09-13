@@ -45,6 +45,7 @@
     <Compile Include="Extensions\IEnumerableExtensions.cs" />
     <Compile Include="Extensions\LinqToXmlExtensions.cs" />
     <Compile Include="Extensions\StreamExtensionMethods.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Hashing\CryptoHelper.cs" />
     <Compile Include="IConverter.cs" />
     <Compile Include="IProvider.cs" />

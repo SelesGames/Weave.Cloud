@@ -88,7 +88,7 @@ namespace Weave.Parsing.Intermediates
 
             // if either image or podcast or video is not set, check for media content
             var mediaContent = xml.GetMediaContentUrl();
-            if (mediaContent.IsWellFormed())
+            if (mediaContent.IsWellFormedUriString())
             {
                 if (mediaContent.IsImageUrl())
                     e.ImageUrls.Add(mediaContent);
@@ -103,7 +103,7 @@ namespace Weave.Parsing.Intermediates
 
             // if either image or podcast or video is not set, check the enclosure element
             var enclosure = xml.GetEnclosureUrl();
-            if (enclosure.IsWellFormed())
+            if (enclosure.IsWellFormedUriString())
             {
                 if (enclosure.IsImageUrl())
                     e.ImageUrls.Add(enclosure);

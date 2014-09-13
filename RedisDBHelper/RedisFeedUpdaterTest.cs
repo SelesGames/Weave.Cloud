@@ -31,14 +31,14 @@ namespace RedisDBHelper
             this.url = url;
         }
 
-        public async Task Execute()
+        public async Task<string> Execute()
         {
             var config = new RedisConfig();
             var db = config.CreateConnection().GetDatabase(DatabaseNumbers.FEED_UPDATER);
             var redisCache = new Weave.User.Service.Redis.FeedUpdaterCache(db);
             var result = await redisCache.Get(url);
             var val = result.Value;
-            System.Diagnostics.Debug.WriteLine(val.Dump());
+            return val.Dump();
         }
     }
 
@@ -46,7 +46,8 @@ namespace RedisDBHelper
     {
         public static string Dump(this object value)
         {
-             return JsonConvert.SerializeObject(value, Formatting.Indented);
+            var settings = new JsonSerializerSettings { DateTimeZoneHandling = DateTimeZoneHandling.Utc };         
+            return JsonConvert.SerializeObject(value, Formatting.Indented, settings);
         }
     }
 }

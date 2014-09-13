@@ -17,6 +17,9 @@ namespace Weave.Parsing
         {
             if (string.IsNullOrWhiteSpace(imageUrl)) return false;
 
+            if (!imageUrl.IsWellFormedUriString())
+                return false;
+
             if (imageUrl.StartsWith("http://share.feedsportal.com/share/", StringComparison.OrdinalIgnoreCase))
                 return false;
 

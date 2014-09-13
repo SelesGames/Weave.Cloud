@@ -224,7 +224,7 @@ namespace Weave.Parsing
                 link = await SelesGames.HttpClient.UrlHelper.GetFinalRedirectLocation(link, TimeSpan.FromSeconds(10));
                 var linkUri = new Uri(link, UriKind.Absolute);
                 domainUrl = linkUri.Scheme + "://" + linkUri.Host;
-                if (!System.Uri.IsWellFormedUriString(domainUrl, UriKind.Absolute))
+                if (!domainUrl.IsWellFormedUriString())
                     return;
             }
             catch { }

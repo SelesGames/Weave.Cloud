@@ -16,7 +16,7 @@ namespace RedisDBHelper
             this.id = id;
         }
 
-        public async Task Execute()
+        public async Task<string> Execute()
         {
             var config = new RedisConfig();
             var db = config.CreateConnection().GetDatabase(DatabaseNumbers.CANONICAL_NEWSITEMS);
@@ -25,9 +25,9 @@ namespace RedisDBHelper
             var result = await redisCache.Get(new[] { guid });
             var val = result.Results.FirstOrDefault();
             if (val != null)
-                System.Diagnostics.Debug.WriteLine(val.Dump());
+                return val.Dump();
             else
-                System.Diagnostics.Debug.WriteLine("not found");
+                return "not found";
         }
     }
 }

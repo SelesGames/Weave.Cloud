@@ -54,13 +54,10 @@ namespace Weave.RssAggregator
                 //.Take(3)  // for debugging only
                 .ToList();
 
-            var cachedFeeds = new List<CachedFeed>();
-
             foreach (var o in libraryFeeds)
             {
                 var cachedFeed = new CachedFeed(o.FeedName, o.FeedUri);
 
-                cachedFeeds.Add(cachedFeed);
                 feeds.Add(o.FeedUri, cachedFeed);
 
                 if (!string.IsNullOrWhiteSpace(o.CorrectedUri))
@@ -71,76 +68,3 @@ namespace Weave.RssAggregator
         }
     }
 }
-
-
-
-
-#region now deprecated code relating to processing feed updates from redis pubsub
-
-//const string CHANNEL = "feedUpdate";
-//List<HFeedDbMediator> mediators = new List<HFeedDbMediator>();
-//ConnectionMultiplexer cm;
-//            if (cm == null) throw new ArgumentNullException("cm cannot be null: FeedCache ctor");
-//this.cm = cm;
-
-                //mediators = cachedFeeds.Select(cachedFeed => new HFeedDbMediator(cachedFeed)).ToList();
-
-            //foreach (var mediator in mediators)
-            //{
-            //    await mediator.LoadLatestNews();
-            //}
-
-            //var sub = cm.GetSubscriber();
-            //var observable = await sub.AsObservable(CHANNEL);
-            //observable
-            //    .Select(Parse)
-            //    .OfType<FeedUpdateNotice>()
-            //    .Subscribe(OnFeedUpdateReceived, OnError);
-        //}
-
-        //void OnFeedUpdateReceived(FeedUpdateNotice notice)
-        //{
-        //    foreach (var mediator in mediators)
-        //    {
-        //        mediator.ProcessFeedUpdateNotice(notice);
-        //    }
-        //}
-
-        //void OnError(Exception exception)
-        //{
-        //    DebugEx.WriteLine(exception);
-        //}
-
-
-
-
-        //#region private helper methods
-
-        //FeedUpdateNotice Parse(RedisPubSubTuple o)
-        //{
-        //    try
-        //    {
-        //        if (!o.Message.HasValue)
-        //            return null;
-
-        //        var bytes = (byte[])o.Message;
-        //        using (var ms = new MemoryStream(bytes))
-        //        using (var br = new BinaryReader(ms))
-        //        {
-        //            var notice = new FeedUpdateNotice();
-
-        //            notice.FeedId = new Guid(br.ReadBytes(16));
-        //            notice.RefreshTime = DateTime.FromBinary(br.ReadInt64());
-        //            notice.FeedUri = br.ReadString();
-
-        //            return notice;
-        //        }
-        //    }
-        //    catch { }
-
-        //    return null;
-        //}
-
-        //#endregion
-
-#endregion
