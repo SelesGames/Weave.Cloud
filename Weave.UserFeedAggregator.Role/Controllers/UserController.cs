@@ -618,7 +618,7 @@ namespace Weave.User.Service.Role.Controllers
 
 
 
-        #region Save user graph and index functions
+        #region Save user index
 
         async Task SaveUserIndex()
         {
@@ -975,19 +975,6 @@ namespace Weave.User.Service.Role.Controllers
 
             return entries.Results;
         }
-
-        ///// <summary>
-        ///// Save news to Redis; uses batching
-        ///// </summary>
-        //public Task<IEnumerable<bool>> SaveNewsToRedis(IEnumerable<Redis.DTOs.NewsItem> newsItems)
-        //{
-        //    var db = connection.GetDatabase(DatabaseNumbers.CANONICAL_NEWSITEMS);
-        //    var batch = db.CreateBatch();
-        //    var newsItemCache = new NewsItemCache(batch);
-        //    var resultsTask = newsItemCache.Set(newsItems);
-        //    batch.Execute();
-        //    return resultsTask;
-        //}
 
         #endregion
     }

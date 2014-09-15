@@ -82,6 +82,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Weave.Services.Redis.Ambient\Weave.Services.Redis.Ambient.csproj">
+      <Project>{62ed133d-e68c-43df-a950-0ce650d02d98}</Project>
+      <Name>Weave.Services.Redis.Ambient</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Weave.User.BusinessObjects.Mutable.Cache\Weave.User.BusinessObjects.Mutable.Cache.csproj">
       <Project>{00d9ae16-67ff-41d5-8fa2-fab5c39fbd44}</Project>
       <Name>Weave.User.BusinessObjects.Mutable.Cache</Name>

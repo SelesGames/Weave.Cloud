@@ -1,10 +1,8 @@
-﻿using StackExchange.Redis;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Weave.Services.Redis.Ambient;
 using Weave.Updater.Azure;
 using Weave.User.Service.Redis;
 
@@ -12,24 +10,6 @@ namespace RedisDBHelper
 {
     public class Program
     {
-        const string REDIS_CONN =
-"weaveuser.redis.cache.windows.net,ssl=false,password=dM/xNBd9hB9Wgn3tPhkTsiwzIw4gImnS+eAN9sYuouY=";
-
-        //static void Main(string[] args)
-        //{
-        //    //TestFeedUpdateToAzure().Wait();
-        //    RunLoop().Wait();
-        //}
-
-        //static async Task RunLoop()
-        //{
-        //    while (true)
-        //    {
-        //        var input = Console.ReadLine();
-                
-        //    }
-        //}
-
         public Task<string> ProcessInput(string input)
         {
             var parameters = input.Split(' ');
@@ -57,12 +37,7 @@ namespace RedisDBHelper
 
         static void Stuff()
         {
-            var redisClientConfig = ConfigurationOptions.Parse(
-"weaveuser.redis.cache.windows.net,ssl=false,password=dM/xNBd9hB9Wgn3tPhkTsiwzIw4gImnS+eAN9sYuouY=");
-
-            redisClientConfig.AllowAdmin = true;
-            var connectionMultiplexer = ConnectionMultiplexer.Connect(redisClientConfig);
-
+            var connectionMultiplexer = Settings.ElevatedConnection;
             var server = connectionMultiplexer.GetServer(
 "weaveuser.redis.cache.windows.net", 6379);
             server.FlushDatabase(0);
@@ -72,8 +47,7 @@ namespace RedisDBHelper
         {
             var feedUrl = "http://www.polygon.com/rss/index.xml";
 
-            var redisClientConfig = ConfigurationOptions.Parse(REDIS_CONN);
-            var cm = ConnectionMultiplexer.Connect(redisClientConfig);
+            var cm = Settings.StandardConnection;
             var db = cm.GetDatabase(DatabaseNumbers.FEED_UPDATER);
             var redisCache = new Weave.User.Service.Redis.FeedUpdaterCache(db);
             var blobClient = new Weave.Updater.Azure.FeedUpdaterCache(

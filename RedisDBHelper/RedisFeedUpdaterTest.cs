@@ -6,22 +6,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Weave.User.Service.Redis;
 using Newtonsoft.Json;
+using Weave.Services.Redis.Ambient;
 
 namespace RedisDBHelper
 {
-    class RedisConfig
-    {
-        const string REDIS_CONN =
-"weaveuser.redis.cache.windows.net,ssl=false,password=dM/xNBd9hB9Wgn3tPhkTsiwzIw4gImnS+eAN9sYuouY=";
-
-        public ConnectionMultiplexer CreateConnection()
-        {
-            var redisClientConfig = ConfigurationOptions.Parse(REDIS_CONN);
-            var cm = ConnectionMultiplexer.Connect(redisClientConfig);
-            return cm;
-        }
-    }
-
     class RedisFeedUpdaterTest
     {
         readonly string url;
@@ -33,8 +21,8 @@ namespace RedisDBHelper
 
         public async Task<string> Execute()
         {
-            var config = new RedisConfig();
-            var db = config.CreateConnection().GetDatabase(DatabaseNumbers.FEED_UPDATER);
+            var cm = Settings.StandardConnection;
+            var db = cm.GetDatabase(DatabaseNumbers.FEED_UPDATER);
             var redisCache = new Weave.User.Service.Redis.FeedUpdaterCache(db);
             var result = await redisCache.Get(url);
             var val = result.Value;

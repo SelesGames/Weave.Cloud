@@ -1,6 +1,7 @@
 ﻿using StackExchange.Redis;
 using System;
 using System.Threading.Tasks;
+using Weave.Services.Redis.Ambient;
 using Weave.User.BusinessObjects.Mutable.Cache.Azure;
 using Weave.User.BusinessObjects.Mutable.Cache.PubSub;
 using Weave.User.Service.Redis;
@@ -9,15 +10,10 @@ namespace Weave.User.Service.UpdateProcessor
 {
     static class Helper
     {
-        const string REDIS_CONN =
-"weaveuser.redis.cache.windows.net,ssl=false,password=dM/xNBd9hB9Wgn3tPhkTsiwzIw4gImnS+eAN9sYuouY=";
-
         public static async Task<IDisposable> StartAsync()
         {
-            var redisClientConfig = ConfigurationOptions.Parse(REDIS_CONN);
-            var clientConnection = await ConnectionMultiplexer.ConnectAsync(redisClientConfig);
-            var pubsubConnection = await ConnectionMultiplexer.ConnectAsync(redisClientConfig);
-            pubsubConnection.PreserveAsyncOrder = false;
+            var clientConnection = Settings.StandardConnection;
+            var pubsubConnection = Settings.PubsubConnection;
             
             var redisCache = new UserIndexCache(clientConnection);
             var blobClient = new UserIndexBlobClient(

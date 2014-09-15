@@ -1,5 +1,5 @@
-﻿using StackExchange.Redis;
-using System;
+﻿using System;
+using Weave.Services.Redis.Ambient;
 using Weave.Updater.Azure;
 using Weave.Updater.PubSub;
 using Weave.User.Service.Redis;
@@ -8,20 +8,13 @@ namespace Weave.Updater.Monitor.Azure.WorkerRole.Startup
 {
     internal class StartupTask
     {
-        const string REDIS_CONN =
-"weaveuser.redis.cache.windows.net,ssl=false,password=dM/xNBd9hB9Wgn3tPhkTsiwzIw4gImnS+eAN9sYuouY=";
-
-        readonly TimeSpan pollingInterval = TimeSpan.FromMilliseconds(30);
-
-        //readonly ConnectionMultiplexer cm;
         readonly FeedBlobUpdater blobUpdater;
         IDisposable handle;
 
         public StartupTask()
         {
-            var redisClientConfig = ConfigurationOptions.Parse(REDIS_CONN);
-            var redisCacheCM = ConnectionMultiplexer.Connect(redisClientConfig);
-            var db = redisCacheCM.GetDatabase(DatabaseNumbers.FEED_UPDATER);
+            var standardConnection = Settings.StandardConnection;
+            var db = standardConnection.GetDatabase(DatabaseNumbers.FEED_UPDATER);
             var redisCache = new Weave.User.Service.Redis.FeedUpdaterCache(db);
             var blobClient = new Weave.Updater.Azure.FeedUpdaterCache(
                 "weaveuser2",
@@ -32,11 +25,9 @@ namespace Weave.Updater.Monitor.Azure.WorkerRole.Startup
 
         public async void OnStart()
         {
-            var redisClientConfig = ConfigurationOptions.Parse(REDIS_CONN);
-            var pubSubCM = ConnectionMultiplexer.Connect(redisClientConfig);
-
-            var bridge = new FeedUpdateObserver(pubSubCM);
-            handle = await bridge.Observe(OnFeedUpdateNotice);
+            var pubsubConnection = Settings.PubsubConnection;
+            var observer = new FeedUpdateObserver(pubsubConnection);
+            handle = await observer.Observe(OnFeedUpdateNotice);
         }
 
         async void OnFeedUpdateNotice(FeedUpdateNotice notice)

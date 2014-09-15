@@ -6,6 +6,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
+using Weave.Services.Redis.Ambient;
 using Weave.Updater.BusinessObjects;
 using Weave.Updater.PubSub;
 using Weave.User.Service.Redis;
@@ -16,17 +17,19 @@ namespace Weave.RssAggregator.WorkerRole
     {
         readonly FeedCache feedCache;
         readonly NLevelIconUrlCache iconCache;
-        readonly ConnectionMultiplexer connection;
+        readonly ConnectionMultiplexer standardConnection;
         readonly dynamic Metadata;
         readonly TimingHelper sw;
+        readonly FeedUpdatePublisher publisher;
 
-        public WeaveControllerHelper(FeedCache cache, NLevelIconUrlCache iconCache, ConnectionMultiplexer connection)
+        public WeaveControllerHelper(FeedCache cache, NLevelIconUrlCache iconCache)
         {
             this.feedCache = cache;
             this.iconCache = iconCache;
-            this.connection = connection;
+            this.standardConnection = Settings.StandardConnection;
             this.Metadata = new ExpandoObject();
             this.sw = new TimingHelper();
+            this.publisher = new FeedUpdatePublisher(Settings.PubsubConnection);
         }
 
         public async Task<Result> GetResultFromRequest(string url)
@@ -79,7 +82,7 @@ namespace Weave.RssAggregator.WorkerRole
 
         async Task<bool> CheckIfFeedUpdaterExists(RedisKey key)
         {
-            var db = connection.GetDatabase(DatabaseNumbers.FEED_UPDATER);
+            var db = standardConnection.GetDatabase(DatabaseNumbers.FEED_UPDATER);
 
             sw.Start();
             var isFeedIndexLoaded = await db.KeyExistsAsync(key, flags: CommandFlags.None);
@@ -94,7 +97,7 @@ namespace Weave.RssAggregator.WorkerRole
 
             // create the feed we will use for doing the actual refresh here
             var feed = new Feed(url);
-            var db = connection.GetDatabase(DatabaseNumbers.FEED_UPDATER);
+            var db = standardConnection.GetDatabase(DatabaseNumbers.FEED_UPDATER);
             var cache = new FeedUpdaterCache(db);
 
             // the feed's prior data may or may not exist in Redis
@@ -136,8 +139,7 @@ namespace Weave.RssAggregator.WorkerRole
             }
 
             // Send a notice via Redis PubSub that the feed updater was updated
-            var bridge = new FeedUpdateEventBridge(connection);
-            var received = await bridge.Publish(new FeedUpdateNotice { FeedUri = url, RefreshTime = feed.LastRefreshedOn });
+            var received = await publisher.Publish(new FeedUpdateNotice { FeedUri = url, RefreshTime = feed.LastRefreshedOn });
             Metadata.NumberThatReceivedPubSubNotification = received;
         }
 
@@ -152,7 +154,7 @@ namespace Weave.RssAggregator.WorkerRole
 
         async Task<RedisWriteMultiResult<bool>> SaveNewEntries(IEnumerable<ExpandedEntry> entries)
         {
-            var db = connection.GetDatabase(DatabaseNumbers.CANONICAL_NEWSITEMS);
+            var db = standardConnection.GetDatabase(DatabaseNumbers.CANONICAL_NEWSITEMS);
             var transaction = db.CreateTransaction();
             var cache = new ExpandedEntryCache(transaction);
 

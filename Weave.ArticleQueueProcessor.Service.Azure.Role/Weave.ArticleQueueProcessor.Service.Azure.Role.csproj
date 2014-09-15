@@ -128,6 +128,10 @@
       <Project>{a9731e9c-72fc-4171-ba99-9a6f97cd379f}</Project>
       <Name>Weave.Parsing</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Weave.Services.Redis.Ambient\Weave.Services.Redis.Ambient.csproj">
+      <Project>{62ed133d-e68c-43df-a950-0ce650d02d98}</Project>
+      <Name>Weave.Services.Redis.Ambient</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Weave.Updater.BusinessObjects\Weave.Updater.BusinessObjects.csproj">
       <Project>{95fa1246-08c5-4ce4-a78d-e0f3a254aa7c}</Project>
       <Name>Weave.Updater.BusinessObjects</Name>

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using System.Web.Http.Dependencies;
+using Weave.Services.Redis.Ambient;
 using Weave.User.BusinessObjects.Mutable.Cache;
 
 namespace Weave.User.Service.Role.Startup
@@ -23,17 +24,13 @@ namespace Weave.User.Service.Role.Startup
             kernel = new NinjectKernel();
             resolver = new NinjectResolver(kernel);
 
-            var redisClientConfig = ConfigurationOptions.Parse(
-"weaveuser.redis.cache.windows.net,ssl=false,password=dM/xNBd9hB9Wgn3tPhkTsiwzIw4gImnS+eAN9sYuouY=");
-
-            var clientConnection = await ConnectionMultiplexer.ConnectAsync(redisClientConfig);
-            var pubsubConnection = await ConnectionMultiplexer.ConnectAsync(redisClientConfig);
-            pubsubConnection.PreserveAsyncOrder = false;
+            var clientConnection = Settings.StandardConnection;
+            var pubsubConnection = Settings.PubsubConnection;
 
             kernel.Bind<ConnectionMultiplexer>().ToConstant(clientConnection).InSingletonScope();
 
             var userIndexCache = await UserIndexCacheFactory.CreateCacheAsync(
-                clientConnection: kernel.Get<ConnectionMultiplexer>(), 
+                clientConnection: clientConnection, 
                 pubsubConnection: pubsubConnection);
 
             kernel.Bind<UserIndexCache>().ToConstant(userIndexCache).InSingletonScope();

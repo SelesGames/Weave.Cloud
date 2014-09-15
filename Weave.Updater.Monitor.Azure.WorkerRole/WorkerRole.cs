@@ -1,13 +1,8 @@
+using Microsoft.WindowsAzure.ServiceRuntime;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Threading;
-using Microsoft.WindowsAzure;
-using Microsoft.WindowsAzure.Diagnostics;
-using Microsoft.WindowsAzure.ServiceRuntime;
-using Microsoft.WindowsAzure.Storage;
 using Weave.Updater.Monitor.Azure.WorkerRole.Startup;
 
 namespace Weave.Updater.Monitor.Azure.WorkerRole

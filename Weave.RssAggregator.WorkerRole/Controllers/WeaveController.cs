@@ -1,6 +1,5 @@
 ﻿using RssAggregator.IconCaching;
 using SelesGames.WebApi;
-using StackExchange.Redis;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -14,13 +13,11 @@ namespace Weave.RssAggregator.WorkerRole.Controllers
     {
         readonly FeedCache feedCache;
         readonly NLevelIconUrlCache iconCache;
-        readonly ConnectionMultiplexer connection;
 
-        public WeaveController(FeedCache feedCache, NLevelIconUrlCache iconCache, ConnectionMultiplexer connection)
+        public WeaveController(FeedCache feedCache, NLevelIconUrlCache iconCache)
         {
             this.feedCache = feedCache;
             this.iconCache = iconCache;
-            this.connection = connection;
         }
 
         [HttpGet]
@@ -44,7 +41,7 @@ namespace Weave.RssAggregator.WorkerRole.Controllers
 
         Task<Result> GetResultFromRequest(string uri)
         {
-            var helper = new WeaveControllerHelper(feedCache, iconCache, connection);
+            var helper = new WeaveControllerHelper(feedCache, iconCache);
             return helper.GetResultFromRequest(uri);
         }
     }

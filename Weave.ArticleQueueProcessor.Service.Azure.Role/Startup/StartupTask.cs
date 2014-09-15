@@ -1,5 +1,4 @@
 ﻿using Common.Compression;
-using StackExchange.Redis;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,9 +11,6 @@ namespace Weave.ArticleQueueProcessor.Service.Azure.Role.Startup
 {
     internal class StartupTask
     {
-        const string REDIS_CONN =
-"weaveuser.redis.cache.windows.net,ssl=false,password=dM/xNBd9hB9Wgn3tPhkTsiwzIw4gImnS+eAN9sYuouY=";
-
         readonly TimeSpan pollingInterval = TimeSpan.FromMilliseconds(30);
         readonly Article.Service.Client.ServiceClient articleService;
         readonly ArticleStateChangeMessageQueue messageQueue;
@@ -23,15 +19,13 @@ namespace Weave.ArticleQueueProcessor.Service.Azure.Role.Startup
         public StartupTask()
         {
             Settings.CompressionHandlers = new Common.Compression.Windows.CompressionHandlerCollection();
-            articleService = new Article.Service.Client.ServiceClient();
+            this.articleService = new Article.Service.Client.ServiceClient();
 
-            var redisClientConfig = ConfigurationOptions.Parse(REDIS_CONN);
-            var connectionMultiplexer = ConnectionMultiplexer.Connect(redisClientConfig);
-
-            messageQueue = new ArticleStateChangeMessageQueue(connectionMultiplexer);
+            var connectionMultiplexer = Weave.Services.Redis.Ambient.Settings.StandardConnection;
+            this.messageQueue = new ArticleStateChangeMessageQueue(connectionMultiplexer);
 
             var db = connectionMultiplexer.GetDatabase(DatabaseNumbers.CANONICAL_NEWSITEMS);
-            newsCache = new ExpandedEntryCache(db);
+            this.newsCache = new ExpandedEntryCache(db);
         }
 
         public void OnStart()

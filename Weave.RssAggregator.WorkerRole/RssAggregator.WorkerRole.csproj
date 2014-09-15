@@ -139,14 +139,6 @@
       <Project>{c83ab657-c7a6-4cf8-b4f5-d4e01bf2e562}</Project>
       <Name>Common.Caching</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Common.Data.Linq\Common.Data.Linq.csproj">
-      <Project>{f741017d-fd83-4f35-98a4-57af366c1b53}</Project>
-      <Name>Common.Data.Linq</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Common.Data\Common.Data.csproj">
-      <Project>{cad7cc28-36e9-4b39-ba90-df99815904eb}</Project>
-      <Name>Common.Data</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Ninject.WebApi\Ninject.WebApi.csproj">
       <Project>{be97f564-16f5-4d09-9218-cc65e89df2ac}</Project>
       <Name>Ninject.WebApi</Name>
@@ -178,6 +170,10 @@
     <ProjectReference Include="..\Weave.RssAggregator.Core\RssAggregator.DTOs.csproj">
       <Project>{2f1a280d-ee75-4dc1-a36c-f8e5488e3260}</Project>
       <Name>RssAggregator.DTOs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Weave.Services.Redis.Ambient\Weave.Services.Redis.Ambient.csproj">
+      <Project>{62ed133d-e68c-43df-a950-0ce650d02d98}</Project>
+      <Name>Weave.Services.Redis.Ambient</Name>
     </ProjectReference>
     <ProjectReference Include="..\Weave.Updater.Azure.Blob\Weave.Updater.csproj">
       <Project>{be2ab7b9-7783-460a-845d-e06b712c0497}</Project>

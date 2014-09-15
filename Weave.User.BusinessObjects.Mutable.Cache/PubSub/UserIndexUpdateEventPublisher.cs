@@ -1,4 +1,5 @@
 ﻿using StackExchange.Redis;
+using Weave.User.Service.Redis.PubSub;
 
 namespace Weave.User.BusinessObjects.Mutable.Cache.PubSub
 {
