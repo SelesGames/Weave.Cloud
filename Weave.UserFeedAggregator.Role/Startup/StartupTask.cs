@@ -23,7 +23,19 @@ namespace Weave.User.Service.Role.Startup
             kernel = new NinjectKernel();
             resolver = new NinjectResolver(kernel);
 
-            var userIndexCache = await UserIndexCacheFactory.CreateCacheAsync(kernel.Get<ConnectionMultiplexer>());
+            var redisClientConfig = ConfigurationOptions.Parse(
+"weaveuser.redis.cache.windows.net,ssl=false,password=dM/xNBd9hB9Wgn3tPhkTsiwzIw4gImnS+eAN9sYuouY=");
+
+            var clientConnection = await ConnectionMultiplexer.ConnectAsync(redisClientConfig);
+            var pubsubConnection = await ConnectionMultiplexer.ConnectAsync(redisClientConfig);
+            pubsubConnection.PreserveAsyncOrder = false;
+
+            kernel.Bind<ConnectionMultiplexer>().ToConstant(clientConnection).InSingletonScope();
+
+            var userIndexCache = await UserIndexCacheFactory.CreateCacheAsync(
+                clientConnection: kernel.Get<ConnectionMultiplexer>(), 
+                pubsubConnection: pubsubConnection);
+
             kernel.Bind<UserIndexCache>().ToConstant(userIndexCache).InSingletonScope();
             
             CreateAndStartServer();
@@ -35,8 +47,7 @@ namespace Weave.User.Service.Role.Startup
             var ipString = string.Format("http://{0}", ip.ToString());
             Trace.WriteLine(string.Format("**** IP ADDRESS: {0}", ipString));
 
-            //var host = new SelfHost();
-            var config = SelfHost.Config;// host.Config;
+            var config = SelfHost.Config;
             config.DependencyResolver = resolver;
 
             //config.MessageHandlers.Add(new InjectAcceptEncodingHandler("gzip"));

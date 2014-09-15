@@ -1,10 +1,10 @@
 ﻿using HtmlAgilityPack;
+using SelesGames.Common;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Weave.Mobilizer.Client;
-using Weave.Mobilizer.DTOs;
 using Weave.Updater.BusinessObjects;
 
 namespace Weave.RssAggregator.HighFrequency.Processors.BestImageSelector
@@ -21,7 +21,7 @@ namespace Weave.RssAggregator.HighFrequency.Processors.BestImageSelector
         {
             this.entry = entry;
             mobilizerClient = new MobilizerServiceClient(token);
-            imageInfoClient = new ImageInfoClient();
+            imageInfoClient = new ImageInfoClient { Timeout = System.TimeSpan.FromSeconds(10) };
             imagePool = new List<ImageInfo>();
         }
 
@@ -62,29 +62,33 @@ namespace Weave.RssAggregator.HighFrequency.Processors.BestImageSelector
         /// <summary>
         /// Call the image info weave service to get image info (height, width, etc.)
         /// </summary>
-        async Task<ImageInfo> GetFromUrl(string url)
+        async Task<Option<ImageInfo>> GetFromUrl(string url)
         {
-            ImageInfo imageInfo = null;
+            //ImageInfo imageInfo = null;
 
             try
             {
-                imageInfo = await imageInfoClient.Get(url);
+                var imageInfo = await imageInfoClient.Get(url);
                 imageInfo.ImageUrl = url;
+                return Option.Some(imageInfo);
             }
             catch (InvalidImageException)
             {
-                return null;
+                //return null;
+                return Option.None<ImageInfo>();
             }
             catch
             {
-                imageInfo = new ImageInfo { ImageUrl = url };
+                var imageInfo = new ImageInfo { ImageUrl = url };
+                return Option.Some(imageInfo);
             }
-            return imageInfo;
+            //return imageInfo;
         }
 
-        static IEnumerable<ImageInfo> Filter(IEnumerable<ImageInfo> images)
+        static IEnumerable<ImageInfo> Filter(IEnumerable<Option<ImageInfo>> images)
         {
-            return images.OfType<ImageInfo>().Where(o =>
+            //return images.OfType<ImageInfo>().Where(o =>
+            return images.SelectMany(o => o).Where(o =>
             {
                 var imageArea = o.ImageHeight * o.ImageWidth;
                 return imageArea == 0 || imageArea > 10000;

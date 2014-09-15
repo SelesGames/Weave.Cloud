@@ -35,7 +35,7 @@ namespace Weave.Updater.Monitor.Azure.WorkerRole.Startup
             var redisClientConfig = ConfigurationOptions.Parse(REDIS_CONN);
             var pubSubCM = ConnectionMultiplexer.Connect(redisClientConfig);
 
-            var bridge = new FeedUpdateEventBridge(pubSubCM);
+            var bridge = new FeedUpdateObserver(pubSubCM);
             handle = await bridge.Observe(OnFeedUpdateNotice);
         }
 

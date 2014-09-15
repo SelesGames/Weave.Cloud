@@ -15,8 +15,11 @@ namespace Weave.User.Service.UpdateProcessor
         public static async Task<IDisposable> StartAsync()
         {
             var redisClientConfig = ConfigurationOptions.Parse(REDIS_CONN);
-            var connectionMultiplexer = ConnectionMultiplexer.Connect(redisClientConfig);
-            var redisCache = new UserIndexCache(connectionMultiplexer);
+            var clientConnection = await ConnectionMultiplexer.ConnectAsync(redisClientConfig);
+            var pubsubConnection = await ConnectionMultiplexer.ConnectAsync(redisClientConfig);
+            pubsubConnection.PreserveAsyncOrder = false;
+            
+            var redisCache = new UserIndexCache(clientConnection);
             var blobClient = new UserIndexBlobClient(
                 storageAccountName: "weaveuser2",
                 storageKey: "JO5kSIOr+r3NdM45gfzb1szHe/hPx6f+MS7YOWogr8VDqSikiIP//OMUbOxCCMTFTcJgldVhl+Y0zP9WpvQV5g==",
@@ -24,8 +27,8 @@ namespace Weave.User.Service.UpdateProcessor
 
             var innerHelper = new InnerHelper(redisCache, blobClient);
 
-            var bridge = new UserIndexUpdateEventBridge(connectionMultiplexer);
-            var disposeHandle = await bridge.Observe(innerHelper.OnUserUpdated);
+            var updateNoticeObserver = new UserIndexUpdateEventObserver(pubsubConnection);
+            var disposeHandle = await updateNoticeObserver.Observe(innerHelper.OnUserUpdated);
             return disposeHandle;
         }
 

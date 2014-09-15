@@ -10,12 +10,6 @@ namespace Weave.User.Service.Role.Startup
         {
             base.AddComponents();
 
-            var redisClientConfig = ConfigurationOptions.Parse(
-"weaveuser.redis.cache.windows.net,ssl=false,password=dM/xNBd9hB9Wgn3tPhkTsiwzIw4gImnS+eAN9sYuouY=");
-
-            var connectionMultiplexer = ConnectionMultiplexer.Connect(redisClientConfig);
-
-            Bind<ConnectionMultiplexer>().ToConstant(connectionMultiplexer).InSingletonScope();
             Bind<IArticleQueueService>().To<ArticleQueueService>();
         }
     }

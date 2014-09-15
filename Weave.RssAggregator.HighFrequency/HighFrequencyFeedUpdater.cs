@@ -42,7 +42,7 @@ namespace Weave.RssAggregator.HighFrequency
 
             var highFrequencyFeeds = libraryFeeds
                 .Distinct()
-                //.Where(o => o.FeedUri == "http://www.wired.com/gadgetlab/feed")
+                //.Where(o => o.FeedUri == "http://bleacherreport.com/articles;feed")
                 .Select(CreateHighFrequencyFeed)
                 .OfType<HighFrequencyFeed>()
                 .ToList();

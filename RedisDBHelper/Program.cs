@@ -37,15 +37,19 @@ namespace RedisDBHelper
             if (command.Equals("testfeed", StringComparison.OrdinalIgnoreCase))
             {
                 var url = parameters.Skip(1).First();
-                var temp = new RedisFeedUpdaterTest(url);
-                return temp.Execute();
+                return new RedisFeedUpdaterTest(url).Execute();
             }
 
             else if (command.Equals("testentry", StringComparison.OrdinalIgnoreCase))
             {
                 var id = parameters.Skip(1).First();
-                var temp = new RedisExpandedEntryTest(id);
-                return temp.Execute();
+                return new RedisExpandedEntryTest(id).Execute();
+            }
+
+            else if (command.Equals("remfeed"))
+            {
+                var url = parameters.Skip(1).First();
+                return new RedisDeleteFeedUpdater(url).Execute();
             }
 
             else return Task.FromResult("unrecognized command");

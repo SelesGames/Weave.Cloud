@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Weave.User.BusinessObjects.Mutable.Cache.PubSub
+namespace Weave.User.Service.Redis.PubSub
 {
     public class RedisPubSubPublisher<T>
     {

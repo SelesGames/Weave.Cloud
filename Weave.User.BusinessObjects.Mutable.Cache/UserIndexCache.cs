@@ -15,12 +15,14 @@ namespace Weave.User.BusinessObjects.Mutable.Cache
         readonly Weave.User.Service.Redis.UserIndexCache redisCache;
         readonly UserIndexBlobClient blobClient;
         readonly UserInfoBlobClient legacyDataStoreBlobClient;
-        readonly UserIndexUpdateEventBridge notificationBridge;
+        readonly UserIndexUpdateEventPublisher updateNoticePublisher;
+        readonly UserIndexUpdateEventObserver updateNoticeObserver;
 
         IDisposable disposeHandle;
 
         internal UserIndexCache(
-            ConnectionMultiplexer cm, 
+            ConnectionMultiplexer clientConnection,
+            ConnectionMultiplexer pubsubConnection,
             string azureUserIndexStorageAccountName,
             string azureUserIndexStorageAccountKey,
             string azureUserIndexContainerName,
@@ -30,7 +32,7 @@ namespace Weave.User.BusinessObjects.Mutable.Cache
         {
             this.cacheId = Guid.NewGuid();
             this.localCache = new LRUCache<Guid, UserIndex>(2000);
-            this.redisCache = new Service.Redis.UserIndexCache(cm);
+            this.redisCache = new Service.Redis.UserIndexCache(clientConnection);
 
             this.blobClient = new UserIndexBlobClient(
                 storageAccountName: azureUserIndexStorageAccountName,
@@ -42,7 +44,8 @@ namespace Weave.User.BusinessObjects.Mutable.Cache
                 accountKey: legacyUserDataStoreAccountKey,
                 containerName: legacyUserDataStoreContainerName);
 
-            this.notificationBridge = new UserIndexUpdateEventBridge(cm);
+            this.updateNoticePublisher = new UserIndexUpdateEventPublisher(pubsubConnection);
+            this.updateNoticeObserver = new UserIndexUpdateEventObserver(pubsubConnection);
         }
 
         public async Task<UserIndex> Get(Guid id)
@@ -107,7 +110,7 @@ namespace Weave.User.BusinessObjects.Mutable.Cache
         // Begin listening to update notifications
         internal async Task InitializeAsync()
         {
-            disposeHandle = await notificationBridge.Observe(OnUpdateNoticeReceived);
+            disposeHandle = await updateNoticeObserver.Observe(OnUpdateNoticeReceived);
         }
 
 
@@ -123,7 +126,7 @@ namespace Weave.User.BusinessObjects.Mutable.Cache
             {
                 // send notice here
                 var notice = new UserIndexUpdateNotice { UserId = user.Id, CacheId = cacheId };
-                var numReceived = await notificationBridge.Publish(notice);
+                var numReceived = await updateNoticePublisher.Publish(notice);
             }
         }
 
