@@ -1,6 +1,5 @@
 ﻿using Microsoft.WindowsAzure.ServiceRuntime;
 using Ninject;
-using StackExchange.Redis;
 using System;
 using Weave.RssAggregator.HighFrequency;
 
@@ -42,9 +41,7 @@ namespace RssAggregator.Role.HighFrequency
             temp = RoleEnvironment.GetConfigurationSettingValue("FeedLibraryUrl");
             feedLibraryUrl = temp;
 
-            hfUpdater = new HighFrequencyFeedUpdater(
-                feedLibraryUrl, 
-                kernel.Get<ConnectionMultiplexer>());
+            hfUpdater = new HighFrequencyFeedUpdater(feedLibraryUrl);
 
             kernel.Bind<HighFrequencyFeedUpdater>().ToMethod(_ => hfUpdater).InSingletonScope();
         }

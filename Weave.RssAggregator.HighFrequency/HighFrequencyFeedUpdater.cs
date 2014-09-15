@@ -1,9 +1,9 @@
-﻿using StackExchange.Redis;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Weave.RssAggregator.LibraryClient;
+using Weave.Services.Redis.Ambient;
 using Weave.User.Service.Redis;
 
 namespace Weave.RssAggregator.HighFrequency
@@ -11,7 +11,6 @@ namespace Weave.RssAggregator.HighFrequency
     public class HighFrequencyFeedUpdater
     {
         readonly string feedLibraryUrl;
-        readonly ConnectionMultiplexer connection;
         readonly ProcessQueue<HighFrequencyFeed> processQueue;
 
 
@@ -19,12 +18,9 @@ namespace Weave.RssAggregator.HighFrequency
 
         #region Constructor
 
-        public HighFrequencyFeedUpdater(
-            string feedLibraryUrl, 
-            ConnectionMultiplexer connection)
+        public HighFrequencyFeedUpdater(string feedLibraryUrl)
         {
             this.feedLibraryUrl = feedLibraryUrl;
-            this.connection = connection;
             this.processQueue = new ProcessQueue<HighFrequencyFeed>();
         }
 
@@ -97,6 +93,7 @@ namespace Weave.RssAggregator.HighFrequency
         {
             var feedUrls = feeds.Select(o => o.Uri);
 
+            var connection = Settings.StandardConnection;
             var db = connection.GetDatabase(DatabaseNumbers.FEED_UPDATER);
             var cache = new FeedUpdaterCache(db);
             var cacheMultiGet = await cache.Get(feedUrls);
@@ -140,7 +137,7 @@ namespace Weave.RssAggregator.HighFrequency
 
         IAsyncProcessor<HighFrequencyFeedUpdate> CreateProcessor()
         {
-            return new StandardProcessorChain(connection);
+            return new StandardProcessorChain();
         }
 
         #endregion

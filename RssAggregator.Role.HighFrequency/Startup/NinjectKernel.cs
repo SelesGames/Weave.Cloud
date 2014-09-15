@@ -1,5 +1,4 @@
 ﻿using Ninject;
-using StackExchange.Redis;
 
 namespace RssAggregator.Role.HighFrequency
 {
@@ -10,9 +9,6 @@ namespace RssAggregator.Role.HighFrequency
 //        const string SQL_CONN =
 //"Server=tcp:ykgd4qav8g.database.windows.net,1433;Database=weave;User ID=aemami99@ykgd4qav8g;Password=rzarecta99!;Trusted_Connection=False;Encrypt=True;Connection Timeout=30;";
 
-        const string REDIS_CONN =
-"weaveuser.redis.cache.windows.net,ssl=false,password=dM/xNBd9hB9Wgn3tPhkTsiwzIw4gImnS+eAN9sYuouY=";
-
         #endregion
 
 
@@ -21,12 +17,6 @@ namespace RssAggregator.Role.HighFrequency
         protected override void AddComponents()
         {
             base.AddComponents();
-
-            //Bind<SqlStoredProcClient>().ToMethod(_ => new SqlStoredProcClient(SQL_CONN));
-
-            var redisClientConfig = ConfigurationOptions.Parse(REDIS_CONN);
-            var connectionMultiplexer = ConnectionMultiplexer.Connect(redisClientConfig);
-            Bind<ConnectionMultiplexer>().ToConstant(connectionMultiplexer).InSingletonScope();
         }
     }
 }

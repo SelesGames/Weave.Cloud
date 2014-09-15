@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Weave.Services.Redis.Ambient;
 using Weave.Updater.BusinessObjects;
 using Weave.User.Service.Redis;
 
@@ -14,9 +15,9 @@ namespace Weave.RssAggregator.HighFrequency
     {
         readonly ConnectionMultiplexer connection;
 
-        public FeedUpdaterProcessor(ConnectionMultiplexer connection)
+        public FeedUpdaterProcessor()
         {
-            this.connection = connection;
+            this.connection = Settings.StandardConnection;
         }
 
         public async Task ProcessAsync(HighFrequencyFeedUpdate update)

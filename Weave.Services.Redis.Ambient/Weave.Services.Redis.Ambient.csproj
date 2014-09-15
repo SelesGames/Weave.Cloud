@@ -36,12 +36,7 @@
       <HintPath>..\packages\StackExchange.Redis.1.0.331\lib\net45\StackExchange.Redis.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="RedisSettings.cs" />

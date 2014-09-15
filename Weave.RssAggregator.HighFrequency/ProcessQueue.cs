@@ -35,41 +35,41 @@ namespace Weave.RssAggregator.HighFrequency
                 processList.Remove(o);
                 queue.Enqueue(o);
             }
-        }
-
-
-
-
-        #region helper class - better version of a Queue<T>
-
-        class PerfQueue<T>
-        {
-            LinkedList<T> inner = new LinkedList<T>();
-
-            public T Dequeue()
-            {
-                var first = inner.First;
-
-                if (first != null)
-                {
-                    inner.RemoveFirst();
-                    return first.Value;
-                }
-
-                return default(T);
-            }
-
-            public void Enqueue(T val)
-            {
-                inner.AddLast(val);
-            }
-
-            public override string ToString()
-            {
-                return inner.ToString();
-            }
-        }
-
-        #endregion
+        }     
     }
+
+
+
+
+    #region helper class - better version of a Queue<T>
+
+    class PerfQueue<T>
+    {
+        LinkedList<T> inner = new LinkedList<T>();
+
+        public T Dequeue()
+        {
+            var first = inner.First;
+
+            if (first != null)
+            {
+                inner.RemoveFirst();
+                return first.Value;
+            }
+
+            return default(T);
+        }
+
+        public void Enqueue(T val)
+        {
+            inner.AddLast(val);
+        }
+
+        public override string ToString()
+        {
+            return inner.ToString();
+        }
+    }
+
+    #endregion
 }
