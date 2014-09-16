@@ -5,11 +5,10 @@ namespace Weave.User.BusinessObjects.Mutable.Cache
 {
     public static class UserIndexCacheFactory
     {
-        public static async Task<UserIndexCache> CreateCacheAsync(ConnectionMultiplexer clientConnection, ConnectionMultiplexer pubsubConnection)
+        public static async Task<UserIndexCache> CreateCacheAsync(ConnectionMultiplexer clientConnection)
         {
             var cache = new UserIndexCache(
                 clientConnection: clientConnection,
-                pubsubConnection: pubsubConnection,
 
                 azureUserIndexStorageAccountName: "weaveuser2",
                 azureUserIndexStorageAccountKey: "JO5kSIOr+r3NdM45gfzb1szHe/hPx6f+MS7YOWogr8VDqSikiIP//OMUbOxCCMTFTcJgldVhl+Y0zP9WpvQV5g==",

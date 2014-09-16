@@ -171,10 +171,6 @@
       <Project>{2f1a280d-ee75-4dc1-a36c-f8e5488e3260}</Project>
       <Name>RssAggregator.DTOs</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Weave.Services.Redis.Ambient\Weave.Services.Redis.Ambient.csproj">
-      <Project>{62ed133d-e68c-43df-a950-0ce650d02d98}</Project>
-      <Name>Weave.Services.Redis.Ambient</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Weave.Updater.Azure.Blob\Weave.Updater.csproj">
       <Project>{be2ab7b9-7783-460a-845d-e06b712c0497}</Project>
       <Name>Weave.Updater</Name>

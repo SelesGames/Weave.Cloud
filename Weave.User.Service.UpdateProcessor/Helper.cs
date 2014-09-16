@@ -23,7 +23,7 @@ namespace Weave.User.Service.UpdateProcessor
 
             var innerHelper = new InnerHelper(redisCache, blobClient);
 
-            var updateNoticeObserver = new UserIndexUpdateEventObserver(pubsubConnection);
+            var updateNoticeObserver = new UserIndexUpdateEventObserver();
             var disposeHandle = await updateNoticeObserver.Observe(innerHelper.OnUserUpdated);
             return disposeHandle;
         }

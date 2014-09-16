@@ -22,7 +22,6 @@ namespace Weave.User.BusinessObjects.Mutable.Cache
 
         internal UserIndexCache(
             ConnectionMultiplexer clientConnection,
-            ConnectionMultiplexer pubsubConnection,
             string azureUserIndexStorageAccountName,
             string azureUserIndexStorageAccountKey,
             string azureUserIndexContainerName,
@@ -44,8 +43,8 @@ namespace Weave.User.BusinessObjects.Mutable.Cache
                 accountKey: legacyUserDataStoreAccountKey,
                 containerName: legacyUserDataStoreContainerName);
 
-            this.updateNoticePublisher = new UserIndexUpdateEventPublisher(pubsubConnection);
-            this.updateNoticeObserver = new UserIndexUpdateEventObserver(pubsubConnection);
+            this.updateNoticePublisher = new UserIndexUpdateEventPublisher();
+            this.updateNoticeObserver = new UserIndexUpdateEventObserver();
         }
 
         public async Task<UserIndex> Get(Guid id)

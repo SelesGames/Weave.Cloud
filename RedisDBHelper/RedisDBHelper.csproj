@@ -79,10 +79,6 @@
       <Project>{a9731e9c-72fc-4171-ba99-9a6f97cd379f}</Project>
       <Name>Weave.Parsing</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Weave.Services.Redis.Ambient\Weave.Services.Redis.Ambient.csproj">
-      <Project>{62ed133d-e68c-43df-a950-0ce650d02d98}</Project>
-      <Name>Weave.Services.Redis.Ambient</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Weave.Updater.Azure.Blob\Weave.Updater.csproj">
       <Project>{be2ab7b9-7783-460a-845d-e06b712c0497}</Project>
       <Name>Weave.Updater</Name>

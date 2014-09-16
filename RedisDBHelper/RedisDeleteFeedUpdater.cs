@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Weave.Services.Redis.Ambient;
 using Weave.User.Service.Redis;
 
 namespace RedisDBHelper
@@ -18,8 +19,7 @@ namespace RedisDBHelper
 
         public async Task<string> Execute()
         {
-            var config = new RedisConfig();
-            var db = config.CreateConnection().GetDatabase(DatabaseNumbers.FEED_UPDATER);
+            var db = Settings.StandardConnection.GetDatabase(DatabaseNumbers.FEED_UPDATER);
             var wasDeleted = await db.KeyDeleteAsync(url);
             return wasDeleted ? "deleted" : "no key found";
         }

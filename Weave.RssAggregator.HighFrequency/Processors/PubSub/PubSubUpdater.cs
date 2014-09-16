@@ -16,7 +16,7 @@ namespace Weave.RssAggregator.HighFrequency
 
         public async Task ProcessAsync(HighFrequencyFeedUpdate update)
         {
-            var publisher = new FeedUpdatePublisher(cm);
+            var publisher = new FeedUpdatePublisher();
             var received = await publisher.Publish(update.InnerUpdate);
 
             DebugEx.WriteLine("** REDIS PUBSUB ** processed: {0}, {1} clients received", update.Feed.Uri, received);

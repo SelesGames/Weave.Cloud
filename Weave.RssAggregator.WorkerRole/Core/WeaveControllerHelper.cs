@@ -29,7 +29,7 @@ namespace Weave.RssAggregator.WorkerRole
             this.standardConnection = Settings.StandardConnection;
             this.Metadata = new ExpandoObject();
             this.sw = new TimingHelper();
-            this.publisher = new FeedUpdatePublisher(Settings.PubsubConnection);
+            this.publisher = new FeedUpdatePublisher();
         }
 
         public async Task<Result> GetResultFromRequest(string url)

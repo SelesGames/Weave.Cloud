@@ -26,7 +26,7 @@ namespace Weave.Updater.Monitor.Azure.WorkerRole.Startup
         public async void OnStart()
         {
             var pubsubConnection = Settings.PubsubConnection;
-            var observer = new FeedUpdateObserver(pubsubConnection);
+            var observer = new FeedUpdateObserver();
             handle = await observer.Observe(OnFeedUpdateNotice);
         }
 
