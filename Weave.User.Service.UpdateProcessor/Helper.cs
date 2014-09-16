@@ -1,5 +1,4 @@
-﻿using StackExchange.Redis;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using Weave.Services.Redis.Ambient;
 using Weave.User.BusinessObjects.Mutable.Cache.Azure;
