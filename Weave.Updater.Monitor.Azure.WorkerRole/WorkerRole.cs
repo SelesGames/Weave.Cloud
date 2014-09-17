@@ -3,7 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Net;
 using System.Threading;
-using Weave.Updater.PubSub;
+using Weave.FeedUpdater.PubSub;
 
 namespace Weave.FeedUpdater.Monitor.Role
 {

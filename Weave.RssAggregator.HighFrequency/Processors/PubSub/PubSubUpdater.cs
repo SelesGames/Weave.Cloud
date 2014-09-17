@@ -1,7 +1,7 @@
 ﻿using StackExchange.Redis;
 using System.Threading.Tasks;
 using Weave.Services.Redis.Ambient;
-using Weave.Updater.PubSub;
+using Weave.FeedUpdater.PubSub;
 
 namespace Weave.FeedUpdater.HighFrequency
 {

@@ -1,8 +1,8 @@
 ﻿
-namespace Weave.Updater.PubSub
+namespace Weave.FeedUpdater.PubSub
 {
     static class Constants
     {
-        public const string FEED_UPDATE_CHANNEL = "feedUpdate";
+        public const string FEED_UPDATE_CHANNEL = "feed:update";
     }
 }

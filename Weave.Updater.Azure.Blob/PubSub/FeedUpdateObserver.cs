@@ -1,7 +1,7 @@
 ﻿using Weave.Services.Redis.Ambient;
 using Weave.User.Service.Redis.PubSub;
 
-namespace Weave.Updater.PubSub
+namespace Weave.FeedUpdater.PubSub
 {
     public class FeedUpdateObserver : RedisPubSubObserver<FeedUpdateNotice>
     {

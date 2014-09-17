@@ -1,9 +1,8 @@
 ﻿using StackExchange.Redis;
-using System;
 using System.IO;
 using System.Text;
 
-namespace Weave.Updater.PubSub
+namespace Weave.FeedUpdater.PubSub
 {
     static class FeedUpdateNoticeExtensions
     {

@@ -7,8 +7,8 @@
     <ProjectGuid>{BE2AB7B9-7783-460A-845D-E06B712C0497}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Weave.Updater</RootNamespace>
-    <AssemblyName>Weave.Updater</AssemblyName>
+    <RootNamespace>Weave.FeedUpdater</RootNamespace>
+    <AssemblyName>Weave.FeedUpdater</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>

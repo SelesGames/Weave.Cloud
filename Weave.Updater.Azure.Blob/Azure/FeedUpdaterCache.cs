@@ -3,7 +3,7 @@ using Common.Azure.SmartBlobClient;
 using System.Threading.Tasks;
 using Weave.Updater.BusinessObjects;
 
-namespace Weave.Updater.Azure
+namespace Weave.FeedUpdater.Azure
 {
     public class FeedUpdaterCache
     {

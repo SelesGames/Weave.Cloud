@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Weave.Services.Redis.Ambient;
-using Weave.Updater.Azure;
+using Weave.FeedUpdater.Azure;
 using Weave.User.Service.Redis;
 
 namespace RedisDBHelper

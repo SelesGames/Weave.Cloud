@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
 using Weave.Services.Redis.Ambient;
 using Weave.Updater.BusinessObjects;
-using Weave.Updater.PubSub;
+using Weave.FeedUpdater.PubSub;
 using Weave.User.Service.Redis;
 
 namespace Weave.FeedUpdater.Service
