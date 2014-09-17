@@ -66,7 +66,7 @@ namespace Weave.User.Service.Role.Controllers
         {
             var client = new SmartHttpClient(CompressionSettings.None) { Timeout = TimeSpan.FromMinutes(2) };
             return client.PostAsync<List<string>, List<Result>>(
-                "http://weave-v2-news.cloudapp.net/api/weave", urls.ToList());
+                "http://weave-v2-feedupdater.cloudapp.net/api/weave", urls.ToList());
         }
 
         Task<RedisCacheMultiResult<Feed>> GetUpdaterFeeds(IEnumerable<string> urls)
