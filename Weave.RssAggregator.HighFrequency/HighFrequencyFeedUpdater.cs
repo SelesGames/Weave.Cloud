@@ -29,7 +29,7 @@ namespace Weave.FeedUpdater.HighFrequency
 
 
 
-        public async Task InitializeAsync()
+        public async void Initialize()
         {
             var feedClient = new FeedLibraryClient(feedLibraryUrl);
 
@@ -50,7 +50,7 @@ namespace Weave.FeedUpdater.HighFrequency
                 processQueue.Enqueue(hff);
             }
 
-            StartFeedRefreshTimer();
+            await StartFeedRefreshTimer();
         }
 
         
@@ -140,7 +140,7 @@ namespace Weave.FeedUpdater.HighFrequency
 
 
 
-        async void StartFeedRefreshTimer()
+        async Task StartFeedRefreshTimer()
         {
             await RefreshAllFeedsImmediately();
             await Task.Delay(TimeSpan.FromSeconds(30));

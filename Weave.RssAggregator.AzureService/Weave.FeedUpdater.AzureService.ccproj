@@ -43,6 +43,7 @@
   <ItemGroup>
     <Folder Include="Profiles" />
     <Folder Include="Weave.FeedUpdater.HighFrequency.RoleContent" />
+    <Folder Include="Weave.FeedUpdater.Monitor.RoleContent\" />
   </ItemGroup>
   <ItemGroup>
     <PublishProfile Include="Profiles\Weave Feed Updater.azurePubxml" />
@@ -62,9 +63,20 @@
       <RoleType>Worker</RoleType>
       <RoleName>Weave.FeedUpdater.Service.Role</RoleName>
     </ProjectReference>
+    <ProjectReference Include="..\Weave.Updater.Monitor.Azure.WorkerRole\Weave.FeedUpdater.Monitor.Role.csproj">
+      <Name>Weave.FeedUpdater.Monitor.Role</Name>
+      <Project>{85ee7ef8-65bf-4eba-92d8-db2c6cc97604}</Project>
+      <Private>True</Private>
+      <RoleType>Worker</RoleType>
+      <RoleName>Weave.FeedUpdater.Monitor.Role</RoleName>
+      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Weave.FeedUpdater.HighFrequency.RoleContent\diagnostics.wadcfg">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Weave.FeedUpdater.Monitor.RoleContent\diagnostics.wadcfg">
       <SubType>Content</SubType>
     </Content>
   </ItemGroup>

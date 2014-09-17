@@ -35,7 +35,7 @@ namespace Weave.FeedUpdater.HighFrequency.Role
                 var feedLibraryUrl = RoleEnvironment.GetConfigurationSettingValue("FeedLibraryUrl");
                 var hfUpdater = new HighFrequencyFeedUpdater(feedLibraryUrl);
 
-                hfUpdater.InitializeAsync().Wait();
+                hfUpdater.Initialize();
             }
             catch (Exception e)
             {

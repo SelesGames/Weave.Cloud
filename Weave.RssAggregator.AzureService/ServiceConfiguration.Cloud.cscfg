@@ -4,7 +4,7 @@
   <Role name="Weave.FeedUpdater.Service.Role">
     <Instances count="1" />
     <ConfigurationSettings>
-      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=weave;AccountKey=uudFrra70qkI64bifaI2Rrm37CZ1HkzaBQrLMyw6U/hmzNDZehXeo9DdUv7BCpuZY4N2q/CNpNwYxW2fa218xA==" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=weaveuser2;AccountKey=JO5kSIOr+r3NdM45gfzb1szHe/hPx6f+MS7YOWogr8VDqSikiIP//OMUbOxCCMTFTcJgldVhl+Y0zP9WpvQV5g==" />
       <Setting name="LowFrequencyHttpWebRequestTimeout" value="2000" />
       <Setting name="FeedLibraryUrl" value="http://weave.blob.core.windows.net/settings/masterfeeds.xml" />
     </ConfigurationSettings>
@@ -20,7 +20,7 @@
   <Role name="Weave.FeedUpdater.HighFrequency.Role">
     <Instances count="1" />
     <ConfigurationSettings>
-      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=weaveuser2;AccountKey=JO5kSIOr+r3NdM45gfzb1szHe/hPx6f+MS7YOWogr8VDqSikiIP//OMUbOxCCMTFTcJgldVhl+Y0zP9WpvQV5g==" />
       <Setting name="FeedLibraryUrl" value="http://weave.blob.core.windows.net/settings/masterfeeds.xml" />
     </ConfigurationSettings>
   </Role>

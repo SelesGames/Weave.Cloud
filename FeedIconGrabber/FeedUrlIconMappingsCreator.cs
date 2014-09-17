@@ -1,12 +1,11 @@
-﻿using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
-using Weave.RssAggregator.LibraryClient;
-using Common.JsonDotNet;
+﻿using Common.JsonDotNet;
 using Newtonsoft.Json;
-using System.Text;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Weave.RssAggregator.LibraryClient;
 
 namespace FeedIconGrabber
 {

@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Weave.RssAggregator.LibraryClient;
 
-
 namespace FeedIconGrabber
 {
     public class XmlIconUrlSetter
