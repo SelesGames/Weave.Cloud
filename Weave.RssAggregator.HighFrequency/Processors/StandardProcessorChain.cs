@@ -4,8 +4,6 @@ namespace Weave.FeedUpdater.HighFrequency
 {
     public class StandardProcessorChain : SequentialProcessorCollection<HighFrequencyFeedUpdate>
     {
-        IAsyncProcessor<HighFrequencyFeedUpdate> processorCollection;
-
         public StandardProcessorChain()
             : base(CreateCollection())
         { }

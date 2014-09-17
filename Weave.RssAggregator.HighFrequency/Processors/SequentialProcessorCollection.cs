@@ -23,8 +23,11 @@ namespace Weave.FeedUpdater.HighFrequency
                 }
                 catch (Exception e)
                 {
+                    DebugEx.WriteLine("\r\n\r\n**** PROCESSOR {0} ERROR ****", processor.GetType().Name);
                     DebugEx.WriteLine(e);
-                    throw e;
+
+                    //DebugEx.WriteLine(e);
+                    //throw e;
                 }
             }
         }

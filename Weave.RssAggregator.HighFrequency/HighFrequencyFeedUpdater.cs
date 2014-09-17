@@ -38,6 +38,7 @@ namespace Weave.FeedUpdater.HighFrequency
 
             var highFrequencyFeeds = libraryFeeds
                 .Distinct()
+                .Where(o => !string.IsNullOrEmpty(o.FeedUri))
                 //.Where(o => o.FeedUri == "http://bleacherreport.com/articles;feed")
                 .Select(CreateHighFrequencyFeed)
                 .OfType<HighFrequencyFeed>()

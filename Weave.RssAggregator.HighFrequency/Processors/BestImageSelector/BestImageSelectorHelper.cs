@@ -1,5 +1,6 @@
 ﻿using HtmlAgilityPack;
 using SelesGames.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,8 @@ namespace Weave.FeedUpdater.HighFrequency.Processors.BestImageSelector
     class BestImageSelectorHelper
     {
         readonly static string token = "hxyuiplkx78!ksdfl";
+        readonly static TimeSpan IMAGE_ACQ_TIMEOUT = TimeSpan.FromSeconds(7);
+
         readonly MobilizerServiceClient mobilizerClient;
         readonly ExpandedEntry entry;
         readonly ImageInfoClient imageInfoClient;
@@ -20,9 +23,9 @@ namespace Weave.FeedUpdater.HighFrequency.Processors.BestImageSelector
         public BestImageSelectorHelper(ExpandedEntry entry)
         {
             this.entry = entry;
-            mobilizerClient = new MobilizerServiceClient(token);
-            imageInfoClient = new ImageInfoClient { Timeout = System.TimeSpan.FromSeconds(10) };
-            imagePool = new List<ImageInfo>();
+            this.mobilizerClient = new MobilizerServiceClient(token);
+            this.imageInfoClient = new ImageInfoClient { Timeout = IMAGE_ACQ_TIMEOUT };
+            this.imagePool = new List<ImageInfo>();
         }
 
         public async Task Process()
@@ -64,8 +67,6 @@ namespace Weave.FeedUpdater.HighFrequency.Processors.BestImageSelector
         /// </summary>
         async Task<Option<ImageInfo>> GetFromUrl(string url)
         {
-            //ImageInfo imageInfo = null;
-
             try
             {
                 var imageInfo = await imageInfoClient.Get(url);
@@ -74,7 +75,6 @@ namespace Weave.FeedUpdater.HighFrequency.Processors.BestImageSelector
             }
             catch (InvalidImageException)
             {
-                //return null;
                 return Option.None<ImageInfo>();
             }
             catch
@@ -82,7 +82,6 @@ namespace Weave.FeedUpdater.HighFrequency.Processors.BestImageSelector
                 var imageInfo = new ImageInfo { ImageUrl = url };
                 return Option.Some(imageInfo);
             }
-            //return imageInfo;
         }
 
         static IEnumerable<ImageInfo> Filter(IEnumerable<Option<ImageInfo>> images)
@@ -127,6 +126,7 @@ namespace Weave.FeedUpdater.HighFrequency.Processors.BestImageSelector
         static bool IsImageNode(HtmlNode node)
         {
             return
+                node != null && 
                 node.Name == "img" &&
                 node.Attributes["src"] != null;// &&
                 //mobilizerDetectedFirstImage.Equals(node.Attributes["src"].Value, StringComparison.OrdinalIgnoreCase);

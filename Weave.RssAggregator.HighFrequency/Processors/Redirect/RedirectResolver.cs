@@ -16,11 +16,7 @@ namespace Weave.FeedUpdater.HighFrequency
             if (o == null || EnumerableEx.IsNullOrEmpty(o.Entries))
                 return;
 
-            try
-            {
-                await Task.WhenAll(o.Entries.Select(ProcessEntry));
-            }
-            catch { }
+            await Task.WhenAll(o.Entries.Select(ProcessEntry));
         }
 
         static async Task ProcessEntry(ExpandedEntry e)
@@ -32,12 +28,12 @@ namespace Weave.FeedUpdater.HighFrequency
                 if (link != finalLinkLocation)
                 {
                     e.Link = finalLinkLocation;
+                    DebugEx.WriteLine("FIXED REDIRECT\r\n: original: {0}\r\n new {1}\r\n\r\n", link, e.Link);
                 }
-                DebugEx.WriteLine("Fixed redirect for {0}", e.Link);
             }
             catch(Exception ex)
             {
-                DebugEx.WriteLine(ex);
+                DebugEx.WriteLine("Failed to find redirect for {0}\r\n{1}\r\n", e.Link, ex.ToString());
             }
         }
     }

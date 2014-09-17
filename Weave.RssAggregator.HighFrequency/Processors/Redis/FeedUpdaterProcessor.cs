@@ -1,5 +1,4 @@
 ﻿using StackExchange.Redis;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Weave.Services.Redis.Ambient;
@@ -22,28 +21,20 @@ namespace Weave.FeedUpdater.HighFrequency
 
         public async Task ProcessAsync(HighFrequencyFeedUpdate update)
         {
-            try
+            var saveFeedResult = await SaveFeed(update.InnerFeed);
+            DebugEx.WriteLine("** FEED UPDATER PROCESSOR ** Took {0} ms to serialize, {1} ms to save updater feed for {2}", saveFeedResult.Timings.SerializationTime.TotalMilliseconds, saveFeedResult.Timings.ServiceTime.TotalMilliseconds, update.Feed.Name);
+
+            foreach (var previous in update.Feed.PreviousUris)
             {
-                var saveFeedResult = await SaveFeed(update.InnerFeed);
-                DebugEx.WriteLine("** FEED UPDATER PROCESSOR ** Took {0} ms to serialize, {1} ms to save updater feed for {2}", saveFeedResult.Timings.SerializationTime.TotalMilliseconds, saveFeedResult.Timings.ServiceTime.TotalMilliseconds, update.Feed.Name);
-
-                foreach (var previous in update.Feed.PreviousUris)
-                {
-                    var feed = new Feed(previous);
-                    update.InnerFeed.CopyStateTo(feed);
-                    await SaveFeed(feed);
-                }
-
-                if (update.Entries.Any())
-                {
-                    var saveNewsResults = await SaveNewNews(update);
-                    DebugEx.WriteLine("** FEED UPDATER PROCESSOR ** Took {0} ms to serialize, {1} ms to save news for {2}", saveNewsResults.Timings.SerializationTime.TotalMilliseconds, saveNewsResults.Timings.ServiceTime.TotalMilliseconds, update.Feed.Name);
-                }
+                var feed = new Feed(previous);
+                update.InnerFeed.CopyStateTo(feed);
+                await SaveFeed(feed);
             }
-            catch (Exception ex)
+
+            if (update.Entries.Any())
             {
-                DebugEx.WriteLine("\r\n\r\n**** FeedUpdaterProcessor ERROR ****");
-                DebugEx.WriteLine(ex);
+                var saveNewsResults = await SaveNewNews(update);
+                DebugEx.WriteLine("** FEED UPDATER PROCESSOR ** Took {0} ms to serialize, {1} ms to save news for {2}", saveNewsResults.Timings.SerializationTime.TotalMilliseconds, saveNewsResults.Timings.ServiceTime.TotalMilliseconds, update.Feed.Name);
             }
         }
 

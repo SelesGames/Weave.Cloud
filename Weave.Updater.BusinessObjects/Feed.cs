@@ -46,7 +46,8 @@ namespace Weave.Updater.BusinessObjects
 
         public Feed(string feedUri)
         {
-            if (string.IsNullOrWhiteSpace(feedUri)) throw new ArgumentException("feedUri in HighFrequencyFeed ctor");
+            if (string.IsNullOrWhiteSpace(feedUri)) 
+                throw new ArgumentException("feedUri in HighFrequencyFeed ctor");
 
             Uri = feedUri;
             RefreshTimeout = TimeSpan.FromMinutes(1);
