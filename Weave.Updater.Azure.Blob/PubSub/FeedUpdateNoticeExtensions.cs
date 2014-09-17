@@ -1,6 +1,7 @@
 ﻿using StackExchange.Redis;
 using System;
 using System.IO;
+using System.Text;
 
 namespace Weave.Updater.PubSub
 {
@@ -15,7 +16,7 @@ namespace Weave.Updater.PubSub
 
                 var bytes = (byte[])o;
                 using (var ms = new MemoryStream(bytes))
-                using (var br = new BinaryReader(ms))
+                using (var br = new BinaryReader(ms, Encoding.UTF8))
                 {
                     var notice = new FeedUpdateNotice();
 
@@ -35,7 +36,7 @@ namespace Weave.Updater.PubSub
             byte[] bytes;
 
             using (var ms = new MemoryStream())
-            using (var bw = new BinaryWriter(ms))
+            using (var bw = new BinaryWriter(ms, Encoding.UTF8))
             {
                 bw.Write(update.RefreshTime);
                 bw.Write(update.FeedUri);

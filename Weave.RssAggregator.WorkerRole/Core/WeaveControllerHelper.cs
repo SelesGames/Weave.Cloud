@@ -23,8 +23,12 @@ namespace Weave.FeedUpdater.Service
         readonly dynamic Metadata;
         readonly TimingHelper sw;
         readonly FeedUpdatePublisher publisher;
+        readonly Func<string, Task<bool>> checkKeyFunc;
 
-        public WeaveControllerHelper(FeedCache cache, NLevelIconUrlCache iconCache)
+        public WeaveControllerHelper(
+            FeedCache cache, 
+            NLevelIconUrlCache iconCache, 
+            Func<string, Task<bool>> checkKeyFunc)
         {
             this.feedCache = cache;
             this.iconCache = iconCache;
@@ -32,6 +36,7 @@ namespace Weave.FeedUpdater.Service
             this.Metadata = new ExpandoObject();
             this.sw = new TimingHelper();
             this.publisher = new FeedUpdatePublisher();
+            this.checkKeyFunc = checkKeyFunc;
         }
 
         public async Task<Result> GetResultFromRequest(string url)
@@ -84,10 +89,11 @@ namespace Weave.FeedUpdater.Service
 
         async Task<bool> CheckIfFeedUpdaterExists(RedisKey key)
         {
-            var db = standardConnection.GetDatabase(DatabaseNumbers.FEED_UPDATER);
+            //var db = standardConnection.GetDatabase(DatabaseNumbers.FEED_UPDATER);
 
             sw.Start();
-            var isFeedIndexLoaded = await db.KeyExistsAsync(key, flags: CommandFlags.None);
+            var isFeedIndexLoaded = await checkKeyFunc(key);
+            //var isFeedIndexLoaded = await db.KeyExistsAsync(key, flags: CommandFlags.None);
             Metadata.IsFeedUpdaterPresent = sw.Record().Dump();
 
             return isFeedIndexLoaded;

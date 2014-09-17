@@ -1,5 +1,6 @@
 ﻿using StackExchange.Redis;
 using System.IO;
+using System.Text;
 
 namespace Weave.User.BusinessObjects.Mutable.Cache.PubSub
 {
@@ -14,7 +15,7 @@ namespace Weave.User.BusinessObjects.Mutable.Cache.PubSub
 
                 var bytes = (byte[])o;
                 using (var ms = new MemoryStream(bytes))
-                using (var br = new BinaryReader(ms))
+                using (var br = new BinaryReader(ms, Encoding.UTF8))
                 {
                     var notice = new UserIndexUpdateNotice();
                     notice.UserId = br.ReadGuid();
@@ -33,7 +34,7 @@ namespace Weave.User.BusinessObjects.Mutable.Cache.PubSub
             byte[] bytes;
 
             using (var ms = new MemoryStream())
-            using (var bw = new BinaryWriter(ms))
+            using (var bw = new BinaryWriter(ms, Encoding.UTF8))
             {
                 bw.Write(update.UserId);
                 bw.Write(update.CacheId);
