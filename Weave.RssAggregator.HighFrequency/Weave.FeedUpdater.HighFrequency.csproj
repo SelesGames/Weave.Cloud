@@ -7,8 +7,8 @@
     <ProjectGuid>{41091951-EAB3-458C-9339-C4A8219FC300}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Weave.RssAggregator.HighFrequency</RootNamespace>
-    <AssemblyName>Weave.RssAggregator.HighFrequency</AssemblyName>
+    <RootNamespace>Weave.FeedUpdater.HighFrequency</RootNamespace>
+    <AssemblyName>Weave.FeedUpdater.HighFrequency</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
@@ -54,6 +54,7 @@
     <Compile Include="Processors\BestImageSelector\BestImageSelectorProcessor.cs" />
     <Compile Include="Processors\BestImageSelector\ImageInfo.cs" />
     <Compile Include="Processors\BestImageSelector\ImageInfoClient.cs" />
+    <Compile Include="Processors\FeedIconUpdating\FeedIconUriUpdater.cs" />
     <Compile Include="Processors\IAsyncProcessor.cs" />
     <Compile Include="Processors\Mobilizer\MobilizerOverride.cs" />
     <Compile Include="Processors\PubSub\PubSubUpdater.cs" />
@@ -76,6 +77,14 @@
     <ProjectReference Include="..\..\Weave.Portable\Weave.Mobilizer.DTOs\Weave.Mobilizer.DTOs.csproj">
       <Project>{0a9019e4-e76f-4fac-a5c7-70f32cf5e2c1}</Project>
       <Name>Weave.Mobilizer.DTOs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common.Caching\Common.Caching.csproj">
+      <Project>{c83ab657-c7a6-4cf8-b4f5-d4e01bf2e562}</Project>
+      <Name>Common.Caching</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RssAggregator.IconCaching\RssAggregator.IconCaching.csproj">
+      <Project>{5eaf7a94-ddee-482b-874b-f5d509264b14}</Project>
+      <Name>RssAggregator.IconCaching</Name>
     </ProjectReference>
     <ProjectReference Include="..\RssAggregator.LibraryClient\RssAggregator.LibraryClient.csproj">
       <Project>{2db284eb-5b81-425a-957e-77eeb704ebdc}</Project>

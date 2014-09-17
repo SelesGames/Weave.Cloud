@@ -11,7 +11,7 @@
     <RootNamespace>Weave.RssAggregator.AzureService</RootNamespace>
     <AssemblyName>Weave.RssAggregator.AzureService</AssemblyName>
     <StartDevelopmentStorage>True</StartDevelopmentStorage>
-    <Name>RssAggregator.AzureService</Name>
+    <Name>Weave.FeedUpdater.AzureService</Name>
     <FullDeploy>true</FullDeploy>
     <UseIISExpressByDefault>False</UseIISExpressByDefault>
     <UseEmulatorExpressByDefault>False</UseEmulatorExpressByDefault>
@@ -42,31 +42,29 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Profiles" />
-    <Folder Include="Weave.Updater.Monitor.Azure.WorkerRoleContent\" />
+    <Folder Include="Weave.FeedUpdater.HighFrequency.RoleContent" />
   </ItemGroup>
   <ItemGroup>
-    <PublishProfile Include="Profiles\Weave v2 News.azurePubxml" />
+    <PublishProfile Include="Profiles\Weave Feed Updater.azurePubxml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Weave.RssAggregator.WorkerRole\RssAggregator.WorkerRole.csproj">
-      <Name>RssAggregator.WorkerRole</Name>
+    <ProjectReference Include="..\RssAggregator.Role.HighFrequency\Weave.FeedUpdater.HighFrequency.Role.csproj">
+      <Name>Weave.FeedUpdater.HighFrequency.Role</Name>
+      <Project>{0ef2d384-11e8-48fe-8ec3-2f67ad896628}</Project>
+      <Private>True</Private>
+      <RoleType>Worker</RoleType>
+      <RoleName>Weave.FeedUpdater.HighFrequency.Role</RoleName>
+    </ProjectReference>
+    <ProjectReference Include="..\Weave.RssAggregator.WorkerRole\Weave.FeedUpdater.Service.Role.csproj">
+      <Name>Weave.FeedUpdater.Service.Role</Name>
       <Project>{31e6c664-4807-43b7-8c91-59cb94717ccf}</Project>
       <Private>True</Private>
       <RoleType>Worker</RoleType>
-      <RoleName>RssAggregator.WorkerRole</RoleName>
-      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
-    </ProjectReference>
-    <ProjectReference Include="..\Weave.Updater.Monitor.Azure.WorkerRole\Weave.Updater.Monitor.Azure.WorkerRole.csproj">
-      <Name>Weave.Updater.Monitor.Azure.WorkerRole</Name>
-      <Project>{85ee7ef8-65bf-4eba-92d8-db2c6cc97604}</Project>
-      <Private>True</Private>
-      <RoleType>Worker</RoleType>
-      <RoleName>Weave.Updater.Monitor.Azure.WorkerRole</RoleName>
-      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
+      <RoleName>Weave.FeedUpdater.Service.Role</RoleName>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Weave.Updater.Monitor.Azure.WorkerRoleContent\diagnostics.wadcfg">
+    <Content Include="Weave.FeedUpdater.HighFrequency.RoleContent\diagnostics.wadcfg">
       <SubType>Content</SubType>
     </Content>
   </ItemGroup>

@@ -53,6 +53,7 @@
     <Compile Include="Extensions\BinaryExtensions.cs" />
     <Compile Include="Extensions\UpdaterFeedExtensions.cs" />
     <Compile Include="PubSub\PubSubHelper.cs" />
+    <Compile Include="PubSub\RedisPersister.cs" />
     <Compile Include="PubSub\RedisPubSubObserver.cs" />
     <Compile Include="PubSub\RedisPubSubPublisher.cs" />
     <Compile Include="RedisPrependKeyCreator.cs" />

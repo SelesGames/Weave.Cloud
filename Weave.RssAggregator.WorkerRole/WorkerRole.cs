@@ -3,9 +3,9 @@ using System;
 using System.Diagnostics;
 using System.Net;
 using System.Threading;
-using Weave.RssAggregator.WorkerRole.Startup;
+using Weave.FeedUpdater.Service.Role.Startup;
 
-namespace Weave.RssAggregator.WorkerRole
+namespace Weave.FeedUpdater.Service.Role
 {
     public class WorkerRole : RoleEntryPoint
     {
@@ -19,7 +19,7 @@ namespace Weave.RssAggregator.WorkerRole
         public override void Run()
         {
             // This is a sample worker implementation. Replace with your logic.
-            Trace.WriteLine("Weave.RssAggregator.WorkerRole entry point called", "Information");
+            Trace.WriteLine("Weave.FeedUpdater.Service.Role entry point called", "Information");
 
             while (true)
             {

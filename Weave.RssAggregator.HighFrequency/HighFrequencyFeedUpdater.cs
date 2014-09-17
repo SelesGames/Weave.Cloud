@@ -6,7 +6,7 @@ using Weave.RssAggregator.LibraryClient;
 using Weave.Services.Redis.Ambient;
 using Weave.User.Service.Redis;
 
-namespace Weave.RssAggregator.HighFrequency
+namespace Weave.FeedUpdater.HighFrequency
 {
     public class HighFrequencyFeedUpdater
     {
@@ -49,11 +49,6 @@ namespace Weave.RssAggregator.HighFrequency
             {
                 processQueue.Enqueue(hff);
             }
-
-#if DEBUG
-            await RefreshAllFeedsImmediately();
-            await Task.Delay(TimeSpan.FromSeconds(30));
-#endif
 
             StartFeedRefreshTimer();
         }
@@ -147,6 +142,9 @@ namespace Weave.RssAggregator.HighFrequency
 
         async void StartFeedRefreshTimer()
         {
+            await RefreshAllFeedsImmediately();
+            await Task.Delay(TimeSpan.FromSeconds(30));
+
             var interval = TimeSpan.FromSeconds(2);
 
             while (true)

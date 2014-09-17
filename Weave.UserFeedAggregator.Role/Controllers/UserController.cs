@@ -768,7 +768,7 @@ namespace Weave.User.Service.Role.Controllers
                 IconUri = o.IconUri,
                 Category = o.Category,
                 ArticleViewingType = (Weave.User.Service.DTOs.ArticleViewingType)o.ArticleViewingType,
-                TeaserImageUrl = o.TeaserImageUrl,
+                TeaserImageUrl = o.TeaserImageUri,
                 //LastRefreshedOn = o.LastRefreshedOn,
                 MostRecentEntrance = o.MostRecentEntrance,
                 PreviousEntrance = o.PreviousEntrance,

@@ -5,7 +5,7 @@ using Weave.Mobilizer.DTOs;
 using Weave.Mobilizer.HtmlParser;
 using Weave.Updater.BusinessObjects;
 
-namespace Weave.RssAggregator.HighFrequency
+namespace Weave.FeedUpdater.HighFrequency
 {
     public class MobilizerOverride : IAsyncProcessor<HighFrequencyFeedUpdate>
     {

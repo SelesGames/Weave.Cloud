@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Weave.RssAggregator.HighFrequency
+namespace Weave.FeedUpdater.HighFrequency
 {
     public class ProcessQueue<T>
     {

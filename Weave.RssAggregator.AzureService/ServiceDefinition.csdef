@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ServiceDefinition name="Weave.RssAggregator.AzureService" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2014-01.2.3">
-  <WorkerRole name="RssAggregator.WorkerRole" vmsize="ExtraSmall">
+  
+  <WorkerRole name="Weave.FeedUpdater.Service.Role" vmsize="ExtraSmall">
     <Runtime executionContext="elevated" />
     <Endpoints>
       <InputEndpoint name="Endpoint1" protocol="http" port="80" />
@@ -13,9 +14,21 @@
       <Setting name="FeedLibraryUrl" />
     </ConfigurationSettings>
   </WorkerRole>
-  <WorkerRole name="Weave.Updater.Monitor.Azure.WorkerRole" vmsize="ExtraSmall">
+  
+  <WorkerRole name="Weave.FeedUpdater.Monitor.Role" vmsize="ExtraSmall">
+    <Runtime executionContext="elevated" />
     <Imports>
       <Import moduleName="Diagnostics" />
     </Imports>
+  </WorkerRole>
+  
+  <WorkerRole name="Weave.FeedUpdater.HighFrequency.Role" vmsize="ExtraSmall">
+    <Runtime executionContext="elevated" />
+    <Imports>
+      <Import moduleName="Diagnostics" />
+    </Imports>
+    <ConfigurationSettings>
+      <Setting name="FeedLibraryUrl" />
+    </ConfigurationSettings>
   </WorkerRole>
 </ServiceDefinition>

@@ -11,10 +11,12 @@ using Weave.Updater.BusinessObjects;
 using Weave.Updater.PubSub;
 using Weave.User.Service.Redis;
 
-namespace Weave.RssAggregator.WorkerRole
+namespace Weave.FeedUpdater.Service
 {
     public class WeaveControllerHelper
     {
+        static TimeSpan FEED_REFRESH_TIMEOUT = TimeSpan.FromSeconds(4);
+
         readonly FeedCache feedCache;
         readonly NLevelIconUrlCache iconCache;
         readonly ConnectionMultiplexer standardConnection;
@@ -96,7 +98,11 @@ namespace Weave.RssAggregator.WorkerRole
             DateTime previousFeedUpdate;
 
             // create the feed we will use for doing the actual refresh here
-            var feed = new Feed(url);
+            var feed = new Feed(url)
+            {
+                RefreshTimeout = FEED_REFRESH_TIMEOUT
+            };
+
             var db = standardConnection.GetDatabase(DatabaseNumbers.FEED_UPDATER);
             var cache = new FeedUpdaterCache(db);
 
@@ -121,6 +127,13 @@ namespace Weave.RssAggregator.WorkerRole
             // maybe switch this to a new ETAG or something?
             if (feed.LastRefreshedOn == previousFeedUpdate)
                 return;
+
+            // if the feed was refreshed, try grabbing the latest icon for it
+            sw.Start();
+            var iconUri = await iconCache.Get(url);
+            if (!string.IsNullOrWhiteSpace(iconUri))
+                feed.IconUri = iconUri;
+            Metadata.IconAcquisitionTime = sw.Record().Dump();
 
             // save the newly refreshed feed state
             var saveUpdaterFeedResult = await cache.Save(feed);

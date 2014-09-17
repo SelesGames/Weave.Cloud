@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Weave.RssAggregator
+namespace Weave.FeedUpdater.Service
 {
     public class CachedFeed
     {

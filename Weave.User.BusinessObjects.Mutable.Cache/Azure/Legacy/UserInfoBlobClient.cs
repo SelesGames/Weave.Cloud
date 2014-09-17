@@ -66,7 +66,7 @@ namespace Weave.User.BusinessObjects.Mutable.Cache.Azure.Legacy
                 Name = o.FeedName,
                 IconUri = o.IconUri,
                 Category = o.Category,
-                TeaserImageUrl = null,
+                TeaserImageUri = null,
                 ArticleViewingType = (ArticleViewingType)o.ArticleViewingType,
                 MostRecentEntrance = o.MostRecentEntrance,
                 PreviousEntrance = o.PreviousEntrance,

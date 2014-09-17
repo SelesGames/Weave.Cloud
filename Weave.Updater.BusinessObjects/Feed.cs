@@ -16,6 +16,7 @@ namespace Weave.Updater.BusinessObjects
     public class Feed
     {
         public static TimeSpan MinimumElapsedRefreshTime { get; set; }
+
         static Feed()
         {
             // prevent the feed from being refreshed more frequently than every X minutes
@@ -27,7 +28,8 @@ namespace Weave.Updater.BusinessObjects
         // Read-only properties
         public string Uri { get; set; }
         public News News { get; private set; }
-        public string TeaserImageUrl { get; set; }
+        public string IconUri { get; set; }
+        public string TeaserImageUri { get; set; }
 
         // record-keeping for feed updates
         public DateTime LastRefreshedOn { get; set; }
@@ -100,7 +102,7 @@ namespace Weave.Updater.BusinessObjects
 
                     if (addedNews.Any())
                     {
-                        TeaserImageUrl = addedNews.GetBestImageUrl() ?? TeaserImageUrl;
+                        TeaserImageUri = addedNews.GetBestImageUrl() ?? TeaserImageUri;
                     }
 
                     DebugEx.WriteLine("REFRESHED {0}", Uri);

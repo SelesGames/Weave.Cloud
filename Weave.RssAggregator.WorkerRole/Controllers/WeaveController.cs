@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
 
-namespace Weave.RssAggregator.WorkerRole.Controllers
+namespace Weave.FeedUpdater.Service.Role.Controllers
 {
     public class WeaveController : ApiController
     {

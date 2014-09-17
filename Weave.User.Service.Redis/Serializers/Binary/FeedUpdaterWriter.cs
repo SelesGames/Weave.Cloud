@@ -29,7 +29,8 @@ namespace Weave.User.Service.Redis.Serializers.Binary
             bw.Write(feed.LastRefreshedOn);
 
             // write string values
-            bw.Write(feed.TeaserImageUrl ?? "");
+            bw.Write(feed.IconUri ?? "");
+            bw.Write(feed.TeaserImageUri ?? "");
             bw.Write(feed.Etag ?? "");
             bw.Write(feed.LastModified ?? "");
             bw.Write(feed.MostRecentNewsItemPubDate ?? "");

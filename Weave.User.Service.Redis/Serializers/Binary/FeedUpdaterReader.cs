@@ -31,7 +31,8 @@ namespace Weave.User.Service.Redis.Serializers.Binary
             feed.LastRefreshedOn = br.ReadDateTime();
 
             // read string values
-            feed.TeaserImageUrl = ReadString();
+            feed.IconUri = ReadString();
+            feed.TeaserImageUri = ReadString();
             feed.Etag = ReadString();
             feed.LastModified = ReadString();
             feed.MostRecentNewsItemPubDate = ReadString();

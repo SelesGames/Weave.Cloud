@@ -5,7 +5,7 @@ using SelesGames.WebApi.SelfHost;
 using System.Diagnostics;
 using System.Web.Http.Dependencies;
 
-namespace Weave.RssAggregator.WorkerRole.Startup
+namespace Weave.FeedUpdater.Service.Role.Startup
 {
     internal class StartupTask
     {

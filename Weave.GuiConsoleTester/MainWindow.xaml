@@ -8,6 +8,6 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <TextBox x:Name="commandLine" Margin="18" Text="hello world" KeyUp="commandLine_KeyUp" FontSize="16" />
-        <TextBox Grid.Row="1" x:Name="outputWindow" Margin="18" Text="Outputhere"/>
+        <TextBox Grid.Row="1" x:Name="outputWindow" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="18" Text="Outputhere"/>
     </Grid>
 </Window>

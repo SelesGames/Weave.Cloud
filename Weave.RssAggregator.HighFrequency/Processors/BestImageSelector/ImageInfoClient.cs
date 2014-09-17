@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Weave.RssAggregator.HighFrequency.Processors.BestImageSelector
+namespace Weave.FeedUpdater.HighFrequency.Processors.BestImageSelector
 {
     class ImageInfoClient
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Weave.Updater.BusinessObjects;
 
-namespace Weave.RssAggregator.HighFrequency
+namespace Weave.FeedUpdater.HighFrequency
 {
     public class HighFrequencyFeedUpdate
     {

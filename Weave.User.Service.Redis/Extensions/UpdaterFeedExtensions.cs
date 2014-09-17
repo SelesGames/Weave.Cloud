@@ -6,7 +6,8 @@ namespace Weave.User.Service.Redis
     {
         public static void CopyStateTo(this Feed source, Feed target)
         {
-            target.TeaserImageUrl = source.TeaserImageUrl;
+            target.IconUri = source.IconUri;
+            target.TeaserImageUri = source.TeaserImageUri;
             target.LastRefreshedOn = source.LastRefreshedOn;
             target.Etag = source.Etag;
             target.LastModified = source.LastModified;

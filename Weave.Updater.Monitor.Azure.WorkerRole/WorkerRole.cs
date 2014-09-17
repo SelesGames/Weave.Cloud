@@ -3,19 +3,12 @@ using System;
 using System.Diagnostics;
 using System.Net;
 using System.Threading;
-using Weave.Updater.Monitor.Azure.WorkerRole.Startup;
+using Weave.Updater.PubSub;
 
-namespace Weave.Updater.Monitor.Azure.WorkerRole
+namespace Weave.FeedUpdater.Monitor.Role
 {
     public class WorkerRole : RoleEntryPoint
     {
-        StartupTask startupTask;
-
-        public WorkerRole()
-        {
-            startupTask = new StartupTask();
-        }
-
         public override void Run()
         {
             // This is a sample worker implementation. Replace with your logic.
@@ -38,7 +31,12 @@ namespace Weave.Updater.Monitor.Azure.WorkerRole
 
             try
             {
-                startupTask.OnStart();
+                var persister = new FeedUpdatePersister(
+                    "weaveuser2",
+                    "JO5kSIOr+r3NdM45gfzb1szHe/hPx6f+MS7YOWogr8VDqSikiIP//OMUbOxCCMTFTcJgldVhl+Y0zP9WpvQV5g==",
+                    "updaterfeeds");
+
+                persister.Initialize().Wait();
             }
             catch (Exception e)
             {

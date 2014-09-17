@@ -1,5 +1,5 @@
 ﻿
-namespace Weave.RssAggregator.HighFrequency.Processors.BestImageSelector
+namespace Weave.FeedUpdater.HighFrequency.Processors.BestImageSelector
 {
     class ImageInfo
     {

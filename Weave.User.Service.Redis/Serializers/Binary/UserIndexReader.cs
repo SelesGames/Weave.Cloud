@@ -55,7 +55,7 @@ namespace Weave.User.Service.Redis.Serializers.Binary
             feedIndex.Name = ReadString();
             feedIndex.IconUri = ReadString();
             feedIndex.Category = ReadString();
-            feedIndex.TeaserImageUrl = ReadString();
+            feedIndex.TeaserImageUri = ReadString();
             object unused = ReadString();
             unused = ReadString();
             unused = ReadString();

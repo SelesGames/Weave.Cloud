@@ -1,29 +1,43 @@
-﻿using Common.Azure.Caching;
-using Common.Caching;
-using Microsoft.ApplicationServer.Caching;
+﻿using Common.Caching;
+using StackExchange.Redis;
 using System;
 using System.Threading.Tasks;
+using Weave.Services.Redis.Ambient;
+using Weave.User.Service.Redis;
 
 namespace RssAggregator.IconCaching
 {
     public class IconUrlAzureDataCache : IExtendedCache<string, Task<string>>
     {
-        readonly string CACHE_NAME = "iconurls";
+        readonly string ICON_PREFIX = "FEEDICON:";
 
-        StandardAsyncDataCache<string> dataCache;
+        readonly ConnectionMultiplexer connection;
 
         public IconUrlAzureDataCache()
         {
-            var config = new DataCacheFactoryConfiguration();
-            var cacheFactory = new DataCacheFactory(config);
-            var cache = cacheFactory.GetCache(CACHE_NAME);
-
-            dataCache = new StandardAsyncDataCache<string>(cache);
+            connection = Settings.StandardConnection;
         }
 
-        public Task<string> GetOrAdd(string key, Func<string, Task<string>> valueFactory)
+        public async Task<string> GetOrAdd(string key, Func<string, Task<string>> valueFactory)
         {
-            return dataCache.GetOrAdd(key, valueFactory);
+            var db = connection.GetDatabase(DatabaseNumbers.FEED_UPDATER);
+            var redisKey = ICON_PREFIX + key;
+            var result = await db.StringGetAsync(redisKey, CommandFlags.None);
+            if (result.HasValue)
+            {
+                return (string)result;
+            }
+            else
+            {
+                var val = await valueFactory(key);
+
+                var saveResult = await db.StringSetAsync(redisKey, val,
+                    expiry: TimeSpan.FromDays(90),
+                    when: When.Always,
+                    flags: CommandFlags.None);
+
+                return val;
+            }
         }
     }
 }

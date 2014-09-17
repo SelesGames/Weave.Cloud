@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Weave.Mobilizer.Client;
 using Weave.Updater.BusinessObjects;
 
-namespace Weave.RssAggregator.HighFrequency.Processors.BestImageSelector
+namespace Weave.FeedUpdater.HighFrequency.Processors.BestImageSelector
 {
     class BestImageSelectorHelper
     {

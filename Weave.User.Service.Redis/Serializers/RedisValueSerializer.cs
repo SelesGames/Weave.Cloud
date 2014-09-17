@@ -22,7 +22,7 @@ namespace Weave.User.Service.Redis.Serializers
             }
             catch(Exception ex)
             {
-                var serializationException = new SerializationException(ex);
+                var serializationException = new SerializationException(ex, val);
                 return new RedisCacheResult<T> { RedisValue = val, SerializationException = serializationException };
             }
         }

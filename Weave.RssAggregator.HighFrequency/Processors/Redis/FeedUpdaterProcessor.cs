@@ -6,7 +6,7 @@ using Weave.Services.Redis.Ambient;
 using Weave.Updater.BusinessObjects;
 using Weave.User.Service.Redis;
 
-namespace Weave.RssAggregator.HighFrequency
+namespace Weave.FeedUpdater.HighFrequency
 {
     /// <summary>
     /// Saves the state of the Updater Feed

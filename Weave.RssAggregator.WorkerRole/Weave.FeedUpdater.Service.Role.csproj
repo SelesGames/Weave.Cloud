@@ -8,8 +8,8 @@
     <ProjectGuid>{31E6C664-4807-43B7-8C91-59CB94717CCF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Weave.RssAggregator.WorkerRole</RootNamespace>
-    <AssemblyName>Weave.RssAggregator.WorkerRole</AssemblyName>
+    <RootNamespace>Weave.FeedUpdater.Service.Role</RootNamespace>
+    <AssemblyName>Weave.FeedUpdater.Service.Role</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <RoleType>Worker</RoleType>
@@ -35,22 +35,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.ApplicationServer.Caching.AzureClientHelper, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\Azure Cache Service\Microsoft.ApplicationServer.Caching.AzureClientHelper.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.ApplicationServer.Caching.AzureCommon, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\Azure Cache Service\Microsoft.ApplicationServer.Caching.AzureCommon.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.ApplicationServer.Caching.Client, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\Azure Cache Service\Microsoft.ApplicationServer.Caching.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.ApplicationServer.Caching.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\Azure Cache Service\Microsoft.ApplicationServer.Caching.Core.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Owin, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.Owin.3.0.0\lib\net45\Microsoft.Owin.dll</HintPath>
@@ -167,9 +151,9 @@
       <Project>{a9731e9c-72fc-4171-ba99-9a6f97cd379f}</Project>
       <Name>Weave.Parsing</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Weave.RssAggregator.Core\RssAggregator.DTOs.csproj">
+    <ProjectReference Include="..\Weave.RssAggregator.Core\Weave.FeedUpdater.Service.Role.DTOs.csproj">
       <Project>{2f1a280d-ee75-4dc1-a36c-f8e5488e3260}</Project>
-      <Name>RssAggregator.DTOs</Name>
+      <Name>Weave.FeedUpdater.Service.Role.DTOs</Name>
     </ProjectReference>
     <ProjectReference Include="..\Weave.Updater.Azure.Blob\Weave.Updater.csproj">
       <Project>{be2ab7b9-7783-460a-845d-e06b712c0497}</Project>

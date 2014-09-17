@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Weave.Services.Redis.Ambient;
 using Weave.Updater.PubSub;
 
-namespace Weave.RssAggregator.HighFrequency
+namespace Weave.FeedUpdater.HighFrequency
 {
     public class PubSubUpdater : IAsyncProcessor<HighFrequencyFeedUpdate>
     {

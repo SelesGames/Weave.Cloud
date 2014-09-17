@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Weave.RssAggregator.HighFrequency.Processors.BestImageSelector;
+using Weave.FeedUpdater.HighFrequency.Processors.BestImageSelector;
 using Weave.Updater.BusinessObjects;
 
-namespace Weave.RssAggregator.HighFrequency
+namespace Weave.FeedUpdater.HighFrequency
 {
     public class BestImageSelectorProcessor : IAsyncProcessor<HighFrequencyFeedUpdate>
     {

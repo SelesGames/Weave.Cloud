@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Weave.Updater.BusinessObjects;
 using Weave.User.Service.Redis;
 
-namespace Weave.RssAggregator.HighFrequency
+namespace Weave.FeedUpdater.HighFrequency
 {
     public class HighFrequencyFeed
     {

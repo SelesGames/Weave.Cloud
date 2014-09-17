@@ -58,7 +58,7 @@ namespace Weave.User.Service.Redis.Serializers.Binary
             bw.Write(feed.Name ?? "");
             bw.Write(feed.IconUri ?? "");
             bw.Write(feed.Category ?? "");
-            bw.Write(feed.TeaserImageUrl ?? "");
+            bw.Write(feed.TeaserImageUri ?? "");
             bw.Write("");
             bw.Write("");
             bw.Write("");

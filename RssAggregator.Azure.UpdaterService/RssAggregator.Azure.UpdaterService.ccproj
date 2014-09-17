@@ -40,20 +40,19 @@
     <ServiceConfiguration Include="ServiceConfiguration.Cloud.cscfg" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RssAggregator.Role.HighFrequency\RssAggregator.Role.HighFrequency.csproj">
-      <Name>RssAggregator.Role.HighFrequency</Name>
-      <Project>{0ef2d384-11e8-48fe-8ec3-2f67ad896628}</Project>
-      <Private>True</Private>
-      <RoleType>Worker</RoleType>
-      <RoleName>RssAggregator.Role.HighFrequency</RoleName>
-      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Profiles" />
   </ItemGroup>
   <ItemGroup>
     <PublishProfile Include="Profiles\weave-updater.azurePubxml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RssAggregator.Role.HighFrequency\Weave.FeedUpdater.HighFrequency.Role.csproj">
+      <Name>Weave.FeedUpdater.HighFrequency.Role</Name>
+      <Project>{0ef2d384-11e8-48fe-8ec3-2f67ad896628}</Project>
+      <Private>True</Private>
+      <RoleType>Worker</RoleType>
+      <RoleName>Weave.FeedUpdater.HighFrequency.Role</RoleName>
+    </ProjectReference>
   </ItemGroup>
   <!-- Import the target files for this project template -->
   <PropertyGroup>

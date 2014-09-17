@@ -66,12 +66,12 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RedisDeleteDatabase.cs" />
     <Compile Include="RedisDeleteFeedUpdater.cs" />
     <Compile Include="RedisExpandedEntryTest.cs" />
     <Compile Include="RedisFeedUpdaterTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

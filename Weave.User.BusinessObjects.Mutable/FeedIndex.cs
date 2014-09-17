@@ -10,7 +10,7 @@ namespace Weave.User.BusinessObjects.Mutable
         public string Name { get; set; }
         public string IconUri { get; set; }
         public string Category { get; set; }
-        public string TeaserImageUrl { get; set; }
+        public string TeaserImageUri { get; set; }
         public ArticleViewingType ArticleViewingType { get; set; }
 
         // "New" determination and bookkeeping

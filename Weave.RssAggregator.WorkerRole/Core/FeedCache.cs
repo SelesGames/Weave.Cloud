@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Weave.RssAggregator.LibraryClient;
 
-namespace Weave.RssAggregator
+namespace Weave.FeedUpdater.Service
 {
     public class FeedCache
     {

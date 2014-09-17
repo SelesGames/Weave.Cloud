@@ -1,10 +1,7 @@
-﻿using Common.Caching;
-using Ninject;
+﻿using Ninject;
 using RssAggregator.IconCaching;
-using StackExchange.Redis;
-using System.Threading.Tasks;
 
-namespace Weave.RssAggregator.WorkerRole.Startup
+namespace Weave.FeedUpdater.Service.Role.Startup
 {
     public class NinjectKernel : StandardKernel
     {
@@ -12,19 +9,7 @@ namespace Weave.RssAggregator.WorkerRole.Startup
         {
             base.AddComponents();
 
-            var hfCache = new HighFrequencyFeedIconUrlCache();
-            hfCache.BeginListeningToResourceChanges();
-
-            var caches = new IExtendedCache<string, Task<string>>[] 
-            {
-                hfCache,
-                new IconUrlAzureDataCache(),
-                new DynamicIconUrlCache()
-            };
-
-            var nLevelCache = new NLevelIconUrlCache(caches);
-
-            Bind<NLevelIconUrlCache>().ToConstant(nLevelCache).InSingletonScope();
+            Bind<NLevelIconUrlCache>().ToConstant(new StandardIconCache()).InSingletonScope();
         }
     }
 }

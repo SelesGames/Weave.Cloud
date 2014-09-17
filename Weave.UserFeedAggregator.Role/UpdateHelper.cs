@@ -107,10 +107,10 @@ namespace Weave.User.Service.Role.Controllers
 
                 var feed = updateResult.Value;
 
-                // you shouldn't need to update the Uri, and the IconUri is currently broken
+                // you shouldn't need to update the Uri
                 //index.Uri = feed.Uri;
-                //index.IconUri = feed.IconUri;
-                index.TeaserImageUrl = feed.TeaserImageUrl;
+                index.IconUri = feed.IconUri;
+                index.TeaserImageUri = feed.TeaserImageUri;
 
                 var newsDiff = index.NewsItemIndices.Diff(feed.News, o => o.Id, o => o.Id);
                 // don't remove a news item just because it was removed from the underlying feed!

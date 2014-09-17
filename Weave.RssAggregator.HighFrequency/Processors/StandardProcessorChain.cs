@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Weave.RssAggregator.HighFrequency
+namespace Weave.FeedUpdater.HighFrequency
 {
     public class StandardProcessorChain : SequentialProcessorCollection<HighFrequencyFeedUpdate>
     {
@@ -15,6 +15,7 @@ namespace Weave.RssAggregator.HighFrequency
             var processors = new IAsyncProcessor<HighFrequencyFeedUpdate>[] 
             {
                 new RedirectResolver(),
+                new FeedIconUriUpdater(),
                 new BestImageSelectorProcessor(),
                 new FeedUpdaterProcessor(),
                 new PubSubUpdater(),

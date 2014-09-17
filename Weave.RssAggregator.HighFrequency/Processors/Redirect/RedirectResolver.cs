@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Weave.Updater.BusinessObjects;
 
-namespace Weave.RssAggregator.HighFrequency
+namespace Weave.FeedUpdater.HighFrequency
 {
     public class RedirectResolver : IAsyncProcessor<HighFrequencyFeedUpdate>
     {

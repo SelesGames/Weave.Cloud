@@ -1,6 +1,5 @@
-﻿using System;
-
-namespace Weave.RssAggregator
+﻿
+namespace System
 {
     static class TimeSpanFormattingExtensions
     {

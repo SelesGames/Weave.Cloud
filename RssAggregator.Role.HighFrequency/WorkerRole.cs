@@ -4,17 +4,10 @@ using System.Diagnostics;
 using System.Net;
 using System.Threading;
 
-namespace RssAggregator.Role.HighFrequency
+namespace Weave.FeedUpdater.HighFrequency.Role
 {
     public class WorkerRole : RoleEntryPoint
     {
-        StartupTask startupTask;
-
-        public WorkerRole()
-        {
-            startupTask = new StartupTask();
-        }
-
         public override void Run()
         {
             // This is a sample worker implementation. Replace with your logic.
@@ -37,7 +30,12 @@ namespace RssAggregator.Role.HighFrequency
 
             try
             {
-                startupTask.OnStart();
+                Common.Compression.Settings.CompressionHandlers = new Common.Compression.Windows.CompressionHandlerCollection();
+
+                var feedLibraryUrl = RoleEnvironment.GetConfigurationSettingValue("FeedLibraryUrl");
+                var hfUpdater = new HighFrequencyFeedUpdater(feedLibraryUrl);
+
+                hfUpdater.InitializeAsync().Wait();
             }
             catch (Exception e)
             {

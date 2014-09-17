@@ -32,32 +32,30 @@ namespace RedisDBHelper
                 return new RedisDeleteFeedUpdater(url).Execute();
             }
 
-            else return Task.FromResult("unrecognized command");
-        }
+            else if (command.Equals("remdb"))
+            {
+                var dbNum = parameters.Skip(1).First();
+                return new RedisDeleteDatabase(dbNum).Execute();
+            }
 
-        static void Stuff()
-        {
-            var connectionMultiplexer = Settings.ElevatedConnection;
-            var server = connectionMultiplexer.GetServer(
-"weaveuser.redis.cache.windows.net", 6379);
-            server.FlushDatabase(0);
+            else return Task.FromResult("unrecognized command");
         }
 
         static async Task TestFeedUpdateToAzure()
         {
-            var feedUrl = "http://www.polygon.com/rss/index.xml";
+            //var feedUrl = "http://www.polygon.com/rss/index.xml";
 
-            var cm = Settings.StandardConnection;
-            var db = cm.GetDatabase(DatabaseNumbers.FEED_UPDATER);
-            var redisCache = new Weave.User.Service.Redis.FeedUpdaterCache(db);
-            var blobClient = new Weave.Updater.Azure.FeedUpdaterCache(
-                "weaveuser2",
-                "JO5kSIOr+r3NdM45gfzb1szHe/hPx6f+MS7YOWogr8VDqSikiIP//OMUbOxCCMTFTcJgldVhl+Y0zP9WpvQV5g==",
-                "updaterfeeds");
-            var blobUpdater = new FeedBlobUpdater(blobClient, redisCache);
+            //var cm = Settings.StandardConnection;
+            //var db = cm.GetDatabase(DatabaseNumbers.FEED_UPDATER);
+            //var redisCache = new Weave.User.Service.Redis.FeedUpdaterCache(db);
+            //var blobClient = new Weave.Updater.Azure.FeedUpdaterCache(
+            //    "weaveuser2",
+            //    "JO5kSIOr+r3NdM45gfzb1szHe/hPx6f+MS7YOWogr8VDqSikiIP//OMUbOxCCMTFTcJgldVhl+Y0zP9WpvQV5g==",
+            //    "updaterfeeds");
+            //var blobUpdater = new FeedBlobUpdater(blobClient, redisCache);
 
-            var wasUpdated = await blobUpdater.Update(feedUrl);
-            Debug.WriteLine(wasUpdated);
+            //var wasUpdated = await blobUpdater.Update(feedUrl);
+            //Debug.WriteLine(wasUpdated);
         }
     }
 }

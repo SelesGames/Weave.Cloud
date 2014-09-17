@@ -150,9 +150,9 @@
       <Project>{a9731e9c-72fc-4171-ba99-9a6f97cd379f}</Project>
       <Name>Weave.Parsing</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Weave.RssAggregator.Core\RssAggregator.DTOs.csproj">
+    <ProjectReference Include="..\Weave.RssAggregator.Core\Weave.FeedUpdater.Service.Role.DTOs.csproj">
       <Project>{2F1A280D-EE75-4DC1-A36C-F8E5488E3260}</Project>
-      <Name>RssAggregator.DTOs</Name>
+      <Name>Weave.FeedUpdater.Service.Role.DTOs</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
