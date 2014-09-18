@@ -1,7 +1,7 @@
 ﻿using Common.Caching;
-using StackExchange.Redis;
 using System;
 using System.Threading.Tasks;
+using Weave.Services.Redis.Ambient;
 using Weave.User.BusinessObjects.Mutable.Cache.Azure;
 using Weave.User.BusinessObjects.Mutable.Cache.Azure.Legacy;
 using Weave.User.BusinessObjects.Mutable.Cache.PubSub;
@@ -21,7 +21,6 @@ namespace Weave.User.BusinessObjects.Mutable.Cache
         IDisposable disposeHandle;
 
         internal UserIndexCache(
-            ConnectionMultiplexer clientConnection,
             string azureUserIndexStorageAccountName,
             string azureUserIndexStorageAccountKey,
             string azureUserIndexContainerName,
@@ -31,7 +30,7 @@ namespace Weave.User.BusinessObjects.Mutable.Cache
         {
             this.cacheId = Guid.NewGuid();
             this.localCache = new LRUCache<Guid, UserIndex>(2000);
-            this.redisCache = new Service.Redis.UserIndexCache(clientConnection);
+            this.redisCache = new Service.Redis.UserIndexCache(Settings.StandardConnection);
 
             this.blobClient = new UserIndexBlobClient(
                 storageAccountName: azureUserIndexStorageAccountName,

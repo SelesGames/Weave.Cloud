@@ -25,12 +25,10 @@ namespace Weave.User.Service.Role.Startup
             resolver = new NinjectResolver(kernel);
 
             var clientConnection = Settings.StandardConnection;
-            var pubsubConnection = Settings.PubsubConnection;
 
             kernel.Bind<ConnectionMultiplexer>().ToConstant(clientConnection).InSingletonScope();
 
-            var userIndexCache = await UserIndexCacheFactory.CreateCacheAsync(
-                clientConnection: clientConnection);
+            var userIndexCache = await UserIndexCacheFactory.CreateCacheAsync();
 
             kernel.Bind<UserIndexCache>().ToConstant(userIndexCache).InSingletonScope();
             

@@ -45,7 +45,7 @@ namespace Weave.User.Service.Redis
             return db.StringSetAsync(
                 key: key, 
                 value: val, 
-                expiry: TimeSpan.FromDays(7), 
+                expiry: TimeSpan.FromDays(3), 
                 when: When.Always, 
                 flags: CommandFlags.HighPriority);
         }
