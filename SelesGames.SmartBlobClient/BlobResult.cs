@@ -13,7 +13,7 @@ namespace Common.Azure.SmartBlobClient
         public StorageException StorageException { get; set; }
         public SerializationException SerializationException { get; set; }
 
-        public bool HasValue { get { return Content.Content != null && Value is T; } }
+        public bool HasValue { get { return Value is T; } }
         public int ByteLength { get { return GetByteLength(Content); } }
 
         public BlobTimings Timings { get; set; }
