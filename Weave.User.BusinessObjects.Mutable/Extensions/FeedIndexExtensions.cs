@@ -31,14 +31,15 @@ namespace Weave.User.BusinessObjects.Mutable
                     .Select(x => new NewsItemIndexFeedIndexTuple(x, o)));
         }
 
-        static NewsItemIndexFeedIndexTupleComparer orderedComparer = new NewsItemIndexFeedIndexTupleComparer();
+        //static NewsItemIndexFeedIndexTupleComparer orderedComparer = new NewsItemIndexFeedIndexTupleComparer();
 
         public static IEnumerable<NewsItemIndexFeedIndexTuple> Ordered(this IEnumerable<NewsItemIndexFeedIndexTuple> indices)
         {
             return indices
                 .OrderByDescending(o => o.IsNew)
-                .ThenByDescending(o => o.NewsItemIndex.UtcPublishDateTime)
-                .Distinct(orderedComparer);
+                .ThenByDescending(o => o.UtcPublishDateTime)
+                //.Distinct(orderedComparer);
+                .Distinct();
         }
 
         public static void MarkEntry(this IEnumerable<FeedIndex> feeds)
@@ -74,30 +75,32 @@ namespace Weave.User.BusinessObjects.Mutable
 
 
 
-        #region Helper class for the Ordered function
+        //#region Helper class for the Ordered function
 
-        class NewsItemIndexFeedIndexTupleComparer : IEqualityComparer<NewsItemIndexFeedIndexTuple>
-        {
-            public bool Equals(NewsItemIndexFeedIndexTuple x, NewsItemIndexFeedIndexTuple y)
-            {
-                if (x == y)
-                    return true;
+        //class NewsItemIndexFeedIndexTupleComparer : IEqualityComparer<NewsItemIndexFeedIndexTuple>
+        //{
+        //    public bool Equals(NewsItemIndexFeedIndexTuple x, NewsItemIndexFeedIndexTuple y)
+        //    {
+        //        return x.NewsItemIndex.Id == y.NewsItemIndex.Id;
 
-                var xNews = x.NewsItemIndex;
-                var yNews = y.NewsItemIndex;
+        //        //if (x == y)
+        //        //    return true;
 
-                return
-                    (xNews.Id == yNews.Id); /*||
-                    (xNews.TitleHash == yNews.TitleHash) ||
-                    (xNews.UrlHash == yNews.UrlHash);*/
-            }
+        //        //var xNews = x.NewsItemIndex;
+        //        //var yNews = y.NewsItemIndex;
 
-            public int GetHashCode(NewsItemIndexFeedIndexTuple obj)
-            {
-                return obj.NewsItemIndex.Id.GetHashCode();
-            }
-        }
+        //        //return
+        //        //    (xNews.Id == yNews.Id); /*||
+        //        //    (xNews.TitleHash == yNews.TitleHash) ||
+        //        //    (xNews.UrlHash == yNews.UrlHash);*/
+        //    }
 
-        #endregion
+        //    public int GetHashCode(NewsItemIndexFeedIndexTuple obj)
+        //    {
+        //        return obj.NewsItemIndex.Id.GetHashCode();
+        //    }
+        //}
+
+        //#endregion
     }
 }

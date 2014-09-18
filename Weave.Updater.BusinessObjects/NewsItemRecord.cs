@@ -15,9 +15,6 @@ namespace Weave.Updater.BusinessObjects
         public DateTime UtcPublishDateTime { get; set; }
         public string Title { get; set; }
         public string Link { get; set; }
-
-        // used to create the NewsItemIndex
-        //public DateTime OriginalDownloadDateTime { get; set; }
         public bool HasImage { get; set; }
 
         public override string ToString()

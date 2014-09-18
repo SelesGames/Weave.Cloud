@@ -27,6 +27,7 @@ namespace Weave.User.Service.Role.Controllers
         readonly Weave.User.BusinessObjects.Mutable.Cache.UserIndexCache userIndexCache;
         readonly UserLockHelper userLockHelper;
         readonly IArticleQueueService articleQueueService;
+        readonly TimingHelper sw = new TimingHelper();
 
         dynamic timings;
 
@@ -132,6 +133,8 @@ namespace Weave.User.Service.Role.Controllers
                 {
                     await PerformRefreshOnFeeds(userIndex.FeedIndices);
                     DeleteOldNews(userIndex.FeedIndices);
+                    foreach (var feedIndex in userIndex.FeedIndices)
+                        feedIndex.NewsItemIndices.Trim();
                 }
 
                 await SaveUserIndex();
@@ -714,22 +717,24 @@ namespace Weave.User.Service.Role.Controllers
             if (requireImage)
                 indices = indices.Where(o => o.NewsItemIndex.HasImage);
 
-            var sw = System.Diagnostics.Stopwatch.StartNew();
+            //sw.Start();
+            //indices = indices.ToList();
+            //timings.CreateAllIndicesList = sw.Record().Dump();
+
+            sw.Start();
             indices = indices
                 .Ordered()
                 .Skip(skip)
                 .Take(take)
                 .ToList();
-            sw.Stop();
-            timings.CreateOrderedNewsIndices = sw.Elapsed.Dump();
+            timings.CreateOrderedNewsIndices = sw.Record().Dump();
             //DebugEx.WriteLine("creating ordered indices took {0} ms", sw.ElapsedMilliseconds);
 
             var outgoingNews = await CreateOutgoingNews(indices);
             
-            sw.Restart();
+            sw.Start();
             var outgoingFeeds = feeds.Select(CreateOutgoingFeed).ToList();
-            sw.Stop();
-            timings.CreateOutgoingFeeds = sw.Elapsed.Dump();
+            timings.CreateOutgoingFeeds = sw.Record().Dump();
             //DebugEx.WriteLine("creating outgoing feeds took {0} ms", sw.ElapsedMilliseconds);
 
             var outgoing = new Outgoing.NewsList
@@ -804,14 +809,15 @@ namespace Weave.User.Service.Role.Controllers
         static Outgoing.NewsItem Merge(NewsItemIndexFeedIndexTuple tuple, ExpandedEntry entry)
         {
             var newsIndex = tuple.NewsItemIndex;
-            var feedIndex = tuple.FeedIndex;
+            //var feedIndex = tuple.FeedIndex;
 
             var bestImage = entry.Images.GetBest();
 
             return new Outgoing.NewsItem
             {
-                FeedId = feedIndex.Id,
-                
+                //FeedId = feedIndex.Id,
+                FeedId = tuple.FeedId,
+
                 Id = entry.Id,
                 Title = entry.Title,
                 Link = entry.Link,

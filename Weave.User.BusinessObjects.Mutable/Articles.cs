@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Weave.User.BusinessObjects.Mutable
 {
-    public class Articles
+    public struct Articles
     {
         UserIndex user;
 

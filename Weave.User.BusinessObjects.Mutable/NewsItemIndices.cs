@@ -7,15 +7,16 @@ namespace Weave.User.BusinessObjects.Mutable
 {
     public class NewsItemIndices : IEnumerable<NewsItemIndex>
     {
+        const int NUMBER_OF_NEWSITEMS_TO_HOLD = 200;
+        static readonly NewsItemIndexComparer indexComparer = new NewsItemIndexComparer();
+
         readonly FeedIndex feedIndex;
-        readonly List<NewsItemIndex> innerList;
-        readonly HashSet<Guid> ids;
+        SortedSet<NewsItemIndex> set;
 
         public NewsItemIndices(FeedIndex feedIndex)
         {
             this.feedIndex = feedIndex;
-            this.innerList = new List<NewsItemIndex>();
-            this.ids = new HashSet<Guid>();
+            this.set = new SortedSet<NewsItemIndex>(indexComparer);
         }
 
         /// <summary>
@@ -28,45 +29,60 @@ namespace Weave.User.BusinessObjects.Mutable
             if (newsItem == null) return false;
             if (newsItem.Id == Guid.Empty) return false;
 
-            if (ids.Add(newsItem.Id))
-            {
-                innerList.Add(newsItem);
+            var addResult = set.Add(newsItem);
+            if (addResult)
                 newsItem.FeedIndex = feedIndex;
-                return true;
-            }
-
-            return false;
+            return addResult;
         }
 
         public bool Remove(NewsItemIndex newsItem)
         {
             if (newsItem == null) return false;
             if (newsItem.Id == Guid.Empty) return false;
-        
-            if (ids.Remove(newsItem.Id))
-            {
-                if (!innerList.Remove(newsItem))
-                {
-                    var matched = innerList.Single(o => o.Id == newsItem.Id);
-                    return innerList.Remove(matched);
-                }
-                else
-                    return true;
-            }
-            return false;
+
+            if (set.Remove(newsItem))
+                return true;
+            else
+                return set.RemoveWhere(o => o.Id == newsItem.Id) > 0;
         }
 
-        public int Count { get { return innerList.Count; } }
+        public int Count { get { return set.Count; } }
 
         public int CountUnread()
         {
-            return innerList.Count(o => !o.HasBeenViewed);
+            return set.Count(o => !o.HasBeenViewed);
         }
 
         public int CountNew()
         {
-            return innerList.Count(feedIndex.IsNewsItemNew);
+            return set.Count(feedIndex.IsNewsItemCountedNew);
         }
+
+        public void Trim()
+        {
+            set = new SortedSet<NewsItemIndex>(set.Take(NUMBER_OF_NEWSITEMS_TO_HOLD), indexComparer);
+        }
+
+
+
+
+        #region helper class for doing the EntryWithPostProcessInfo comparisons
+
+        class NewsItemIndexComparer : IComparer<NewsItemIndex>
+        {
+            public int Compare(NewsItemIndex x, NewsItemIndex y)
+            {
+                if (x.Id == y.Id)
+                    return 0;
+
+                if (x.UtcPublishDateTime <= y.UtcPublishDateTime)
+                    return 1;
+                else
+                    return -1;
+            }
+        }
+
+        #endregion
 
 
 
@@ -75,12 +91,12 @@ namespace Weave.User.BusinessObjects.Mutable
 
         IEnumerator<NewsItemIndex> IEnumerable<NewsItemIndex>.GetEnumerator()
         {
-            return innerList.GetEnumerator();
+            return set.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return innerList.GetEnumerator();
+            return set.GetEnumerator();
         }
 
         #endregion

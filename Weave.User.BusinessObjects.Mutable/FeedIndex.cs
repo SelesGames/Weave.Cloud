@@ -35,5 +35,11 @@ namespace Weave.User.BusinessObjects.Mutable
             return !newsIndex.HasBeenViewed &&
                 newsIndex.OriginalDownloadDateTime > PreviousEntrance;
         }
+
+        internal bool IsNewsItemCountedNew(NewsItemIndex newsIndex)
+        {
+            return !newsIndex.HasBeenViewed &&
+                newsIndex.OriginalDownloadDateTime > MostRecentEntrance;
+        }
     }
 }
