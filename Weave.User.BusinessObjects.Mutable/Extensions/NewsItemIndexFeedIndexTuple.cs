@@ -4,34 +4,25 @@ namespace Weave.User.BusinessObjects.Mutable
 {
     public struct NewsItemIndexFeedIndexTuple : IEquatable<NewsItemIndexFeedIndexTuple>
     {
-        readonly Guid id;
-        readonly Guid feedId;
-        readonly NewsItemIndex newsItemIndex;
-        //readonly FeedIndex feedIndex;
-        readonly bool isNew;
-        readonly DateTime publishDateTime;
-
-        public NewsItemIndex NewsItemIndex { get { return newsItemIndex; } }
-        //public FeedIndex FeedIndex { get { return feedIndex; } }
-        public DateTime UtcPublishDateTime { get { return publishDateTime; } }
-        public bool IsNew { get { return isNew; } }
-        public Guid FeedId { get { return feedId; } }
-
-        //public NewsItemIndex NewsItemIndex { get; private set; }
-        //public FeedIndex FeedIndex { get; private set; }
-        //public bool IsNew { get; private set; }
+        public readonly Guid id;
+        public readonly Guid feedId;
+        public readonly DateTime utcPublishDateTime;
+        public readonly DateTime originalDownloadDateTime;
+        public readonly bool isNew;
+        public readonly bool isFavorite;
+        public readonly bool hasBeenViewed;
+        public readonly bool hasImage;
 
         public NewsItemIndexFeedIndexTuple(NewsItemIndex newsItemIndex, FeedIndex feedIndex)
         {
-            //NewsItemIndex = newsItemIndex;
-            //FeedIndex = feedIndex;
-            //IsNew = feedIndex.IsNewsItemNew(newsItemIndex);
             this.id = newsItemIndex.Id;
-            this.newsItemIndex = newsItemIndex;
-            //this.feedIndex = feedIndex;
             this.feedId = feedIndex.Id;
-            this.publishDateTime = newsItemIndex.UtcPublishDateTime;
+            this.utcPublishDateTime = newsItemIndex.UtcPublishDateTime;
+            this.originalDownloadDateTime = newsItemIndex.OriginalDownloadDateTime;
             this.isNew = feedIndex.IsNewsItemNew(newsItemIndex);
+            this.isFavorite = newsItemIndex.IsFavorite;
+            this.hasBeenViewed = newsItemIndex.HasBeenViewed;
+            this.hasImage = newsItemIndex.HasImage;
         }
 
         public override bool Equals(object obj)

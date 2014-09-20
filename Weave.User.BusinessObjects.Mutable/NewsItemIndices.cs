@@ -48,19 +48,11 @@ namespace Weave.User.BusinessObjects.Mutable
 
         public int Count { get { return set.Count; } }
 
-        public int CountUnread()
-        {
-            return set.Count(o => !o.HasBeenViewed);
-        }
-
-        public int CountNew()
-        {
-            return set.Count(feedIndex.IsNewsItemCountedNew);
-        }
-
         public void Trim()
         {
-            set = new SortedSet<NewsItemIndex>(set.Take(NUMBER_OF_NEWSITEMS_TO_HOLD), indexComparer);
+            var favoritesPastN = set.Skip(NUMBER_OF_NEWSITEMS_TO_HOLD).Where(o => o.IsFavorite);
+            var toKeep = set.Take(NUMBER_OF_NEWSITEMS_TO_HOLD).Union(favoritesPastN);
+            set = new SortedSet<NewsItemIndex>(toKeep, indexComparer);
         }
 
 

@@ -23,6 +23,45 @@ namespace Weave.User.BusinessObjects.Mutable
             return feeds.Where(o => categoryName.Equals(o.Category, StringComparison.OrdinalIgnoreCase));
         }
 
+        public static IEnumerable<NewsItemIndexFeedIndexTuple> AllIndices(this IEnumerable<FeedIndex> feeds, UserIndex userIndex)
+        {
+            var now = DateTime.UtcNow;
+            var markedReadCutoffDate = Subtract(now, userIndex.ArticleDeletionTimeForMarkedRead);
+            var unreadCutoffDate = Subtract(now, userIndex.ArticleDeletionTimeForUnread);
+
+            return feeds
+                .SelectMany(o => o.NewsItemIndices
+                    .Select(x => new NewsItemIndexFeedIndexTuple(x, o)))
+                .Where(o => CanKeep(o, markedReadCutoffDate, unreadCutoffDate));
+        }
+
+        static DateTime Subtract(DateTime val, TimeSpan offset)
+        {
+            try
+            {
+                return val - offset;
+            }
+            catch { }
+            return DateTime.MinValue;
+        }
+
+        static bool CanKeep(NewsItemIndexFeedIndexTuple o, DateTime markedReadCutoffDate, DateTime unreadCutoffDate)
+        {
+            if (o.isNew)
+                return true;
+
+            if (o.isFavorite)
+                return true;
+
+            if (o.hasBeenViewed && o.originalDownloadDateTime > markedReadCutoffDate)
+                return true;
+
+            if (!o.hasBeenViewed && o.originalDownloadDateTime > unreadCutoffDate)
+                return true;
+
+            return false;
+        }
+
         public static IEnumerable<NewsItemIndexFeedIndexTuple> AllIndices(this IEnumerable<FeedIndex> feeds)
         {
             return feeds
@@ -36,8 +75,8 @@ namespace Weave.User.BusinessObjects.Mutable
         public static IEnumerable<NewsItemIndexFeedIndexTuple> Ordered(this IEnumerable<NewsItemIndexFeedIndexTuple> indices)
         {
             return indices
-                .OrderByDescending(o => o.IsNew)
-                .ThenByDescending(o => o.UtcPublishDateTime)
+                .OrderByDescending(o => o.isNew)
+                .ThenByDescending(o => o.utcPublishDateTime)
                 //.Distinct(orderedComparer);
                 .Distinct();
         }

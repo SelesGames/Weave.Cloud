@@ -13,7 +13,7 @@ namespace Weave.User.BusinessObjects.Mutable.Extensions.Helpers
             IEnumerable<NewsItemIndexFeedIndexTuple> pool = feeds
                 .AllIndices()
                 .Ordered()
-                .Where(o => !o.NewsItemIndex.HasBeenViewed)
+                .Where(o => !o.hasBeenViewed)
                 .Take(20)
                 .ToList();
 
@@ -36,8 +36,8 @@ namespace Weave.User.BusinessObjects.Mutable.Extensions.Helpers
 
         static double GetAdjustedForImagePresenceSortRating(NewsItemIndexFeedIndexTuple i)
         {
-            var sortRating = CalculateSortRating(i.NewsItemIndex.UtcPublishDateTime);
-            return i.NewsItemIndex.HasImage ? 100d * sortRating : sortRating;
+            var sortRating = CalculateSortRating(i.utcPublishDateTime);
+            return i.hasImage ? 100d * sortRating : sortRating;
         }
 
         //static double GetAdjustedForRepetitiveFeedSortRating(double i)

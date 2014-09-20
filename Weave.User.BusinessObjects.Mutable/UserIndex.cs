@@ -20,8 +20,8 @@ namespace Weave.User.BusinessObjects.Mutable
         {
             FeedIndices = new FeedIndices();
             Articles = new Articles(this);
-            ArticleDeletionTimeForMarkedRead = "12 hours";
-            ArticleDeletionTimeForUnread = "3 days";
+            ArticleDeletionTimeForMarkedRead = "2 hours";
+            ArticleDeletionTimeForUnread = "never";
         }
     }
 }

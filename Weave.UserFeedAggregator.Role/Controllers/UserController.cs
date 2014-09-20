@@ -132,7 +132,7 @@ namespace Weave.User.Service.Role.Controllers
                 if (refresh)
                 {
                     await PerformRefreshOnFeeds(userIndex.FeedIndices);
-                    DeleteOldNews(userIndex.FeedIndices);
+                    //DeleteOldNews(userIndex.FeedIndices);
                     foreach (var feedIndex in userIndex.FeedIndices)
                         feedIndex.NewsItemIndices.Trim();
                 }
@@ -426,7 +426,7 @@ namespace Weave.User.Service.Role.Controllers
 
         [HttpGet]
         [ActionName("mark_read")]
-        public async Task MarkArticleRead(Guid userId, Guid newsItemId)
+        public async Task<object> MarkArticleRead(Guid userId, Guid newsItemId)
         {
             await Lock(userId, async () =>
             {
@@ -439,11 +439,13 @@ namespace Weave.User.Service.Role.Controllers
                     await SaveUserIndex();
                 }
             });
+
+            return timings;
         }
 
         [HttpGet]
         [ActionName("mark_unread")]
-        public async Task MarkArticleUnread(Guid userId, Guid newsItemId)
+        public async Task<object> MarkArticleUnread(Guid userId, Guid newsItemId)
         {
             await Lock(userId, async () =>
             {
@@ -456,11 +458,13 @@ namespace Weave.User.Service.Role.Controllers
                     await SaveUserIndex();
                 }
             });
+
+            return timings;
         }
 
         [HttpPost]
         [ActionName("soft_read")]
-        public async Task MarkArticlesSoftRead(Guid userId, [FromBody] List<Guid> newsItemIds)
+        public async Task<object> MarkArticlesSoftRead(Guid userId, [FromBody] List<Guid> newsItemIds)
         {
             await Lock(userId, async () =>
             {
@@ -472,11 +476,13 @@ namespace Weave.User.Service.Role.Controllers
                     await SaveUserIndex();
                 }
             });
+
+            return timings;
         }
 
         [HttpGet]
         [ActionName("soft_read")]
-        public async Task MarkArticlesSoftRead(Guid userId, string category)
+        public async Task<object> MarkArticlesSoftRead(Guid userId, string category)
         {
             await Lock(userId, async () =>
             {
@@ -488,11 +494,13 @@ namespace Weave.User.Service.Role.Controllers
                     await SaveUserIndex();
                 }
             });
+
+            return timings;
         }
 
         [HttpGet]
         [ActionName("soft_read")]
-        public async Task MarkArticlesSoftRead(Guid userId, Guid feedId)
+        public async Task<object> MarkArticlesSoftRead(Guid userId, Guid feedId)
         {
             await Lock(userId, async () =>
             {
@@ -504,11 +512,13 @@ namespace Weave.User.Service.Role.Controllers
                     await SaveUserIndex();
                 }
             });
+
+            return timings;
         }
 
         [HttpGet]
         [ActionName("add_favorite")]
-        public async Task AddFavorite(Guid userId, Guid newsItemId)
+        public async Task<object> AddFavorite(Guid userId, Guid newsItemId)
         {
             await Lock(userId, async () =>
             {
@@ -521,11 +531,13 @@ namespace Weave.User.Service.Role.Controllers
                     await SaveUserIndex();
                 }
             });
+
+            return timings;
         }
 
         [HttpGet]
         [ActionName("remove_favorite")]
-        public async Task RemoveFavorite(Guid userId, Guid newsItemId)
+        public async Task<object> RemoveFavorite(Guid userId, Guid newsItemId)
         {
             await Lock(userId, async () =>
             {
@@ -538,6 +550,8 @@ namespace Weave.User.Service.Role.Controllers
                     await SaveUserIndex();
                 }
             });
+
+            return timings;
         }
 
         #endregion
@@ -662,17 +676,17 @@ namespace Weave.User.Service.Role.Controllers
         }
 
         //********** test
-        public void DeleteOldNews(IEnumerable<FeedIndex> feeds)
-        {
-            var now = DateTime.UtcNow;
+        //public void DeleteOldNews(IEnumerable<FeedIndex> feeds)
+        //{
+        //    var now = DateTime.UtcNow;
 
-            foreach (var feed in feeds)
-            {
-                var toDelete = feed.NewsItemIndices.Where(o => IsNewsOld(o, now)).ToList();
-                foreach (var newsItemIndex in toDelete)
-                    feed.NewsItemIndices.Remove(newsItemIndex);
-            }
-        }
+        //    foreach (var feed in feeds)
+        //    {
+        //        var toDelete = feed.NewsItemIndices.Where(o => IsNewsOld(o, now)).ToList();
+        //        foreach (var newsItemIndex in toDelete)
+        //            feed.NewsItemIndices.Remove(newsItemIndex);
+        //    }
+        //}
 
         bool IsNewsOld(NewsItemIndex newsItem, DateTime now)
         {
@@ -695,6 +709,42 @@ namespace Weave.User.Service.Role.Controllers
 
         #region Create "Get News" outgoing DTO
 
+        class FeedIndexMetaData
+        {
+            public Guid FeedId { get; set; }
+            public int UnreadCount { get; set; }
+            public int NewCount { get; set; }
+            public int TotalCount { get; set; }
+        }
+
+        static IEnumerable<FeedIndexMetaData> CreateFeedMetaData(IEnumerable<NewsItemIndexFeedIndexTuple> tuples)
+        {
+            var groupedByFeed = tuples.GroupBy(o => o.feedId);
+            foreach (var group in groupedByFeed)
+            {
+                int unread = 0, newCount = 0, total = 0;
+
+                foreach (var item in group)
+                {
+                    if (item.isNew)
+                        newCount++;
+
+                    if (!item.hasBeenViewed)
+                        unread++;
+
+                    total++;
+                }
+
+                yield return new FeedIndexMetaData
+                {
+                    FeedId = group.Key,
+                    NewCount = newCount,
+                    UnreadCount = unread,
+                    TotalCount = total,
+                };
+            }
+        }
+
         async Task<Outgoing.NewsList> CreateNewsListFromSubset(
             IEnumerable<FeedIndex> feeds,
             int skip, 
@@ -705,21 +755,25 @@ namespace Weave.User.Service.Role.Controllers
         {
             feeds = feeds ?? new List<FeedIndex>(0);
 
-            var indices = feeds.AllIndices();
+            IEnumerable<NewsItemIndexFeedIndexTuple> indices;
+
+            sw.Start();
+            indices = feeds.AllIndices(userIndex).ToList();
+            timings.InitialNewsItemIndicesFilter = sw.Record().Dump();
+
+            sw.Start();
+            var feedMetaDataLookup = CreateFeedMetaData(indices).ToDictionary(o => o.FeedId);
+            timings.CreateFeedMetaData = sw.Record().Dump();
 
             if (type == NewsItemType.New)
-                indices = indices.Where(o => o.IsNew);
+                indices = indices.Where(o => o.isNew);
             else if (type == NewsItemType.Viewed)
-                indices = indices.Where(o => o.NewsItemIndex.HasBeenViewed);
+                indices = indices.Where(o => o.hasBeenViewed);
             else if (type == NewsItemType.Unviewed)
-                indices = indices.Where(o => !o.NewsItemIndex.HasBeenViewed);
+                indices = indices.Where(o => !o.hasBeenViewed);
 
             if (requireImage)
-                indices = indices.Where(o => o.NewsItemIndex.HasImage);
-
-            //sw.Start();
-            //indices = indices.ToList();
-            //timings.CreateAllIndicesList = sw.Record().Dump();
+                indices = indices.Where(o => o.hasImage);
 
             sw.Start();
             indices = indices
@@ -733,7 +787,7 @@ namespace Weave.User.Service.Role.Controllers
             var outgoingNews = await CreateOutgoingNews(indices);
             
             sw.Start();
-            var outgoingFeeds = feeds.Select(CreateOutgoingFeed).ToList();
+            var outgoingFeeds = feeds.Select(o => CreateOutgoingFeed(o, feedMetaDataLookup)).ToList();
             timings.CreateOutgoingFeeds = sw.Record().Dump();
             //DebugEx.WriteLine("creating outgoing feeds took {0} ms", sw.ElapsedMilliseconds);
 
@@ -777,10 +831,22 @@ namespace Weave.User.Service.Role.Controllers
                 //LastRefreshedOn = o.LastRefreshedOn,
                 MostRecentEntrance = o.MostRecentEntrance,
                 PreviousEntrance = o.PreviousEntrance,
-                NewArticleCount = o.NewsItemIndices.CountNew(),
-                UnreadArticleCount = o.NewsItemIndices.CountUnread(),
-                TotalArticleCount = o.NewsItemIndices.Count,
             };
+        }
+
+        static Outgoing.Feed CreateOutgoingFeed(FeedIndex o, Dictionary<Guid, FeedIndexMetaData> metaLookup)
+        {
+            var outgoing = CreateOutgoingFeed(o);
+
+            FeedIndexMetaData meta;
+            if (metaLookup.TryGetValue(o.Id, out meta))
+            {
+                outgoing.NewArticleCount = meta.NewCount;
+                outgoing.UnreadArticleCount = meta.UnreadCount;
+                outgoing.TotalArticleCount = meta.TotalCount;
+            }
+
+            return outgoing;
         }
 
         async Task<List<Outgoing.NewsItem>> CreateOutgoingNews(IEnumerable<NewsItemIndexFeedIndexTuple> indices)
@@ -789,7 +855,7 @@ namespace Weave.User.Service.Role.Controllers
             if (!indices.Any())
                 return new List<Outgoing.NewsItem>();
 
-            var newsIds = indices.Select(o => o.NewsItemIndex.Id);
+            var newsIds = indices.Select(o => o.id);
             var newsItems = await GetNewsFromRedis(newsIds);
 
             var zipped = indices.Zip(newsItems, (tuple, ni) => new { tuple, ni });
@@ -808,15 +874,11 @@ namespace Weave.User.Service.Role.Controllers
 
         static Outgoing.NewsItem Merge(NewsItemIndexFeedIndexTuple tuple, ExpandedEntry entry)
         {
-            var newsIndex = tuple.NewsItemIndex;
-            //var feedIndex = tuple.FeedIndex;
-
             var bestImage = entry.Images.GetBest();
 
             return new Outgoing.NewsItem
             {
-                //FeedId = feedIndex.Id,
-                FeedId = tuple.FeedId,
+                FeedId = tuple.feedId,
 
                 Id = entry.Id,
                 Title = entry.Title,
@@ -829,11 +891,10 @@ namespace Weave.User.Service.Role.Controllers
                 ZuneAppId = entry.ZuneAppId,
                 Image = bestImage == null ? null : MapToOutgoing(bestImage),
                 
-                IsNew = tuple.IsNew,
-
-                IsFavorite = newsIndex.IsFavorite,
-                HasBeenViewed = newsIndex.HasBeenViewed,
-                OriginalDownloadDateTime = newsIndex.OriginalDownloadDateTime,
+                IsNew = tuple.isNew,
+                IsFavorite = tuple.isFavorite,
+                HasBeenViewed = tuple.hasBeenViewed,
+                OriginalDownloadDateTime = tuple.originalDownloadDateTime,
             };
         }
 
@@ -872,7 +933,10 @@ namespace Weave.User.Service.Role.Controllers
                 return outgoing;
             }
 
-            var outgoingFeeds = feeds.Select(CreateOutgoingFeed).ToList();
+            var indices = feeds.AllIndices(userIndex);
+            var metaLookup = CreateFeedMetaData(indices).ToDictionary(o => o.FeedId);
+
+            var outgoingFeeds = feeds.Select(o => CreateOutgoingFeed(o, metaLookup)).ToList();
             outgoing.NewArticleCount = outgoingFeeds.Sum(o => o.NewArticleCount);
             outgoing.UnreadArticleCount = outgoingFeeds.Sum(o => o.UnreadArticleCount);
             outgoing.TotalArticleCount = outgoingFeeds.Sum(o => o.TotalArticleCount);
@@ -914,7 +978,7 @@ namespace Weave.User.Service.Role.Controllers
 
 
 
-        #region Conversion Helpers
+        #region Map
 
         FeedIndex ConvertToFeedIndex(Incoming.NewFeed o)
         {
@@ -938,9 +1002,23 @@ namespace Weave.User.Service.Role.Controllers
             };
         }
 
-        Outgoing.UserInfo ConvertToOutgoing(UserIndex user)
+        static Outgoing.UserInfo ConvertToOutgoing(UserIndex o)
         {
-            return BusinessObjectToServerOutgoing.Convert(user);
+            var tuples = o.FeedIndices.AllIndices();
+            var feedMeta = CreateFeedMetaData(tuples);
+            var metaLookup = feedMeta.ToDictionary(x => x.FeedId);
+
+            return new Outgoing.UserInfo
+            {
+                Id = o.Id,
+                FeedCount = o.FeedIndices.Count,
+                Feeds = o.FeedIndices.Select(x => CreateOutgoingFeed(x, metaLookup)).ToList(),
+                PreviousLoginTime = o.PreviousLoginTime,
+                CurrentLoginTime = o.CurrentLoginTime,
+                ArticleDeletionTimeForMarkedRead = o.ArticleDeletionTimeForMarkedRead,
+                ArticleDeletionTimeForUnread = o.ArticleDeletionTimeForUnread,
+                LastModified = o.LastModified,
+            };
         }
 
         #endregion
@@ -993,71 +1071,3 @@ namespace Weave.User.Service.Role.Controllers
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-#region deprecated
-
-///// <summary>
-///// Load the user Index first.  If the full user graph was not loaded yet 
-///// (which will be the majority case) then load it.  Finally, merge any changes 
-///// from the current user index state into the user graph.
-///// </summary>
-//async Task LoadBoth(Guid userId)
-//{
-//    await LoadIndexOnly(userId);
-
-//    if (userBO == null)
-//    {
-//        await LoadUserInfoBusinessObject();
-//        await LoadUserIndex();
-//    }
-
-//    userBO.UpdateFrom(userIndex);
-//}
-
-//async Task PerformRefreshOnFeeds(IEnumerable<Feed> feeds)
-//{
-//    // refresh news for relevant feeds
-//    var subset = new FeedsSubset(feeds);
-
-//    var sw = System.Diagnostics.Stopwatch.StartNew();
-//    await subset.Refresh();
-//    sw.Stop();
-//    timings.Refresh = sw.Elapsed.Dump();
-
-//    // 1. Lock the userIndex first, because we will be modifying/recreating it
-//    // 2. Grab the latest user index, which may be different from the previous one
-//    // that was grabbed prior to the refresh
-//    // 3. Merge the state of the latest user index into the object graph
-//    // 4. Recreate the userIndex from the newly updated user graph
-//    // 5. Save the user index
-//    await Lock(userId, async () =>
-//    {
-//        await LoadUserIndex();
-//        userBO.UpdateFrom(userIndex);
-//        userIndex = userBO.CreateUserIndex();
-//        await SaveUserIndex();
-//    });
-
-//    // save the full user graph, which was updated via the refresh
-//    SaveUserInfoBusinessObject();
-
-//    // save the news articles from the refreshed feeds to Redis
-//    var redisNews = subset.AllNews().Select(MapAsRedis);
-
-//    sw.Restart();
-//    var saveToRedisResults = await SaveNewsToRedis(redisNews);
-//    sw.Stop();
-//    timings.SaveToNewsCache = sw.Elapsed.Dump();
-//}
-
-#endregion
