@@ -8,12 +8,13 @@ namespace Weave.User.BusinessObjects.Mutable.Extensions.Helpers
     {
         const int pageSize = 20;
 
-        public static IEnumerable<NewsItemIndexFeedIndexTuple> GetTopNewsItems(IEnumerable<FeedIndex> feeds)
+        public static IEnumerable<NewsItemIndexFeedIndexTuple> GetTopNewsItems(IEnumerable<FeedIndex> feeds, UserIndex user)
         {
             IEnumerable<NewsItemIndexFeedIndexTuple> pool = feeds
-                .AllIndices()
+                .AllIndices(user)
+                .Where(o => o.CanKeep)
+                .Where(o => !o.HasBeenViewed)
                 .Ordered()
-                .Where(o => !o.hasBeenViewed)
                 .Take(20)
                 .ToList();
 
@@ -36,8 +37,8 @@ namespace Weave.User.BusinessObjects.Mutable.Extensions.Helpers
 
         static double GetAdjustedForImagePresenceSortRating(NewsItemIndexFeedIndexTuple i)
         {
-            var sortRating = CalculateSortRating(i.utcPublishDateTime);
-            return i.hasImage ? 100d * sortRating : sortRating;
+            var sortRating = CalculateSortRating(i.UtcPublishDateTime);
+            return i.HasImage ? 100d * sortRating : sortRating;
         }
 
         //static double GetAdjustedForRepetitiveFeedSortRating(double i)

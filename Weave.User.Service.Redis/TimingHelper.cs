@@ -28,4 +28,12 @@ namespace Weave.User.Service.Redis
             return TimeSpan.Zero;
         }
     }
+
+    public static class TimeSpanFormattingExtensions
+    {
+        public static string Dump(this TimeSpan t)
+        {
+            return t.TotalMilliseconds + " ms";
+        }
+    }
 }

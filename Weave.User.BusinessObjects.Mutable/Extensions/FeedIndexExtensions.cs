@@ -23,64 +23,6 @@ namespace Weave.User.BusinessObjects.Mutable
             return feeds.Where(o => categoryName.Equals(o.Category, StringComparison.OrdinalIgnoreCase));
         }
 
-        public static IEnumerable<NewsItemIndexFeedIndexTuple> AllIndices(this IEnumerable<FeedIndex> feeds, UserIndex userIndex)
-        {
-            var now = DateTime.UtcNow;
-            var markedReadCutoffDate = Subtract(now, userIndex.ArticleDeletionTimeForMarkedRead);
-            var unreadCutoffDate = Subtract(now, userIndex.ArticleDeletionTimeForUnread);
-
-            return feeds
-                .SelectMany(o => o.NewsItemIndices
-                    .Select(x => new NewsItemIndexFeedIndexTuple(x, o)))
-                .Where(o => CanKeep(o, markedReadCutoffDate, unreadCutoffDate));
-        }
-
-        static DateTime Subtract(DateTime val, TimeSpan offset)
-        {
-            try
-            {
-                return val - offset;
-            }
-            catch { }
-            return DateTime.MinValue;
-        }
-
-        static bool CanKeep(NewsItemIndexFeedIndexTuple o, DateTime markedReadCutoffDate, DateTime unreadCutoffDate)
-        {
-            if (o.isNew)
-                return true;
-
-            if (o.isFavorite)
-                return true;
-
-            if (o.hasBeenViewed && o.originalDownloadDateTime > markedReadCutoffDate)
-                return true;
-
-            if (!o.hasBeenViewed && o.originalDownloadDateTime > unreadCutoffDate)
-                return true;
-
-            return false;
-        }
-
-        public static IEnumerable<NewsItemIndexFeedIndexTuple> AllIndices(this IEnumerable<FeedIndex> feeds)
-        {
-            return feeds
-                .Where(o => o.NewsItemIndices != null)
-                .SelectMany(o => o.NewsItemIndices
-                    .Select(x => new NewsItemIndexFeedIndexTuple(x, o)));
-        }
-
-        //static NewsItemIndexFeedIndexTupleComparer orderedComparer = new NewsItemIndexFeedIndexTupleComparer();
-
-        public static IEnumerable<NewsItemIndexFeedIndexTuple> Ordered(this IEnumerable<NewsItemIndexFeedIndexTuple> indices)
-        {
-            return indices
-                .OrderByDescending(o => o.isNew)
-                .ThenByDescending(o => o.utcPublishDateTime)
-                //.Distinct(orderedComparer);
-                .Distinct();
-        }
-
         public static void MarkEntry(this IEnumerable<FeedIndex> feeds)
         {
             if (EnumerableEx.IsNullOrEmpty(feeds))
@@ -106,40 +48,9 @@ namespace Weave.User.BusinessObjects.Mutable
             }
         }
 
-        public static IEnumerable<NewsItemIndexFeedIndexTuple> GetLatestNews(this IEnumerable<FeedIndex> feeds)
+        public static IEnumerable<NewsItemIndexFeedIndexTuple> GetLatestNews(this IEnumerable<FeedIndex> feeds, UserIndex user)
         {
-            return LatestNewsHelper.GetTopNewsItems(feeds);
+            return LatestNewsHelper.GetTopNewsItems(feeds, user);
         }
-
-
-
-
-        //#region Helper class for the Ordered function
-
-        //class NewsItemIndexFeedIndexTupleComparer : IEqualityComparer<NewsItemIndexFeedIndexTuple>
-        //{
-        //    public bool Equals(NewsItemIndexFeedIndexTuple x, NewsItemIndexFeedIndexTuple y)
-        //    {
-        //        return x.NewsItemIndex.Id == y.NewsItemIndex.Id;
-
-        //        //if (x == y)
-        //        //    return true;
-
-        //        //var xNews = x.NewsItemIndex;
-        //        //var yNews = y.NewsItemIndex;
-
-        //        //return
-        //        //    (xNews.Id == yNews.Id); /*||
-        //        //    (xNews.TitleHash == yNews.TitleHash) ||
-        //        //    (xNews.UrlHash == yNews.UrlHash);*/
-        //    }
-
-        //    public int GetHashCode(NewsItemIndexFeedIndexTuple obj)
-        //    {
-        //        return obj.NewsItemIndex.Id.GetHashCode();
-        //    }
-        //}
-
-        //#endregion
     }
 }

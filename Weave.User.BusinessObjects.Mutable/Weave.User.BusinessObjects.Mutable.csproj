@@ -40,6 +40,7 @@
     <Compile Include="ArticleViewingType.cs" />
     <Compile Include="Extensions\Helpers\LatestNewsHelper.cs" />
     <Compile Include="Extensions\NewsItemIndexFeedIndexTuple.cs" />
+    <Compile Include="Extensions\NewsItemIndexFeedIndexTupleExtensions.cs" />
     <Compile Include="FeedIndex.cs" />
     <Compile Include="Extensions\FeedIndexExtensions.cs" />
     <Compile Include="FeedIndices.cs" />

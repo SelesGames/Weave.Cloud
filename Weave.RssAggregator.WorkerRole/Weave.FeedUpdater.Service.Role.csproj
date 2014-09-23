@@ -109,7 +109,6 @@
     <Compile Include="Controllers\PingController.cs" />
     <Compile Include="Core\CachedFeed.cs" />
     <Compile Include="Core\FeedCache.cs" />
-    <Compile Include="Core\TimeSpanFormattingExtensions.cs" />
     <Compile Include="Core\WeaveControllerHelper.cs" />
     <Compile Include="Startup\AppSettings.cs" />
     <Compile Include="Controllers\WeaveController.cs" />

@@ -142,7 +142,7 @@ namespace Weave.User.Service.Role.Controllers
 
 
             var outgoing = ConvertToOutgoing(userIndex);
-            var latestNewsIndices = userIndex.FeedIndices.GetLatestNews();
+            var latestNewsIndices = userIndex.FeedIndices.GetLatestNews(userIndex);
             var latestNews = await CreateOutgoingNews(latestNewsIndices);
             outgoing.LatestNews = latestNews;
 
@@ -164,6 +164,7 @@ namespace Weave.User.Service.Role.Controllers
             Guid userId,
             string category = "all news",
             EntryType entry = EntryType.Peek,
+            Guid? cursorId = null,
             int skip = 0,
             int take = 10,
             NewsItemType type = NewsItemType.Any,
@@ -171,31 +172,71 @@ namespace Weave.User.Service.Role.Controllers
         {
             category = category ?? "all news";
 
-            return await GetNewsImpl(
-                userId: userId,
-                feedSelector: o => o.FeedIndices.OfCategory(category).ToList(),
-                skip: skip,
-                take: take,
-                type: type,
-                entry: entry,
-                requireImage: requireImage);
+            if (cursorId.HasValue)
+            {
+                return await GetNewsImpl(
+                    userId: userId,
+                    feedSelector: o => o.FeedIndices.OfCategory(category).ToList(),
+                    cursorId: cursorId.Value,
+                    take: take,
+                    type: type,
+                    entry: entry,
+                    requireImage: requireImage);
+            }
+            else
+            {
+                return await GetNewsImpl(
+                    userId: userId,
+                    feedSelector: o => o.FeedIndices.OfCategory(category).ToList(),
+                    skip: skip,
+                    take: take,
+                    type: type,
+                    entry: entry,
+                    requireImage: requireImage);
+            }
         }
 
         [HttpGet]
         [ActionName("news")]
         public async Task<Outgoing.NewsList> GetNews(
-            Guid userId, Guid feedId, EntryType entry = EntryType.Peek, int skip = 0, int take = 10, NewsItemType type = NewsItemType.Any, bool requireImage = false)
+            Guid userId, 
+            Guid feedId, 
+            EntryType entry = EntryType.Peek, 
+            Guid? cursorId = null,
+            int skip = 0, 
+            int take = 10, 
+            NewsItemType type = NewsItemType.Any, 
+            bool requireImage = false)
         {
-            return await GetNewsImpl(
-                userId: userId,
-                feedSelector: o => o.FeedIndices.WithId(feedId).ToList(),
-                skip: skip,
-                take: take,
-                type: type,
-                entry: entry,
-                requireImage: requireImage);
+            if (cursorId.HasValue)
+            {
+                return await GetNewsImpl(
+                    userId: userId,
+                    feedSelector: o => o.FeedIndices.WithId(feedId).ToList(),
+                    cursorId: cursorId.Value,
+                    take: take,
+                    type: type,
+                    entry: entry,
+                    requireImage: requireImage);
+            }
+            else
+            {
+                return await GetNewsImpl(
+                    userId: userId,
+                    feedSelector: o => o.FeedIndices.WithId(feedId).ToList(),
+                    skip: skip,
+                    take: take,
+                    type: type,
+                    entry: entry,
+                    requireImage: requireImage);
+            }
         }
 
+
+
+
+        #region get news implementation
+        
         async Task<Outgoing.NewsList> GetNewsImpl(
             Guid userId, 
             Func<UserIndex, IEnumerable<FeedIndex>> feedSelector, 
@@ -244,6 +285,57 @@ namespace Weave.User.Service.Role.Controllers
 
             return list;
         }
+
+        async Task<Outgoing.NewsList> GetNewsImpl(
+            Guid userId,
+            Func<UserIndex, IEnumerable<FeedIndex>> feedSelector,
+            EntryType entry,
+            Guid cursorId,
+            int take,
+            NewsItemType type,
+            bool requireImage)
+        {
+            IEnumerable<FeedIndex> feeds = null;
+
+            if (entry == EntryType.ExtendRefresh)
+            {
+                await Lock(userId, async () =>
+                {
+                    await LoadIndexOnly(userId);
+                    feeds = feedSelector(userIndex);
+                    feeds.ExtendEntry();
+                    await PerformRefreshOnFeeds(feeds);
+                    await SaveUserIndex();
+                });
+            }
+            else if (entry == EntryType.Mark)
+            {
+                await Lock(userId, async () =>
+                {
+                    await LoadIndexOnly(userId);
+                    feeds = feedSelector(userIndex);
+                    feeds.MarkEntry();
+                    await SaveUserIndex();
+                });
+            }
+            else
+            {
+                await LoadIndexOnly(userId);
+                feeds = feedSelector(userIndex);
+            }
+
+            var list = await CreateNewsListFromSubset(
+                feeds: feeds,
+                cursorId: cursorId,
+                take: take,
+                type: type,
+                entry: entry,
+                requireImage: requireImage);
+
+            return list;
+        }
+
+        #endregion
 
         #endregion
 
@@ -715,24 +807,28 @@ namespace Weave.User.Service.Role.Controllers
             public int UnreadCount { get; set; }
             public int NewCount { get; set; }
             public int TotalCount { get; set; }
+            public int TrueTotalCount { get; set; }
         }
 
         static IEnumerable<FeedIndexMetaData> CreateFeedMetaData(IEnumerable<NewsItemIndexFeedIndexTuple> tuples)
         {
-            var groupedByFeed = tuples.GroupBy(o => o.feedId);
+            var groupedByFeed = tuples.GroupBy(o => o.FeedId);
             foreach (var group in groupedByFeed)
             {
-                int unread = 0, newCount = 0, total = 0;
+                int unread = 0, newCount = 0, total = 0, trueTotal = 0;
 
                 foreach (var item in group)
                 {
-                    if (item.isNew)
+                    if (item.IsNew)
                         newCount++;
 
-                    if (!item.hasBeenViewed)
+                    if (!item.HasBeenViewed)
                         unread++;
 
-                    total++;
+                    if (item.CanKeep)
+                        total++;
+
+                    trueTotal++;
                 }
 
                 yield return new FeedIndexMetaData
@@ -741,6 +837,7 @@ namespace Weave.User.Service.Role.Controllers
                     NewCount = newCount,
                     UnreadCount = unread,
                     TotalCount = total,
+                    TrueTotalCount = trueTotal,
                 };
             }
         }
@@ -766,17 +863,18 @@ namespace Weave.User.Service.Role.Controllers
             timings.CreateFeedMetaData = sw.Record().Dump();
 
             if (type == NewsItemType.New)
-                indices = indices.Where(o => o.isNew);
+                indices = indices.Where(o => o.IsNew);
             else if (type == NewsItemType.Viewed)
-                indices = indices.Where(o => o.hasBeenViewed);
+                indices = indices.Where(o => o.HasBeenViewed);
             else if (type == NewsItemType.Unviewed)
-                indices = indices.Where(o => !o.hasBeenViewed);
+                indices = indices.Where(o => !o.HasBeenViewed);
 
             if (requireImage)
-                indices = indices.Where(o => o.hasImage);
+                indices = indices.Where(o => o.HasImage);
 
             sw.Start();
             indices = indices
+                .Where(o => o.CanKeep)
                 .Ordered()
                 .Skip(skip)
                 .Take(take)
@@ -805,6 +903,95 @@ namespace Weave.User.Service.Role.Controllers
                 Skip = skip,
                 Take = take,
                 IncludedArticleCount = outgoing.News == null ? 0 : outgoing.News.Count,
+            };
+            outgoing.Page = page;
+
+            outgoing.NewArticleCount = outgoing.Feeds == null ? 0 : outgoing.Feeds.Sum(o => o.NewArticleCount);
+            outgoing.UnreadArticleCount = outgoing.Feeds == null ? 0 : outgoing.Feeds.Sum(o => o.UnreadArticleCount);
+            outgoing.TotalArticleCount = outgoing.Feeds == null ? 0 : outgoing.Feeds.Sum(o => o.TotalArticleCount);
+
+            outgoing.Timings = timings;
+
+            return outgoing;
+        }
+
+        async Task<Outgoing.NewsList> CreateNewsListFromSubset(
+            IEnumerable<FeedIndex> feeds,
+            Guid cursorId,
+            int take,
+            NewsItemType type,
+            EntryType entry,
+            bool requireImage)
+        {
+            feeds = feeds ?? new List<FeedIndex>(0);
+
+            IEnumerable<NewsItemIndexFeedIndexTuple> indices;
+
+            sw.Start();
+            indices = feeds.AllIndices(userIndex).ToList();
+            timings.InitialNewsItemIndicesFilter = sw.Record().Dump();
+
+            sw.Start();
+            var feedMetaDataLookup = CreateFeedMetaData(indices)
+                .ToDictionary(o => o.FeedId);
+            timings.CreateFeedMetaData = sw.Record().Dump();
+
+            if (type == NewsItemType.New)
+                indices = indices.Where(o => o.IsNew);
+            else if (type == NewsItemType.Viewed)
+                indices = indices.Where(o => o.HasBeenViewed);
+            else if (type == NewsItemType.Unviewed)
+                indices = indices.Where(o => !o.HasBeenViewed);
+
+            if (requireImage)
+                indices = indices.Where(o => o.HasImage);
+
+            sw.Start();
+            indices = indices
+                .Ordered()
+                .SkipWhile(o => o.Id != cursorId)
+                .Skip(1) // required?
+                .Where(o => o.CanKeep)
+                .Take(take)
+                .ToList();
+            timings.CreateOrderedNewsIndices = sw.Record().Dump();
+            //DebugEx.WriteLine("creating ordered indices took {0} ms", sw.ElapsedMilliseconds);
+
+            var outgoingNews = await CreateOutgoingNews(indices);
+
+            sw.Start();
+            var outgoingFeeds = feeds.Select(o => CreateOutgoingFeed(o, feedMetaDataLookup)).ToList();
+            timings.CreateOutgoingFeeds = sw.Record().Dump();
+            //DebugEx.WriteLine("creating outgoing feeds took {0} ms", sw.ElapsedMilliseconds);
+
+            var outgoing = new Outgoing.NewsList
+            {
+                UserId = userId,
+                FeedCount = outgoingFeeds.Count,
+                Feeds = outgoingFeeds,
+                News = outgoingNews,
+                EntryType = entry.ToString(),
+            };
+
+            //string next = null;
+            //var lastNewsItem = outgoing.News.LastOrDefault();
+            //if (lastNewsItem != null)
+            //{
+            //    var nextCursorId = lastNewsItem.Id;
+            //    next = this.Url.Link("news",
+            //        new 
+            //        {
+            //            userId = userId,
+            //            cursorId = nextCursorId,
+            //        });
+            //}
+
+            var page = new Outgoing.PageInfo
+            {
+                Skip = -1,
+                Take = take,
+                IncludedArticleCount = outgoing.News == null ? 0 : outgoing.News.Count,
+                //Next = next,
             };
             outgoing.Page = page;
 
@@ -855,7 +1042,7 @@ namespace Weave.User.Service.Role.Controllers
             if (!indices.Any())
                 return new List<Outgoing.NewsItem>();
 
-            var newsIds = indices.Select(o => o.id);
+            var newsIds = indices.Select(o => o.Id);
             var newsItems = await GetNewsFromRedis(newsIds);
 
             var zipped = indices.Zip(newsItems, (tuple, ni) => new { tuple, ni });
@@ -878,7 +1065,7 @@ namespace Weave.User.Service.Role.Controllers
 
             return new Outgoing.NewsItem
             {
-                FeedId = tuple.feedId,
+                FeedId = tuple.FeedId,
 
                 Id = entry.Id,
                 Title = entry.Title,
@@ -891,10 +1078,10 @@ namespace Weave.User.Service.Role.Controllers
                 ZuneAppId = entry.ZuneAppId,
                 Image = bestImage == null ? null : MapToOutgoing(bestImage),
                 
-                IsNew = tuple.isNew,
-                IsFavorite = tuple.isFavorite,
-                HasBeenViewed = tuple.hasBeenViewed,
-                OriginalDownloadDateTime = tuple.originalDownloadDateTime,
+                IsNew = tuple.IsNew,
+                IsFavorite = tuple.IsFavorite,
+                HasBeenViewed = tuple.HasBeenViewed,
+                OriginalDownloadDateTime = tuple.OriginalDownloadDateTime,
             };
         }
 
@@ -1004,7 +1191,7 @@ namespace Weave.User.Service.Role.Controllers
 
         static Outgoing.UserInfo ConvertToOutgoing(UserIndex o)
         {
-            var tuples = o.FeedIndices.AllIndices();
+            var tuples = o.FeedIndices.AllIndices(o);
             var feedMeta = CreateFeedMetaData(tuples);
             var metaLookup = feedMeta.ToDictionary(x => x.FeedId);
 
