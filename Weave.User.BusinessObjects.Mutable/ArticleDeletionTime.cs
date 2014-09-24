@@ -127,7 +127,7 @@ namespace Weave.User.BusinessObjects.Mutable
                 sb.Append(string.Format("{0} {1} ", minutes, minutes == 1 ? "minute" : "minutes"));
 
             var seconds = ts.Seconds;
-            if (minutes > 0)
+            if (seconds > 0)
                 sb.Append(string.Format("{0} {1} ", seconds, seconds == 1 ? "second" : "seconds"));
 
             return sb.ToString().Trim();
