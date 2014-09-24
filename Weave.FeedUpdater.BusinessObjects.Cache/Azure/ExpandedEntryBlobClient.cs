@@ -42,5 +42,30 @@ namespace Weave.FeedUpdater.BusinessObjects.Cache.Azure
                 return false;
             }
         }
+
+        public async Task<bool> ConditionalSave(ExpandedEntry entry)
+        {
+            try
+            {
+                var blobName = entry.Id.ToString("N");
+
+                var existsAlready = await blobClient.CheckExists(containerName, blobName);
+                if (existsAlready)
+                    return false;
+
+                var requestProperties = new WriteRequestProperties
+                {
+                    UseCompression = false,
+                };
+
+                await blobClient.Save(containerName, blobName, entry, requestProperties);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+                return false;
+            }
+        }
     }
 }

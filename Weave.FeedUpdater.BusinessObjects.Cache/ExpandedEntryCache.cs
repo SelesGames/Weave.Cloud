@@ -14,6 +14,8 @@ namespace Weave.FeedUpdater.BusinessObjects.Cache
 {
     public class ExpandedEntryCache
     {
+        const int LOCAL_CACHE_SIZE = 100000;
+
         readonly LRUCache<Guid, ExpandedEntry> localCache;
         readonly Weave.User.Service.Redis.ExpandedEntryCache redisCache;
         readonly ExpandedEntryBlobClient blobClient;
@@ -23,7 +25,7 @@ namespace Weave.FeedUpdater.BusinessObjects.Cache
             string azureUserIndexStorageAccountKey,
             string azureUserIndexContainerName)
         {
-            this.localCache = new LRUCache<Guid, ExpandedEntry>(100000);
+            this.localCache = new LRUCache<Guid, ExpandedEntry>(LOCAL_CACHE_SIZE);
             var settings = Settings.StandardConnection;
             var db = settings.GetDatabase(DatabaseNumbers.CANONICAL_NEWSITEMS);
             this.redisCache = new Weave.User.Service.Redis.ExpandedEntryCache(db);
@@ -50,7 +52,7 @@ namespace Weave.FeedUpdater.BusinessObjects.Cache
             }
         }
 
-        public async Task<IEnumerable<Option<ExpandedEntry>>> Get(IEnumerable<Guid> ids)
+        public async Task<CacheGetMultiResult<ExpandedEntry>> Get(IEnumerable<Guid> ids)
         {
             var sw = new TimingHelper();
             dynamic meta = new ExpandoObject();
@@ -62,58 +64,83 @@ namespace Weave.FeedUpdater.BusinessObjects.Cache
             fullResults = ids
                 .Select((id, i) => new resultTuple(i, id, localCache.Get(id), "local"))
                 .ToArray();
-            meta.LocalGetTiming = sw.Record().Dump();
+            meta.LocalGet = sw.Record().Dump();
 
-            // try grabbing from Redis - if found, add it to local cache and return
+            // for any feeds not found in the local cache, try grabbing from Redis 
+            // - if found, add it to local cache
             var notInLocalCache = fullResults.Where(o => o.Entry == null).ToList();
-            var fromRedis = await redisCache.Get(notInLocalCache.Select(o => o.Id));
-            var zipped = fromRedis.Results.Zip(notInLocalCache, (result, tuple) => new { result, tuple.i });
-            foreach (var temp in zipped)
+
+            if (notInLocalCache.Any())
             {
-                if (temp.result.HasValue)
+                sw.Start();
+                var fromRedis = await redisCache.Get(notInLocalCache.Select(o => o.Id));
+                meta.FromRedis = sw.Record().Dump();
+
+                var zipped = fromRedis.Results.Zip(notInLocalCache, (result, tuple) => new { result, tuple.i });
+                foreach (var temp in zipped)
                 {
-                    var resultTuple = fullResults[temp.i];
-                    var entry = temp.result.Value;
+                    if (temp.result.HasValue)
+                    {
+                        var resultTuple = fullResults[temp.i];
+                        var entry = temp.result.Value;
 
-                    // null out the description
-                    NullOutHeavyFields(entry);
+                        // null out the description
+                        NullOutHeavyFields(entry);
 
-                    resultTuple.Entry = entry;
-                    resultTuple.Source = "redis";
-                    localCache.AddOrUpdate(entry.Id, entry);
+                        resultTuple.Entry = entry;
+                        resultTuple.Source = "redis";
+                        localCache.AddOrUpdate(entry.Id, entry);
+                    }
                 }
             }
 
             // try grabbing from blob storage - if found, add to local cache and redis
             notInLocalCache = fullResults.Where(o => o.Entry == null).ToList();
 
-            var fromBlob = await Task.WhenAll(notInLocalCache.Select(o => blobClient.Get(o.Id)));
-            var zipped2 = fromBlob.Zip(notInLocalCache, (result, tuple) => new { result, tuple.i });
-            var toSaveToRedis = new List<ExpandedEntry>();
-            foreach (var temp in zipped2)
+            if (notInLocalCache.Any())
             {
-                if (temp.result.HasValue)
+                sw.Start();
+                var fromBlob = await Task.WhenAll(notInLocalCache.Select(o => blobClient.Get(o.Id)));
+                meta.FromBlob = sw.Record().Dump();
+                var zipped2 = fromBlob.Zip(notInLocalCache, (result, tuple) => new { result, tuple.i });
+                var toSaveToRedis = new List<ExpandedEntry>();
+                foreach (var temp in zipped2)
                 {
-                    var resultTuple = fullResults[temp.i];
-                    var entry = temp.result.Value;
+                    if (temp.result.HasValue)
+                    {
+                        var resultTuple = fullResults[temp.i];
+                        var entry = temp.result.Value;
 
-                    // null out the description
-                    NullOutHeavyFields(entry);
+                        // null out the description
+                        NullOutHeavyFields(entry);
 
-                    resultTuple.Entry = entry;
-                    resultTuple.Source = "blob";
-                    localCache.AddOrUpdate(entry.Id, entry);
-                    toSaveToRedis.Add(entry);
+                        resultTuple.Entry = entry;
+                        resultTuple.Source = "blob";
+                        localCache.AddOrUpdate(entry.Id, entry);
+                        toSaveToRedis.Add(entry);
+                    }
                 }
+                if (toSaveToRedis.Any())
+                    await redisCache.Set(toSaveToRedis, overwrite: true);
             }
-            if (toSaveToRedis.Any())
-                await redisCache.Set(toSaveToRedis, overwrite: true);
 
-            return fullResults.Select(o => 
-                o.Entry == null ? 
-                Option.None<ExpandedEntry>() 
-                : 
-                Option.Some(o.Entry));
+            var results = fullResults.Select(o => 
+                new CacheGetResult<ExpandedEntry>
+                {
+                    Value = o.Entry,
+                    Source = o.Source,
+                });
+
+                //o.Entry == null ? 
+                //Option.None<ExpandedEntry>() 
+                //: 
+                //Option.Some(o.Entry));
+
+            return new CacheGetMultiResult<ExpandedEntry>
+            {
+                Results = results,
+                Meta = meta,
+            };
         }
 
         static void NullOutHeavyFields(ExpandedEntry entry)
@@ -128,17 +155,39 @@ namespace Weave.FeedUpdater.BusinessObjects.Cache
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<DoubleSaveResult>> Save(IEnumerable<ExpandedEntry> entries, bool redisOverwrite)
+        public async Task<CacheSaveResult> Save(IEnumerable<ExpandedEntry> entries, bool overWrite)
         {
-            var blobSaveResults = await Task.WhenAll(entries.Select(blobClient.Save));
+            dynamic meta = new ExpandoObject();
+            var sw = new TimingHelper();
+
+            var blobSaveStrategy = SelectBlobSaveStrategy(overWrite);
+
+            sw.Start();
+            var blobSaveResults = await Task.WhenAll(entries.Select(blobSaveStrategy));
+            meta.BlobSave = sw.Record().Dump();
 
             // after saving to blob storage, null out heavy fields
             foreach (var entry in entries)
                 NullOutHeavyFields(entry);
 
-            var redisResult = await redisCache.Set(entries, overwrite: redisOverwrite);
-            
-            return blobSaveResults.Zip(redisResult.Results, (x,y) => new DoubleSaveResult { BlobSave = x, RedisSave = y.ResultValue });
+            sw.Start();
+            var redisResult = await redisCache.Set(entries, overwrite: overWrite);
+            meta.RedisSave = sw.Record().Dump();
+
+            return new CacheSaveResult
+            {
+                RedisSaves = redisResult.Results.Select(o => o.ResultValue),
+                BlobSaves = blobSaveResults,
+            };
+        }
+
+        Func<ExpandedEntry, Task<bool>> SelectBlobSaveStrategy(bool overWrite)
+        {
+            if (overWrite)
+                return blobClient.Save;
+
+            else
+                return blobClient.ConditionalSave;
         }
     }
 }

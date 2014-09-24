@@ -193,6 +193,22 @@ namespace Common.Azure.Blob
 
 
 
+        #region Check Existence
+
+        public static Task<bool> CheckExists(this AzureBlobClient client,
+            string container, 
+            string blobName)//,
+            //BlobRequestOptions options = null,
+            //OperationContext operationContext = null)
+        {
+            var blob = client.GetBlobHandle(container, blobName);
+            return blob.ExistsAsync();
+        }
+        #endregion
+
+
+
+
         #region Private static helper methods
 
         static void CopyBlobProperties(BlobProperties source, BlobProperties destination)

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Weave.FeedUpdater.BusinessObjects.Cache
 {
@@ -10,5 +6,6 @@ namespace Weave.FeedUpdater.BusinessObjects.Cache
     {
         public IEnumerable<bool> RedisSaves { get; set; }
         public IEnumerable<bool> BlobSaves { get; set; }
+        public object Meta { get; set; }
     }
 }
