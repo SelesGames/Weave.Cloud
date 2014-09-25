@@ -5,7 +5,7 @@ using Weave.User.BusinessObjects.Mutable;
 using Weave.User.Service.Redis.Serializers;
 using Weave.User.Service.Redis.Serializers.Binary;
 
-namespace Weave.User.Service.Redis
+namespace Weave.User.Service.Redis.Clients
 {
     public class UserIndexCache
     {

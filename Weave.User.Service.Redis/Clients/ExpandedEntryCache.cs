@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Weave.Updater.BusinessObjects;
 using Weave.User.Service.Redis.Serializers.Binary;
 
-namespace Weave.User.Service.Redis
+namespace Weave.User.Service.Redis.Clients
 {
     /// <summary>
     /// The cache for retrieving the actual article/news item content
