@@ -124,7 +124,8 @@ namespace Weave.User.BusinessObjects.Mutable.Cache
             {
                 // send notice here
                 var notice = new UserIndexUpdateNotice { UserId = user.Id, CacheId = cacheId };
-                var numReceived = await updateNoticePublisher.Publish(notice);
+                //var numReceived = await updateNoticePublisher.Publish(notice);
+                await updateNoticePublisher.Publish(notice, StackExchange.Redis.CommandFlags.FireAndForget);
             }
         }
 

@@ -7,6 +7,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Weave.FeedUpdater.BusinessObjects.Cache;
+using Weave.Services.Redis.Ambient;
 using Weave.Updater.BusinessObjects;
 using Weave.User.BusinessObjects.Mutable;
 using Weave.User.Service.Contracts;
@@ -41,13 +42,12 @@ namespace Weave.User.Service.Role.Controllers
             ConnectionMultiplexer connection,
             Weave.User.BusinessObjects.Mutable.Cache.UserIndexCache userIndexCache,
             Weave.FeedUpdater.BusinessObjects.Cache.ExpandedEntryCache newsCache,
-            UserLockHelper userLockHelper,
             IArticleQueueService articleQueueService)
         {
             this.connection = connection;
             this.userIndexCache = userIndexCache;
             this.newsCache = newsCache;
-            this.userLockHelper = userLockHelper;
+            this.userLockHelper = new UserLockHelper(new UserLockCache(Settings.StandardConnection));
             this.articleQueueService = articleQueueService;
 
             timings = new System.Dynamic.ExpandoObject();
@@ -150,7 +150,6 @@ namespace Weave.User.Service.Role.Controllers
             var latestNewsIndices = userIndex.FeedIndices.GetLatestNews(userIndex);
             var latestNews = await CreateOutgoingNews(latestNewsIndices);
             outgoing.LatestNews = latestNews;
-
             outgoing.Timings = timings;
 
             return outgoing;
@@ -1220,14 +1219,19 @@ namespace Weave.User.Service.Role.Controllers
 
         #region Redis Lock/Unlock User Index
 
-        Task<T> Lock<T>(Guid userId, Func<Task<T>> func)
+        async Task<T> Lock<T>(Guid userId, Func<Task<T>> func)
         {
-            return userLockHelper.Lock(userId, func);
+            var result = await userLockHelper.Lock(userId, func);
+            timings.LockAcquisitionTime = userLockHelper.LockAcquisitionTime.Dump();
+            timings.LockReleaseTime = userLockHelper.LockReleaseTime.Dump();
+            return result;
         }
 
-        Task Lock(Guid userId, Func<Task> func)
+        async Task Lock(Guid userId, Func<Task> func)
         {
-            return userLockHelper.Lock(userId, func);
+            await userLockHelper.Lock(userId, func);
+            timings.LockAcquisitionTime = userLockHelper.LockAcquisitionTime.Dump();
+            timings.LockReleaseTime = userLockHelper.LockReleaseTime.Dump();
         }
 
         #endregion

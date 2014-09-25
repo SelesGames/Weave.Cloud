@@ -5,16 +5,23 @@ namespace Weave.User.Service.Redis.Synchronization.UserIndex
 {
     public class UserLockHelper
     {
+        readonly TimingHelper sw;
         readonly UserLockCache userIndexLocker;
+
+        public TimeSpan LockAcquisitionTime { get; private set; }
+        public TimeSpan LockReleaseTime { get; private set; }
 
         public UserLockHelper(UserLockCache userIndexLocker)
         {
             this.userIndexLocker = userIndexLocker;
+            this.sw = new TimingHelper();
         }
 
         public async Task<T> Lock<T>(Guid userId, Func<Task<T>> func)
         {
+            sw.Start();
             var token = await Lock(userId);
+            LockAcquisitionTime = sw.Record();
 
             T result = default(T);
             Exception ex = null;
@@ -28,7 +35,9 @@ namespace Weave.User.Service.Redis.Synchronization.UserIndex
                 ex = e;
             }
 
+            sw.Start();
             var wasUnlocked = await Unlock(userId, token);
+            LockReleaseTime = sw.Record();
 
             if (ex != null)
                 throw ex;
@@ -38,7 +47,9 @@ namespace Weave.User.Service.Redis.Synchronization.UserIndex
 
         public async Task Lock(Guid userId, Func<Task> func)
         {
+            sw.Start();
             var token = await Lock(userId);
+            LockAcquisitionTime = sw.Record();
 
             Exception ex = null;
 
@@ -51,7 +62,9 @@ namespace Weave.User.Service.Redis.Synchronization.UserIndex
                 ex = e;
             }
 
+            sw.Start();
             var wasUnlocked = await Unlock(userId, token);
+            LockReleaseTime = sw.Record();
 
             if (ex != null)
                 throw ex;
