@@ -1,5 +1,5 @@
 ﻿using Ninject;
-using StackExchange.Redis;
+using Weave.FeedUpdater.BusinessObjects.Cache;
 using Weave.User.Service.InterRoleMessaging.Articles;
 
 namespace Weave.User.Service.Role.Startup
@@ -11,6 +11,9 @@ namespace Weave.User.Service.Role.Startup
             base.AddComponents();
 
             Bind<IArticleQueueService>().To<ArticleQueueService>();
+            Bind<ExpandedEntryCache>()
+                .ToConstant(ExpandedEntryCacheFactory.CreateCache(100000))
+                .InSingletonScope();
         }
     }
 }

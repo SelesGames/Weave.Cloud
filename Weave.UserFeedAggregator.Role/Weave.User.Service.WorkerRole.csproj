@@ -169,6 +169,10 @@
       <Project>{bb3ea281-94b3-435f-a1ef-c395a7d1f25a}</Project>
       <Name>SelesGames.WebApi</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Weave.FeedUpdater.BusinessObjects.Cache\Weave.FeedUpdater.BusinessObjects.Cache.csproj">
+      <Project>{dca07938-c905-4bbc-8057-5b58dc9c8ec9}</Project>
+      <Name>Weave.FeedUpdater.BusinessObjects.Cache</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Weave.Parsing\Weave.Parsing.csproj">
       <Project>{a9731e9c-72fc-4171-ba99-9a6f97cd379f}</Project>
       <Name>Weave.Parsing</Name>

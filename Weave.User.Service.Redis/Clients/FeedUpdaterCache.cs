@@ -46,7 +46,7 @@ namespace Weave.User.Service.Redis.Clients
             var result = await base.Set(
                 key: key,
                 value: feed,
-                expiry: TimeSpan.FromDays(30),
+                expiry: TimeSpan.FromDays(3),
                 when: When.Always,
                 flags: CommandFlags.HighPriority);
 

@@ -6,7 +6,7 @@ namespace Weave.FeedUpdater.BusinessObjects.Cache
     public class CacheGetMultiResult<T>
     {
         public IEnumerable<CacheGetResult<T>> Results { get; set; }
-        public object Meta { get; set; }
+        public dynamic Meta { get; set; }
     }
 
     public class CacheGetResult<T>

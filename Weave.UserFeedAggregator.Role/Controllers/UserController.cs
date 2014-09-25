@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
+using Weave.FeedUpdater.BusinessObjects.Cache;
 using Weave.Updater.BusinessObjects;
 using Weave.User.BusinessObjects.Mutable;
 using Weave.User.Service.Contracts;
@@ -29,6 +30,7 @@ namespace Weave.User.Service.Role.Controllers
         readonly UserLockHelper userLockHelper;
         readonly IArticleQueueService articleQueueService;
         readonly TimingHelper sw = new TimingHelper();
+        readonly Weave.FeedUpdater.BusinessObjects.Cache.ExpandedEntryCache newsCache;
 
         dynamic timings;
 
@@ -38,11 +40,13 @@ namespace Weave.User.Service.Role.Controllers
         public UserController(
             ConnectionMultiplexer connection,
             Weave.User.BusinessObjects.Mutable.Cache.UserIndexCache userIndexCache,
+            Weave.FeedUpdater.BusinessObjects.Cache.ExpandedEntryCache newsCache,
             UserLockHelper userLockHelper,
             IArticleQueueService articleQueueService)
         {
             this.connection = connection;
             this.userIndexCache = userIndexCache;
+            this.newsCache = newsCache;
             this.userLockHelper = userLockHelper;
             this.articleQueueService = articleQueueService;
 
@@ -1236,26 +1240,15 @@ namespace Weave.User.Service.Role.Controllers
         /// <summary>
         /// Get news from Redis, do not use batching
         /// </summary>
-        async Task<IEnumerable<RedisCacheResult<ExpandedEntry>>> GetNewsFromRedis(IEnumerable<Guid> newsIds)
+        async Task<IEnumerable<CacheGetResult<ExpandedEntry>>> GetNewsFromRedis(IEnumerable<Guid> newsIds)
         {
-            var db = connection.GetDatabase(DatabaseNumbers.CANONICAL_NEWSITEMS);
-            var cache = new ExpandedEntryCache(db);
-            var entries = await cache.Get(newsIds);
+            var entries = await newsCache.Get(newsIds);
 
-            timings.GetNewsItemsFromCache_Deserialization = entries.Timings.SerializationTime.Dump();
-            timings.GetNewsItemsFromCache_Retrieval = entries.Timings.ServiceTime.Dump();
+            timings.GetNewsItemsFromCache = entries.Meta;
 
             return entries.Results;
         }
 
         #endregion
-    }
-
-    static class TimeSpanFormattingExtensions
-    {
-        public static string Dump(this TimeSpan t)
-        {
-            return t.TotalMilliseconds + " ms";
-        }
     }
 }

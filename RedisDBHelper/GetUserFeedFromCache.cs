@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Weave.FeedUpdater.BusinessObjects.Cache;
-using Weave.Services.Redis.Ambient;
 using Weave.Updater.BusinessObjects;
 using Weave.User.BusinessObjects.Mutable;
 using Weave.User.BusinessObjects.Mutable.Cache;
-using Weave.User.Service.Redis;
 
 namespace RedisDBHelper
 {
