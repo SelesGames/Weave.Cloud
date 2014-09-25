@@ -64,6 +64,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GetUserFeedFromCache.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RedisDeleteDatabase.cs" />
@@ -94,6 +95,10 @@
     <ProjectReference Include="..\Weave.Updater.BusinessObjects\Weave.Updater.BusinessObjects.csproj">
       <Project>{95fa1246-08c5-4ce4-a78d-e0f3a254aa7c}</Project>
       <Name>Weave.Updater.BusinessObjects</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Weave.User.BusinessObjects.Mutable.Cache\Weave.User.BusinessObjects.Mutable.Cache.csproj">
+      <Project>{00d9ae16-67ff-41d5-8fa2-fab5c39fbd44}</Project>
+      <Name>Weave.User.BusinessObjects.Mutable.Cache</Name>
     </ProjectReference>
     <ProjectReference Include="..\Weave.User.BusinessObjects.Mutable\Weave.User.BusinessObjects.Mutable.csproj">
       <Project>{fc7c92ee-0aed-4859-b5ec-a770ce148497}</Project>

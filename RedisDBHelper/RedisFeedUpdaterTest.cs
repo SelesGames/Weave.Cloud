@@ -23,7 +23,7 @@ namespace RedisDBHelper
         {
             var cm = Settings.StandardConnection;
             var db = cm.GetDatabase(DatabaseNumbers.FEED_UPDATER);
-            var redisCache = new Weave.User.Service.Redis.FeedUpdaterCache(db);
+            var redisCache = new Weave.User.Service.Redis.Clients.FeedUpdaterCache(db);
             var result = await redisCache.Get(url);
             var val = result.Value;
             return val.Dump();

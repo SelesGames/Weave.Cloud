@@ -38,6 +38,13 @@ namespace RedisDBHelper
                 return new RedisDeleteDatabase(dbNum).Execute();
             }
 
+            else if (command.Equals("userfeed"))
+            {
+                var userId = parameters.Skip(1).First();
+                var feedId = parameters.Skip(2).First();
+                return new GetUserFeedFromCache(userId, feedId).Execute();
+            }
+
             else return Task.FromResult("unrecognized command");
         }
 
