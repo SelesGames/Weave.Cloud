@@ -1,5 +1,4 @@
 ﻿using Common.Caching;
-using SelesGames.Common;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -17,7 +16,7 @@ namespace Weave.FeedUpdater.BusinessObjects.Cache
         const int LOCAL_CACHE_SIZE = 100000;
 
         readonly LRUCache<Guid, ExpandedEntry> localCache;
-        readonly Weave.User.Service.Redis.ExpandedEntryCache redisCache;
+        readonly Weave.User.Service.Redis.Clients.ExpandedEntryCache redisCache;
         readonly ExpandedEntryBlobClient blobClient;
 
         internal ExpandedEntryCache(
@@ -28,7 +27,7 @@ namespace Weave.FeedUpdater.BusinessObjects.Cache
             this.localCache = new LRUCache<Guid, ExpandedEntry>(LOCAL_CACHE_SIZE);
             var settings = Settings.StandardConnection;
             var db = settings.GetDatabase(DatabaseNumbers.CANONICAL_NEWSITEMS);
-            this.redisCache = new Weave.User.Service.Redis.ExpandedEntryCache(db);
+            this.redisCache = new Weave.User.Service.Redis.Clients.ExpandedEntryCache(db);
 
             this.blobClient = new ExpandedEntryBlobClient(
                 storageAccountName: azureUserIndexStorageAccountName,
@@ -121,7 +120,7 @@ namespace Weave.FeedUpdater.BusinessObjects.Cache
                     }
                 }
                 if (toSaveToRedis.Any())
-                    await redisCache.Set(toSaveToRedis, overwrite: true);
+                    await new Redis.SaveCommand().Execute(toSaveToRedis, overWrite: true);
             }
 
             var results = fullResults.Select(o => 
@@ -147,47 +146,6 @@ namespace Weave.FeedUpdater.BusinessObjects.Cache
         {
             entry.Description = null;
             entry.OriginalRssXml = null;
-        }
-
-        /// <summary>
-        /// On saving a user, save to the local cache, save to Redis, 
-        /// notify via PubSub that other local caches need to update from Redis.
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
-        public async Task<CacheSaveResult> Save(IEnumerable<ExpandedEntry> entries, bool overWrite)
-        {
-            dynamic meta = new ExpandoObject();
-            var sw = new TimingHelper();
-
-            var blobSaveStrategy = SelectBlobSaveStrategy(overWrite);
-
-            sw.Start();
-            var blobSaveResults = await Task.WhenAll(entries.Select(blobSaveStrategy));
-            meta.BlobSave = sw.Record().Dump();
-
-            // after saving to blob storage, null out heavy fields
-            foreach (var entry in entries)
-                NullOutHeavyFields(entry);
-
-            sw.Start();
-            var redisResult = await redisCache.Set(entries, overwrite: overWrite);
-            meta.RedisSave = sw.Record().Dump();
-
-            return new CacheSaveResult
-            {
-                RedisSaves = redisResult.Results.Select(o => o.ResultValue),
-                BlobSaves = blobSaveResults,
-            };
-        }
-
-        Func<ExpandedEntry, Task<bool>> SelectBlobSaveStrategy(bool overWrite)
-        {
-            if (overWrite)
-                return blobClient.Save;
-
-            else
-                return blobClient.ConditionalSave;
         }
     }
 }

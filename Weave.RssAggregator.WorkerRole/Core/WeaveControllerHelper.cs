@@ -10,6 +10,8 @@ using Weave.Services.Redis.Ambient;
 using Weave.Updater.BusinessObjects;
 using Weave.FeedUpdater.PubSub;
 using Weave.User.Service.Redis;
+using Weave.User.Service.Redis.Clients;
+using Weave.FeedUpdater.BusinessObjects.Cache;
 
 namespace Weave.FeedUpdater.Service
 {
@@ -153,8 +155,8 @@ namespace Weave.FeedUpdater.Service
                     FixImages(entry);
 
                 var saveFeedIndexAndNewsIndices = await SaveNewEntries(update.Entries);
-                Metadata.SaveNewEntries_SaveTime = saveFeedIndexAndNewsIndices.Timings.ServiceTime.Dump();
-                Metadata.SaveNewEntries_SerializationTime = saveFeedIndexAndNewsIndices.Timings.SerializationTime.Dump();
+                Metadata.SaveNewEntries_Blob = saveFeedIndexAndNewsIndices.Meta.BlobSave;
+                Metadata.SaveNewEntries_Redis = saveFeedIndexAndNewsIndices.Meta.RedisSave;
             }
 
             // Send a notice via Redis PubSub that the feed updater was updated
@@ -171,15 +173,10 @@ namespace Weave.FeedUpdater.Service
             }
         }
 
-        async Task<RedisWriteMultiResult<bool>> SaveNewEntries(IEnumerable<ExpandedEntry> entries)
+        Task<CacheSaveResult> SaveNewEntries(IEnumerable<ExpandedEntry> entries)
         {
-            var db = standardConnection.GetDatabase(DatabaseNumbers.CANONICAL_NEWSITEMS);
-            var transaction = db.CreateTransaction();
-            var cache = new ExpandedEntryCache(transaction);
-
-            var saveResultTask = cache.Set(entries, overwrite: false);
-            await transaction.ExecuteAsync(flags: CommandFlags.None);
-            return await saveResultTask;
+            var saveHelper = ExpandedEntryCacheFactory.CreateSaveHelper();
+            return saveHelper.Save(entries, overWrite: false);
         }
     }
 }
