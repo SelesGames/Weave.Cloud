@@ -12,6 +12,7 @@ using Weave.User.Service.Contracts;
 using Weave.User.Service.DTOs;
 using Weave.User.Service.InterRoleMessaging.Articles;
 using Weave.User.Service.Redis;
+using Weave.User.Service.Redis.Clients;
 using Weave.User.Service.Redis.Synchronization.UserIndex;
 using Weave.User.Service.Role.Map;
 using Incoming = Weave.User.Service.DTOs.ServerIncoming;

@@ -6,6 +6,7 @@ using Weave.Article.Service.DTOs.ServerIncoming;
 using Weave.Updater.BusinessObjects;
 using Weave.User.Service.InterRoleMessaging.Articles;
 using Weave.User.Service.Redis;
+using Weave.User.Service.Redis.Clients;
 
 namespace Weave.ArticleQueueProcessor.Service.Azure.Role.Startup
 {

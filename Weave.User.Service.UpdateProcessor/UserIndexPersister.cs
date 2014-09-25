@@ -5,6 +5,7 @@ using Weave.User.BusinessObjects.Mutable;
 using Weave.User.BusinessObjects.Mutable.Cache.Azure;
 using Weave.User.BusinessObjects.Mutable.Cache.PubSub;
 using Weave.User.Service.Redis;
+using Weave.User.Service.Redis.Clients;
 using Weave.User.Service.Redis.PubSub;
 
 namespace Weave.User.Service.UpdateProcessor

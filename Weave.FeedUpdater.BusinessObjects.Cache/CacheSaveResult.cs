@@ -6,6 +6,6 @@ namespace Weave.FeedUpdater.BusinessObjects.Cache
     {
         public IEnumerable<bool> RedisSaves { get; set; }
         public IEnumerable<bool> BlobSaves { get; set; }
-        public object Meta { get; set; }
+        public dynamic Meta { get; set; }
     }
 }

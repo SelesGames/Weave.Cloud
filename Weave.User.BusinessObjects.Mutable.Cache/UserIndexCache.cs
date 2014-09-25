@@ -12,7 +12,7 @@ namespace Weave.User.BusinessObjects.Mutable.Cache
     {
         readonly Guid cacheId;
         readonly LRUCache<Guid, UserIndex> localCache;
-        readonly Weave.User.Service.Redis.UserIndexCache redisCache;
+        readonly Weave.User.Service.Redis.Clients.UserIndexCache redisCache;
         readonly UserIndexBlobClient blobClient;
         readonly UserInfoBlobClient legacyDataStoreBlobClient;
         readonly UserIndexUpdateEventPublisher updateNoticePublisher;
@@ -30,7 +30,7 @@ namespace Weave.User.BusinessObjects.Mutable.Cache
         {
             this.cacheId = Guid.NewGuid();
             this.localCache = new LRUCache<Guid, UserIndex>(2000);
-            this.redisCache = new Service.Redis.UserIndexCache(Settings.StandardConnection);
+            this.redisCache = new Service.Redis.Clients.UserIndexCache(Settings.StandardConnection);
 
             this.blobClient = new UserIndexBlobClient(
                 storageAccountName: azureUserIndexStorageAccountName,

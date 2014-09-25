@@ -9,6 +9,7 @@ using Weave.RssAggregator.Core.DTOs.Outgoing;
 using Weave.Updater.BusinessObjects;
 using Weave.User.BusinessObjects.Mutable;
 using Weave.User.Service.Redis;
+using Weave.User.Service.Redis.Clients;
 
 namespace Weave.User.Service.Role.Controllers
 {

@@ -42,9 +42,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Ambient\RedisSettings.cs" />
-    <Compile Include="CacheClients\FeedUpdaterCache.cs" />
-    <Compile Include="CacheClients\ExpandedEntryCache.cs" />
-    <Compile Include="CacheClients\StandardStringCache.cs" />
+    <Compile Include="Clients\FeedUpdaterCache.cs" />
+    <Compile Include="Clients\ExpandedEntryCache.cs" />
+    <Compile Include="Clients\StandardStringCache.cs" />
     <Compile Include="Communication\Generic\Message.cs" />
     <Compile Include="Communication\Generic\MessageQueue.cs" />
     <Compile Include="Communication\Message.cs" />
@@ -75,7 +75,7 @@
     <Compile Include="RedisCacheResult.cs" />
     <Compile Include="Synchronization\LockTimeout.cs" />
     <Compile Include="Synchronization\UserIndex\UserLockHelper.cs" />
-    <Compile Include="CacheClients\UserIndexCache.cs" />
+    <Compile Include="Clients\UserIndexCache.cs" />
     <Compile Include="TimingHelper.cs" />
     <Compile Include="Timings.cs" />
   </ItemGroup>

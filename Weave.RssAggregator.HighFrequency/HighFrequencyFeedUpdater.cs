@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Weave.RssAggregator.LibraryClient;
 using Weave.Services.Redis.Ambient;
 using Weave.User.Service.Redis;
+using Weave.User.Service.Redis.Clients;
 
 namespace Weave.FeedUpdater.HighFrequency
 {

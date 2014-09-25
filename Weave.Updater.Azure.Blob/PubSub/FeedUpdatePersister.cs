@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Weave.Services.Redis.Ambient;
 using Weave.Updater.BusinessObjects;
 using Weave.User.Service.Redis;
+using Weave.User.Service.Redis.Clients;
 using Weave.User.Service.Redis.PubSub;
 
 namespace Weave.FeedUpdater.PubSub
