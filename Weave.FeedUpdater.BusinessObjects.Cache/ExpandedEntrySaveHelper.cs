@@ -40,9 +40,9 @@ namespace Weave.FeedUpdater.BusinessObjects.Cache
             var blobSaveResults = await Task.WhenAll(entries.Select(blobSaveStrategy));
             meta.BlobSave = sw.Record().Dump();
 
-            // after saving to blob storage, null out heavy fields
+            // after saving to blob storage, null out heavy fields before saving to Redis
             foreach (var entry in entries)
-                NullOutHeavyFields(entry);
+                entry.NullOutHeavyFields();
 
             sw.Start();
             var redisResult = await new Redis.SaveCommand().Execute(entries, overWrite: overWrite);
@@ -54,12 +54,6 @@ namespace Weave.FeedUpdater.BusinessObjects.Cache
                 RedisSaves = redisResult.Results.Select(o => o.ResultValue),
                 BlobSaves = blobSaveResults,
             };
-        }
-
-        static void NullOutHeavyFields(ExpandedEntry entry)
-        {
-            entry.Description = null;
-            entry.OriginalRssXml = null;
         }
 
         Func<ExpandedEntry, Task<bool>> SelectBlobSaveStrategy(bool overWrite)

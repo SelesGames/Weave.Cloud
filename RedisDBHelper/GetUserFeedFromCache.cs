@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Weave.FeedUpdater.BusinessObjects.Cache;
 using Weave.Services.Redis.Ambient;
 using Weave.Updater.BusinessObjects;
 using Weave.User.BusinessObjects.Mutable;
@@ -28,11 +29,10 @@ namespace RedisDBHelper
             var user = await cache.Get(Guid.Parse(userId));
             var feedGuid = Guid.Parse(feedId);
             var feed = user.FeedIndices.FirstOrDefault(o => o.Id == feedGuid);
-            var conn = Settings.StandardConnection;
-            var db = conn.GetDatabase(DatabaseNumbers.CANONICAL_NEWSITEMS);
-            var newsItemCache = new Weave.User.Service.Redis.Clients.ExpandedEntryCache(db);
+            var newsItemCache = ExpandedEntryCacheFactory.CreateCache(0);
+
             var newsDetails = await newsItemCache.Get(feed.NewsItemIndices.Select(o => o.Id));
-            var newsLookup = newsDetails.GetValidValues().ToDictionary(o => o.Id);
+            var newsLookup = newsDetails.Results.Where(o => o.HasValue).ToDictionary(o => o.Value.Id, o => o.Value);
 
             var temp = new
             {

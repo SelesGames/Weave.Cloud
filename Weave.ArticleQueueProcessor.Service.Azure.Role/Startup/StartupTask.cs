@@ -15,7 +15,7 @@ namespace Weave.ArticleQueueProcessor.Service.Azure.Role.Startup
         readonly TimeSpan pollingInterval = TimeSpan.FromMilliseconds(30);
         readonly Article.Service.Client.ServiceClient articleService;
         readonly ArticleStateChangeMessageQueue messageQueue;
-        readonly ExpandedEntryCache newsCache;
+        readonly Weave.FeedUpdater.BusinessObjects.Cache.ExpandedEntryCache newsCache;
 
         public StartupTask()
         {
@@ -25,8 +25,8 @@ namespace Weave.ArticleQueueProcessor.Service.Azure.Role.Startup
             var connectionMultiplexer = Weave.Services.Redis.Ambient.Settings.StandardConnection;
             this.messageQueue = new ArticleStateChangeMessageQueue(connectionMultiplexer);
 
-            var db = connectionMultiplexer.GetDatabase(DatabaseNumbers.CANONICAL_NEWSITEMS);
-            this.newsCache = new ExpandedEntryCache(db);
+            // create the cache with a local cache size of 0
+            this.newsCache = Weave.FeedUpdater.BusinessObjects.Cache.ExpandedEntryCacheFactory.CreateCache(0);
         }
 
         public void OnStart()
@@ -76,7 +76,7 @@ namespace Weave.ArticleQueueProcessor.Service.Azure.Role.Startup
 
 
 
-        #region Find the News Item - either from the Redis cache, or the user object graph
+        #region Find the News Item from the Redis cache (or the Azure Blob cache)
 
         async Task<SavedNewsItem> FindNewsItem(Guid userId, Guid articleId)
         {

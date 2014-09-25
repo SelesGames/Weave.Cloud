@@ -93,7 +93,7 @@ namespace Weave.Updater.BusinessObjects
                         if (News.Add(record))
                         {
                             var expandedEntry = Map(o);
-                            expandedEntry.Description = null;
+                            //expandedEntry.Description = null;
                             expandedEntry.OriginalDownloadDateTime = now;
                             addedNews.Add(expandedEntry);
                         }

@@ -16,9 +16,7 @@ namespace RedisDBHelper
 
         public async Task<string> Execute()
         {
-            var cache = ExpandedEntryCacheFactory.CreateCache();
-            //var db = Settings.StandardConnection.GetDatabase(DatabaseNumbers.CANONICAL_NEWSITEMS);
-            //var cache = new Weave.User.Service.Redis.ExpandedEntryCache(db);
+            var cache = ExpandedEntryCacheFactory.CreateCache(0);
             var guid = Guid.Parse(id);
             var result = await cache.Get(new[] { guid });
 
