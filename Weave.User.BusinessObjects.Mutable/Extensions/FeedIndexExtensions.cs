@@ -23,6 +23,16 @@ namespace Weave.User.BusinessObjects.Mutable
             return feeds.Where(o => categoryName.Equals(o.Category, StringComparison.OrdinalIgnoreCase));
         }
 
+        public static IEnumerable<NewsItemIndex> AllNewsIndices(this IEnumerable<FeedIndex> feeds)
+        {
+            return feeds.SelectMany(o => o.NewsItemIndices);
+        }
+
+
+
+
+        #region FeedIndex time management for "new" determination
+
         public static void MarkEntry(this IEnumerable<FeedIndex> feeds)
         {
             if (EnumerableEx.IsNullOrEmpty(feeds))
@@ -47,6 +57,11 @@ namespace Weave.User.BusinessObjects.Mutable
                 feed.MostRecentEntrance = now;
             }
         }
+
+        #endregion
+
+
+
 
         public static IEnumerable<NewsItemIndexFeedIndexTuple> GetLatestNews(this IEnumerable<FeedIndex> feeds, UserIndex user)
         {
