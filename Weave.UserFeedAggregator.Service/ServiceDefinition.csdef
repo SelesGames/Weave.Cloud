@@ -1,7 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ServiceDefinition name="Weave.User.Service.Service" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2014-01.2.3">
+  
   <WorkerRole name="Weave.User.Service.WorkerRole" vmsize="ExtraLarge">
     <Runtime executionContext="elevated" />
+    <!--Startup>
+      <Task commandLine="startup.cmd" executionContext="elevated" taskType="simple" />
+    </Startup-->
+    <Startup>
+      <Task commandLine="ServerGC.cmd" executionContext="elevated" taskType="simple">
+        <Environment>
+          <Variable name="UseServerGC" value="True" />
+          <Variable name="UseBackgroundGC" value="True" />
+        </Environment>
+      </Task>
+    </Startup>
     <Imports>
       <Import moduleName="Diagnostics" />
     </Imports>
@@ -9,11 +21,13 @@
       <InputEndpoint name="Endpoint1" protocol="http" port="80" />
     </Endpoints>
   </WorkerRole>
+  
   <WorkerRole name="Weave.ArticleQueueProcessor.Service.Azure.Role" vmsize="ExtraSmall">
     <Imports>
       <Import moduleName="Diagnostics" />
     </Imports>
   </WorkerRole>
+  
   <WorkerRole name="Weave.User.Service.UpdateProcessor" vmsize="Small">
     <Imports>
       <Import moduleName="Diagnostics" />
