@@ -48,7 +48,7 @@ namespace Weave.User.Service.Redis.Clients
                 value: feed,
                 expiry: TimeSpan.FromDays(3),
                 when: When.Always,
-                flags: CommandFlags.HighPriority);
+                flags: CommandFlags.None);
 
             return result;
         }

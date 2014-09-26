@@ -29,7 +29,7 @@ namespace Weave.User.Service.Redis.Synchronization
                     value: lockToken,
                     expiry: ttl,
                     when: When.NotExists,
-                    flags: CommandFlags.HighPriority);
+                    flags: CommandFlags.None);
 
                 if (wasLockSuccesfullyAcquired)
                     return lockToken;

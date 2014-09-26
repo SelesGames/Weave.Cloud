@@ -10,7 +10,7 @@ namespace Weave.User.Service.Redis.Synchronization.UserIndex
 
         static readonly TimeSpan lockAcquisitionTimeout = TimeSpan.FromSeconds(5);
         static readonly TimeSpan lockTTL = TimeSpan.FromSeconds(4);
-        static readonly TimeSpan lockRetryInterval = TimeSpan.FromMilliseconds(20);
+        static readonly TimeSpan lockRetryInterval = TimeSpan.FromMilliseconds(4);
 
         public UserLockCache(ConnectionMultiplexer connection)
         {
