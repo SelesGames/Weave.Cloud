@@ -6,13 +6,14 @@ namespace Weave.User.Service.Role.Startup
 {
     public class NinjectKernel : StandardKernel
     {
+        const int EXPANDED_ENTRY_MEMORY_LENGTH = 200000;
         protected override void AddComponents()
         {
             base.AddComponents();
 
             Bind<IArticleQueueService>().To<ArticleQueueService>();
             Bind<ExpandedEntryCache>()
-                .ToConstant(ExpandedEntryCacheFactory.CreateCache(100000))
+                .ToConstant(ExpandedEntryCacheFactory.CreateCache(EXPANDED_ENTRY_MEMORY_LENGTH))
                 .InSingletonScope();
         }
     }

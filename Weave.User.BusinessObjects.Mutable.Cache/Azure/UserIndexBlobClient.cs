@@ -28,7 +28,7 @@ namespace Weave.User.BusinessObjects.Mutable.Cache.Azure
         {
             var requestProperties = new WriteRequestProperties
             {
-                UseCompression = false,
+                UseCompression = true,
             };
             var blobName = user.Id.ToString("N");
             try
