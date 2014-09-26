@@ -45,6 +45,12 @@ namespace RedisDBHelper
                 return new GetUserFeedFromCache(userId, feedId).Execute();
             }
 
+            else if (command.Equals("user"))
+            {
+                var userId = parameters.Skip(1).First();
+                return new GetUser(userId).Execute();
+            }
+
             else return Task.FromResult("unrecognized command");
         }
 
