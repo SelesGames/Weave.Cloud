@@ -47,19 +47,4 @@ namespace Weave.User.Service.Redis.PubSub
             return new ActionDisposable(() => valueObserver = null);
         }
     }
-
-    class ActionDisposable : IDisposable
-    {
-        Action onDispose; 
-        public ActionDisposable(Action onDispose)
-        {
-            this.onDispose = onDispose;
-        }
-
-        public void Dispose()
-        {
-            if (onDispose != null)
-                onDispose();
-        }
-    }
 }

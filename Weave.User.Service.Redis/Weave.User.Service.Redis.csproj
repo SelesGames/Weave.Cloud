@@ -41,21 +41,22 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActionDisposable.cs" />
     <Compile Include="Ambient\RedisSettings.cs" />
     <Compile Include="Clients\FeedUpdaterCache.cs" />
     <Compile Include="Clients\ExpandedEntryCache.cs" />
     <Compile Include="Clients\StandardStringCache.cs" />
     <Compile Include="Communication\Generic\Message.cs" />
     <Compile Include="Communication\Generic\MessageQueue.cs" />
+    <Compile Include="Communication\Generic\MessageQueueExtensions.cs" />
     <Compile Include="Communication\Message.cs" />
+    <Compile Include="Communication\Generic\RedisPersister.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DatabaseNumbers.cs" />
     <Compile Include="Communication\MessageQueue.cs" />
     <Compile Include="Extensions\BinaryExtensions.cs" />
     <Compile Include="Extensions\UpdaterFeedExtensions.cs" />
-    <Compile Include="PubSub\PubSubHelper.cs" />
-    <Compile Include="PubSub\RedisPersister.cs" />
-    <Compile Include="PubSub\RedisPubSubObserver.cs" />
-    <Compile Include="PubSub\RedisPubSubPublisher.cs" />
     <Compile Include="RedisPrependKeyCreator.cs" />
     <Compile Include="Serializers\Binary\ExpandedEntryBinarySerializer.cs" />
     <Compile Include="Serializers\Binary\ExpandedEntryReader.cs" />
@@ -63,6 +64,7 @@
     <Compile Include="Serializers\Binary\FeedUpdaterBinarySerializer.cs" />
     <Compile Include="Serializers\Binary\FeedUpdaterReader.cs" />
     <Compile Include="Serializers\Binary\FeedUpdaterWriter.cs" />
+    <Compile Include="Serializers\RedisValueMap.cs" />
     <Compile Include="Serializers\SerializationException.cs" />
     <Compile Include="Synchronization\IDatabaseLockExtensions.cs" />
     <Compile Include="Synchronization\RedisLockException.cs" />

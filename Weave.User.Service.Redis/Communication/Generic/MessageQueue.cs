@@ -1,21 +1,23 @@
-﻿using StackExchange.Redis;
+﻿using SelesGames.Common;
+using StackExchange.Redis;
+using System;
 using System.Threading.Tasks;
+using Weave.User.Service.Redis.Serializers;
 
 namespace Weave.User.Service.Redis.Communication.Generic
 {
-    public abstract class MessageQueue<T>
+    public class MessageQueue<T>
     {
         readonly MessageQueue innerQueue;
+        readonly IRedisValueMap<T> map;
 
         public long Size { get { return innerQueue.Size; } }
 
-        public MessageQueue(IDatabase db, RedisKey messageList, RedisKey processList)
+        public MessageQueue(IDatabaseAsync db, RedisKey messageList, RedisKey processList, IRedisValueMap<T> map)
         {
             this.innerQueue = new MessageQueue(db, messageList, processList);
+            this.map = map;
         }
-
-        protected abstract T Map(RedisValue value);
-        protected abstract RedisValue Map(T o);
 
         /// <summary>
         /// Push the input value into the message queue
@@ -23,18 +25,34 @@ namespace Weave.User.Service.Redis.Communication.Generic
         /// <param name="value">The value to push to the message queue</param>
         public Task Push(T o)
         {
-            var value = Map(o);
+            var value = map.Map(o);
             return innerQueue.Push(value);
         }
 
         /// <summary>
         /// Get's the next message from the message queue
         /// </summary>
-        /// <returns>A Message object, or null if no messages are in the message queue</returns>
-        public async Task<Message<T>> GetNext()
+        /// <returns>A Message object, or Option.None if no messages are in the message queue</returns>
+        public async Task<Option<Message<T>>> GetNext()
         {
-            var message = await innerQueue.GetNext();
-            return message == null ? null : new Message<T>(message, Map);
+            var next = await innerQueue.GetNext();
+            if (next.IsSome)
+            {     
+                var message = next.Value;
+
+                try
+                {
+                    var mappedVal = map.Map(message.Value);
+                    return Option.Some(new Message<T>(message, mappedVal));
+                }
+                catch(Exception e)
+                {
+                    throw new SerializationException(e, message.Value);
+                }
+            }
+
+            else
+                return Option.None<Message<T>>();
         }
     }
 }

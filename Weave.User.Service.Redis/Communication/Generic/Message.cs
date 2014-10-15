@@ -1,5 +1,4 @@
 ﻿using StackExchange.Redis;
-using System;
 using System.Threading.Tasks;
 
 namespace Weave.User.Service.Redis.Communication.Generic
@@ -12,10 +11,10 @@ namespace Weave.User.Service.Redis.Communication.Generic
         public RedisValue RedisValue { get { return innerMessage.Value; } }
         public T Value { get { return value; } }
 
-        internal Message(Message innerMessage, Func<RedisValue, T> map)
+        internal Message(Message innerMessage, T value)
         {
             this.innerMessage = innerMessage;
-            this.value = map(innerMessage.Value);
+            this.value = value;
         }
 
         public Task<bool> Complete()

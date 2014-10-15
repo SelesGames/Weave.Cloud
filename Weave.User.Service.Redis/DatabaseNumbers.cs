@@ -8,5 +8,6 @@ namespace Weave.User.Service.Redis
         public const int FEED_UPDATER = 2;
         public const int CANONICAL_NEWSITEMS = 3;
         public const int LOCK = 4;
+        public const int MESSAGE_QUEUE = 9;
     }
 }

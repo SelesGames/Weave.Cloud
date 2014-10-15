@@ -1,17 +1,18 @@
-﻿using StackExchange.Redis;
+﻿using SelesGames.Common;
+using StackExchange.Redis;
 using System.Threading.Tasks;
 
 namespace Weave.User.Service.Redis.Communication
 {
     public class MessageQueue
     {
-        readonly IDatabase db;
+        readonly IDatabaseAsync db;
         readonly RedisKey messageList;
         readonly RedisKey processList;
 
         public long Size { get; private set; }
 
-        public MessageQueue(IDatabase db, RedisKey messageList, RedisKey processList)
+        public MessageQueue(IDatabaseAsync db, RedisKey messageList, RedisKey processList)
         {
             this.db = db;
             this.messageList = messageList;
@@ -34,8 +35,8 @@ namespace Weave.User.Service.Redis.Communication
         /// <summary>
         /// Get's the next message from the message queue
         /// </summary>
-        /// <returns>A Message object, or null if no messages are in the message queue</returns>
-        public async Task<Message> GetNext()
+        /// <returns>A Message object, or Option.None if no messages are in the message queue</returns>
+        public async Task<Option<Message>> GetNext()
         {
             var redisValue = await db.ListRightPopLeftPushAsync(
                 source: messageList,
@@ -44,10 +45,10 @@ namespace Weave.User.Service.Redis.Communication
             );
 
             if (redisValue.HasValue)
-                return new Message(db, processList, redisValue);
+                return Option.Some(new Message(db, processList, redisValue));
 
             else
-                return null;
+                return Option.None<Message>();
         }
     }
 }

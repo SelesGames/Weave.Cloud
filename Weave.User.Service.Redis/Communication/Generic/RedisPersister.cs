@@ -1,33 +1,38 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Weave.User.Service.Redis.PubSub
+namespace Weave.User.Service.Redis.Communication.Generic
 {
     public class RedisPersister<T1, T2> : IDisposable
     {
-        readonly RedisPubSubObserver<T1> observer;
+        readonly MessageQueue<T1> messageQueue;
         readonly Func<T1, Task<RedisCacheResult<T2>>> redisGet;
         readonly Func<T2, Task<bool>> persisterFunc;
+        readonly TimeSpan pollingFrequency;
+
         IDisposable disposeHandle;
 
         public RedisPersister(
-            RedisPubSubObserver<T1> observer,
+            MessageQueue<T1> messageQueue,
             Func<T1, Task<RedisCacheResult<T2>>> redisGet,
-            Func<T2, Task<bool>> persisterFunc)
+            Func<T2, Task<bool>> persisterFunc,
+            TimeSpan pollingFrequency)
         {
-            this.observer = observer;
+            this.messageQueue = messageQueue;
             this.redisGet = redisGet;
             this.persisterFunc = persisterFunc;
+            this.pollingFrequency = pollingFrequency;
         }
 
-        public async Task Initialize()
+        // switch to an adaptive polling strategy, adapting based on whether there was a message
+        public void Initialize()
         {
-            disposeHandle = await observer.Observe(OnNoticeReceived);
+            disposeHandle = messageQueue.Observe(pollingFrequency, ProcessMessage);
         }
 
-        async void OnNoticeReceived(T1 notice)
+        async Task ProcessMessage(T1 message)
         {
-            var redisResult = await redisGet(notice);
+            var redisResult = await redisGet(message);
             if (redisResult.HasValue)
             {
                 var latest = redisResult.Value;

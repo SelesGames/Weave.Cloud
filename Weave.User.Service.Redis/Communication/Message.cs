@@ -5,13 +5,13 @@ namespace Weave.User.Service.Redis.Communication
 {
     public class Message
     {
-        readonly IDatabase db;
+        readonly IDatabaseAsync db;
         readonly RedisKey processList;
         readonly RedisValue value;
 
         public RedisValue Value { get { return value; } }
 
-        internal Message(IDatabase db, RedisKey processList, RedisValue value)
+        internal Message(IDatabaseAsync db, RedisKey processList, RedisValue value)
         {
             this.db = db;
             this.processList = processList;
