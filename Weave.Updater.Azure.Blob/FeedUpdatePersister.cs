@@ -4,14 +4,18 @@ using Weave.Services.Redis.Ambient;
 using Weave.Updater.BusinessObjects;
 using Weave.User.Service.Redis;
 using Weave.User.Service.Redis.Clients;
-using Weave.User.Service.Redis.PubSub;
+using Weave.User.Service.Redis.Communication.Generic;
 
-namespace Weave.FeedUpdater.PubSub
+namespace Weave.FeedUpdater.Messaging
 {
     public class FeedUpdatePersister : RedisPersister<FeedUpdateNotice, Feed>
     {
         public FeedUpdatePersister(string account, string key, string container)
-            : base(new FeedUpdateObserver(), CreateGet(), CreatePersist(account, key, container))
+            : base(
+            new FeedUpdateMessageQueue(), 
+            CreateGet(), 
+            CreatePersist(account, key, container),
+            TimeSpan.FromMilliseconds(500))
         { }
 
         static Func<FeedUpdateNotice,Task<RedisCacheResult<Feed>>> CreateGet()

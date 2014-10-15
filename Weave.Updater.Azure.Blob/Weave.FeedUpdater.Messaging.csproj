@@ -41,14 +41,12 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PubSub\Constants.cs" />
-    <Compile Include="PubSub\FeedUpdateNotice.cs" />
+    <Compile Include="FeedUpdateMessageQueue.cs" />
+    <Compile Include="FeedUpdateNotice.cs" />
     <Compile Include="Azure\FeedUpdaterCache.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PubSub\FeedUpdateNoticeExtensions.cs" />
-    <Compile Include="PubSub\FeedUpdateObserver.cs" />
-    <Compile Include="PubSub\FeedUpdatePersister.cs" />
-    <Compile Include="PubSub\FeedUpdatePublisher.cs" />
+    <Compile Include="FeedUpdateNoticeExtensions.cs" />
+    <Compile Include="FeedUpdatePersister.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common.Azure.Blob\Common.Azure.Blob.csproj">

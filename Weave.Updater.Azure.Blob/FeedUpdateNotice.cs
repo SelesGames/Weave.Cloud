@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Weave.FeedUpdater.PubSub
+namespace Weave.FeedUpdater.Messaging
 {
     public class FeedUpdateNotice
     {

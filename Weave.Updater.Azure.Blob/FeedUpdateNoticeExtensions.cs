@@ -1,12 +1,13 @@
 ﻿using StackExchange.Redis;
 using System.IO;
 using System.Text;
+using Weave.User.Service.Redis.Serializers;
 
-namespace Weave.FeedUpdater.PubSub
+namespace Weave.FeedUpdater.Messaging
 {
-    static class FeedUpdateNoticeExtensions
+    class FeedUpdateNoticeMap : IRedisValueMap<FeedUpdateNotice>
     {
-        public static FeedUpdateNotice ReadFeedUpdateNotice(this RedisValue o)
+        public FeedUpdateNotice Map(RedisValue o)
         {
             try
             {
@@ -30,7 +31,7 @@ namespace Weave.FeedUpdater.PubSub
             return null;
         }
 
-        public static byte[] WriteToBytes(this FeedUpdateNotice update)
+        public RedisValue Map(FeedUpdateNotice update)
         {
             byte[] bytes;
 
