@@ -28,7 +28,7 @@ namespace Weave.FeedUpdater.BusinessObjects.Cache.Azure
         {
             var requestProperties = new WriteRequestProperties
             {
-                UseCompression = false,
+                UseCompression = true,
             };
             var blobName = entry.Id.ToString("N");
             try
@@ -55,7 +55,7 @@ namespace Weave.FeedUpdater.BusinessObjects.Cache.Azure
 
                 var requestProperties = new WriteRequestProperties
                 {
-                    UseCompression = false,
+                    UseCompression = true,
                 };
 
                 await blobClient.Save(containerName, blobName, entry, requestProperties);

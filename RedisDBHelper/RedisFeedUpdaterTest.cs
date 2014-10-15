@@ -26,7 +26,8 @@ namespace RedisDBHelper
             var redisCache = new Weave.User.Service.Redis.Clients.FeedUpdaterCache(db);
             var result = await redisCache.Get(url);
             var val = result.Value;
-            return val.Dump();
+            return new { Feed = val, Meta = new { NewsCount = val.News.Count() } }
+                .Dump();
         }
     }
 
@@ -34,7 +35,11 @@ namespace RedisDBHelper
     {
         public static string Dump(this object value)
         {
-            var settings = new JsonSerializerSettings { DateTimeZoneHandling = DateTimeZoneHandling.Utc };         
+            var settings = new JsonSerializerSettings 
+            { 
+                DateTimeZoneHandling = DateTimeZoneHandling.Utc,
+                NullValueHandling = NullValueHandling.Ignore,
+            };         
             return JsonConvert.SerializeObject(value, Formatting.Indented, settings);
         }
     }

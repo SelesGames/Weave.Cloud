@@ -51,11 +51,16 @@ namespace RedisDBHelper
                 return new GetUser(userId).Execute();
             }
 
+            else if (command.Equals("transferentries"))
+            {
+                return new TransferExpandedEntryFromRedisToBlobCommand().Execute();
+            }
+
             else return Task.FromResult("unrecognized command");
         }
 
-        static async Task TestFeedUpdateToAzure()
-        {
+        //static async Task TestFeedUpdateToAzure()
+        //{
             //var feedUrl = "http://www.polygon.com/rss/index.xml";
 
             //var cm = Settings.StandardConnection;
@@ -69,6 +74,6 @@ namespace RedisDBHelper
 
             //var wasUpdated = await blobUpdater.Update(feedUrl);
             //Debug.WriteLine(wasUpdated);
-        }
+        //}
     }
 }

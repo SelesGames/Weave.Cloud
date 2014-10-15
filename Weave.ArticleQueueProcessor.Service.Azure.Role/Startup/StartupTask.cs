@@ -22,8 +22,7 @@ namespace Weave.ArticleQueueProcessor.Service.Azure.Role.Startup
             Settings.CompressionHandlers = new Common.Compression.Windows.CompressionHandlerCollection();
             this.articleService = new Article.Service.Client.ServiceClient();
 
-            var connectionMultiplexer = Weave.Services.Redis.Ambient.Settings.StandardConnection;
-            this.messageQueue = new ArticleStateChangeMessageQueue(connectionMultiplexer);
+            this.messageQueue = new ArticleStateChangeMessageQueue();
 
             // create the cache with a local cache size of 0
             this.newsCache = Weave.FeedUpdater.BusinessObjects.Cache.ExpandedEntryCacheFactory.CreateCache(0);
@@ -45,10 +44,11 @@ namespace Weave.ArticleQueueProcessor.Service.Azure.Role.Startup
 
         async Task ProcessNext()
         {
-            var message = await messageQueue.GetNext();
-            if (message == null)
+            var next = await messageQueue.GetNext();
+            if (!next.IsSome)
                 return;
 
+            var message = next.Value;
             var change = message.Value.Change;
             var userId = message.Value.UserId;
             var articleId = message.Value.ArticleId;
