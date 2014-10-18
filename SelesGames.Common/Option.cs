@@ -1,21 +1,27 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-
-namespace SelesGames.Common
+﻿
+namespace System.Collections.Generic
 {
     /// <summary>
-    /// An F#/Scheme inspired Option type, or values that optionally may be missing
+    /// An F#/Scheme inspired Option type, for values that are may or may not be present.
     /// </summary>
     public class Option<T> : IEnumerable<T>, IEquatable<T>, IEquatable<Option<T>>
     {
+        public static readonly Option<T> None = new Option<T>();
+        
         readonly bool isSome;
         readonly T value;
 
         public bool IsSome { get { return isSome; } }
-        public T Value { get { return value; } }
-
-        public static readonly Option<T> None = new Option<T>();
+        public T Value 
+        { 
+            get 
+            {
+                if (isSome)
+                    return value;
+                else
+                    throw new InvalidOperationException("Cannot access the value of Option.None"); 
+            }
+        }
 
 
 
@@ -24,6 +30,7 @@ namespace SelesGames.Common
 
         internal Option()
         {
+            //this.value = NullVal;
             isSome = false;
         }
 
@@ -42,8 +49,6 @@ namespace SelesGames.Common
 
         public override bool Equals(object obj)
         {
-            //if (obj == null) return false;
-
             var other = obj as Option<T>;
             if (other == null)
                 return false;
@@ -51,14 +56,14 @@ namespace SelesGames.Common
             return Equals(other);
         }
 
+        public bool Equals(Option<T> other)
+        {
+            return Equals(other.value);
+        }
+        
         public bool Equals(T other)
         {
             return value.Equals(other);
-        }
-
-        public bool Equals(Option<T> other)
-        {
-            return value.Equals(other.value);
         }
 
         public static bool operator ==(Option<T> t1, Option<T> t2)
@@ -76,7 +81,7 @@ namespace SelesGames.Common
             if (object.ReferenceEquals(t1, null)) return true;
             if (object.ReferenceEquals(t2, null)) return true;
 
-            return t1.Equals(t2);
+            return !t1.Equals(t2);
         }
 
         public override int GetHashCode()
@@ -85,7 +90,7 @@ namespace SelesGames.Common
                 return value.GetHashCode();
 
             else
-                return false.GetHashCode();
+                return 0;// typeof(T).GetHashCode();// false.GetHashCode();
         }
 
         #endregion
@@ -107,6 +112,14 @@ namespace SelesGames.Common
         }
 
         #endregion
+
+
+
+
+        public override string ToString()
+        {
+            return isSome ? value.ToString() : string.Format("Option<{0}>.None", typeof(T).Name);
+        }
     }
 
     public static class Option
@@ -114,7 +127,7 @@ namespace SelesGames.Common
         public static Option<T> Some<T>(T value)
         {
             if (value == null)
-                throw new ArgumentNullException("You cannot instantiate an reference Option with null");
+                throw new ArgumentNullException("You cannot instantiate a reference Option with null");
             
             return new Option<T>(value);
         }

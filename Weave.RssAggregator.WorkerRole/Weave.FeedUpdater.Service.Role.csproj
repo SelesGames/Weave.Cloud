@@ -158,9 +158,9 @@
       <Project>{2f1a280d-ee75-4dc1-a36c-f8e5488e3260}</Project>
       <Name>Weave.FeedUpdater.Service.Role.DTOs</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Weave.Updater.Azure.Blob\Weave.FeedUpdater.csproj">
+    <ProjectReference Include="..\Weave.Updater.Azure.Blob\Weave.FeedUpdater.Messaging.csproj">
       <Project>{be2ab7b9-7783-460a-845d-e06b712c0497}</Project>
-      <Name>Weave.FeedUpdater</Name>
+      <Name>Weave.FeedUpdater.Messaging</Name>
     </ProjectReference>
     <ProjectReference Include="..\Weave.Updater.BusinessObjects\Weave.Updater.BusinessObjects.csproj">
       <Project>{95fa1246-08c5-4ce4-a78d-e0f3a254aa7c}</Project>

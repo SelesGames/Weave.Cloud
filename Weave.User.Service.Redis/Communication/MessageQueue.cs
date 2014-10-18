@@ -1,5 +1,5 @@
-﻿using SelesGames.Common;
-using StackExchange.Redis;
+﻿using StackExchange.Redis;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Weave.User.Service.Redis.Communication

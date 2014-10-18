@@ -11,7 +11,7 @@ namespace Weave.User.BusinessObjects.Mutable.Extensions.Helpers
         public static IEnumerable<NewsItemIndexFeedIndexTuple> GetTopNewsItems(IEnumerable<FeedIndex> feeds, UserIndex user)
         {
             IEnumerable<NewsItemIndexFeedIndexTuple> pool = feeds
-                .AllIndices(user)
+                .AllIndices(user, useNormalDetermination: true)
                 .Where(o => o.CanKeep)
                 .Where(o => !o.HasBeenViewed)
                 .Ordered()

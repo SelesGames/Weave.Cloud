@@ -16,7 +16,7 @@ namespace Weave.Mobilizer.WorkerRole.Startup
     {
         IKernel kernel;
         IDependencyResolver resolver;
-        int localCacheTTL;
+        //int localCacheTTL;
 
         public void OnStart()
         {
@@ -29,23 +29,23 @@ namespace Weave.Mobilizer.WorkerRole.Startup
         
         void InitializeEnvironment()
         {
-            if (!ReadConfigValues())
-                throw new Exception("Unable to read the config values from Azure! (WebApiConfig.Register function)");
+            //if (!ReadConfigValues())
+            //    throw new Exception("Unable to read the config values from Azure! (WebApiConfig.Register function)");
 
             var localCache = kernel.Get<LocalMemoryCache>();
-            localCache.SetCacheTTLInMinutes(localCacheTTL);
+            //localCache.SetCacheTTLInMinutes(localCacheTTL);
         }
 
-        bool ReadConfigValues()
-        {
-            var localCacheTTLString = RoleEnvironment.GetConfigurationSettingValue("LocalCacheTTLInMinutes");
-            if (!int.TryParse(localCacheTTLString, out localCacheTTL))
-            {
-                return false;
-            }
+        //bool ReadConfigValues()
+        //{
+        //    var localCacheTTLString = RoleEnvironment.GetConfigurationSettingValue("LocalCacheTTLInMinutes");
+        //    if (!int.TryParse(localCacheTTLString, out localCacheTTL))
+        //    {
+        //        return false;
+        //    }
 
-            return true;
-        }
+        //    return true;
+        //}
 
         void CreateAndStartServer()
         {

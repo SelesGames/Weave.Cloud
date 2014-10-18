@@ -5,10 +5,10 @@ namespace Weave.User.BusinessObjects.Mutable.Cache
 {
     public static class UserIndexCacheFactory
     {
-        public static async Task<UserIndexCache> CreateCacheAsync()
+        public static UserIndexCache CreateAndInitializeCache()
         {
             var cache = CreateCache();
-            await cache.InitializeAsync();
+            cache.Initialize();
             return cache;
         }
 

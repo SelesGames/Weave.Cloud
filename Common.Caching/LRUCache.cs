@@ -49,8 +49,6 @@ namespace Common.Caching
         /// <returns>The evicted LRU item, if any</returns>
         public LRUCacheItem<TKey, TValue> AddOrUpdate(TKey key, TValue value)
         {
-            LRUCacheItem<TKey, TValue> evicted = null;
-
             lock (sync)
             {
                 LinkedListNode<LRUCacheItem<TKey, TValue>> node;
@@ -62,7 +60,9 @@ namespace Common.Caching
                     list.AddLast(node);
 
                     node.Value.Value = value;
+                    return null;
                 }
+
                 // cache does not contain a value for key, so add it now
                 else
                 {
@@ -71,13 +71,13 @@ namespace Common.Caching
 
                     cache.Add(key, node);
                     list.AddLast(node);
+
+                    LRUCacheItem<TKey, TValue> evicted = null;
+                    if (cache.Count > capacity)
+                        evicted = EvictLRU();
+                    return evicted;
                 }
-
-                if (cache.Count > capacity)
-                    evicted = EvictLRU();
             }
-
-            return evicted;
         }
 
         /// <summary>

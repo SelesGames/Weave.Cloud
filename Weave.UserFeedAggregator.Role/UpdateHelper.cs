@@ -90,11 +90,13 @@ namespace Weave.User.Service.Role.Controllers
         {
             readonly FeedIndex index;
             readonly RedisCacheResult<Feed> updateResult;
+            readonly DateTime now;
 
             public FeedIndexUpdateHelper(FeedIndex index, RedisCacheResult<Feed> updateResult)
             {
                 this.index = index;
                 this.updateResult = updateResult;
+                this.now = DateTime.UtcNow;
             }
 
             public void UpdateFeedIndex()
@@ -113,12 +115,35 @@ namespace Weave.User.Service.Role.Controllers
                 index.IconUri = feed.IconUri;
                 index.TeaserImageUri = feed.TeaserImageUri;
 
-                var newsDiff = index.NewsItemIndices.Diff(feed.News, o => o.Id, o => o.Id);
-                // don't remove a news item just because it was removed from the underlying feed!
-                //foreach (var newsItem in newsDiff.Removed)
+                #region alternative approach to updating, using canonical
+                //// should be safe to key off of Id, since the set determines uniqueness by ID
+                //var userNewsItemIndicesLookup = index.NewsItemIndices.ToDictionary(o => o.Id);
+
+                //var currentNewsSet = feed.News.Select(CreateNewIndexFromRecord);
+
+                //index.NewsItemIndices.Clear();
+                //foreach (var ni in currentNewsSet)
                 //{
-                //    index.NewsItemIndices.Remove(newsItem);
+                //    var temp = ni;
+                //    NewsItemIndex existing;
+                //    if (userNewsItemIndicesLookup.TryGetValue(temp.Id, out existing))
+                //    {
+                //        temp.UtcPublishDateTime = existing.UtcPublishDateTime;
+                //        temp.OriginalDownloadDateTime = existing.OriginalDownloadDateTime;
+                //        temp.HasImage = existing.HasImage;
+                //        temp.IsFavorite = existing.IsFavorite;
+                //        temp.HasBeenViewed = existing.HasBeenViewed;
+                //    }
+                //    index.NewsItemIndices.Add(temp);
                 //}
+                #endregion
+
+                var newsDiff = index.NewsItemIndices.Diff(feed.News, o => o.Id, o => o.Id);
+                
+                foreach (var newsItem in newsDiff.Removed.Where(o => !o.IsFavorite))
+                {
+                    index.NewsItemIndices.Remove(newsItem);
+                }
 
                 foreach (var record in newsDiff.Added)
                 {
@@ -133,8 +158,10 @@ namespace Weave.User.Service.Role.Controllers
                 {
                     Id = o.Id,
                     UtcPublishDateTime = o.UtcPublishDateTime,
-                    OriginalDownloadDateTime = DateTime.UtcNow,
+                    OriginalDownloadDateTime = now,
                     HasImage = o.HasImage,
+                    IsFavorite = false,
+                    HasBeenViewed = false,
                     //FeedIndex = index,
                 };
             }

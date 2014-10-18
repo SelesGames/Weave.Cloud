@@ -5,7 +5,7 @@ namespace Weave.Parsing
     public class Entry
     {
         public Guid Id { get; set; }
-        public Guid FeedId { get; set; }
+        //public Guid FeedId { get; set; }
         public DateTime UtcPublishDateTime { get; set; }
 
         public string Title { get; set; }

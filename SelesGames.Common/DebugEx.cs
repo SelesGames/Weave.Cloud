@@ -20,7 +20,6 @@ public class DebugEx
     {
         if (o != null)
             WriteLine(o.ToString());
-
     }
 }
 

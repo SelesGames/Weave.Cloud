@@ -1,25 +1,19 @@
 ﻿using StackExchange.Redis;
 using System.Threading.Tasks;
+using Weave.FeedUpdater.Messaging;
 using Weave.Services.Redis.Ambient;
-using Weave.FeedUpdater.PubSub;
 
 namespace Weave.FeedUpdater.HighFrequency
 {
     public class PubSubUpdater : IAsyncProcessor<HighFrequencyFeedUpdate>
     {
-        readonly ConnectionMultiplexer cm;
-
-        public PubSubUpdater()
-        {
-            this.cm = Settings.PubsubConnection;
-        }
+        static readonly FeedUpdateMessageQueue QUEUE = new FeedUpdateMessageQueue();
 
         public async Task ProcessAsync(HighFrequencyFeedUpdate update)
         {
-            var publisher = new FeedUpdatePublisher();
-            var received = await publisher.Publish(update.InnerUpdate);
+            await QUEUE.Push(update.InnerUpdate);
 
-            DebugEx.WriteLine("** REDIS PUBSUB ** processed: {0}, {1} clients received", update.Feed.Uri, received);
+            DebugEx.WriteLine("** REDIS PUBSUB ** processed: {0}", update.Feed.Uri);
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Weave.User.BusinessObjects.Mutable
 {
     public class NewsItemIndices : IEnumerable<NewsItemIndex>
     {
-        const int NUMBER_OF_NEWSITEMS_TO_HOLD = 200;
+        //const int NUMBER_OF_NEWSITEMS_TO_HOLD = 200;
         static readonly NewsItemIndexComparer indexComparer = new NewsItemIndexComparer();
 
         readonly FeedIndex feedIndex;
@@ -48,12 +48,17 @@ namespace Weave.User.BusinessObjects.Mutable
 
         public int Count { get { return set.Count; } }
 
-        public void Trim()
-        {
-            var favoritesPastN = set.Skip(NUMBER_OF_NEWSITEMS_TO_HOLD).Where(o => o.IsFavorite);
-            var toKeep = set.Take(NUMBER_OF_NEWSITEMS_TO_HOLD).Union(favoritesPastN);
-            set = new SortedSet<NewsItemIndex>(toKeep, indexComparer);
-        }
+        //public void Trim()
+        //{
+        //    var favoritesPastN = set.Skip(NUMBER_OF_NEWSITEMS_TO_HOLD).Where(o => o.IsFavorite);
+        //    var toKeep = set.Take(NUMBER_OF_NEWSITEMS_TO_HOLD).Union(favoritesPastN);
+        //    set = new SortedSet<NewsItemIndex>(toKeep, indexComparer);
+        //}
+
+        //public void Clear()
+        //{
+        //    set.Clear();
+        //}
 
 
 

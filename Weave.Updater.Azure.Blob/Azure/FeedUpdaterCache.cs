@@ -5,7 +5,7 @@ using Weave.Updater.BusinessObjects;
 
 namespace Weave.FeedUpdater.Azure
 {
-    public class FeedUpdaterCache
+    class FeedUpdaterCache
     {
         readonly SmartBlobClient blobClient;
         readonly string containerName;

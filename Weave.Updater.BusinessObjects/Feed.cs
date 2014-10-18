@@ -182,7 +182,7 @@ namespace Weave.Updater.BusinessObjects
             var y = destination;
 
             y.Id = x.Id;
-            y.FeedId = x.FeedId;
+            //y.FeedId = x.FeedId;
             y.UtcPublishDateTime = x.UtcPublishDateTime;
             y.Title = x.Title;
             y.OriginalPublishDateTimeString = x.OriginalPublishDateTimeString;

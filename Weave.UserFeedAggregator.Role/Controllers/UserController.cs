@@ -138,8 +138,8 @@ namespace Weave.User.Service.Role.Controllers
                 {
                     await PerformRefreshOnFeeds(userIndex.FeedIndices);
                     //DeleteOldNews(userIndex.FeedIndices);
-                    foreach (var feedIndex in userIndex.FeedIndices)
-                        feedIndex.NewsItemIndices.Trim();
+                    //foreach (var feedIndex in userIndex.FeedIndices)
+                    //    feedIndex.NewsItemIndices.Trim();
                 }
 
                 await SaveUserIndex();
@@ -859,7 +859,7 @@ namespace Weave.User.Service.Role.Controllers
             IEnumerable<NewsItemIndexFeedIndexTuple> indices;
 
             sw.Start();
-            indices = feeds.AllIndices(userIndex).ToList();
+            indices = feeds.AllIndices(userIndex, useNormalDetermination: true).ToList();
             timings.InitialNewsItemIndicesFilter = sw.Record().Dump();
 
             sw.Start();
@@ -932,7 +932,7 @@ namespace Weave.User.Service.Role.Controllers
             IEnumerable<NewsItemIndexFeedIndexTuple> indices;
 
             sw.Start();
-            indices = feeds.AllIndices(userIndex).ToList();
+            indices = feeds.AllIndices(userIndex, useNormalDetermination: true).ToList();
             timings.InitialNewsItemIndicesFilter = sw.Record().Dump();
 
             sw.Start();
@@ -1124,7 +1124,7 @@ namespace Weave.User.Service.Role.Controllers
                 return outgoing;
             }
 
-            var indices = feeds.AllIndices(userIndex);
+            var indices = feeds.AllIndices(userIndex, useNormalDetermination: false);
             var metaLookup = CreateFeedMetaData(indices).ToDictionary(o => o.FeedId);
 
             var outgoingFeeds = feeds.Select(o => CreateOutgoingFeed(o, metaLookup)).ToList();
@@ -1195,7 +1195,7 @@ namespace Weave.User.Service.Role.Controllers
 
         static Outgoing.UserInfo ConvertToOutgoing(UserIndex o)
         {
-            var tuples = o.FeedIndices.AllIndices(o);
+            var tuples = o.FeedIndices.AllIndices(o, useNormalDetermination: false);
             var feedMeta = CreateFeedMetaData(tuples);
             var metaLookup = feedMeta.ToDictionary(x => x.FeedId);
 

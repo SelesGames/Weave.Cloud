@@ -97,11 +97,12 @@ namespace Weave.User.BusinessObjects.Mutable
             NewsItemIndex newsItem,
             FeedIndex feed,
             DateTime markedReadCutoffDate,
-            DateTime unreadCutoffDate)
+            DateTime unreadCutoffDate,
+            bool useNormal)
         {
             this.newsItem = newsItem;
             this.feed = feed;
-            this.IsNew = feed.IsNewsItemNew(newsItem);
+            this.IsNew = useNormal ? feed.IsNewsItemNew(newsItem) : feed.IsNewsItemCountedNew(newsItem);
 
             // set canKeep
             if (IsNew)

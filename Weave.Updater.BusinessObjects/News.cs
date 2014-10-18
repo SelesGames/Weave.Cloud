@@ -48,9 +48,6 @@ namespace Weave.Updater.BusinessObjects
         {
             public int Compare(NewsItemRecord x, NewsItemRecord y)
             {
-                if (x.Id == y.Id)
-                    return 0;
-
                 if (x.Title.Equals(y.Title, StringComparison.OrdinalIgnoreCase))
                     return 0;
 

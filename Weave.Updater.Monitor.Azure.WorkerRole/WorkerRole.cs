@@ -3,7 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Net;
 using System.Threading;
-using Weave.FeedUpdater.PubSub;
+using Weave.FeedUpdater.Messaging;
 
 namespace Weave.FeedUpdater.Monitor.Role
 {
@@ -36,7 +36,7 @@ namespace Weave.FeedUpdater.Monitor.Role
                     "JO5kSIOr+r3NdM45gfzb1szHe/hPx6f+MS7YOWogr8VDqSikiIP//OMUbOxCCMTFTcJgldVhl+Y0zP9WpvQV5g==",
                     "updaterfeeds");
 
-                persister.Initialize().Wait();
+                persister.Initialize();
             }
             catch (Exception e)
             {

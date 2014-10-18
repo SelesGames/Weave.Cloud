@@ -1,6 +1,6 @@
-﻿using SelesGames.Common;
-using StackExchange.Redis;
+﻿using StackExchange.Redis;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Weave.User.Service.Redis.Serializers;
 
@@ -25,7 +25,15 @@ namespace Weave.User.Service.Redis.Communication.Generic
         /// <param name="value">The value to push to the message queue</param>
         public Task Push(T o)
         {
-            var value = map.Map(o);
+            RedisValue value;
+            try
+            {
+                value = map.Map(o);
+            }
+            catch(Exception ex)
+            {
+                throw new SerializationException(ex, RedisValue.Null);
+            }
             return innerQueue.Push(value);
         }
 

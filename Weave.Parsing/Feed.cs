@@ -1,5 +1,4 @@
-﻿using Common.Net.Http.Compression;
-using Common.TimeFormatting;
+﻿using Common.TimeFormatting;
 using SelesGames.Common.Hashing;
 using SelesGames.HttpClient;
 using System;
@@ -17,7 +16,6 @@ namespace Weave.Parsing
 {
     public class Feed
     {
-        public Guid FeedId { get; set; }
         public string Uri { get; set; }
         public string MostRecentNewsItemPubDate { get; set; }
         public string OldestNewsItemPubDate { get; private set; }
@@ -47,8 +45,6 @@ namespace Weave.Parsing
 
         public async Task<RequestStatus> Update()
         {
-            EnsureFeedIdIsSet();
-
             var client = new SmartHttpClient();
 
             var request = new HttpRequestMessage(HttpMethod.Get, Uri);
@@ -93,12 +89,6 @@ namespace Weave.Parsing
             {
                 throw new Exception(responseMessage.StatusCode.ToString());
             }
-        }
-
-        void EnsureFeedIdIsSet()
-        {
-            if (FeedId.Equals(Guid.Empty))
-                FeedId = CryptoHelper.ComputeHashUsedByMobilizer(Uri);
         }
 
         void HandleNonModifiedResponse()
@@ -182,8 +172,7 @@ namespace Weave.Parsing
 
             foreach (var newsItem in News)
             {
-                newsItem.FeedId = FeedId;
-                newsItem.Id = CryptoHelper.ComputeHashUsedByMobilizer(newsItem.Link + Uri);
+                newsItem.Id = CryptoHelper.ComputeHashUsedByMobilizer(newsItem.Link);
 
                 // cap the publishdatetime as no later than the current time
                 if (newsItem.UtcPublishDateTime > now)

@@ -8,7 +8,7 @@ namespace Weave.User.BusinessObjects.Mutable
     {
         static comparerImpl comparer = new comparerImpl();
 
-        public static IEnumerable<NewsItemIndexFeedIndexTuple> AllIndices(this IEnumerable<FeedIndex> feeds, UserIndex userIndex)
+        public static IEnumerable<NewsItemIndexFeedIndexTuple> AllIndices(this IEnumerable<FeedIndex> feeds, UserIndex userIndex, bool useNormalDetermination)
         {
             var now = DateTime.UtcNow;
             var markedReadCutoffDate = Subtract(now, userIndex.ArticleDeletionTimeForMarkedRead);
@@ -18,7 +18,7 @@ namespace Weave.User.BusinessObjects.Mutable
                 .SelectMany(feedIndex => feedIndex
                     .NewsItemIndices
                     .AsParallel()
-                    .Select(o => new NewsItemIndexFeedIndexTuple(o, feedIndex, markedReadCutoffDate, unreadCutoffDate)));
+                    .Select(o => new NewsItemIndexFeedIndexTuple(o, feedIndex, markedReadCutoffDate, unreadCutoffDate, useNormalDetermination)));
         }
 
         static DateTime Subtract(DateTime val, TimeSpan offset)

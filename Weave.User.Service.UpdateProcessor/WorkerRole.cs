@@ -30,7 +30,7 @@ namespace Weave.User.Service.UpdateProcessor
 
             try
             {
-                new UserIndexPersister().Initialize().Wait();
+                new UserIndexPersister().Initialize();
             }
             catch (Exception e)
             {

@@ -4,6 +4,12 @@ namespace System.Collections.Generic
 {
     public static class IEnumerableExtensions
     {
+        /// <summary>
+        /// Turns any IEnumerable sequence into a circularly wrapping infinite sequence.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="o"></param>
+        /// <returns></returns>
         public static IEnumerable<T> Wrap<T>(this IEnumerable<T> o)
         {
             if (o == null)
@@ -25,78 +31,12 @@ namespace System.Collections.Generic
         }
 
         /// <summary>
-        /// A high-performance set comparison function for when we know both sets are ordered
+        /// Computes the full set difference between two IEnumerable sequences.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="source"></param>
-        /// <param name="target"></param>
+        /// <param name="original"></param>
+        /// <param name="modified"></param>
         /// <returns></returns>
-        public static bool IsOrderedSetEqualTo<T>(this IOrderedEnumerable<T> source, IOrderedEnumerable<T> target)
-        {
-            if (source == null) throw new ArgumentNullException("source");
-            if (target == null) return false;
-
-            var sourceEnumerator = source.GetEnumerator();
-            var targetEnumerator = target.GetEnumerator();
-
-            while (true)
-            {
-                var sourceHasNext = sourceEnumerator.MoveNext();
-                var targetHasNext = targetEnumerator.MoveNext();
-
-                if (sourceHasNext != targetHasNext)
-                    return false;
-
-                if (!sourceHasNext)
-                    return true;
-
-                if (!sourceEnumerator.Current.Equals(targetEnumerator.Current))
-                    return false;
-            }
-        }
-
-        public static bool IsOrderedSetEqualTo<T>(this IOrderedEnumerable<T> source, IOrderedEnumerable<T> target, IEqualityComparer<T> comparer)
-        {
-            if (source == null) throw new ArgumentNullException("source");
-            if (target == null) return false;
-
-            var sourceEnumerator = source.GetEnumerator();
-            var targetEnumerator = target.GetEnumerator();
-
-            while (true)
-            {
-                var sourceHasNext = sourceEnumerator.MoveNext();
-                var targetHasNext = targetEnumerator.MoveNext();
-
-                if (sourceHasNext != targetHasNext)
-                    return false;
-
-                if (!sourceHasNext)
-                    return true;
-
-                if (!comparer.Equals(sourceEnumerator.Current, targetEnumerator.Current))
-                    return false;
-            }
-        }
-
-        public static bool IsSetEqualTo<T>(this IEnumerable<T> source, IEnumerable<T> target)
-        {
-            if (source == null) throw new ArgumentNullException("source");
-            if (target == null) return false;
-
-            return !source.Except(target).Any() && !target.Except(source).Any();
-        }
-
-        public static bool IsSetEqualTo<T>(this IEnumerable<T> source, IEnumerable<T> target, IEqualityComparer<T> comparer)
-        {
-            if (source == null) throw new ArgumentNullException("source");
-            if (target == null)  return false;
-
-            return 
-                !source.Except(target, comparer).Any() && 
-                !target.Except(source, comparer).Any();
-        }
-
         public static SetDifference<T> Diff<T>(this IEnumerable<T> original, IEnumerable<T> modified)
         {
             if (original == null) throw new ArgumentNullException("original");
@@ -120,6 +60,13 @@ namespace System.Collections.Generic
             };
         }
 
+        /// <summary>
+        /// Computes the full set difference between two IEnumerable sequences of different types.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="original"></param>
+        /// <param name="modified"></param>
+        /// <returns></returns>
         public static SetDifference<T1, T2> Diff<T1, T2, TCompare>(
             this IEnumerable<T1> original, 
             IEnumerable<T2> modified,
@@ -179,3 +126,83 @@ namespace System.Collections.Generic
         }
     }
 }
+
+
+
+
+#region deprecated set comparison functions
+
+///// <summary>
+///// A high-performance set comparison function for when we know both sets are ordered
+///// </summary>
+///// <typeparam name="T"></typeparam>
+///// <param name="source"></param>
+///// <param name="target"></param>
+///// <returns></returns>
+//public static bool IsOrderedSetEqualTo<T>(this IOrderedEnumerable<T> source, IOrderedEnumerable<T> target)
+//{
+//    if (source == null) throw new ArgumentNullException("source");
+//    if (target == null) return false;
+
+//    var sourceEnumerator = source.GetEnumerator();
+//    var targetEnumerator = target.GetEnumerator();
+
+//    while (true)
+//    {
+//        var sourceHasNext = sourceEnumerator.MoveNext();
+//        var targetHasNext = targetEnumerator.MoveNext();
+
+//        if (sourceHasNext != targetHasNext)
+//            return false;
+
+//        if (!sourceHasNext)
+//            return true;
+
+//        if (!sourceEnumerator.Current.Equals(targetEnumerator.Current))
+//            return false;
+//    }
+//}
+
+//public static bool IsOrderedSetEqualTo<T>(this IOrderedEnumerable<T> source, IOrderedEnumerable<T> target, IEqualityComparer<T> comparer)
+//{
+//    if (source == null) throw new ArgumentNullException("source");
+//    if (target == null) return false;
+
+//    var sourceEnumerator = source.GetEnumerator();
+//    var targetEnumerator = target.GetEnumerator();
+
+//    while (true)
+//    {
+//        var sourceHasNext = sourceEnumerator.MoveNext();
+//        var targetHasNext = targetEnumerator.MoveNext();
+
+//        if (sourceHasNext != targetHasNext)
+//            return false;
+
+//        if (!sourceHasNext)
+//            return true;
+
+//        if (!comparer.Equals(sourceEnumerator.Current, targetEnumerator.Current))
+//            return false;
+//    }
+//}
+
+//public static bool IsSetEqualTo<T>(this IEnumerable<T> source, IEnumerable<T> target)
+//{
+//    if (source == null) throw new ArgumentNullException("source");
+//    if (target == null) return false;
+
+//    return !source.Except(target).Any() && !target.Except(source).Any();
+//}
+
+//public static bool IsSetEqualTo<T>(this IEnumerable<T> source, IEnumerable<T> target, IEqualityComparer<T> comparer)
+//{
+//    if (source == null) throw new ArgumentNullException("source");
+//    if (target == null)  return false;
+
+//    return 
+//        !source.Except(target, comparer).Any() && 
+//        !target.Except(source, comparer).Any();
+//}
+
+#endregion

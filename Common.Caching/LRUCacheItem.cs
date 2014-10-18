@@ -9,7 +9,7 @@ namespace Common.Caching
             Value = v;
         }
 
-        public TKey Key { get; internal set; }
+        public TKey Key { get; private set; }
         public TValue Value { get; internal set; }
     }
 }

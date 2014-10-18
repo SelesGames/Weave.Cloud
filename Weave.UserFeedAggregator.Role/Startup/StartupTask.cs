@@ -28,7 +28,7 @@ namespace Weave.User.Service.Role.Startup
 
             kernel.Bind<ConnectionMultiplexer>().ToConstant(clientConnection).InSingletonScope();
 
-            var userIndexCache = await UserIndexCacheFactory.CreateCacheAsync();
+            var userIndexCache = UserIndexCacheFactory.CreateAndInitializeCache();
 
             kernel.Bind<UserIndexCache>().ToConstant(userIndexCache).InSingletonScope();
             

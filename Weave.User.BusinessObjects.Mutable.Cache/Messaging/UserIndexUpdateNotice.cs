@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Weave.User.BusinessObjects.Mutable.Cache.PubSub
+namespace Weave.User.BusinessObjects.Mutable.Cache.Messaging
 {
     public class UserIndexUpdateNotice
     {

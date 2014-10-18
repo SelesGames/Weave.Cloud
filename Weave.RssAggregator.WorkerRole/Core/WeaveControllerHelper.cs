@@ -8,15 +8,16 @@ using System.Threading.Tasks;
 using Weave.RssAggregator.Core.DTOs.Outgoing;
 using Weave.Services.Redis.Ambient;
 using Weave.Updater.BusinessObjects;
-using Weave.FeedUpdater.PubSub;
 using Weave.User.Service.Redis;
 using Weave.User.Service.Redis.Clients;
 using Weave.FeedUpdater.BusinessObjects.Cache;
+using Weave.FeedUpdater.Messaging;
 
 namespace Weave.FeedUpdater.Service
 {
     public class WeaveControllerHelper
     {
+        static readonly FeedUpdateMessageQueue FEED_UPDATE_MQ = new FeedUpdateMessageQueue();
         static TimeSpan FEED_REFRESH_TIMEOUT = TimeSpan.FromSeconds(4);
 
         readonly FeedCache feedCache;
@@ -24,7 +25,7 @@ namespace Weave.FeedUpdater.Service
         readonly ConnectionMultiplexer standardConnection;
         readonly dynamic Metadata;
         readonly TimingHelper sw;
-        readonly FeedUpdatePublisher publisher;
+        readonly FeedUpdateMessageQueue feedUpdateMQ;
         readonly Func<string, Task<bool>> checkKeyFunc;
 
         public WeaveControllerHelper(
@@ -37,7 +38,7 @@ namespace Weave.FeedUpdater.Service
             this.standardConnection = Settings.StandardConnection;
             this.Metadata = new ExpandoObject();
             this.sw = new TimingHelper();
-            this.publisher = new FeedUpdatePublisher();
+            this.feedUpdateMQ = FEED_UPDATE_MQ;
             this.checkKeyFunc = checkKeyFunc;
         }
 
@@ -160,8 +161,7 @@ namespace Weave.FeedUpdater.Service
             }
 
             // Send a notice via Redis PubSub that the feed updater was updated
-            var received = await publisher.Publish(new FeedUpdateNotice { FeedUri = url, RefreshTime = feed.LastRefreshedOn });
-            Metadata.NumberThatReceivedPubSubNotification = received;
+            await feedUpdateMQ.Push(new FeedUpdateNotice { FeedUri = url, RefreshTime = feed.LastRefreshedOn });
         }
 
         static void FixImages(ExpandedEntry entry)

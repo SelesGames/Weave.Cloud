@@ -4,19 +4,21 @@ using System.Threading.Tasks;
 using Weave.Services.Redis.Ambient;
 using Weave.User.BusinessObjects.Mutable.Cache.Azure;
 using Weave.User.BusinessObjects.Mutable.Cache.Azure.Legacy;
-using Weave.User.BusinessObjects.Mutable.Cache.PubSub;
+using Weave.User.BusinessObjects.Mutable.Cache.Messaging;
+using Weave.User.Service.Redis.Communication.Generic;
 
 namespace Weave.User.BusinessObjects.Mutable.Cache
 {
     public class UserIndexCache : IDisposable
     {
+        static readonly TimeSpan POLLINTERVAL = TimeSpan.FromMilliseconds(50);
+
         readonly Guid cacheId;
         readonly LRUCache<Guid, UserIndex> localCache;
         readonly Weave.User.Service.Redis.Clients.UserIndexCache redisCache;
         readonly UserIndexBlobClient blobClient;
         readonly UserInfoBlobClient legacyDataStoreBlobClient;
-        readonly UserIndexUpdateEventPublisher updateNoticePublisher;
-        readonly UserIndexUpdateEventObserver updateNoticeObserver;
+        readonly UserIndexUpdateMessageQueue userUpdateMessageQueue;
 
         IDisposable disposeHandle;
 
@@ -42,8 +44,7 @@ namespace Weave.User.BusinessObjects.Mutable.Cache
                 accountKey: legacyUserDataStoreAccountKey,
                 containerName: legacyUserDataStoreContainerName);
 
-            this.updateNoticePublisher = new UserIndexUpdateEventPublisher();
-            this.updateNoticeObserver = new UserIndexUpdateEventObserver();
+            this.userUpdateMessageQueue = new UserIndexUpdateMessageQueue();
         }
 
         public async Task<UserIndex> Get(Guid id)
@@ -106,9 +107,9 @@ namespace Weave.User.BusinessObjects.Mutable.Cache
         }
 
         // Begin listening to update notifications
-        internal async Task InitializeAsync()
+        internal void Initialize()
         {
-            disposeHandle = await updateNoticeObserver.Observe(OnUpdateNoticeReceived);
+            disposeHandle = userUpdateMessageQueue.Observe(POLLINTERVAL, OnUpdateNoticeReceived);
         }
 
 
@@ -124,12 +125,11 @@ namespace Weave.User.BusinessObjects.Mutable.Cache
             {
                 // send notice here
                 var notice = new UserIndexUpdateNotice { UserId = user.Id, CacheId = cacheId };
-                //var numReceived = await updateNoticePublisher.Publish(notice);
-                await updateNoticePublisher.Publish(notice, StackExchange.Redis.CommandFlags.FireAndForget);
+                await userUpdateMessageQueue.Push(notice);
             }
         }
 
-        async void OnUpdateNoticeReceived(UserIndexUpdateNotice notice)
+        async Task OnUpdateNoticeReceived(UserIndexUpdateNotice notice)
         {
             // ignore notifications sent from itself
             if (notice.CacheId == cacheId)

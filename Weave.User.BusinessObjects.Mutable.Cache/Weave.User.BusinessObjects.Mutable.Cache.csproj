@@ -48,12 +48,10 @@
     <Compile Include="Azure\Legacy\UserInfoBlobClient.cs" />
     <Compile Include="Azure\Serialization\UserIndex.cs" />
     <Compile Include="Azure\UserIndexBlobClient.cs" />
+    <Compile Include="Messaging\UserIndexUpdateMessageQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PubSub\Constants.cs" />
-    <Compile Include="PubSub\UserIndexUpdateEventObserver.cs" />
-    <Compile Include="PubSub\UserIndexUpdateEventPublisher.cs" />
-    <Compile Include="PubSub\UserIndexUpdateNotice.cs" />
-    <Compile Include="PubSub\UserIndexUpdateNoticeExtensions.cs" />
+    <Compile Include="Messaging\UserIndexUpdateNotice.cs" />
+    <Compile Include="Messaging\UserIndexUpdateNoticeExtensions.cs" />
     <Compile Include="UserIndexCache.cs" />
     <Compile Include="UserIndexCacheFactory.cs" />
   </ItemGroup>
