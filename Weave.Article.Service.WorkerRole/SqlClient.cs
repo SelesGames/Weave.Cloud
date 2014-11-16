@@ -8,7 +8,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Weave.Article.Service.DTOs.ServerOutgoing;
+using Weave.Services.Article.DTOs.ServerOutgoing;
 
 namespace Weave.Article.Service.WorkerRole
 {

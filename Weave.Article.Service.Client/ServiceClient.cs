@@ -3,11 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Weave.Article.Service.Contracts;
-using Incoming = Weave.Article.Service.DTOs.ServerIncoming;
-using Outgoing = Weave.Article.Service.DTOs.ServerOutgoing;
+using Weave.Services.Article.Contracts;
+using Incoming = Weave.Services.Article.DTOs.ServerIncoming;
+using Outgoing = Weave.Services.Article.DTOs.ServerOutgoing;
 
-namespace Weave.Article.Service.Client
+namespace Weave.Services.Article.Client
 {
     public class ServiceClient : IWeaveArticleService
     {
