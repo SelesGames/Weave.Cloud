@@ -12,7 +12,7 @@ namespace SelesGames.WebApi.SelfHost
         static SelfHost()
         {
             Config = new StandardHttpSelfHostConfiguration();
-            Common.Compression.Settings.CompressionHandlers = new CompressionHandlerCollection();
+            Common.Net.Http.Compression.Settings.GlobalCompressionSettings.CompressionHandlers = new CompressionHandlerCollection();
         }
 
         public static IDisposable StartServer(string url)

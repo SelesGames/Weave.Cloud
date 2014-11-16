@@ -4,9 +4,9 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Weave.Identity.Service.Contracts;
-using Weave.Identity.Service.DTOs;
 using Weave.Identity.Service.Sql;
+using Weave.Services.Identity.Contracts;
+using Weave.Services.Identity.DTOs;
 
 namespace Weave.Identity.Service.WorkerRole
 {

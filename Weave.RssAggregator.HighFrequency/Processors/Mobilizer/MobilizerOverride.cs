@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Weave.Mobilizer.Client;
-using Weave.Mobilizer.DTOs;
 using Weave.Mobilizer.HtmlParser;
+using Weave.Services.Mobilizer.DTOs;
 using Weave.Updater.BusinessObjects;
 
 namespace Weave.FeedUpdater.HighFrequency
@@ -14,7 +14,7 @@ namespace Weave.FeedUpdater.HighFrequency
 
         public MobilizerOverride()
         {
-            client = new MobilizerServiceClient(token);
+            client = new MobilizerServiceClient();
         }
 
         public async Task ProcessAsync(HighFrequencyFeedUpdate o)

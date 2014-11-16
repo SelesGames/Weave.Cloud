@@ -1,12 +1,11 @@
 ﻿using SelesGames.Common.Hashing;
-using System;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using Weave.Mobilizer.Cache;
-using Weave.Mobilizer.Contracts;
 using Weave.Mobilizer.Core.Web;
-using Weave.Mobilizer.DTOs;
+using Weave.Services.Mobilizer.Contracts;
+using Weave.Services.Mobilizer.DTOs;
 
 namespace Weave.Mobilizer.WorkerRole.Controllers
 {

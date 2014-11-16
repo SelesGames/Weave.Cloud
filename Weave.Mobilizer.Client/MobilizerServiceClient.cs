@@ -2,35 +2,34 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Weave.Mobilizer.Contracts;
-using Weave.Mobilizer.DTOs;
+using Weave.Services.Mobilizer.DTOs;
 
 namespace Weave.Mobilizer.Client
 {
-    public class MobilizerServiceClient : IMobilizerService
+    public class MobilizerServiceClient
     {
         string token;
         const string SERVICE_URL = "http://mobilizer.cloudapp.net/";
 
-        public MobilizerServiceClient(string token)
-        {
-            this.token = token;
-        }
+        //public MobilizerServiceClient(string token)
+        //{
+        //    this.token = token;
+        //}
 
-        public async Task<MobilizerResult> Get(string url, bool stripLeadImage = false)
-        {
-            if (string.IsNullOrEmpty(url)) throw new ArgumentException("Not a valid url");
+        //public async Task<MobilizerResult> Get(string url, bool stripLeadImage = false)
+        //{
+        //    if (string.IsNullOrEmpty(url)) throw new ArgumentException("Not a valid url");
 
-            string append = "ipf";
-            var fullUrl = new UriBuilder(SERVICE_URL + append)
-                .AddParameter("url", url)
-                .AddParameter("stripLeadImage", stripLeadImage)
-                .ToString();
+        //    string append = "ipf";
+        //    var fullUrl = new UriBuilder(SERVICE_URL + append)
+        //        .AddParameter("url", url)
+        //        .AddParameter("stripLeadImage", stripLeadImage)
+        //        .ToString();
 
-            var client = CreateClient();
-            var result = await client.GetAsync<MobilizerResult>(fullUrl, CancellationToken.None);
-            return result;
-        }
+        //    var client = CreateClient();
+        //    var result = await client.GetAsync<MobilizerResult>(fullUrl, CancellationToken.None);
+        //    return result;
+        //}
 
         public async Task Post(string url, MobilizerResult article)
         {

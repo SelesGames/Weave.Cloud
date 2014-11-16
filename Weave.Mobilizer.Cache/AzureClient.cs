@@ -3,7 +3,7 @@ using Common.Azure.SmartBlobClient;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Weave.Mobilizer.DTOs;
+using Weave.Services.Mobilizer.DTOs;
 
 namespace Weave.Mobilizer.Cache
 {

@@ -5,8 +5,8 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
-using Weave.Identity.Service.DTOs;
 using Weave.Identity.Service.Sql;
+using Weave.Services.Identity.DTOs;
 
 namespace Weave.Identity.Service.WorkerRole.Controllers
 {

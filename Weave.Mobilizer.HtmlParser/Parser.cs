@@ -2,9 +2,7 @@
 using System;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Weave.Mobilizer.Client;
-using Weave.Mobilizer.DTOs;
+using Weave.Services.Mobilizer.DTOs;
 
 namespace Weave.Mobilizer.HtmlParser
 {

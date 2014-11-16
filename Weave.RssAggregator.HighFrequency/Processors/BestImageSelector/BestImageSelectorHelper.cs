@@ -12,10 +12,9 @@ namespace Weave.FeedUpdater.HighFrequency.Processors.BestImageSelector
 {
     class BestImageSelectorHelper
     {
-        readonly static string token = "hxyuiplkx78!ksdfl";
         readonly static TimeSpan IMAGE_ACQ_TIMEOUT = TimeSpan.FromSeconds(7);
 
-        readonly MobilizerServiceClient mobilizerClient;
+        readonly Weave.Services.Mobilizer.Client mobilizerClient;
         readonly ExpandedEntry entry;
         readonly ImageInfoClient imageInfoClient;
         readonly List<ImageInfo> imagePool;
@@ -23,7 +22,7 @@ namespace Weave.FeedUpdater.HighFrequency.Processors.BestImageSelector
         public BestImageSelectorHelper(ExpandedEntry entry)
         {
             this.entry = entry;
-            this.mobilizerClient = new MobilizerServiceClient(token);
+            this.mobilizerClient = new Weave.Services.Mobilizer.Client();
             this.imageInfoClient = new ImageInfoClient { Timeout = IMAGE_ACQ_TIMEOUT };
             this.imagePool = new List<ImageInfo>();
         }
@@ -106,7 +105,7 @@ namespace Weave.FeedUpdater.HighFrequency.Processors.BestImageSelector
             try
             {
                 var url = entry.Link;
-                var mobilized = await mobilizerClient.Get(url);
+                var mobilized = await mobilizerClient.Get(url, stripLeadImage: false);
 
                 var html = mobilized.content;
                 var doc = new HtmlDocument();

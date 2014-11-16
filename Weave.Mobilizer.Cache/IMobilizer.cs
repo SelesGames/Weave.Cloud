@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Weave.Mobilizer.DTOs;
+using Weave.Services.Mobilizer.DTOs;
 
 namespace Weave.Mobilizer.Cache
 {

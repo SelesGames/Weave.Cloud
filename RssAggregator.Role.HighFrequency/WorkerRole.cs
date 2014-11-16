@@ -30,7 +30,8 @@ namespace Weave.FeedUpdater.HighFrequency.Role
 
             try
             {
-                Common.Compression.Settings.CompressionHandlers = new Common.Compression.Windows.CompressionHandlerCollection();
+                Common.Net.Http.Compression.Settings.GlobalCompressionSettings.CompressionHandlers = 
+                    new Common.Compression.Windows.CompressionHandlerCollection();
 
                 var feedLibraryUrl = RoleEnvironment.GetConfigurationSettingValue("FeedLibraryUrl");
                 var hfUpdater = new HighFrequencyFeedUpdater(feedLibraryUrl);
