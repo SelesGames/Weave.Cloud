@@ -8,8 +8,8 @@
     <ProjectGuid>{F1B9B4E0-BD01-453C-B7C5-BF58AC032180}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Weave.Article.Service.WorkerRole</RootNamespace>
-    <AssemblyName>Weave.Article.Service.WorkerRole</AssemblyName>
+    <RootNamespace>Weave.Services.Article.WorkerRole</RootNamespace>
+    <AssemblyName>Weave.Services.Article.WorkerRole</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <RoleType>Worker</RoleType>
@@ -34,6 +34,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Common.Net.Http.Compression, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\SelesGames.HttpClient.1.0.0.32642\lib\portable-net45+win+wpa81+wp80\Common.Net.Http.Compression.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Owin, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.Owin.3.0.0\lib\net45\Microsoft.Owin.dll</HintPath>
@@ -64,6 +68,9 @@
     <Reference Include="protobuf-net">
       <HintPath>..\lib\protobuf-net.dll</HintPath>
     </Reference>
+    <Reference Include="SelesGames.HttpClient">
+      <HintPath>..\packages\SelesGames.HttpClient.1.0.0.32642\lib\portable-net45+win+wpa81+wp80\SelesGames.HttpClient.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http" />
@@ -81,6 +88,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Owin.5.2.2\lib\net45\System.Web.Http.Owin.dll</HintPath>
     </Reference>
+    <Reference Include="Weave.Services">
+      <HintPath>..\packages\Weave.Services.1.0.0.33183\lib\portable-net45+win+wpa81+wp80\Weave.Services.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\ArticleController.cs" />
@@ -91,14 +101,6 @@
     <Compile Include="WorkerRole.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Weave.Portable\Weave.Article.Service.Contracts\Weave.Article.Service.Contracts.csproj">
-      <Project>{d727f239-ee96-4b05-8f17-65871b52b260}</Project>
-      <Name>Weave.Article.Service.Contracts</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Weave.Portable\Weave.Article.Service.DTOs\Weave.Article.Service.DTOs.csproj">
-      <Project>{2b4d1af0-8c77-475d-8d14-db7b506f9450}</Project>
-      <Name>Weave.Article.Service.DTOs</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Common.Data\Common.Data.csproj">
       <Project>{cad7cc28-36e9-4b39-ba90-df99815904eb}</Project>
       <Name>Common.Data</Name>

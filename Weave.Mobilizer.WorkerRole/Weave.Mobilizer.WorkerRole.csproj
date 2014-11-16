@@ -34,6 +34,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Common.Net.Http.Compression, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\SelesGames.HttpClient.1.0.0.32642\lib\portable-net45+win+wpa81+wp80\Common.Net.Http.Compression.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Data.Edm, Version=5.6.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.Data.Edm.5.6.2\lib\net40\Microsoft.Data.Edm.dll</HintPath>
@@ -83,6 +87,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
+    <Reference Include="SelesGames.HttpClient, Version=1.0.0.32642, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\SelesGames.HttpClient.1.0.0.32642\lib\portable-net45+win+wpa81+wp80\SelesGames.HttpClient.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
@@ -117,6 +125,9 @@
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="Weave.Services">
+      <HintPath>..\packages\Weave.Services.1.0.0.33183\lib\portable-net45+win+wpa81+wp80\Weave.Services.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\IPFController.cs" />
@@ -128,20 +139,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="newrelic.cmd">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Weave.Portable\Weave.Mobilizer.Contracts\Weave.Mobilizer.Contracts.csproj">
-      <Project>{fc776ca4-35b3-4024-8667-cb265805a519}</Project>
-      <Name>Weave.Mobilizer.Contracts</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Weave.Portable\Weave.Mobilizer.DTOs\Weave.Mobilizer.DTOs.csproj">
-      <Project>{0a9019e4-e76f-4fac-a5c7-70f32cf5e2c1}</Project>
-      <Name>Weave.Mobilizer.DTOs</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Common.Caching\Common.Caching.csproj">
       <Project>{c83ab657-c7a6-4cf8-b4f5-d4e01bf2e562}</Project>
       <Name>Common.Caching</Name>
@@ -165,10 +165,6 @@
     <ProjectReference Include="..\Weave.Mobilizer.Cache\Weave.Mobilizer.Cache.csproj">
       <Project>{1a5136f0-480b-461c-b350-9ad42c0eca97}</Project>
       <Name>Weave.Mobilizer.Cache</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Weave.Mobilizer.Client\Weave.Mobilizer.Client.csproj">
-      <Project>{787ff65b-d0b3-4135-8495-ec5d4ff0a068}</Project>
-      <Name>Weave.Mobilizer.Client</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

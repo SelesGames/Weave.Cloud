@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using Weave.User.BusinessObjects.Mutable;
-using Incoming = Weave.User.Service.DTOs.ServerIncoming;
+using Incoming = Weave.Services.User.DTOs.ServerIncoming;
 
 namespace Weave.User.Service.Role.Map
 {

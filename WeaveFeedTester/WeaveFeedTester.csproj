@@ -126,10 +126,6 @@
     <DesignTimeOnly Include="SampleData\SampleMainViewModel\SampleMainViewModel.xsd" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Weave.Portable\Weave.Mobilizer.DTOs\Weave.Mobilizer.DTOs.csproj">
-      <Project>{0a9019e4-e76f-4fac-a5c7-70f32cf5e2c1}</Project>
-      <Name>Weave.Mobilizer.DTOs</Name>
-    </ProjectReference>
     <ProjectReference Include="..\RssAggregator.LibraryClient\RssAggregator.LibraryClient.csproj">
       <Project>{2db284eb-5b81-425a-957e-77eeb704ebdc}</Project>
       <Name>RssAggregator.LibraryClient</Name>
@@ -141,10 +137,6 @@
     <ProjectReference Include="..\Weave.Mobilizer.Cache\Weave.Mobilizer.Cache.csproj">
       <Project>{1a5136f0-480b-461c-b350-9ad42c0eca97}</Project>
       <Name>Weave.Mobilizer.Cache</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Weave.Mobilizer.Client\Weave.Mobilizer.Client.csproj">
-      <Project>{787ff65b-d0b3-4135-8495-ec5d4ff0a068}</Project>
-      <Name>Weave.Mobilizer.Client</Name>
     </ProjectReference>
     <ProjectReference Include="..\Weave.Parsing\Weave.Parsing.csproj">
       <Project>{a9731e9c-72fc-4171-ba99-9a6f97cd379f}</Project>

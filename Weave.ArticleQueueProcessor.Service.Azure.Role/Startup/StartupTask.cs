@@ -2,7 +2,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Weave.Article.Service.DTOs.ServerIncoming;
+using Weave.Services.Article.DTOs.ServerIncoming;
 using Weave.Updater.BusinessObjects;
 using Weave.User.Service.InterRoleMessaging.Articles;
 using Weave.User.Service.Redis;
@@ -13,14 +13,14 @@ namespace Weave.ArticleQueueProcessor.Service.Azure.Role.Startup
     internal class StartupTask
     {
         readonly TimeSpan pollingInterval = TimeSpan.FromMilliseconds(30);
-        readonly Article.Service.Client.ServiceClient articleService;
+        readonly Services.Article.Client.Client articleService;
         readonly ArticleStateChangeMessageQueue messageQueue;
         readonly Weave.FeedUpdater.BusinessObjects.Cache.ExpandedEntryCache newsCache;
 
         public StartupTask()
         {
-            Settings.CompressionHandlers = new Common.Compression.Windows.CompressionHandlerCollection();
-            this.articleService = new Article.Service.Client.ServiceClient();
+            Common.Net.Http.Compression.Settings.GlobalCompressionSettings.CompressionHandlers = new Common.Compression.Windows.CompressionHandlerCollection();
+            this.articleService = new Services.Article.Client.Client();
 
             this.messageQueue = new ArticleStateChangeMessageQueue();
 
@@ -123,9 +123,9 @@ namespace Weave.ArticleQueueProcessor.Service.Azure.Role.Startup
             };
         }
 
-        Weave.Article.Service.DTOs.Image Map(Updater.BusinessObjects.Image o)
+        Weave.Services.Article.DTOs.Image Map(Updater.BusinessObjects.Image o)
         {
-            return new Weave.Article.Service.DTOs.Image
+            return new Weave.Services.Article.DTOs.Image
             {      
                 Width = o.Width,
                 Height = o.Height,

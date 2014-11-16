@@ -32,9 +32,21 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Common.Net.Http.Compression, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\SelesGames.HttpClient.1.0.0.33816\lib\portable-net45+win+wpa81+wp80\Common.Net.Http.Compression.dll</HintPath>
+    </Reference>
     <Reference Include="HtmlAgilityPack, Version=1.4.6.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\HtmlAgilityPack.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="SelesGames.HttpClient, Version=1.0.0.33816, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\SelesGames.HttpClient.1.0.0.33816\lib\portable-net45+win+wpa81+wp80\SelesGames.HttpClient.dll</HintPath>
     </Reference>
     <Reference Include="StackExchange.Redis, Version=1.0.316.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -44,7 +56,14 @@
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.2\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
     <Reference Include="System.XML" />
+    <Reference Include="Weave.Services">
+      <HintPath>..\packages\Weave.Services.1.0.0.33183\lib\portable-net45+win+wpa81+wp80\Weave.Services.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HighFrequencyFeed.cs" />
@@ -66,18 +85,6 @@
     <Compile Include="Processors\StandardProcessorChain.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Weave.Portable\SelesGames.HttpClient\SelesGames.HttpClient.csproj">
-      <Project>{e93c1441-a175-4d76-9e97-092e9c621e55}</Project>
-      <Name>SelesGames.HttpClient</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Weave.Portable\Weave.Mobilizer.Contracts\Weave.Mobilizer.Contracts.csproj">
-      <Project>{fc776ca4-35b3-4024-8667-cb265805a519}</Project>
-      <Name>Weave.Mobilizer.Contracts</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Weave.Portable\Weave.Mobilizer.DTOs\Weave.Mobilizer.DTOs.csproj">
-      <Project>{0a9019e4-e76f-4fac-a5c7-70f32cf5e2c1}</Project>
-      <Name>Weave.Mobilizer.DTOs</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Common.Caching\Common.Caching.csproj">
       <Project>{c83ab657-c7a6-4cf8-b4f5-d4e01bf2e562}</Project>
       <Name>Common.Caching</Name>
@@ -124,6 +131,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

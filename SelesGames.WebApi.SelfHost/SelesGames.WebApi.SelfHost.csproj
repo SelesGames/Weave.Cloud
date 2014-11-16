@@ -32,6 +32,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Common.Net.Http.Compression, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\SelesGames.HttpClient.1.0.0.33816\lib\portable-net45+win+wpa81+wp80\Common.Net.Http.Compression.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Owin, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.Owin.3.0.0\lib\net45\Microsoft.Owin.dll</HintPath>
@@ -50,6 +54,9 @@
     </Reference>
     <Reference Include="Owin">
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="SelesGames.HttpClient">
+      <HintPath>..\packages\SelesGames.HttpClient.1.0.0.33816\lib\portable-net45+win+wpa81+wp80\SelesGames.HttpClient.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -75,14 +82,6 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Weave.Portable\Common.Compression\Common.Compression.csproj">
-      <Project>{00617b68-c1f0-4ad8-8307-25c0608d745d}</Project>
-      <Name>Common.Compression</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Weave.Portable\Common.Net.Http.Compression\Common.Net.Http.Compression.csproj">
-      <Project>{8162e82c-c141-4a69-90ef-4a2593a374df}</Project>
-      <Name>Common.Net.Http.Compression</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Common.Compression.Windows\Common.Compression.Windows.csproj">
       <Project>{7e6d6e4c-4ea7-431c-ac57-234fefa406ad}</Project>
       <Name>Common.Compression.Windows</Name>
@@ -97,6 +96,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

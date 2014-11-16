@@ -8,17 +8,16 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Weave.FeedUpdater.BusinessObjects.Cache;
 using Weave.Services.Redis.Ambient;
+using Weave.Services.User.Contracts;
+using Weave.Services.User.DTOs;
 using Weave.Updater.BusinessObjects;
 using Weave.User.BusinessObjects.Mutable;
-using Weave.User.Service.Contracts;
-using Weave.User.Service.DTOs;
 using Weave.User.Service.InterRoleMessaging.Articles;
 using Weave.User.Service.Redis;
-using Weave.User.Service.Redis.Clients;
 using Weave.User.Service.Redis.Synchronization.UserIndex;
 using Weave.User.Service.Role.Map;
-using Incoming = Weave.User.Service.DTOs.ServerIncoming;
-using Outgoing = Weave.User.Service.DTOs.ServerOutgoing;
+using Incoming = Weave.Services.User.DTOs.ServerIncoming;
+using Outgoing = Weave.Services.User.DTOs.ServerOutgoing;
 
 namespace Weave.User.Service.Role.Controllers
 {
@@ -766,6 +765,9 @@ namespace Weave.User.Service.Role.Controllers
 
         async Task PerformRefreshOnFeeds(IEnumerable<FeedIndex> feeds)
         {
+            if (EnumerableEx.IsNullOrEmpty(feeds))
+                return;
+
             var updateHelper = new UpdateHelper(connection);
             var refreshMeta = await updateHelper.PerformRefreshOnFeeds(feeds);
             timings.RefreshMeta = refreshMeta;
@@ -1017,7 +1019,7 @@ namespace Weave.User.Service.Role.Controllers
                 Name = o.Name,
                 IconUri = o.IconUri,
                 Category = o.Category,
-                ArticleViewingType = (Weave.User.Service.DTOs.ArticleViewingType)o.ArticleViewingType,
+                ArticleViewingType = (Weave.Services.User.DTOs.ArticleViewingType)o.ArticleViewingType,
                 TeaserImageUrl = o.TeaserImageUri,
                 //LastRefreshedOn = o.LastRefreshedOn,
                 MostRecentEntrance = o.MostRecentEntrance,
