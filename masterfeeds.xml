@@ -190,7 +190,7 @@
     <Feed Name="PC Gamer" IconUrl="http://weave.blob.core.windows.net/icons/PC Gamer.jpg">http://www.pcgamer.com/feed/rss2</Feed>
     <Feed Name="Penny Arcade" ViewType="ie" IconUrl="http://weave.blob.core.windows.net/icons/Penny Arcade Report.png">http://penny-arcade.com/feed</Feed>
     <Feed Name="Penny Arcade Report" ViewType="ie" IconUrl="http://weave.blob.core.windows.net/icons/Penny Arcade Report.png">http://feeds.penny-arcade.com/pa-report</Feed>
-    <Feed Name="Polygon" IconUrl="http://weave.blob.core.windows.net/icons/Polygon.jpg">http://www.polygon.com/rss/index.xml</Feed>
+    <!--Feed Name="Polygon" IconUrl="http://weave.blob.core.windows.net/icons/Polygon.jpg">http://www.polygon.com/rss/index.xml</Feed-->
     <Feed Name="Rock, Paper, Shotgun" IconUrl="http://weave.blob.core.windows.net/icons/Rock, Paper, Shotgun.png">http://feeds.feedburner.com/RockPaperShotgun</Feed>
     <Feed Name="Siliconera">http://www.siliconera.com/feed/</Feed>
     <Feed Name="Wired | GameLife" IconUrl="http://weave.blob.core.windows.net/icons/Wired.com.png">http://www.wired.com/gamelife/feed</Feed>
@@ -220,6 +220,7 @@
 
 
   <Category Type="Microsoft">
+    <Feed Name="1800Pocket/PC">http://www.1800pocketpc.com/tag/microsoft/feed/</Feed>
     <Feed Name="All About Microsoft" IconUrl="http://weave.blob.core.windows.net/icons/All About Microsoft.png">http://www.zdnet.com/blog/microsoft/rss</Feed>
     <Feed Name="Engadget" CorrectedUrl="http://www.engadget.com/tag/microsoft/rss-full.xml" IconUrl="http://weave.blob.core.windows.net/icons/Engadget-WP.png">http://www.engadget.com/tag/microsoft/rss.xml</Feed>
     <Feed Name="Neowin" IconUrl="http://weave.blob.core.windows.net/icons/Neowin.png">http://www.neowin.net/news/rss/microsoft</Feed>
@@ -346,7 +347,7 @@
     <Feed Name="TechCrunch" IconUrl="http://weave.blob.core.windows.net/icons/TechCrunch.jpg">http://feeds.feedburner.com/Techcrunch</Feed>
     <Feed Name="TechnoBuffalo" IconUrl="http://weave.blob.core.windows.net/icons/TechnoBuffalo.png">http://feeds.feedburner.com/technobuffalo/rss</Feed>
     <Feed Name="The Next Web" IconUrl="http://weave.blob.core.windows.net/icons/The Next Web.jpg">http://feeds2.feedburner.com/thenextweb</Feed>
-    <Feed Name="The Verge" IconUrl="http://weave.blob.core.windows.net/icons/The Verge YouTube.png">http://www.theverge.com/rss/index.xml</Feed>
+    <!--Feed Name="The Verge" IconUrl="http://weave.blob.core.windows.net/icons/The Verge YouTube.png">http://www.theverge.com/rss/index.xml</Feed-->
     <Feed Name="VentureBeat" IconUrl="http://weave.blob.core.windows.net/icons/VentureBeat.jpg">http://feeds.venturebeat.com/Venturebeat</Feed>
     <Feed Name="VR-Zone" IconUrl="http://weave.blob.core.windows.net/icons/VR-Zone.png">http://feeds.feedburner.com/vr-zone</Feed>
     <Feed Name="Wired.com" IconUrl="http://weave.blob.core.windows.net/icons/Wired.com.png">http://feeds.wired.com/wired/index</Feed>
@@ -385,6 +386,7 @@
 
 
   <Category Type="Windows Phone">
+    <Feed Name="1800Pocket/PC">http://www.1800pocketpc.com/category/windowsphone/feed/</Feed>
     <Feed Name="All About Windows Phone" in="mu">http://rss.allaboutwindowsphone.com/aawp-feed-full-all.xml</Feed>
     <Feed Name="BGR | WP" IconUrl="http://weave.blob.core.windows.net/icons/BGR-WP.png">http://www.bgr.com/tag/windows-phone/feed</Feed>
     <Feed Name="Engadget | WP" CorrectedUrl="http://www.engadget.com/tag/windowsphone/rss-full.xml" IconUrl="http://weave.blob.core.windows.net/icons/Engadget-WP.png">http://www.engadget.com/tag/windowsphone/rss.xml</Feed>
@@ -392,6 +394,7 @@
     <Feed Name="Mobility Digest" IconUrl="http://weave.blob.core.windows.net/icons/Mobility Digest.png">http://mobilitydigest.com/category/windowsphone/feed</Feed>
     <Feed Name="Nokia Conversations" IconUrl="http://weave.blob.core.windows.net/icons/Nokia Conversations.png">http://feeds.feedburner.com/NokiaConversations</Feed>
     <Feed Name="PhoneArena" ViewType="ie" IconUrl="http://weave.blob.core.windows.net/icons/PhoneArena.png">http://www.phonearena.com/feed/windows/news</Feed>
+    <Feed Name="TruTower">http://www.trutower.com/category/windows-phone/feed/</Feed>
     <Feed Name="Windows Phone Daily" in="mu" IconUrl="http://weave.blob.core.windows.net/icons/WindowsPhoneDaily.png">http://feeds.feedburner.com/windowsphonedaily/DnwK</Feed>
     <Feed Name="Windows Team Blog" IconUrl="http://weave.blob.core.windows.net/icons/Windows Team Blog.png">http://windowsteamblog.com/windows_phone/rss.aspx</Feed>
     <Feed Name="WMPoweruser.com" IconUrl="http://weave.blob.core.windows.net/icons/WMPowerUser.png">http://feeds.feedburner.com/WmPowerUser</Feed>
